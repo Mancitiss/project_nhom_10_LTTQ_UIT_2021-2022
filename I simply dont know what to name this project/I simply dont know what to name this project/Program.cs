@@ -10,7 +10,6 @@ namespace I_simply_dont_know_what_to_name_this_project
     {
         static void Main(string[] args)
         {
-            int s = 1;
         }
     }
 }
