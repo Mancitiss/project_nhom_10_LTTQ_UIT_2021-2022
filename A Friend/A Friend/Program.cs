@@ -10,7 +10,6 @@ namespace A_Friend
     {
         static void Main(string[] args)
         {
-
         }
     }
 }
