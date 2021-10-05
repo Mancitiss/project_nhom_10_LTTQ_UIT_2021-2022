@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="clsResize.cs" />
     <Compile Include="CustomControls\CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>

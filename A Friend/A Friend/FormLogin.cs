@@ -13,10 +13,30 @@ namespace A_Friend
 {
     public partial class FormLogin : Form
     {
+        clsResize _form_resize;
+
         public FormLogin()
         {
             InitializeComponent();
             labelWarning.Text = "";
+            
+            _form_resize = new clsResize(this); //I put this after the initialize event to be sure that all controls are initialized properly
+
+            this.Load += new EventHandler(_Load); //This will be called after the initialization // form_load
+            this.Resize += new EventHandler(_Resize); //form_resize
+        }
+
+        private void _Load(object sender, EventArgs e)
+        {
+            _form_resize._get_initial_size();
+        }
+
+        private void _Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                _form_resize._resize_minimize();
+            } else _form_resize._resize();
         }
 
         private void ResetTexts()
@@ -33,9 +53,8 @@ namespace A_Friend
             frm.StartPosition = FormStartPosition.Manual;
             frm.FormClosing += delegate { this.Show(); };
             this.ResetTexts();
-            this.Hide();
-            Thread.Sleep(100);
             frm.Show();
+            this.Hide();           
         }
 
         private void buttonExit_Click(object sender, EventArgs e)
@@ -54,7 +73,7 @@ namespace A_Friend
             {
                 if (EmptyTextBoxes())
                 {
-                    labelWarning.Text = "Something is missing?";
+                    labelWarning.Text = "Something is missing!";
                     return;
                 }
             }
@@ -63,7 +82,7 @@ namespace A_Friend
                 labelWarning.Text = "User name or Password is incorrect";
                 return;
             }
-            labelWarning.Text = "You have sign up successfully".ToUpper();
+            labelWarning.Text = "You have logged in successfully".ToUpper();
             labelWarning.ForeColor = Color.FromArgb(37, 75, 133);
             timerClosing.Start();
         }
@@ -106,7 +125,7 @@ namespace A_Friend
 
         private void textBoxUserName_Enter(object sender, EventArgs e)
         {
-            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing?")
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
             {
                 return;
             }
@@ -115,7 +134,7 @@ namespace A_Friend
 
         private void textBoxPassword_Enter(object sender, EventArgs e)
         {
-            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing?")
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
             {
                 return;
             }
@@ -139,9 +158,10 @@ namespace A_Friend
                 var frm = new FormApp();
                 frm.Location = this.Location;
                 frm.StartPosition = FormStartPosition.Manual;
-                frm.FormClosing += delegate { this.Close(); };
-                this.Hide();
+                frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
+                this.ResetTexts();
                 frm.Show();
+                this.Hide();
             }
         }
     }

@@ -13,12 +13,33 @@ namespace A_Friend
 {
     public partial class FormSignUp : Form
     {
+        clsResize _form_resize;
+
         public FormSignUp()
         {
             InitializeComponent();
             labelWarning.Text = "";
+
+            _form_resize = new clsResize(this); //I put this after the initialize event to be sure that all controls are initialized properly
+
+            this.Load += new EventHandler(_Load); //This will be called after the initialization // form_load
+            this.Resize += new EventHandler(_Resize); //form_resize
         }
-       
+
+        private void _Load(object sender, EventArgs e)
+        {
+            _form_resize._get_initial_size();
+        }
+
+        private void _Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                _form_resize._resize_minimize();
+            }
+            else _form_resize._resize();
+        }
+
         private void ResetTexts()
         {
             textBoxUserName.Texts = "";
@@ -29,7 +50,6 @@ namespace A_Friend
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            Thread.Sleep(100);
             this.Close();
         }
 
@@ -116,7 +136,7 @@ namespace A_Friend
 
         private void textBoxUserName_Enter(object sender, EventArgs e)
         {
-            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing?")
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
             {
                 return;
             }
@@ -125,7 +145,7 @@ namespace A_Friend
 
         private void textBoxPassword_Enter(object sender, EventArgs e)
         {
-            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing?")
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
             {
                 return;
             }
@@ -134,7 +154,7 @@ namespace A_Friend
 
         private void textBoxConfirmPassword_Enter(object sender, EventArgs e)
         {
-            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing?")
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
             {
                 return;
             }
@@ -154,6 +174,7 @@ namespace A_Friend
             }
             else
             {
+                this.Opacity = 1;
                 timerClosing.Stop();
                 this.Close();
             }

@@ -1,4 +1,6 @@
-﻿namespace A_Friend
+﻿using System;
+
+namespace A_Friend
 {
     partial class FormApp
     {
@@ -39,9 +41,10 @@
             this.Text = "FormApp";
             this.Load += new System.EventHandler(this.FormApp_Load);
             this.ResumeLayout(false);
-
         }
 
         #endregion
+
+        private CustomControls.CustomButton buttonExit;
     }
 }

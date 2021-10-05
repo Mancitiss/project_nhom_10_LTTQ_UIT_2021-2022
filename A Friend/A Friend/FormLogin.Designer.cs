@@ -179,7 +179,7 @@
             this.Controls.Add(this.textBoxUserName);
             this.Controls.Add(this.buttonLogIn);
             this.Controls.Add(this.buttonExit);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "FormLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LoginForm";

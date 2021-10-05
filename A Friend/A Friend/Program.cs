@@ -13,7 +13,16 @@ namespace A_Friend
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormLogin());
+            //Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            //Application.ThreadException += myHandler;
+            Application.Run(new FormLogin());            
         }
+
+        /*
+        static void myHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            //do something
+        }
+        */
     }
 }

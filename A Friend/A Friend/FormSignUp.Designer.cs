@@ -183,7 +183,7 @@
             this.Controls.Add(this.textBoxUserName);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.labelWarning);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "FormSignUp";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormSignUp";
