@@ -72,12 +72,12 @@ namespace A_Friend
                 if (control.GetType() == typeof(DataGridView))
                     _dgv_Column_Adjust(((DataGridView)control), showRowHeader);
 
-
+                /*
                 //Font AutoSize
                 control.Font = new System.Drawing.Font(form.Font.FontFamily,
-                 (float)(((Convert.ToDouble(_fontsize) * _form_ratio_width) / 2) +
-                  ((Convert.ToDouble(_fontsize) * _form_ratio_height) / 2)));
-
+                 (float)(((Convert.ToDouble(form.Font.Size ) * _form_ratio_width) * 0.5) +
+                  ((Convert.ToDouble(form.Font.Size ) * _form_ratio_height) * 0.5)));
+                */
             }
         }
 

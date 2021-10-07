@@ -8,24 +8,41 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace A_Friend
 {
     public partial class FormSignUp : Form
     {
-        clsResize _form_resize;
+        //clsResize _form_resize;
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+        [DllImportAttribute("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImportAttribute("user32.dll")]
+        public static extern bool ReleaseCapture();
+        private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
 
         public FormSignUp()
         {
             InitializeComponent();
             labelWarning.Text = "";
-
+            this.MouseDown += (sender, e) => Form1_MouseDown(sender, e);
+            /*
             _form_resize = new clsResize(this); //I put this after the initialize event to be sure that all controls are initialized properly
 
             this.Load += new EventHandler(_Load); //This will be called after the initialization // form_load
             this.Resize += new EventHandler(_Resize); //form_resize
+            */
         }
-
+        /*
         private void _Load(object sender, EventArgs e)
         {
             _form_resize._get_initial_size();
@@ -39,6 +56,7 @@ namespace A_Friend
             }
             else _form_resize._resize();
         }
+        */
 
         private void ResetTexts()
         {
