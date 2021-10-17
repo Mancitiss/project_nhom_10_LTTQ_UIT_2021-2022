@@ -129,6 +129,12 @@ namespace A_Friend.CustomControls
                 this.Invalidate();
             }
         }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            this.Invalidate();
+        }
     }
 }
 
