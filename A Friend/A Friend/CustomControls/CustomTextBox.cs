@@ -299,6 +299,7 @@ namespace A_Friend.CustomControls
             {
                 UpdateControlHeight();
             }
+            this.Invalidate();
 
         }
 
