@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Threading;
 
 
 namespace A_Friend.CustomControls
@@ -60,7 +61,7 @@ namespace A_Friend.CustomControls
             if (stringwidth < maxwidth + panelBody.Width - textBoxBody.Width)
             {
                 panelBody.Width = (int)(stringwidth + panelBody.Width - textBoxBody.Width);
-                this.Height += (lines * fontheight) - textBoxBody.Height;
+                this.Height += (lines * fontheight) - textBoxBody.Height + 1;
                 return;
             }
             else
@@ -95,7 +96,12 @@ namespace A_Friend.CustomControls
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(textBoxBody.Text);
+            Thread t = new Thread((ThreadStart)(() =>
+            {
+                Clipboard.SetText(textBoxBody.Text);
+            }));
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
