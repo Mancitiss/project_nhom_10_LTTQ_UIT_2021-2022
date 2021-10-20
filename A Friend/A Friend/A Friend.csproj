@@ -66,6 +66,12 @@
     <Compile Include="CustomControls\ChatItem.Designer.cs">
       <DependentUpon>ChatItem.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\ChatItem2.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ChatItem2.Designer.cs">
+      <DependentUpon>ChatItem2.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -119,6 +125,9 @@
   <ItemGroup>
     <EmbeddedResource Include="CustomControls\ChatItem.resx">
       <DependentUpon>ChatItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\ChatItem2.resx">
+      <DependentUpon>ChatItem2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\CustomTextBox.resx">
       <DependentUpon>CustomTextBox.cs</DependentUpon>

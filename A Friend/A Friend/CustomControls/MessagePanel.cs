@@ -14,6 +14,7 @@ namespace A_Friend.CustomControls
     {
         public MessagePanel()
         {
+            this.DoubleBuffered = true;
         }
 
         int borderRadius = 20;

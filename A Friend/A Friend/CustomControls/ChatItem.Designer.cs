@@ -99,7 +99,7 @@ namespace A_Friend.CustomControls
             // 
             // panelBody
             // 
-            this.panelBody.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(136)))), ((int)(((byte)(235)))));
+            this.panelBody.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
             this.panelBody.Controls.Add(this.textBoxBody);
             this.panelBody.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelBody.Location = new System.Drawing.Point(15, 5);
@@ -113,7 +113,7 @@ namespace A_Friend.CustomControls
             this.textBoxBody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxBody.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(136)))), ((int)(((byte)(235)))));
+            this.textBoxBody.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
             this.textBoxBody.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxBody.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.textBoxBody.Location = new System.Drawing.Point(10, 10);
@@ -126,7 +126,7 @@ namespace A_Friend.CustomControls
             // 
             // ChatItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.Controls.Add(this.panelButton);

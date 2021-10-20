@@ -15,37 +15,31 @@ namespace A_Friend
         public FormApplication()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
         }
         public void AddMessage(string message, bool stacktoleft)
         {
-            var chatItem = new CustomControls.ChatItem(message, stacktoleft);
+            panelChat.SuspendLayout();
+            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
             chatItem.Name = "chatItem" + panelChat.Controls.Count;
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panelChat.BackColor;
             panelChat.Controls.Add(chatItem);
             chatItem.BringToFront();
 
-            chatItem.ResizeBubbles((int)(panelChat.Width * 0.6));
+            chatItem.ResizeBubbles();
+            //chatItem.ResizeBubbles((int)(panelChat.Width * 0.6));
+            panelChat.ResumeLayout();
 
             panelChat.ScrollControlIntoView(chatItem);
-        }
-
-        private void testForm_Resize(object sender, EventArgs e)
-        {
-            foreach (var control in panelChat.Controls)
-            {
-                if (control is CustomControls.ChatItem)
-                {
-                    (control as CustomControls.ChatItem).ResizeBubbles((int)(panelChat.Width * 0.6));
-                }
-            }
+            
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts))
             {
-                AddMessage(textboxWriting.Texts, false);
+                AddMessage(textboxWriting.Texts, true);
                 textboxWriting.Texts = "";
             }
         }
@@ -62,5 +56,27 @@ namespace A_Friend
                 }
             }
         }
+
+        private void panelTopRight_Paint(object sender, PaintEventArgs e)
+        {
+            Pen pen = new Pen(Color.FromArgb(112, 155, 170), 5);
+            e.Graphics.DrawLine(pen, panelTopRight.Left + 5, panelTopRight.Bottom, panelTopRight.Right - 5, panelTopRight.Bottom);
+        }
+
+        private void panelTopRight_Resize(object sender, EventArgs e)
+        {
+            panelTopRight.Invalidate();
+        }
+
+        //protected override void OnResizeBegin(EventArgs e)
+        //{
+        //    SuspendLayout();
+        //    base.OnResizeBegin(e);
+        //}
+        //protected override void OnResizeEnd(EventArgs e)
+        //{
+        //    ResumeLayout();
+        //    base.OnResizeEnd(e);
+        //}
     }
 }
