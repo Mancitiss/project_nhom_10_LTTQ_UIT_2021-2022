@@ -16,5 +16,17 @@ namespace A_Friend
         {
             InitializeComponent();
         }
+
+        private void customButton1_Click(object sender, EventArgs e)
+        {
+     
+        }
+
+        private void customLogout_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            FormLogin frmlogin = new FormLogin();
+            frmlogin.Show();
+        }
     }
 }
