@@ -135,5 +135,17 @@
   <ItemGroup>
     <None Include="Resources\paper-plane-regular.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Windows_Settings_app_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Windows_Settings_app_icon1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sign-out-option.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cogs.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
