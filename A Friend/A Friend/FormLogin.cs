@@ -31,38 +31,14 @@ namespace A_Friend
             }
         }
 
-
-        //clsResize _form_resize;
-
         public FormLogin()
         {
             InitializeComponent();
             labelWarning.Text = "";
             this.MouseDown += (sender, e) => Form1_MouseDown(sender, e);
             Console.WriteLine("test");
-            /*
-            this.MinimumSize = new Size(300, 500);
-            
-            _form_resize = new clsResize(this); //I put this after the initialize event to be sure that all controls are initialized properly
-
-            this.Load += new EventHandler(_Load); //This will be called after the initialization // form_load
-            this.Resize += new EventHandler(_Resize); //form_resize
-            */
-        }
-        /*
-        private void _Load(object sender, EventArgs e)
-        {
-            _form_resize._get_initial_size();
         }
 
-        private void _Resize(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Minimized)
-            {
-                _form_resize._resize_minimize();
-            } else _form_resize._resize();
-        }
-        */
         private void ResetTexts()
         {
             textBoxUserName.Texts = "";
@@ -113,11 +89,7 @@ namespace A_Friend
 
         private bool CorrectPassword()
         {
-            if (textBoxUserName.Texts.Trim() == "admin" && textBoxPassword.Texts.Trim() == "123456")
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
 
         private bool EmptyTextBoxes()
@@ -167,26 +139,14 @@ namespace A_Friend
 
         private void timerClosing_Tick(object sender, EventArgs e)
         {
-            if (this.Opacity > 0)
-            {
-                if (this.Opacity > 0.995)
-                {
-                    this.Opacity -= 0.01;
-                }
-                else
-                this.Opacity -= 0.995;
-            }
-            else
-            {
                 timerClosing.Stop();
-                var frm = new FormApp();
+                var frm = new FormApplication();
                 frm.Location = this.Location;
                 frm.StartPosition = FormStartPosition.Manual;
                 frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
                 this.ResetTexts();
                 frm.Show();
                 this.Hide();
-            }
         }
     }
 }

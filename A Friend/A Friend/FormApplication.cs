@@ -68,6 +68,11 @@ namespace A_Friend
             panelTopRight.Invalidate();
         }
 
+        private void FormApplication_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
         //protected override void OnResizeBegin(EventArgs e)
         //{
         //    SuspendLayout();

@@ -168,6 +168,7 @@
             // 
             // timerClosing
             // 
+            this.timerClosing.Interval = 1000;
             this.timerClosing.Tick += new System.EventHandler(this.timerClosing_Tick);
             // 
             // FormSignUp

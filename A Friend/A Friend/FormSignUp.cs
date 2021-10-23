@@ -35,28 +35,7 @@ namespace A_Friend
             InitializeComponent();
             labelWarning.Text = "";
             this.MouseDown += (sender, e) => Form1_MouseDown(sender, e);
-            /*
-            _form_resize = new clsResize(this); //I put this after the initialize event to be sure that all controls are initialized properly
-
-            this.Load += new EventHandler(_Load); //This will be called after the initialization // form_load
-            this.Resize += new EventHandler(_Resize); //form_resize
-            */
         }
-        /*
-        private void _Load(object sender, EventArgs e)
-        {
-            _form_resize._get_initial_size();
-        }
-
-        private void _Resize(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Minimized)
-            {
-                _form_resize._resize_minimize();
-            }
-            else _form_resize._resize();
-        }
-        */
 
         private void ResetTexts()
         {
@@ -181,21 +160,8 @@ namespace A_Friend
 
         private void timerClosing_Tick(object sender, EventArgs e)
         {
-            if (this.Opacity > 0)
-            {
-                if (this.Opacity > 0.995)
-                {
-                    this.Opacity -= 0.01;
-                }
-                else
-                    this.Opacity -= 0.995;
-            }
-            else
-            {
-                this.Opacity = 1;
-                timerClosing.Stop();
-                this.Close();
-            }
+            timerClosing.Stop();
+            this.Close();
         }
     }
 }

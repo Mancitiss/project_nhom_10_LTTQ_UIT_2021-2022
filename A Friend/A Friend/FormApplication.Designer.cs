@@ -33,11 +33,11 @@ namespace A_Friend
             this.toolTip_DeleteC = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip_Send = new System.Windows.Forms.ToolTip(this.components);
             this.panelBottomRight = new System.Windows.Forms.Panel();
-            this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
+            this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.panelTopRight = new System.Windows.Forms.Panel();
-            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.rjCircularPictureBox1 = new A_Friend.CustomControls.RJCircularPictureBox();
+            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panelChat = new System.Windows.Forms.Panel();
             this.panelRight = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -73,27 +73,6 @@ namespace A_Friend
             this.panelBottomRight.Size = new System.Drawing.Size(848, 60);
             this.panelBottomRight.TabIndex = 0;
             // 
-            // buttonSend
-            // 
-            this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
-            this.buttonSend.BackgroundImage = global::A_Friend.Properties.Resources.paper_plane_regular;
-            this.buttonSend.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonSend.BorderColor = System.Drawing.Color.Empty;
-            this.buttonSend.BorderRadius = 10;
-            this.buttonSend.BorderSize = 0;
-            this.buttonSend.FlatAppearance.BorderSize = 0;
-            this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSend.ForeColor = System.Drawing.Color.White;
-            this.buttonSend.Location = new System.Drawing.Point(796, 10);
-            this.buttonSend.MaximumSize = new System.Drawing.Size(40, 40);
-            this.buttonSend.MinimumSize = new System.Drawing.Size(40, 40);
-            this.buttonSend.Name = "buttonSend";
-            this.buttonSend.Size = new System.Drawing.Size(40, 40);
-            this.buttonSend.TabIndex = 0;
-            this.buttonSend.UseVisualStyleBackColor = false;
-            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
-            // 
             // textboxWriting
             // 
             this.textboxWriting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
@@ -117,6 +96,27 @@ namespace A_Friend
             this.textboxWriting.UnderlinedStyle = false;
             this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
             // 
+            // buttonSend
+            // 
+            this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
+            this.buttonSend.BackgroundImage = global::A_Friend.Properties.Resources.paper_plane_regular;
+            this.buttonSend.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonSend.BorderColor = System.Drawing.Color.Empty;
+            this.buttonSend.BorderRadius = 10;
+            this.buttonSend.BorderSize = 0;
+            this.buttonSend.FlatAppearance.BorderSize = 0;
+            this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonSend.ForeColor = System.Drawing.Color.White;
+            this.buttonSend.Location = new System.Drawing.Point(796, 10);
+            this.buttonSend.MaximumSize = new System.Drawing.Size(40, 40);
+            this.buttonSend.MinimumSize = new System.Drawing.Size(40, 40);
+            this.buttonSend.Name = "buttonSend";
+            this.buttonSend.Size = new System.Drawing.Size(40, 40);
+            this.buttonSend.TabIndex = 0;
+            this.buttonSend.UseVisualStyleBackColor = false;
+            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
+            // 
             // panelTopRight
             // 
             this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(232)))), ((int)(((byte)(235)))));
@@ -129,6 +129,21 @@ namespace A_Friend
             this.panelTopRight.TabIndex = 0;
             this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
             this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
+            // 
+            // rjCircularPictureBox1
+            // 
+            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
+            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(112)))), ((int)(((byte)(155)))), ((int)(((byte)(171)))));
+            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(181)))), ((int)(((byte)(192)))));
+            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            this.rjCircularPictureBox1.BorderSize = 2;
+            this.rjCircularPictureBox1.GradientAngle = 50F;
+            this.rjCircularPictureBox1.Location = new System.Drawing.Point(6, 4);
+            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
+            this.rjCircularPictureBox1.Size = new System.Drawing.Size(43, 43);
+            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.rjCircularPictureBox1.TabIndex = 1;
+            this.rjCircularPictureBox1.TabStop = false;
             // 
             // buttonDelete
             // 
@@ -149,21 +164,6 @@ namespace A_Friend
             this.buttonDelete.Size = new System.Drawing.Size(30, 30);
             this.buttonDelete.TabIndex = 0;
             this.buttonDelete.UseVisualStyleBackColor = false;
-            // 
-            // rjCircularPictureBox1
-            // 
-            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
-            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(112)))), ((int)(((byte)(155)))), ((int)(((byte)(171)))));
-            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(181)))), ((int)(((byte)(192)))));
-            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            this.rjCircularPictureBox1.BorderSize = 2;
-            this.rjCircularPictureBox1.GradientAngle = 50F;
-            this.rjCircularPictureBox1.Location = new System.Drawing.Point(6, 4);
-            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
-            this.rjCircularPictureBox1.Size = new System.Drawing.Size(43, 43);
-            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.rjCircularPictureBox1.TabIndex = 1;
-            this.rjCircularPictureBox1.TabStop = false;
             // 
             // panelChat
             // 
@@ -212,6 +212,7 @@ namespace A_Friend
             this.Name = "FormApplication";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormApplication";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormApplication_FormClosed);
             this.panelBottomRight.ResumeLayout(false);
             this.panelTopRight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();
