@@ -37,9 +37,19 @@ namespace A_Friend
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.panelLeft = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.customLogout = new A_Friend.CustomControls.CustomButton();
+            this.customSetting = new A_Friend.CustomControls.CustomButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.customTextBox1 = new A_Friend.CustomControls.CustomTextBox();
             this.panelRight.SuspendLayout();
             this.panelTopRight.SuspendLayout();
             this.panelBottomRight.SuspendLayout();
+            this.panelLeft.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelChat
@@ -123,7 +133,7 @@ namespace A_Friend
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(656, 40);
+            this.textboxWriting.Size = new System.Drawing.Size(656, 38);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -151,12 +161,110 @@ namespace A_Friend
             // panelLeft
             // 
             this.panelLeft.BackColor = System.Drawing.SystemColors.Control;
+            this.panelLeft.Controls.Add(this.panel3);
+            this.panelLeft.Controls.Add(this.panel2);
+            this.panelLeft.Controls.Add(this.panel1);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelLeft.Location = new System.Drawing.Point(0, 0);
             this.panelLeft.MaximumSize = new System.Drawing.Size(250, 10000);
             this.panelLeft.Name = "panelLeft";
             this.panelLeft.Size = new System.Drawing.Size(250, 561);
             this.panelLeft.TabIndex = 4;
+            // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel3.Location = new System.Drawing.Point(0, 89);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(250, 411);
+            this.panel3.TabIndex = 2;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.AliceBlue;
+            this.panel2.Controls.Add(this.customLogout);
+            this.panel2.Controls.Add(this.customSetting);
+            this.panel2.Location = new System.Drawing.Point(0, 500);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(249, 60);
+            this.panel2.TabIndex = 1;
+            // 
+            // customLogout
+            // 
+            this.customLogout.BackColor = System.Drawing.Color.AliceBlue;
+            this.customLogout.BackgroundImage = global::A_Friend.Properties.Resources.sign_out_option;
+            this.customLogout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.customLogout.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.customLogout.BorderRadius = 0;
+            this.customLogout.BorderSize = 0;
+            this.customLogout.FlatAppearance.BorderSize = 0;
+            this.customLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.customLogout.ForeColor = System.Drawing.Color.White;
+            this.customLogout.Location = new System.Drawing.Point(184, 11);
+            this.customLogout.Name = "customLogout";
+            this.customLogout.Size = new System.Drawing.Size(40, 40);
+            this.customLogout.TabIndex = 0;
+            this.customLogout.UseVisualStyleBackColor = false;
+            this.customLogout.Click += new System.EventHandler(this.customLogout_Click);
+            // 
+            // customSetting
+            // 
+            this.customSetting.BackColor = System.Drawing.Color.AliceBlue;
+            this.customSetting.BackgroundImage = global::A_Friend.Properties.Resources.Cogs;
+            this.customSetting.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.customSetting.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.customSetting.BorderRadius = 0;
+            this.customSetting.BorderSize = 0;
+            this.customSetting.FlatAppearance.BorderSize = 0;
+            this.customSetting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.customSetting.ForeColor = System.Drawing.Color.White;
+            this.customSetting.Location = new System.Drawing.Point(12, 11);
+            this.customSetting.Name = "customSetting";
+            this.customSetting.Size = new System.Drawing.Size(50, 40);
+            this.customSetting.TabIndex = 4;
+            this.customSetting.UseVisualStyleBackColor = false;
+            this.customSetting.Click += new System.EventHandler(this.customButton1_Click);
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.AliceBlue;
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.customTextBox1);
+            this.panel1.Location = new System.Drawing.Point(1, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(248, 89);
+            this.panel1.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.label1.Location = new System.Drawing.Point(2, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 24);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Search:";
+            // 
+            // customTextBox1
+            // 
+            this.customTextBox1.BackColor = System.Drawing.Color.AliceBlue;
+            this.customTextBox1.BorderColor = System.Drawing.SystemColors.Highlight;
+            this.customTextBox1.BorderFocusColor = System.Drawing.Color.HotPink;
+            this.customTextBox1.BorderRadius = 30;
+            this.customTextBox1.BorderSize = 3;
+            this.customTextBox1.Location = new System.Drawing.Point(-1, 36);
+            this.customTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.customTextBox1.Multiline = false;
+            this.customTextBox1.Name = "customTextBox1";
+            this.customTextBox1.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
+            this.customTextBox1.PasswordChar = false;
+            this.customTextBox1.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.customTextBox1.PlaceholderText = "Username..";
+            this.customTextBox1.Size = new System.Drawing.Size(245, 45);
+            this.customTextBox1.TabIndex = 0;
+            this.customTextBox1.Texts = "";
+            this.customTextBox1.UnderlinedStyle = false;
             // 
             // FormApplication
             // 
@@ -172,6 +280,10 @@ namespace A_Friend
             this.panelRight.ResumeLayout(false);
             this.panelTopRight.ResumeLayout(false);
             this.panelBottomRight.ResumeLayout(false);
+            this.panelLeft.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -186,5 +298,12 @@ namespace A_Friend
         private CustomControls.CustomTextBox textboxWriting;
         private CustomControls.CustomButton buttonSend;
         private System.Windows.Forms.Panel panelLeft;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label1;
+        private CustomControls.CustomTextBox customTextBox1;
+        private System.Windows.Forms.Panel panel2;
+        private CustomControls.CustomButton customSetting;
+        private CustomControls.CustomButton customLogout;
+        private System.Windows.Forms.Panel panel3;
     }
 }
