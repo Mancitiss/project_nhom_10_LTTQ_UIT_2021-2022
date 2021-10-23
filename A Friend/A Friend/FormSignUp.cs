@@ -57,11 +57,7 @@ namespace A_Friend
 
         private void SignUp()
         {
-            if (ExistUserName())
-            {
-                labelWarning.Text = "That user name already exists";
-                return;
-            }
+            
             if (EmptyTextBoxes())
             {
                 labelWarning.Text = "Something is missing?";
@@ -72,7 +68,12 @@ namespace A_Friend
                 labelWarning.Text = "Those passwords doesn't match";
                 return;
             }
-            labelWarning.Text = "You have sign up successfully".ToUpper();
+            if (ExistUserName())
+            {
+                labelWarning.Text = "That user name already exists";
+                return;
+            }
+            labelWarning.Text = "You have signed up successfully".ToUpper();
             labelWarning.ForeColor = Color.FromArgb(143, 228, 185);
             timerClosing.Start();
         }
@@ -88,11 +89,8 @@ namespace A_Friend
 
         private bool ExistUserName()
         {
-            if (textBoxUserName.Texts == "admin")
-            {
-                return true;
-            }
-            return false;
+            return !AFriendClient.Signed_up(textBoxUserName.Texts, textBoxPassword.Texts);
+            
         }
 
         private bool MatchPasswords()
