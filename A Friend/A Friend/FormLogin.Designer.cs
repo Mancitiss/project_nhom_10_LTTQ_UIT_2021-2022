@@ -52,14 +52,16 @@
             // 
             // labelWarning
             // 
+            this.labelWarning.AutoSize = true;
             this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
-            this.labelWarning.Location = new System.Drawing.Point(0, 250);
+            this.labelWarning.Location = new System.Drawing.Point(32, 252);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(300, 17);
+            this.labelWarning.Size = new System.Drawing.Size(232, 17);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "User name or Password is incorrect";
             this.labelWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelWarning.TextChanged += new System.EventHandler(this.labelWarning_TextChanged);
             // 
             // timerClosing
             // 
