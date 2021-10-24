@@ -151,10 +151,5 @@ namespace A_Friend
             thread.IsBackground = true;
             thread.Start();
         }
-
-        private void labelWarning_TextChanged(object sender, EventArgs e)
-        {
-            labelWarning.Location = new Point((int)(this.Width / 2 - labelWarning.Width / 2), labelWarning.Location.Y);
-        }
     }
 }

@@ -31,12 +31,12 @@
             this.components = new System.ComponentModel.Container();
             this.labelTittle = new System.Windows.Forms.Label();
             this.labelWarning = new System.Windows.Forms.Label();
+            this.timerClosing = new System.Windows.Forms.Timer(this.components);
             this.textBoxConfirmPassword = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSignUp = new A_Friend.CustomControls.CustomButton();
             this.textBoxPassword = new A_Friend.CustomControls.CustomTextBox();
             this.textBoxUserName = new A_Friend.CustomControls.CustomTextBox();
             this.buttonCancel = new A_Friend.CustomControls.CustomButton();
-            this.timerClosing = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // labelTittle
@@ -54,12 +54,17 @@
             // 
             this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
-            this.labelWarning.Location = new System.Drawing.Point(0, 315);
+            this.labelWarning.Location = new System.Drawing.Point(0, 303);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(300, 17);
+            this.labelWarning.Size = new System.Drawing.Size(300, 112);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "User name or Password is incorrect";
             this.labelWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // timerClosing
+            // 
+            this.timerClosing.Interval = 1000;
+            this.timerClosing.Tick += new System.EventHandler(this.timerClosing_Tick);
             // 
             // textBoxConfirmPassword
             // 
@@ -165,11 +170,6 @@
             this.buttonCancel.Text = "CANCEL";
             this.buttonCancel.UseVisualStyleBackColor = false;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-            // 
-            // timerClosing
-            // 
-            this.timerClosing.Interval = 1000;
-            this.timerClosing.Tick += new System.EventHandler(this.timerClosing_Tick);
             // 
             // FormSignUp
             // 
