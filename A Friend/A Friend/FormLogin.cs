@@ -89,7 +89,7 @@ namespace A_Friend
 
         private bool CorrectPassword()
         {
-            return true;
+            return AFriendClient.Logged_in(textBoxUserName.Texts, textBoxPassword.Texts);
         }
 
         private bool EmptyTextBoxes()
@@ -139,14 +139,17 @@ namespace A_Friend
 
         private void timerClosing_Tick(object sender, EventArgs e)
         {
-                timerClosing.Stop();
-                var frm = new FormApplication();
-                frm.Location = this.Location;
-                frm.StartPosition = FormStartPosition.Manual;
-                frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
-                this.ResetTexts();
-                frm.Show();
-                this.Hide();
+            timerClosing.Stop();
+            var frm = new FormApplication();
+            frm.Location = this.Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
+            this.ResetTexts();
+            frm.Show();
+            this.Hide();
+            Thread thread = new Thread(new ParameterizedThreadStart(AFriendClient.ExecuteClient));
+            thread.IsBackground = true;
+            thread.Start();
         }
 
         private void labelWarning_TextChanged(object sender, EventArgs e)

@@ -41,6 +41,7 @@ namespace A_Friend
             {
                 AddMessage(textboxWriting.Texts, true);
                 textboxWriting.Texts = "";
+                AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
             }
         }
 
