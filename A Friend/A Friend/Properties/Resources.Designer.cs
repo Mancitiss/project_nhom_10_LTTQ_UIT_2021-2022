@@ -63,6 +63,26 @@ namespace A_Friend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Cogs {
+            get {
+                object obj = ResourceManager.GetObject("Cogs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Cogs1 {
+            get {
+                object obj = ResourceManager.GetObject("Cogs1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap copy_regular {
             get {
                 object obj = ResourceManager.GetObject("copy-regular", resourceCulture);
@@ -76,6 +96,16 @@ namespace A_Friend.Properties {
         internal static System.Drawing.Bitmap paper_plane_regular {
             get {
                 object obj = ResourceManager.GetObject("paper-plane-regular", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap sign_out_option {
+            get {
+                object obj = ResourceManager.GetObject("sign-out-option", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
