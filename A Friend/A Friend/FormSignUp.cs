@@ -30,6 +30,21 @@ namespace A_Friend
             }
         }
 
+        public Font ChangeFontSize(Font font, float fontSize)
+        {
+            if (font != null)
+            {
+                float currentSize = font.Size;
+                if (currentSize != fontSize)
+                {
+                    font = new Font(font.Name, fontSize,
+                        font.Style, font.Unit,
+                        font.GdiCharSet, font.GdiVerticalFont);
+                }
+            }
+            return font;
+        }
+
         public FormSignUp()
         {
             InitializeComponent();
@@ -57,23 +72,62 @@ namespace A_Friend
 
         private void SignUp()
         {
-            
+
             if (EmptyTextBoxes())
             {
                 labelWarning.Text = "Something is missing?";
+                labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
+                labelWarning.TextAlign = ContentAlignment.MiddleCenter;
+                labelWarning.ForeColor = Color.Red;
                 return;
             }
-            if (!MatchPasswords())
+            else
             {
-                labelWarning.Text = "Those passwords doesn't match";
-                return;
-            }
-            if (ExistUserName())
-            {
-                labelWarning.Text = "That user name already exists";
-                return;
+                if (CheckInvalidUsernameCharacter())
+                {
+                    labelWarning.Text = "User name can contain only the following characters:\n     - UK English uppercase(A-Z)\n     - UK English lowercase(a-z)\n     - Numbers(0 - 9)\n     - Underline character(_)";
+                    labelWarning.Font = ChangeFontSize(labelWarning.Font, 9);
+                    labelWarning.TextAlign = ContentAlignment.MiddleLeft;
+                    labelWarning.ForeColor = Color.Red;
+                    return;
+                }
+                else
+                {
+                    if (CheckInvalidPasswordCharacter())
+                    {
+                        labelWarning.Text = "Password can contain only the following characters:\n     - UK English uppercase(A-Z)\n     - UK English lowercase(a-z)\n     - Numbers(0 - 9)\n     -Non-alphabetic characters (!,@,#,$,%,^,*,+,-,_)";
+                        labelWarning.Font = ChangeFontSize(labelWarning.Font, 9);
+                        labelWarning.TextAlign = ContentAlignment.MiddleLeft;
+                        labelWarning.ForeColor = Color.Red;
+                        return;
+                    }
+                    else
+                    {
+                        if (!MatchPasswords())
+                        {
+                            labelWarning.Text = "Those passwords doesn't match";
+                            labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
+                            labelWarning.TextAlign = ContentAlignment.MiddleCenter;
+                            labelWarning.ForeColor = Color.Red;
+                            return;
+                        }
+                        else
+                        {
+                            if (ExistUserName())
+                            {
+                                labelWarning.Text = "That user name already exists";
+                                labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
+                                labelWarning.TextAlign = ContentAlignment.MiddleCenter;
+                                labelWarning.ForeColor = Color.Red;
+                                return;
+                            }
+                        }
+                    }
+                }
             }
             labelWarning.Text = "You have signed up successfully".ToUpper();
+            labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
+            labelWarning.TextAlign = ContentAlignment.MiddleLeft;
             labelWarning.ForeColor = Color.FromArgb(143, 228, 185);
             timerClosing.Start();
         }
@@ -87,10 +141,34 @@ namespace A_Friend
             return false;
         }
 
+        private bool CheckInvalidUsernameCharacter()
+        {
+            foreach (char i in textBoxUserName.Texts)
+            {
+                if (!(i >= 48 && i <= 57 || i >= 65 && i <= 90 || i >= 97 && i <= 122 || i == 95))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool CheckInvalidPasswordCharacter()
+        {
+            foreach (char i in textBoxPassword.Texts)
+            {
+                if (!(i == 33 || i > 34 && i < 38 || i >= 42 && i <= 43 || i == 45 || i >= 48 && i <= 57 || i >= 64 && i <= 90 || i == 94 || i == 95 || i >= 97 && i <= 122))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private bool ExistUserName()
         {
             return !AFriendClient.Signed_up(textBoxUserName.Texts, textBoxPassword.Texts);
-            
+
         }
 
         private bool MatchPasswords()

@@ -39,7 +39,7 @@ namespace A_Friend
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts))
             {
-                AddMessage(textboxWriting.Texts, true);
+                AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
             }

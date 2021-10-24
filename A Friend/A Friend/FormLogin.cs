@@ -67,6 +67,31 @@ namespace A_Friend
             Login();
         }
 
+        private bool CheckInvalidUsernameCharacter()
+        {
+            foreach (char i in textBoxUserName.Texts)
+            {
+                if (!(i >= 48 && i <= 57 || i >= 65 && i <= 90 || i >= 97 && i <= 122 || i == 95))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool CheckInvalidPasswordCharacter()
+        {
+            foreach (char i in textBoxPassword.Texts)
+            {
+                if (!(i == 33 || i > 34 && i < 38 || i >= 42 && i <= 43 || i == 45 || i >= 48 && i <= 57 || i >= 64 && i <= 90 || i == 94 || i == 95 || i >= 97 && i <= 122))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
         private void Login()
         {
             if (this.EmptyTextBoxes())
@@ -77,10 +102,29 @@ namespace A_Friend
                     return;
                 }
             }
-            if (!CorrectPassword())
+            else
             {
-                labelWarning.Text = "User name or Password is incorrect";
-                return;
+                if (CheckInvalidUsernameCharacter())
+                {
+                    labelWarning.Text = "User name or Password is incorrect";
+                    return;
+                }
+                else
+                {
+                    if (CheckInvalidPasswordCharacter())
+                    {
+                        labelWarning.Text = "User name or Password is incorrect";
+                        return;
+                    }
+                    else
+                    {
+                        if (!CorrectPassword())
+                        {
+                            labelWarning.Text = "User name or Password is incorrect";
+                            return;
+                        }
+                    }
+                }
             }
             labelWarning.Text = "You have logged in successfully".ToUpper();
             labelWarning.ForeColor = Color.FromArgb(37, 75, 133);
