@@ -67,6 +67,12 @@
     <Compile Include="CustomControls\MessagePanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="FormAddContact.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAddContact.Designer.cs">
+      <DependentUpon>FormAddContact.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormApp.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +84,12 @@
     </Compile>
     <Compile Include="FormApplication.Designer.cs">
       <DependentUpon>FormApplication.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSettings.Designer.cs">
+      <DependentUpon>FormSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="FormSignUp.cs">
       <SubType>Form</SubType>
@@ -109,11 +121,17 @@
     <EmbeddedResource Include="CustomControls\CustomTextBox.resx">
       <DependentUpon>CustomTextBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormAddContact.resx">
+      <DependentUpon>FormAddContact.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormApp.resx">
       <DependentUpon>FormApp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormApplication.resx">
       <DependentUpon>FormApplication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSettings.resx">
+      <DependentUpon>FormSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSignUp.resx">
       <DependentUpon>FormSignUp.cs</DependentUpon>
@@ -140,6 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sign-out-option.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Add.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

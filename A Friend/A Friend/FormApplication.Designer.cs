@@ -32,18 +32,22 @@ namespace A_Friend
             this.panelChat = new System.Windows.Forms.Panel();
             this.panelRight = new System.Windows.Forms.Panel();
             this.panelTopRight = new System.Windows.Forms.Panel();
+            this.labelUsername = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.panelLeft = new System.Windows.Forms.Panel();
+            this.listFriend = new System.Windows.Forms.ListBox();
             this.panelBottomLeft = new System.Windows.Forms.Panel();
+            this.ButtonAdd = new A_Friend.CustomControls.CustomButton();
             this.SettingButton = new A_Friend.CustomControls.CustomButton();
             this.LogoutButton = new A_Friend.CustomControls.CustomButton();
             this.panelTopLeft = new System.Windows.Forms.Panel();
+            this.labelWarning = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.customTextBox1 = new A_Friend.CustomControls.CustomTextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.panelRight.SuspendLayout();
             this.panelTopRight.SuspendLayout();
             this.panelBottomRight.SuspendLayout();
@@ -79,12 +83,33 @@ namespace A_Friend
             // 
             // panelTopRight
             // 
+            this.panelTopRight.Controls.Add(this.labelUsername);
+            this.panelTopRight.Controls.Add(this.label3);
             this.panelTopRight.Controls.Add(this.buttonDelete);
             this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTopRight.Location = new System.Drawing.Point(0, 0);
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Size = new System.Drawing.Size(734, 50);
             this.panelTopRight.TabIndex = 6;
+            // 
+            // labelUsername
+            // 
+            this.labelUsername.AutoSize = true;
+            this.labelUsername.ForeColor = System.Drawing.Color.SteelBlue;
+            this.labelUsername.Location = new System.Drawing.Point(83, 13);
+            this.labelUsername.Name = "labelUsername";
+            this.labelUsername.Size = new System.Drawing.Size(102, 25);
+            this.labelUsername.TabIndex = 6;
+            this.labelUsername.Text = "Username";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(72, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(17, 25);
+            this.label3.TabIndex = 5;
+            this.label3.Text = " ";
             // 
             // buttonDelete
             // 
@@ -133,7 +158,7 @@ namespace A_Friend
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(656, 38);
+            this.textboxWriting.Size = new System.Drawing.Size(656, 42);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -161,7 +186,7 @@ namespace A_Friend
             // panelLeft
             // 
             this.panelLeft.BackColor = System.Drawing.SystemColors.Control;
-            this.panelLeft.Controls.Add(this.panel1);
+            this.panelLeft.Controls.Add(this.listFriend);
             this.panelLeft.Controls.Add(this.panelBottomLeft);
             this.panelLeft.Controls.Add(this.panelTopLeft);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
@@ -171,15 +196,45 @@ namespace A_Friend
             this.panelLeft.Size = new System.Drawing.Size(250, 561);
             this.panelLeft.TabIndex = 4;
             // 
+            // listFriend
+            // 
+            this.listFriend.BackColor = System.Drawing.Color.SteelBlue;
+            this.listFriend.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listFriend.FormattingEnabled = true;
+            this.listFriend.ItemHeight = 25;
+            this.listFriend.Location = new System.Drawing.Point(0, 101);
+            this.listFriend.Name = "listFriend";
+            this.listFriend.Size = new System.Drawing.Size(250, 400);
+            this.listFriend.TabIndex = 0;
+            // 
             // panelBottomLeft
             // 
             this.panelBottomLeft.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.panelBottomLeft.Controls.Add(this.ButtonAdd);
             this.panelBottomLeft.Controls.Add(this.SettingButton);
             this.panelBottomLeft.Controls.Add(this.LogoutButton);
             this.panelBottomLeft.Location = new System.Drawing.Point(0, 501);
             this.panelBottomLeft.Name = "panelBottomLeft";
             this.panelBottomLeft.Size = new System.Drawing.Size(250, 60);
             this.panelBottomLeft.TabIndex = 1;
+            // 
+            // ButtonAdd
+            // 
+            this.ButtonAdd.BackColor = System.Drawing.Color.Transparent;
+            this.ButtonAdd.BackgroundImage = global::A_Friend.Properties.Resources.Add;
+            this.ButtonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.ButtonAdd.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.ButtonAdd.BorderRadius = 0;
+            this.ButtonAdd.BorderSize = 0;
+            this.ButtonAdd.FlatAppearance.BorderSize = 0;
+            this.ButtonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ButtonAdd.ForeColor = System.Drawing.Color.White;
+            this.ButtonAdd.Location = new System.Drawing.Point(69, 5);
+            this.ButtonAdd.Name = "ButtonAdd";
+            this.ButtonAdd.Size = new System.Drawing.Size(110, 51);
+            this.ButtonAdd.TabIndex = 0;
+            this.ButtonAdd.UseVisualStyleBackColor = false;
+            this.ButtonAdd.Click += new System.EventHandler(this.ButtonAdd_Click_1);
             // 
             // SettingButton
             // 
@@ -192,11 +247,12 @@ namespace A_Friend
             this.SettingButton.FlatAppearance.BorderSize = 0;
             this.SettingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SettingButton.ForeColor = System.Drawing.Color.White;
-            this.SettingButton.Location = new System.Drawing.Point(185, 10);
+            this.SettingButton.Location = new System.Drawing.Point(185, 11);
             this.SettingButton.Name = "SettingButton";
             this.SettingButton.Size = new System.Drawing.Size(47, 40);
             this.SettingButton.TabIndex = 1;
             this.SettingButton.UseVisualStyleBackColor = false;
+            this.SettingButton.Click += new System.EventHandler(this.SettingButton_Click);
             // 
             // LogoutButton
             // 
@@ -209,7 +265,7 @@ namespace A_Friend
             this.LogoutButton.FlatAppearance.BorderSize = 0;
             this.LogoutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.LogoutButton.ForeColor = System.Drawing.Color.White;
-            this.LogoutButton.Location = new System.Drawing.Point(14, 10);
+            this.LogoutButton.Location = new System.Drawing.Point(12, 11);
             this.LogoutButton.Name = "LogoutButton";
             this.LogoutButton.Size = new System.Drawing.Size(37, 40);
             this.LogoutButton.TabIndex = 0;
@@ -219,12 +275,25 @@ namespace A_Friend
             // panelTopLeft
             // 
             this.panelTopLeft.BackColor = System.Drawing.Color.AliceBlue;
+            this.panelTopLeft.Controls.Add(this.labelWarning);
             this.panelTopLeft.Controls.Add(this.label1);
             this.panelTopLeft.Controls.Add(this.customTextBox1);
             this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Name = "panelTopLeft";
-            this.panelTopLeft.Size = new System.Drawing.Size(250, 81);
+            this.panelTopLeft.Size = new System.Drawing.Size(250, 110);
             this.panelTopLeft.TabIndex = 0;
+            // 
+            // labelWarning
+            // 
+            this.labelWarning.AutoSize = true;
+            this.labelWarning.BackColor = System.Drawing.Color.Transparent;
+            this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.labelWarning.ForeColor = System.Drawing.Color.Red;
+            this.labelWarning.Location = new System.Drawing.Point(44, 80);
+            this.labelWarning.Name = "labelWarning";
+            this.labelWarning.Size = new System.Drawing.Size(165, 18);
+            this.labelWarning.TabIndex = 0;
+            this.labelWarning.Text = "This user does not exist";
             // 
             // label1
             // 
@@ -233,7 +302,7 @@ namespace A_Friend
             this.label1.ForeColor = System.Drawing.SystemColors.Highlight;
             this.label1.Location = new System.Drawing.Point(12, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 24);
+            this.label1.Size = new System.Drawing.Size(95, 29);
             this.label1.TabIndex = 1;
             this.label1.Text = "Search";
             // 
@@ -252,22 +321,15 @@ namespace A_Friend
             this.customTextBox1.PasswordChar = false;
             this.customTextBox1.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.customTextBox1.PlaceholderText = "";
-            this.customTextBox1.Size = new System.Drawing.Size(242, 38);
+            this.customTextBox1.Size = new System.Drawing.Size(242, 42);
             this.customTextBox1.TabIndex = 0;
             this.customTextBox1.Texts = "";
             this.customTextBox1.UnderlinedStyle = false;
-            // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.Color.SteelBlue;
-            this.panel1.Location = new System.Drawing.Point(0, 80);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(250, 421);
-            this.panel1.TabIndex = 2;
+            this.customTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBox1_KeyDown);
             // 
             // FormApplication
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.panelRight);
@@ -278,6 +340,7 @@ namespace A_Friend
             this.Text = "FormApplication";
             this.panelRight.ResumeLayout(false);
             this.panelTopRight.ResumeLayout(false);
+            this.panelTopRight.PerformLayout();
             this.panelBottomRight.ResumeLayout(false);
             this.panelLeft.ResumeLayout(false);
             this.panelBottomLeft.ResumeLayout(false);
@@ -303,6 +366,10 @@ namespace A_Friend
         private System.Windows.Forms.Panel panelBottomLeft;
         private CustomControls.CustomButton LogoutButton;
         private CustomControls.CustomButton SettingButton;
-        private System.Windows.Forms.Panel panel1;
+        private CustomControls.CustomButton ButtonAdd;
+        private System.Windows.Forms.Label labelWarning;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ListBox listFriend;
+        private System.Windows.Forms.Label labelUsername;
     }
 }
