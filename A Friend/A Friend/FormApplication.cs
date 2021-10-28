@@ -85,8 +85,7 @@ namespace A_Friend
         {
             FormSettings frm = new FormSettings();
             frm.StartPosition = FormStartPosition.CenterScreen;
-            frm.Show();
-            this.Hide(); 
+            frm.ShowDialog(); 
         }
 
         private void customTextBox1_KeyDown(object sender, KeyEventArgs e)
@@ -112,8 +111,8 @@ namespace A_Friend
         {
             FormAddContact frm = new FormAddContact();
             frm.StartPosition = FormStartPosition.CenterScreen;
-            frm.Show();
-            this.Hide();
+            frm.ShowDialog();
+            //Reload list friends
         }
 
         private bool UsernameCheck()

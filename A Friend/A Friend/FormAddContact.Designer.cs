@@ -114,7 +114,7 @@ namespace A_Friend
             this.txtNewUser.BorderRadius = 0;
             this.txtNewUser.BorderSize = 2;
             this.txtNewUser.Location = new System.Drawing.Point(75, 133);
-            this.txtNewUser.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtNewUser.Margin = new System.Windows.Forms.Padding(4);
             this.txtNewUser.Multiline = false;
             this.txtNewUser.Name = "txtNewUser";
             this.txtNewUser.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
@@ -137,7 +137,8 @@ namespace A_Friend
             this.Controls.Add(this.ButtonAdd);
             this.Controls.Add(this.txtNewUser);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximumSize = new System.Drawing.Size(392, 366);
+            this.MinimumSize = new System.Drawing.Size(392, 366);
             this.Name = "FormAddContact";
             this.Text = "FormAddContact";
             this.ResumeLayout(false);
