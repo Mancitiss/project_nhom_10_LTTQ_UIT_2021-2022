@@ -41,6 +41,7 @@ namespace A_Friend
                     {
                         labelWarning.Text = "Added successfully";
                         //Add user to list friends in database
+                        //Reload FormApplication
                     }
                 }
             }

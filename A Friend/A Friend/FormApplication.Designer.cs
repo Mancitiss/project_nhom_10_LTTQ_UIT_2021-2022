@@ -121,9 +121,9 @@ namespace A_Friend
             // 
             this.labelUsername.AutoSize = true;
             this.labelUsername.ForeColor = System.Drawing.Color.SteelBlue;
-            this.labelUsername.Location = new System.Drawing.Point(83, 13);
+            this.labelUsername.Location = new System.Drawing.Point(55, 12);
             this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(83, 20);
+            this.labelUsername.Size = new System.Drawing.Size(102, 25);
             this.labelUsername.TabIndex = 6;
             this.labelUsername.Text = "Username";
             // 
@@ -132,7 +132,7 @@ namespace A_Friend
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(13, 20);
+            this.label3.Size = new System.Drawing.Size(17, 25);
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
@@ -200,7 +200,7 @@ namespace A_Friend
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(656, 46);
+            this.textboxWriting.Size = new System.Drawing.Size(656, 51);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -253,10 +253,10 @@ namespace A_Friend
             this.listFriend.BackColor = System.Drawing.Color.SteelBlue;
             this.listFriend.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listFriend.FormattingEnabled = true;
-            this.listFriend.ItemHeight = 20;
+            this.listFriend.ItemHeight = 25;
             this.listFriend.Location = new System.Drawing.Point(0, 104);
             this.listFriend.Name = "listFriend";
-            this.listFriend.Size = new System.Drawing.Size(250, 420);
+            this.listFriend.Size = new System.Drawing.Size(250, 400);
             this.listFriend.TabIndex = 0;
             // 
             // panelBottomLeft
@@ -343,7 +343,7 @@ namespace A_Friend
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
             this.labelWarning.Location = new System.Drawing.Point(44, 80);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(135, 15);
+            this.labelWarning.Size = new System.Drawing.Size(165, 18);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "This user does not exist";
             // 
@@ -354,7 +354,7 @@ namespace A_Friend
             this.label1.ForeColor = System.Drawing.SystemColors.Highlight;
             this.label1.Location = new System.Drawing.Point(12, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 24);
+            this.label1.Size = new System.Drawing.Size(95, 29);
             this.label1.TabIndex = 1;
             this.label1.Text = "Search";
             // 
@@ -373,7 +373,7 @@ namespace A_Friend
             this.customTextBox1.PasswordChar = false;
             this.customTextBox1.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.customTextBox1.PlaceholderText = "";
-            this.customTextBox1.Size = new System.Drawing.Size(242, 38);
+            this.customTextBox1.Size = new System.Drawing.Size(242, 42);
             this.customTextBox1.TabIndex = 0;
             this.customTextBox1.Texts = "";
             this.customTextBox1.UnderlinedStyle = false;
@@ -381,7 +381,7 @@ namespace A_Friend
             // 
             // FormApplication
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1098, 584);
             this.Controls.Add(this.panelRight);
