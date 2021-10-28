@@ -37,8 +37,8 @@ namespace A_Friend
             this.panelTopRight = new System.Windows.Forms.Panel();
             this.labelUsername = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.rjCircularPictureBox1 = new A_Friend.CustomControls.RJCircularPictureBox();
+            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
@@ -136,6 +136,21 @@ namespace A_Friend
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
+            // rjCircularPictureBox1
+            // 
+            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
+            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(112)))), ((int)(((byte)(155)))), ((int)(((byte)(171)))));
+            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(181)))), ((int)(((byte)(192)))));
+            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            this.rjCircularPictureBox1.BorderSize = 2;
+            this.rjCircularPictureBox1.GradientAngle = 50F;
+            this.rjCircularPictureBox1.Location = new System.Drawing.Point(6, 4);
+            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
+            this.rjCircularPictureBox1.Size = new System.Drawing.Size(43, 43);
+            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.rjCircularPictureBox1.TabIndex = 1;
+            this.rjCircularPictureBox1.TabStop = false;
+            // 
             // buttonDelete
             // 
             this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -155,21 +170,6 @@ namespace A_Friend
             this.buttonDelete.Size = new System.Drawing.Size(30, 30);
             this.buttonDelete.TabIndex = 0;
             this.buttonDelete.UseVisualStyleBackColor = false;
-            // 
-            // rjCircularPictureBox1
-            // 
-            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
-            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(112)))), ((int)(((byte)(155)))), ((int)(((byte)(171)))));
-            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(181)))), ((int)(((byte)(192)))));
-            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            this.rjCircularPictureBox1.BorderSize = 2;
-            this.rjCircularPictureBox1.GradientAngle = 50F;
-            this.rjCircularPictureBox1.Location = new System.Drawing.Point(6, 4);
-            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
-            this.rjCircularPictureBox1.Size = new System.Drawing.Size(43, 43);
-            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.rjCircularPictureBox1.TabIndex = 1;
-            this.rjCircularPictureBox1.TabStop = false;
             // 
             // panelBottomRight
             // 
@@ -254,9 +254,9 @@ namespace A_Friend
             this.listFriend.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listFriend.FormattingEnabled = true;
             this.listFriend.ItemHeight = 20;
-            this.listFriend.Location = new System.Drawing.Point(0, 101);
+            this.listFriend.Location = new System.Drawing.Point(0, 104);
             this.listFriend.Name = "listFriend";
-            this.listFriend.Size = new System.Drawing.Size(250, 400);
+            this.listFriend.Size = new System.Drawing.Size(250, 420);
             this.listFriend.TabIndex = 0;
             // 
             // panelBottomLeft
@@ -265,7 +265,7 @@ namespace A_Friend
             this.panelBottomLeft.Controls.Add(this.ButtonAdd);
             this.panelBottomLeft.Controls.Add(this.SettingButton);
             this.panelBottomLeft.Controls.Add(this.LogoutButton);
-            this.panelBottomLeft.Location = new System.Drawing.Point(0, 501);
+            this.panelBottomLeft.Location = new System.Drawing.Point(0, 524);
             this.panelBottomLeft.Name = "panelBottomLeft";
             this.panelBottomLeft.Size = new System.Drawing.Size(250, 60);
             this.panelBottomLeft.TabIndex = 1;
@@ -332,7 +332,7 @@ namespace A_Friend
             this.panelTopLeft.Controls.Add(this.customTextBox1);
             this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Name = "panelTopLeft";
-            this.panelTopLeft.Size = new System.Drawing.Size(250, 110);
+            this.panelTopLeft.Size = new System.Drawing.Size(250, 105);
             this.panelTopLeft.TabIndex = 0;
             // 
             // labelWarning
@@ -384,7 +384,6 @@ namespace A_Friend
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1098, 584);
-            //this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelRight);
             this.Controls.Add(this.panelLeft);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
