@@ -175,7 +175,7 @@ namespace A_Friend.CustomControls
             }
         }
 
-        private void SetPlaceHolder()
+        public void SetPlaceHolder()
         {
             if (string.IsNullOrWhiteSpace(textBox1.Text) && PlaceholderText != "")
             {
@@ -189,7 +189,7 @@ namespace A_Friend.CustomControls
             }
         }
 
-        private void RemovePlaceHolder()
+        public void RemovePlaceHolder()
         {
             if (isPlaceholder && PlaceholderText != "")
             {

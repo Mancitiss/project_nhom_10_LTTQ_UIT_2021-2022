@@ -15,7 +15,7 @@ namespace A_Friend
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             //Application.ThreadException += myHandler;
-            Application.Run(new FormApplication());            
+            Application.Run(new FormLogin());
         }
 
         /*
