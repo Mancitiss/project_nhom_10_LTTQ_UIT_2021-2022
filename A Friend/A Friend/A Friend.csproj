@@ -74,6 +74,12 @@
     <Compile Include="CustomControls\ChatItem2.Designer.cs">
       <DependentUpon>ChatItem2.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\ContactItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ContactItem.Designer.cs">
+      <DependentUpon>ContactItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -86,7 +92,7 @@
     <Compile Include="CustomControls\MessagePanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CustomControls\RJCircularPictureBox.cs">
+    <Compile Include="CustomControls\CirclePictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="FormAddContact.cs">
@@ -143,6 +149,9 @@
     <EmbeddedResource Include="CustomControls\ChatItem2.resx">
       <DependentUpon>ChatItem2.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\ContactItem.resx">
+      <DependentUpon>ContactItem.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\CustomTextBox.resx">
       <DependentUpon>CustomTextBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -186,6 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

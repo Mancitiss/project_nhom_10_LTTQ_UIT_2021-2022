@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace A_Friend
 {
-    class Account
+    public class Account
     {
         public string username;
         public string id;
