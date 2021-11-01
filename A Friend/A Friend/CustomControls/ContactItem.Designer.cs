@@ -41,7 +41,7 @@
             this.labelLastMessage.ForeColor = System.Drawing.Color.DarkGray;
             this.labelLastMessage.Location = new System.Drawing.Point(90, 44);
             this.labelLastMessage.Name = "labelLastMessage";
-            this.labelLastMessage.Size = new System.Drawing.Size(122, 17);
+            this.labelLastMessage.Size = new System.Drawing.Size(144, 20);
             this.labelLastMessage.TabIndex = 2;
             this.labelLastMessage.Text = "You: last text here";
             // 
@@ -50,7 +50,7 @@
             this.labelName.AutoSize = true;
             this.labelName.Location = new System.Drawing.Point(89, 20);
             this.labelName.Name = "labelName";
-            this.labelName.Size = new System.Drawing.Size(100, 20);
+            this.labelName.Size = new System.Drawing.Size(124, 25);
             this.labelName.TabIndex = 3;
             this.labelName.Text = "Friend Name";
             this.labelName.Resize += new System.EventHandler(this.labelName_Resize);
@@ -73,7 +73,7 @@
             // 
             // ContactItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.labelName);
             this.Controls.Add(this.labelLastMessage);

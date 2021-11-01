@@ -65,18 +65,23 @@ namespace A_Friend
             //contactItem.BringToFront();
             panelContact.ResumeLayout();
             panelContact.ScrollControlIntoView(contactItem);
+            contactItem.Click += delegate 
+            {
+                contactItem.BackColor = Color.Red;
+                showPanelChat(contactItem.Name); 
+            };
         }
 
-        public void bringContactItemToTop(CustomControls.ContactItem item)
-        {
-            Console.WriteLine(panelContact.Controls.GetChildIndex(item));
-            for (int i = panelContact.Controls.GetChildIndex(item) + 1; i < panelContact.Controls.Count; i++)
-            {
-                panelContact.Controls.SetChildIndex(panelContact.Controls[i], i - 1);
-                panelContact.Controls.SetChildIndex(item, i);
-            }
-            Console.WriteLine();
-        }
+        //public void bringContactItemToTop(CustomControls.ContactItem item)
+        //{
+        //    Console.WriteLine(panelContact.Controls.GetChildIndex(item));
+        //    for (int i = panelContact.Controls.GetChildIndex(item) + 1; i < panelContact.Controls.Count; i++)
+        //    {
+        //        panelContact.Controls.SetChildIndex(panelContact.Controls[i], i - 1);
+        //        panelContact.Controls.SetChildIndex(item, i);
+        //    }
+        //    Console.WriteLine();
+        //}
 
         public void TurnActiveState(string name)
         {
@@ -148,37 +153,13 @@ namespace A_Friend
             //Load friends data from database to listbox
         }
 
-        private void customButton1_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-            FormLogin lg = new FormLogin();
-            lg.Show();
-        }
+
 
         private void SettingButton_Click(object sender, EventArgs e)
         {
             FormSettings frm = new FormSettings();
             frm.StartPosition = FormStartPosition.CenterScreen;
             frm.ShowDialog(); 
-        }
-
-        private void customTextBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (customTextBox1.Text == "")
-                {
-                    labelWarning.Text = "Please enter a username";
-                }
-                else
-                {
-                    if (!UsernameCheck())
-                        labelWarning.Text = "This user does not exist";
-                    else
-                        labelUsername.Text = customTextBox1.Texts;
-                        //Load chat history from database
-                }
-            }
         }
 
         private void ButtonAdd_Click_1(object sender, EventArgs e)
@@ -199,6 +180,7 @@ namespace A_Friend
         {
             Application.Exit();
         }
+
         //protected override void OnResizeBegin(EventArgs e)
 
         //{
@@ -210,5 +192,61 @@ namespace A_Friend
         //    ResumeLayout();
         //    base.OnResizeEnd(e);
         //}
+        List<CustomControls.PanelChat> panelChats = new List<CustomControls.PanelChat>();
+
+        private CustomControls.PanelChat checkPanelChatExisted(string name)
+        {
+            foreach (CustomControls.PanelChat i in panelChats)
+            {
+                if (i.Name == name)
+                {
+                    return i;
+                }
+            }
+            return null;
+        }
+
+        private void showPanelChat(string name)
+        {
+            var item = checkPanelChatExisted(name);
+            if (item == null)
+            {
+                item = new CustomControls.PanelChat();
+                item.Name = name;
+                item.Anchor = (AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom);
+                item.Size = panelRight.Size;
+                panelChats.Add(item);
+            }
+            panelRight.Controls.Clear();
+            item.Anchor = (AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom);
+            item.Size = panelRight.Size;
+            panelRight.Controls.Add(item);        
+        }
+
+        private void LogoutButton_Click_1(object sender, EventArgs e)
+        {
+            this.Hide();
+            FormLogin lg = new FormLogin();
+            lg.Show();
+        }
+
+        private void customTextBoxSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (customTextBoxSearch.Text == "")
+                {
+                    labelWarning.Text = "Please enter a username";
+                }
+                else
+                {
+                    if (!UsernameCheck())
+                        labelWarning.Text = "This user does not exist";
+                    else
+                        labelUsername.Text = customTextBoxSearch.Texts;
+                    //Load chat history from database
+                }
+            }
+        }
     }
 }

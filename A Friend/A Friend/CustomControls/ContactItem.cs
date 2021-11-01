@@ -13,7 +13,7 @@ namespace A_Friend.CustomControls
 {
     public partial class ContactItem : UserControl
     {
-        
+
         public ContactItem()
         {
             InitializeComponent();
@@ -21,13 +21,13 @@ namespace A_Friend.CustomControls
         public ContactItem(string name, string lastmessage, bool unread)
         {
             InitializeComponent();
-            FriendName = name;  
+            FriendName = name;
             LastMessage = lastmessage;
             Unread = unread;
         }
 
         bool unread = false;
-        public bool Unread 
+        public bool Unread
         {
             get { return unread; }
             set
@@ -52,10 +52,11 @@ namespace A_Friend.CustomControls
             }
             set
             {
-                labelName.Text = value; 
+                labelName.Text = value;
             }
         }
-        public string LastMessage {
+        public string LastMessage
+        {
             set
             {
                 if (value.Length <= 25)
@@ -74,7 +75,7 @@ namespace A_Friend.CustomControls
             friendPicture.BorderColor = Color.FromArgb(58, 206, 58);
             friendPicture.BorderColor2 = Color.FromArgb(180, 236, 180);
         }
-         
+
         public void TurnAway()
         {
             friendPicture.BorderColor = Color.FromArgb(255, 32, 21);
@@ -97,4 +98,4 @@ namespace A_Friend.CustomControls
             this.Invalidate();
         }
     }
-} 
+}

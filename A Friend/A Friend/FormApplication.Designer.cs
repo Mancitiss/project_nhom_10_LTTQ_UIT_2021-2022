@@ -43,7 +43,7 @@ namespace A_Friend
             this.panelContact = new System.Windows.Forms.Panel();
             this.panelTopLeft = new System.Windows.Forms.Panel();
             this.labelWarning = new System.Windows.Forms.Label();
-            this.customTextBox1 = new A_Friend.CustomControls.CustomTextBox();
+            this.customTextBoxSearch = new A_Friend.CustomControls.CustomTextBox();
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.panelTopRight = new System.Windows.Forms.Panel();
@@ -117,7 +117,7 @@ namespace A_Friend
             this.panelLeft.Margin = new System.Windows.Forms.Padding(0);
             this.panelLeft.MaximumSize = new System.Drawing.Size(300, 10000);
             this.panelLeft.Name = "panelLeft";
-            this.panelLeft.Size = new System.Drawing.Size(300, 720);
+            this.panelLeft.Size = new System.Drawing.Size(300, 712);
             this.panelLeft.TabIndex = 4;
             // 
             // panelBottomLeft
@@ -127,7 +127,7 @@ namespace A_Friend
             this.panelBottomLeft.Controls.Add(this.SettingButton);
             this.panelBottomLeft.Controls.Add(this.LogoutButton);
             this.panelBottomLeft.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottomLeft.Location = new System.Drawing.Point(0, 660);
+            this.panelBottomLeft.Location = new System.Drawing.Point(0, 652);
             this.panelBottomLeft.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottomLeft.Name = "panelBottomLeft";
             this.panelBottomLeft.Size = new System.Drawing.Size(300, 60);
@@ -185,7 +185,7 @@ namespace A_Friend
             this.LogoutButton.Size = new System.Drawing.Size(40, 40);
             this.LogoutButton.TabIndex = 0;
             this.LogoutButton.UseVisualStyleBackColor = false;
-            this.LogoutButton.Click += new System.EventHandler(this.customButton1_Click);
+            this.LogoutButton.Click += new System.EventHandler(this.LogoutButton_Click_1);
             // 
             // panelContact
             // 
@@ -196,14 +196,14 @@ namespace A_Friend
             this.panelContact.BackColor = System.Drawing.SystemColors.Window;
             this.panelContact.Location = new System.Drawing.Point(2, 80);
             this.panelContact.Name = "panelContact";
-            this.panelContact.Size = new System.Drawing.Size(298, 580);
+            this.panelContact.Size = new System.Drawing.Size(298, 572);
             this.panelContact.TabIndex = 2;
             // 
             // panelTopLeft
             // 
             this.panelTopLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
             this.panelTopLeft.Controls.Add(this.labelWarning);
-            this.panelTopLeft.Controls.Add(this.customTextBox1);
+            this.panelTopLeft.Controls.Add(this.customTextBoxSearch);
             this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Margin = new System.Windows.Forms.Padding(0);
             this.panelTopLeft.Name = "panelTopLeft";
@@ -218,30 +218,30 @@ namespace A_Friend
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
             this.labelWarning.Location = new System.Drawing.Point(66, 62);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(158, 17);
+            this.labelWarning.Size = new System.Drawing.Size(188, 20);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "This user does not exist";
             // 
-            // customTextBox1
+            // customTextBoxSearch
             // 
-            this.customTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.customTextBox1.BorderColor = System.Drawing.SystemColors.Window;
-            this.customTextBox1.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.customTextBox1.BorderRadius = 20;
-            this.customTextBox1.BorderSize = 2;
-            this.customTextBox1.Location = new System.Drawing.Point(13, 17);
-            this.customTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.customTextBox1.Multiline = false;
-            this.customTextBox1.Name = "customTextBox1";
-            this.customTextBox1.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
-            this.customTextBox1.PasswordChar = false;
-            this.customTextBox1.PlaceholderColor = System.Drawing.Color.DarkGray;
-            this.customTextBox1.PlaceholderText = "Search";
-            this.customTextBox1.Size = new System.Drawing.Size(271, 38);
-            this.customTextBox1.TabIndex = 0;
-            this.customTextBox1.Texts = "";
-            this.customTextBox1.UnderlinedStyle = false;
-            this.customTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBox1_KeyDown);
+            this.customTextBoxSearch.BackColor = System.Drawing.SystemColors.Window;
+            this.customTextBoxSearch.BorderColor = System.Drawing.SystemColors.Window;
+            this.customTextBoxSearch.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.customTextBoxSearch.BorderRadius = 20;
+            this.customTextBoxSearch.BorderSize = 2;
+            this.customTextBoxSearch.Location = new System.Drawing.Point(13, 17);
+            this.customTextBoxSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.customTextBoxSearch.Multiline = false;
+            this.customTextBoxSearch.Name = "customTextBoxSearch";
+            this.customTextBoxSearch.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
+            this.customTextBoxSearch.PasswordChar = false;
+            this.customTextBoxSearch.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.customTextBoxSearch.PlaceholderText = "Search";
+            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 42);
+            this.customTextBoxSearch.TabIndex = 0;
+            this.customTextBoxSearch.Texts = "";
+            this.customTextBoxSearch.UnderlinedStyle = false;
+            this.customTextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBoxSearch_KeyDown);
             // 
             // panelBottomRight
             // 
@@ -249,7 +249,7 @@ namespace A_Friend
             this.panelBottomRight.Controls.Add(this.textboxWriting);
             this.panelBottomRight.Controls.Add(this.buttonSend);
             this.panelBottomRight.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottomRight.Location = new System.Drawing.Point(0, 660);
+            this.panelBottomRight.Location = new System.Drawing.Point(0, 652);
             this.panelBottomRight.MaximumSize = new System.Drawing.Size(10000, 60);
             this.panelBottomRight.Name = "panelBottomRight";
             this.panelBottomRight.Size = new System.Drawing.Size(912, 60);
@@ -272,7 +272,7 @@ namespace A_Friend
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -301,7 +301,7 @@ namespace A_Friend
             this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.labelUsername.Location = new System.Drawing.Point(72, 21);
             this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(83, 20);
+            this.labelUsername.Size = new System.Drawing.Size(102, 25);
             this.labelUsername.TabIndex = 6;
             this.labelUsername.Text = "Username";
             // 
@@ -310,7 +310,7 @@ namespace A_Friend
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(13, 20);
+            this.label3.Size = new System.Drawing.Size(17, 25);
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
@@ -357,7 +357,7 @@ namespace A_Friend
             this.panelChat.Location = new System.Drawing.Point(0, 80);
             this.panelChat.Margin = new System.Windows.Forms.Padding(0);
             this.panelChat.Name = "panelChat";
-            this.panelChat.Size = new System.Drawing.Size(912, 580);
+            this.panelChat.Size = new System.Drawing.Size(912, 572);
             this.panelChat.TabIndex = 0;
             // 
             // panelRight
@@ -371,14 +371,14 @@ namespace A_Friend
             this.panelRight.Location = new System.Drawing.Point(300, 0);
             this.panelRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(912, 720);
+            this.panelRight.Size = new System.Drawing.Size(912, 712);
             this.panelRight.TabIndex = 3;
             // 
             // FormApplication
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1215, 720);
+            this.ClientSize = new System.Drawing.Size(1215, 712);
             this.Controls.Add(this.panelRight);
             this.Controls.Add(this.panelLeft);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -408,7 +408,7 @@ namespace A_Friend
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panelLeft;
         private System.Windows.Forms.Panel panelTopLeft;
-        private CustomControls.CustomTextBox customTextBox1;
+        private CustomControls.CustomTextBox customTextBoxSearch;
         private System.Windows.Forms.Panel panelBottomLeft;
         private CustomControls.CustomButton LogoutButton;
         private CustomControls.CustomButton SettingButton;
