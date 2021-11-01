@@ -65,7 +65,7 @@ namespace A_Friend.CustomControls
             this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.labelUsername.Location = new System.Drawing.Point(72, 21);
             this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(102, 25);
+            this.labelUsername.Size = new System.Drawing.Size(83, 20);
             this.labelUsername.TabIndex = 6;
             this.labelUsername.Text = "Username";
             // 
@@ -74,7 +74,7 @@ namespace A_Friend.CustomControls
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(17, 25);
+            this.label3.Size = new System.Drawing.Size(13, 20);
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
@@ -152,10 +152,11 @@ namespace A_Friend.CustomControls
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
+            this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
             // 
             // buttonSend
             // 
@@ -179,11 +180,12 @@ namespace A_Friend.CustomControls
             // 
             // PanelChat
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panelBottomRight);
             this.Controls.Add(this.panel_Chat);
             this.Controls.Add(this.panelTopRight);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "PanelChat";

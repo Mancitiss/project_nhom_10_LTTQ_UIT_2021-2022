@@ -13,11 +13,25 @@ namespace A_Friend
     public partial class FormApplication : Form
     {
         public string currentUsername;
+        private Panel panelRight2 = new Panel();
         public FormApplication()
         {
             InitializeComponent();
-            this.DoubleBuffered = true;
             labelWarning.Visible = false;
+            this.SetStyle(
+            System.Windows.Forms.ControlStyles.UserPaint |
+            System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
+            System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer,
+            true);
+
+            this.Controls.Add(panelRight2);
+            this.panelRight2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelRight2.Location = new System.Drawing.Point(300, 0);
+            this.panelRight2.Margin = new System.Windows.Forms.Padding(0);
+            this.panelRight2.Name = "panelRight2";
+            this.panelRight2.Size = new System.Drawing.Size(912, 712);
         }
 
         private void FormApplication_Load(object sender, EventArgs e)
@@ -56,6 +70,8 @@ namespace A_Friend
 
         public void AddContact(string name, string lastmessage, bool unread = false)
         {
+            //this.SuspendLayout();
+
             panelContact.SuspendLayout();
             var contactItem = new CustomControls.ContactItem(name, lastmessage, unread);
             contactItem.Name = "Friend_" + contactItem.FriendName;
@@ -67,9 +83,10 @@ namespace A_Friend
             panelContact.ScrollControlIntoView(contactItem);
             contactItem.Click += delegate 
             {
-                contactItem.BackColor = Color.Red;
                 showPanelChat(contactItem.Name); 
             };
+
+            //this.ResumeLayout();
         }
 
         //public void bringContactItemToTop(CustomControls.ContactItem item)
@@ -213,14 +230,32 @@ namespace A_Friend
             {
                 item = new CustomControls.PanelChat();
                 item.Name = name;
-                item.Anchor = (AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom);
-                item.Size = panelRight.Size;
                 panelChats.Add(item);
             }
-            panelRight.Controls.Clear();
-            item.Anchor = (AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom);
-            item.Size = panelRight.Size;
-            panelRight.Controls.Add(item);        
+
+            if (panelRight.Controls.Count == 0)
+            {
+                if (panelRight2.Controls[0].Name != name)
+                {
+                    panelRight.Controls.Clear();
+                    panelRight.Controls.Add(item);
+                    panelRight.BringToFront();
+                    panelRight2.SendToBack();
+                    panelRight2.Controls.Clear();
+                }
+            }
+            else
+            {
+                if (panelRight.Controls[0].Name != name)
+                {
+                    panelRight2.Controls.Clear();
+                    panelRight2.Controls.Add(item);
+                    panelRight2.BringToFront();
+                    panelRight.SendToBack();
+                    panelRight.Controls.Clear();
+                }
+            }
+            item.Dock = DockStyle.Fill;
         }
 
         private void LogoutButton_Click_1(object sender, EventArgs e)

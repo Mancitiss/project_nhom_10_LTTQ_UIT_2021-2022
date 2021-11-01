@@ -97,5 +97,20 @@ namespace A_Friend.CustomControls
         {
             this.Invalidate();
         }
+
+        private void friendPicture_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
+        }
+
+        private void labelName_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
+        }
+
+        private void labelLastMessage_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
+        }
     }
 }

@@ -30,8 +30,6 @@ namespace A_Friend.CustomControls
             panel_Chat.ScrollControlIntoView(chatItem);
         }
 
-
-
         private void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)

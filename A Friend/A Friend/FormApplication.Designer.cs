@@ -48,18 +48,17 @@ namespace A_Friend
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.panelChat = new System.Windows.Forms.Panel();
             this.panelRight = new System.Windows.Forms.Panel();
-            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
-            this.rjCircularPictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.labelUsername = new System.Windows.Forms.Label();
             this.panelTopRight = new System.Windows.Forms.Panel();
+            this.labelUsername = new System.Windows.Forms.Label();
+            this.rjCircularPictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
+            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panelLeft.SuspendLayout();
             this.panelBottomLeft.SuspendLayout();
             this.panelTopLeft.SuspendLayout();
             this.panelBottomRight.SuspendLayout();
             this.panelRight.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).BeginInit();
             this.panelTopRight.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // toolTip_DeleteC
@@ -218,7 +217,7 @@ namespace A_Friend
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
             this.labelWarning.Location = new System.Drawing.Point(66, 62);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(188, 20);
+            this.labelWarning.Size = new System.Drawing.Size(158, 17);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "This user does not exist";
             // 
@@ -237,7 +236,7 @@ namespace A_Friend
             this.customTextBoxSearch.PasswordChar = false;
             this.customTextBoxSearch.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.customTextBoxSearch.PlaceholderText = "Search";
-            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 42);
+            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 38);
             this.customTextBoxSearch.TabIndex = 0;
             this.customTextBoxSearch.Texts = "";
             this.customTextBoxSearch.UnderlinedStyle = false;
@@ -271,7 +270,7 @@ namespace A_Friend
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -296,13 +295,54 @@ namespace A_Friend
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelRight.Controls.Add(this.panelChat);
-            this.panelRight.Controls.Add(this.panelTopRight);
             this.panelRight.Controls.Add(this.panelBottomRight);
+            this.panelRight.Controls.Add(this.panelTopRight);
             this.panelRight.Location = new System.Drawing.Point(300, 0);
             this.panelRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelRight.Name = "panelRight";
             this.panelRight.Size = new System.Drawing.Size(912, 712);
             this.panelRight.TabIndex = 3;
+            // 
+            // panelTopRight
+            // 
+            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
+            this.panelTopRight.Controls.Add(this.labelUsername);
+            this.panelTopRight.Controls.Add(this.rjCircularPictureBox1);
+            this.panelTopRight.Controls.Add(this.buttonDelete);
+            this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTopRight.Location = new System.Drawing.Point(0, 0);
+            this.panelTopRight.Margin = new System.Windows.Forms.Padding(0);
+            this.panelTopRight.Name = "panelTopRight";
+            this.panelTopRight.Size = new System.Drawing.Size(912, 80);
+            this.panelTopRight.TabIndex = 0;
+            this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
+            this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
+            // 
+            // labelUsername
+            // 
+            this.labelUsername.AutoSize = true;
+            this.labelUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.labelUsername.Location = new System.Drawing.Point(72, 21);
+            this.labelUsername.Name = "labelUsername";
+            this.labelUsername.Size = new System.Drawing.Size(83, 20);
+            this.labelUsername.TabIndex = 6;
+            this.labelUsername.Text = "Username";
+            // 
+            // rjCircularPictureBox1
+            // 
+            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
+            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FloralWhite;
+            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.Snow;
+            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            this.rjCircularPictureBox1.BorderSize = 2;
+            this.rjCircularPictureBox1.GradientAngle = 50F;
+            this.rjCircularPictureBox1.Location = new System.Drawing.Point(10, 10);
+            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
+            this.rjCircularPictureBox1.Size = new System.Drawing.Size(60, 60);
+            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.rjCircularPictureBox1.TabIndex = 1;
+            this.rjCircularPictureBox1.TabStop = false;
             // 
             // buttonDelete
             // 
@@ -322,60 +362,9 @@ namespace A_Friend
             this.buttonDelete.TabIndex = 0;
             this.buttonDelete.UseVisualStyleBackColor = false;
             // 
-            // rjCircularPictureBox1
-            // 
-            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
-            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FloralWhite;
-            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.Snow;
-            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            this.rjCircularPictureBox1.BorderSize = 2;
-            this.rjCircularPictureBox1.GradientAngle = 50F;
-            this.rjCircularPictureBox1.Location = new System.Drawing.Point(10, 10);
-            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
-            this.rjCircularPictureBox1.Size = new System.Drawing.Size(60, 60);
-            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.rjCircularPictureBox1.TabIndex = 1;
-            this.rjCircularPictureBox1.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(72, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(17, 25);
-            this.label3.TabIndex = 5;
-            this.label3.Text = " ";
-            // 
-            // labelUsername
-            // 
-            this.labelUsername.AutoSize = true;
-            this.labelUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.labelUsername.Location = new System.Drawing.Point(72, 21);
-            this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(102, 25);
-            this.labelUsername.TabIndex = 6;
-            this.labelUsername.Text = "Username";
-            // 
-            // panelTopRight
-            // 
-            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
-            this.panelTopRight.Controls.Add(this.labelUsername);
-            this.panelTopRight.Controls.Add(this.label3);
-            this.panelTopRight.Controls.Add(this.rjCircularPictureBox1);
-            this.panelTopRight.Controls.Add(this.buttonDelete);
-            this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTopRight.Location = new System.Drawing.Point(0, 0);
-            this.panelTopRight.Margin = new System.Windows.Forms.Padding(0);
-            this.panelTopRight.Name = "panelTopRight";
-            this.panelTopRight.Size = new System.Drawing.Size(912, 80);
-            this.panelTopRight.TabIndex = 0;
-            this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
-            this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
-            // 
             // FormApplication
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1215, 712);
             this.Controls.Add(this.panelRight);
@@ -394,9 +383,9 @@ namespace A_Friend
             this.panelTopLeft.PerformLayout();
             this.panelBottomRight.ResumeLayout(false);
             this.panelRight.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -421,7 +410,6 @@ namespace A_Friend
         private System.Windows.Forms.Panel panelRight;
         private System.Windows.Forms.Panel panelTopRight;
         private System.Windows.Forms.Label labelUsername;
-        private System.Windows.Forms.Label label3;
         private CustomControls.CirclePictureBox rjCircularPictureBox1;
         private CustomControls.CustomButton buttonDelete;
     }
