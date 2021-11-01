@@ -52,7 +52,6 @@ namespace A_Friend.CustomControls
             this.panelTopRight.Controls.Add(this.rjCircularPictureBox1);
             this.panelTopRight.Controls.Add(this.buttonDelete);
             this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTopRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panelTopRight.Location = new System.Drawing.Point(0, 0);
             this.panelTopRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelTopRight.Name = "panelTopRight";
@@ -119,11 +118,10 @@ namespace A_Friend.CustomControls
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_Chat.AutoScroll = true;
             this.panel_Chat.BackColor = System.Drawing.SystemColors.Control;
-            this.panel_Chat.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panel_Chat.Location = new System.Drawing.Point(0, 80);
             this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
             this.panel_Chat.Name = "panel_Chat";
-            this.panel_Chat.Size = new System.Drawing.Size(912, 580);
+            this.panel_Chat.Size = new System.Drawing.Size(912, 572);
             this.panel_Chat.TabIndex = 2;
             // 
             // panelBottomRight
@@ -132,9 +130,7 @@ namespace A_Friend.CustomControls
             this.panelBottomRight.Controls.Add(this.textboxWriting);
             this.panelBottomRight.Controls.Add(this.buttonSend);
             this.panelBottomRight.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottomRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panelBottomRight.Location = new System.Drawing.Point(0, 660);
-            this.panelBottomRight.MaximumSize = new System.Drawing.Size(10000, 60);
+            this.panelBottomRight.Location = new System.Drawing.Point(0, 652);
             this.panelBottomRight.Name = "panelBottomRight";
             this.panelBottomRight.Size = new System.Drawing.Size(912, 60);
             this.panelBottomRight.TabIndex = 3;
@@ -160,7 +156,6 @@ namespace A_Friend.CustomControls
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
-            this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
             // 
             // buttonSend
             // 
@@ -181,17 +176,18 @@ namespace A_Friend.CustomControls
             this.buttonSend.Size = new System.Drawing.Size(40, 40);
             this.buttonSend.TabIndex = 0;
             this.buttonSend.UseVisualStyleBackColor = false;
-            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
             // PanelChat
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panelBottomRight);
             this.Controls.Add(this.panel_Chat);
             this.Controls.Add(this.panelTopRight);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "PanelChat";
-            this.Size = new System.Drawing.Size(912, 720);
+            this.Size = new System.Drawing.Size(912, 712);
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();

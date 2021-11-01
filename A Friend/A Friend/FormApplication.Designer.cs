@@ -46,20 +46,20 @@ namespace A_Friend
             this.customTextBoxSearch = new A_Friend.CustomControls.CustomTextBox();
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
-            this.panelTopRight = new System.Windows.Forms.Panel();
-            this.labelUsername = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.rjCircularPictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
-            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panelChat = new System.Windows.Forms.Panel();
             this.panelRight = new System.Windows.Forms.Panel();
+            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
+            this.rjCircularPictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.labelUsername = new System.Windows.Forms.Label();
+            this.panelTopRight = new System.Windows.Forms.Panel();
             this.panelLeft.SuspendLayout();
             this.panelBottomLeft.SuspendLayout();
             this.panelTopLeft.SuspendLayout();
             this.panelBottomRight.SuspendLayout();
-            this.panelTopRight.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).BeginInit();
             this.panelRight.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).BeginInit();
+            this.panelTopRight.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolTip_DeleteC
@@ -250,7 +250,6 @@ namespace A_Friend
             this.panelBottomRight.Controls.Add(this.buttonSend);
             this.panelBottomRight.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelBottomRight.Location = new System.Drawing.Point(0, 652);
-            this.panelBottomRight.MaximumSize = new System.Drawing.Size(10000, 60);
             this.panelBottomRight.Name = "panelBottomRight";
             this.panelBottomRight.Size = new System.Drawing.Size(912, 60);
             this.panelBottomRight.TabIndex = 0;
@@ -277,75 +276,6 @@ namespace A_Friend
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
             this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
-            // 
-            // panelTopRight
-            // 
-            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
-            this.panelTopRight.Controls.Add(this.labelUsername);
-            this.panelTopRight.Controls.Add(this.label3);
-            this.panelTopRight.Controls.Add(this.rjCircularPictureBox1);
-            this.panelTopRight.Controls.Add(this.buttonDelete);
-            this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTopRight.Location = new System.Drawing.Point(0, 0);
-            this.panelTopRight.Margin = new System.Windows.Forms.Padding(0);
-            this.panelTopRight.Name = "panelTopRight";
-            this.panelTopRight.Size = new System.Drawing.Size(912, 80);
-            this.panelTopRight.TabIndex = 0;
-            this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
-            this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
-            // 
-            // labelUsername
-            // 
-            this.labelUsername.AutoSize = true;
-            this.labelUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.labelUsername.Location = new System.Drawing.Point(72, 21);
-            this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(102, 25);
-            this.labelUsername.TabIndex = 6;
-            this.labelUsername.Text = "Username";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(72, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(17, 25);
-            this.label3.TabIndex = 5;
-            this.label3.Text = " ";
-            // 
-            // rjCircularPictureBox1
-            // 
-            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
-            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FloralWhite;
-            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.Snow;
-            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            this.rjCircularPictureBox1.BorderSize = 2;
-            this.rjCircularPictureBox1.GradientAngle = 50F;
-            this.rjCircularPictureBox1.Location = new System.Drawing.Point(10, 10);
-            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
-            this.rjCircularPictureBox1.Size = new System.Drawing.Size(60, 60);
-            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.rjCircularPictureBox1.TabIndex = 1;
-            this.rjCircularPictureBox1.TabStop = false;
-            // 
-            // buttonDelete
-            // 
-            this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonDelete.BackColor = System.Drawing.Color.Transparent;
-            this.buttonDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDelete.BackgroundImage")));
-            this.buttonDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonDelete.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.buttonDelete.BorderRadius = 10;
-            this.buttonDelete.BorderSize = 0;
-            this.buttonDelete.FlatAppearance.BorderSize = 0;
-            this.buttonDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonDelete.ForeColor = System.Drawing.Color.White;
-            this.buttonDelete.Location = new System.Drawing.Point(860, 21);
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(40, 40);
-            this.buttonDelete.TabIndex = 0;
-            this.buttonDelete.UseVisualStyleBackColor = false;
             // 
             // panelChat
             // 
@@ -374,6 +304,75 @@ namespace A_Friend
             this.panelRight.Size = new System.Drawing.Size(912, 712);
             this.panelRight.TabIndex = 3;
             // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.buttonDelete.BackColor = System.Drawing.Color.Transparent;
+            this.buttonDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDelete.BackgroundImage")));
+            this.buttonDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonDelete.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.buttonDelete.BorderRadius = 10;
+            this.buttonDelete.BorderSize = 0;
+            this.buttonDelete.FlatAppearance.BorderSize = 0;
+            this.buttonDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonDelete.ForeColor = System.Drawing.Color.White;
+            this.buttonDelete.Location = new System.Drawing.Point(860, 21);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(40, 40);
+            this.buttonDelete.TabIndex = 0;
+            this.buttonDelete.UseVisualStyleBackColor = false;
+            // 
+            // rjCircularPictureBox1
+            // 
+            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
+            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FloralWhite;
+            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.Snow;
+            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            this.rjCircularPictureBox1.BorderSize = 2;
+            this.rjCircularPictureBox1.GradientAngle = 50F;
+            this.rjCircularPictureBox1.Location = new System.Drawing.Point(10, 10);
+            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
+            this.rjCircularPictureBox1.Size = new System.Drawing.Size(60, 60);
+            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.rjCircularPictureBox1.TabIndex = 1;
+            this.rjCircularPictureBox1.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(72, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(17, 25);
+            this.label3.TabIndex = 5;
+            this.label3.Text = " ";
+            // 
+            // labelUsername
+            // 
+            this.labelUsername.AutoSize = true;
+            this.labelUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.labelUsername.Location = new System.Drawing.Point(72, 21);
+            this.labelUsername.Name = "labelUsername";
+            this.labelUsername.Size = new System.Drawing.Size(102, 25);
+            this.labelUsername.TabIndex = 6;
+            this.labelUsername.Text = "Username";
+            // 
+            // panelTopRight
+            // 
+            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
+            this.panelTopRight.Controls.Add(this.labelUsername);
+            this.panelTopRight.Controls.Add(this.label3);
+            this.panelTopRight.Controls.Add(this.rjCircularPictureBox1);
+            this.panelTopRight.Controls.Add(this.buttonDelete);
+            this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTopRight.Location = new System.Drawing.Point(0, 0);
+            this.panelTopRight.Margin = new System.Windows.Forms.Padding(0);
+            this.panelTopRight.Name = "panelTopRight";
+            this.panelTopRight.Size = new System.Drawing.Size(912, 80);
+            this.panelTopRight.TabIndex = 0;
+            this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
+            this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
+            // 
             // FormApplication
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -394,10 +393,10 @@ namespace A_Friend
             this.panelTopLeft.ResumeLayout(false);
             this.panelTopLeft.PerformLayout();
             this.panelBottomRight.ResumeLayout(false);
+            this.panelRight.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();
-            this.panelRight.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -418,12 +417,12 @@ namespace A_Friend
         private System.Windows.Forms.Panel panelBottomRight;
         private CustomControls.CustomTextBox textboxWriting;
         private CustomControls.CustomButton buttonSend;
+        private System.Windows.Forms.Panel panelChat;
+        private System.Windows.Forms.Panel panelRight;
         private System.Windows.Forms.Panel panelTopRight;
         private System.Windows.Forms.Label labelUsername;
         private System.Windows.Forms.Label label3;
         private CustomControls.CirclePictureBox rjCircularPictureBox1;
         private CustomControls.CustomButton buttonDelete;
-        private System.Windows.Forms.Panel panelChat;
-        private System.Windows.Forms.Panel panelRight;
     }
 }
