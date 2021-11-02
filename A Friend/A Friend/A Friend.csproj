@@ -101,12 +101,6 @@
     <Compile Include="FormAddContact.Designer.cs">
       <DependentUpon>FormAddContact.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormApp.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormApp.Designer.cs">
-      <DependentUpon>FormApp.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormApplication.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -157,9 +151,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormAddContact.resx">
       <DependentUpon>FormAddContact.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormApp.resx">
-      <DependentUpon>FormApp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormApplication.resx">
       <DependentUpon>FormApplication.cs</DependentUpon>
