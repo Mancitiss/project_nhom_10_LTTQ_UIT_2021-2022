@@ -14,7 +14,7 @@ namespace A_Friend.CustomControls
     public partial class ContactItem : UserControl
     {
         Account account;
-        int state = 0;
+        byte state = 0;
         string id;
         Color mouseOnColor = Color.FromArgb(65, 165, 238);
         Color stateColor = Color.Gainsboro;
@@ -97,7 +97,7 @@ namespace A_Friend.CustomControls
             }
         }
 
-        public int State
+        public byte State
         {
             get
             {

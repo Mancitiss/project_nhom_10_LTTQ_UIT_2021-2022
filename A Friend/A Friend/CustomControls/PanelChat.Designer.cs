@@ -66,7 +66,7 @@ namespace A_Friend.CustomControls
             this.labelFriendName.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.labelFriendName.Location = new System.Drawing.Point(89, 21);
             this.labelFriendName.Name = "labelFriendName";
-            this.labelFriendName.Size = new System.Drawing.Size(83, 20);
+            this.labelFriendName.Size = new System.Drawing.Size(102, 25);
             this.labelFriendName.TabIndex = 6;
             this.labelFriendName.Text = "Username";
             // 
@@ -75,7 +75,7 @@ namespace A_Friend.CustomControls
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(13, 20);
+            this.label3.Size = new System.Drawing.Size(17, 25);
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
@@ -124,6 +124,7 @@ namespace A_Friend.CustomControls
             this.panel_Chat.Name = "panel_Chat";
             this.panel_Chat.Size = new System.Drawing.Size(912, 572);
             this.panel_Chat.TabIndex = 2;
+            this.panel_Chat.Click += new System.EventHandler(this.panel_Chat_Click);
             // 
             // panelBottomRight
             // 
@@ -153,7 +154,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -181,7 +182,7 @@ namespace A_Friend.CustomControls
             // 
             // PanelChat
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panelBottomRight);
             this.Controls.Add(this.panel_Chat);
@@ -191,6 +192,7 @@ namespace A_Friend.CustomControls
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "PanelChat";
             this.Size = new System.Drawing.Size(912, 712);
+            this.Load += new System.EventHandler(this.PanelChat_Load);
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).EndInit();

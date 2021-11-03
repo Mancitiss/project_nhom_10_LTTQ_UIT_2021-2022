@@ -15,7 +15,7 @@ namespace A_Friend.CustomControls
     {
         Account account;
         string id;
-        int state;
+        byte state;
         Color stateColor = Color.Gainsboro;
 
         public PanelChat()
@@ -39,7 +39,7 @@ namespace A_Friend.CustomControls
             get { return this.id; }
         }
 
-        public int State
+        public byte State
         {
             get
             {
@@ -112,6 +112,24 @@ namespace A_Friend.CustomControls
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 e.Graphics.DrawEllipse(pen, friendPicture.Left - 1, friendPicture.Top - 1, friendPicture.Width + 2, friendPicture.Width + 2);
             }
+        }
+
+        private void panel_Chat_Click(object sender, EventArgs e)
+        {
+            panel_Chat.Focus();
+        }
+
+        private void LoadMessage()
+        {
+            AddMessage("Chào bạn", true);
+            AddMessage("Chào", false);
+            AddMessage("Chào Tạm biệt", true);
+            AddMessage("Tạm biệt", false);
+        }
+
+        private void PanelChat_Load(object sender, EventArgs e)
+        {
+            LoadMessage();
         }
     }
 }

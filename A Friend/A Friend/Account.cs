@@ -11,10 +11,10 @@ namespace A_Friend
         public string username;
         public string name;
         public string id;
-        public int state;
+        public byte state;
 
         public Account() { }
-        public Account(string username, string name, string id, int state) 
+        public Account(string username, string name, string id, byte state) 
         { 
             this.username = username;
             this.name = name;
