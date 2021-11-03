@@ -24,7 +24,45 @@ namespace A_Friend
                 //Send_to_id(client, "0000000000000000002", "0000000000000000001", "alo"); How to send message
                 while (user.state == 1 || user.state == 2) // while self.state == online or fake-offline
                 {
-                    Receive_from_id(client);
+                    //Console.WriteLine("In loop");
+                    //Receive_from_id(client);
+                    try
+                    {
+                        //Console.WriteLine(item.Key + " is online");
+                        if (client.Connected)
+                        {
+                            if (client.Poll(1, SelectMode.SelectRead))
+                            {
+                                if (!client.Connected)
+                                {
+                                    // Something bad has happened, shut down
+                                    try
+                                    {
+                                        client.Shutdown(SocketShutdown.Both);
+                                        client.Close();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e.ToString());
+                                    }
+                                }
+                                else
+                                {
+                                    // There is data waiting to be read"
+                                    Receive_from_id(client);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            client.Shutdown(SocketShutdown.Both);
+                            client.Close();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
                 }
                 user = null;
                 client.Send(Encoding.Unicode.GetBytes("2004"));
