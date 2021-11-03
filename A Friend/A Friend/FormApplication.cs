@@ -181,6 +181,7 @@ namespace A_Friend
                 if (item.ID == id)
                 {
                     item.State = state;
+                    break;
                 }
             }
 
@@ -189,6 +190,7 @@ namespace A_Friend
                 if (item.ID == id)
                 {
                     item.State = state;
+                    break;
                 }
             }
 
@@ -197,6 +199,7 @@ namespace A_Friend
                 if (item.ID == id)
                 {
                     item.State = state;
+                    break;
                 }
             }
         }
