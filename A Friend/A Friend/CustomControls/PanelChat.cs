@@ -7,15 +7,67 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace A_Friend.CustomControls
 {
     public partial class PanelChat : UserControl
     {
+        Account account;
+        string id;
+        int state;
+        Color stateColor = Color.Gainsboro;
+
         public PanelChat()
         {
             InitializeComponent();
         }
+
+        public PanelChat(Account account)
+        {
+            InitializeComponent();
+            this.account = account;
+            this.DoubleBuffered = true;
+            this.Name = "panelChat_" + account.id;
+            labelFriendName.Text = account.name;
+            this.id = account.id;
+            State = account.state;
+        }
+
+        public string ID
+        {
+            get { return this.id; }
+        }
+
+        public int State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                if (state != value)
+                {
+                    state = value;
+
+                    if (state == 0)
+                    {
+                        stateColor = Color.Gainsboro;
+                    }
+                    else if (state == 1)
+                    {
+                        stateColor = Color.Green;
+                    }
+                    else
+                    {
+                        stateColor = Color.Red;
+                    }
+                    this.Invalidate();
+                }
+            }
+        }
+
 
         public void AddMessage(string message, bool stacktoleft)
         {
@@ -50,6 +102,15 @@ namespace A_Friend.CustomControls
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
+            }
+        }
+
+        private void panelTopRight_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen pen = new Pen(stateColor, 2))
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                e.Graphics.DrawEllipse(pen, friendPicture.Left - 1, friendPicture.Top - 1, friendPicture.Width + 2, friendPicture.Width + 2);
             }
         }
     }

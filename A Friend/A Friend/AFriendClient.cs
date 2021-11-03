@@ -22,7 +22,7 @@ namespace A_Friend
             try
             {
                 //Send_to_id(client, "0000000000000000002", "0000000000000000001", "alo"); How to send message
-                while (user.state == "online" || user.state == "fake-offline") // while self.state == online or fake-offline
+                while (user.state == 1 || user.state == 2) // while self.state == online or fake-offline
                 {
                     Receive_from_id(client);
                 }
@@ -108,7 +108,7 @@ namespace A_Friend
                     user.id = data.Substring(0, 19);
                     data = data.Remove(0, 19);
                     user.username = data;
-                    user.state = "online";
+                    user.state = 1;
                 }
                 else
                 if (instruction == "-200") // -200 = logged in failed

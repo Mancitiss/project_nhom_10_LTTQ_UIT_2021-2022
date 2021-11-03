@@ -31,25 +31,25 @@ namespace A_Friend.CustomControls
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanelChat));
             this.panelTopRight = new System.Windows.Forms.Panel();
-            this.labelUsername = new System.Windows.Forms.Label();
+            this.labelFriendName = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.rjCircularPictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
+            this.friendPicture = new A_Friend.CustomControls.CirclePictureBox();
             this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panel_Chat = new System.Windows.Forms.Panel();
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.panelTopRight.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.panelBottomRight.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelTopRight
             // 
             this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
-            this.panelTopRight.Controls.Add(this.labelUsername);
+            this.panelTopRight.Controls.Add(this.labelFriendName);
             this.panelTopRight.Controls.Add(this.label3);
-            this.panelTopRight.Controls.Add(this.rjCircularPictureBox1);
+            this.panelTopRight.Controls.Add(this.friendPicture);
             this.panelTopRight.Controls.Add(this.buttonDelete);
             this.panelTopRight.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTopRight.Location = new System.Drawing.Point(0, 0);
@@ -57,17 +57,18 @@ namespace A_Friend.CustomControls
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Size = new System.Drawing.Size(912, 80);
             this.panelTopRight.TabIndex = 1;
+            this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
             // 
-            // labelUsername
+            // labelFriendName
             // 
-            this.labelUsername.AutoSize = true;
-            this.labelUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.labelUsername.Location = new System.Drawing.Point(72, 21);
-            this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(83, 20);
-            this.labelUsername.TabIndex = 6;
-            this.labelUsername.Text = "Username";
+            this.labelFriendName.AutoSize = true;
+            this.labelFriendName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelFriendName.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.labelFriendName.Location = new System.Drawing.Point(89, 21);
+            this.labelFriendName.Name = "labelFriendName";
+            this.labelFriendName.Size = new System.Drawing.Size(83, 20);
+            this.labelFriendName.TabIndex = 6;
+            this.labelFriendName.Text = "Username";
             // 
             // label3
             // 
@@ -78,20 +79,20 @@ namespace A_Friend.CustomControls
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
-            // rjCircularPictureBox1
+            // friendPicture
             // 
-            this.rjCircularPictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
-            this.rjCircularPictureBox1.BorderColor = System.Drawing.Color.FloralWhite;
-            this.rjCircularPictureBox1.BorderColor2 = System.Drawing.Color.Snow;
-            this.rjCircularPictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            this.rjCircularPictureBox1.BorderSize = 2;
-            this.rjCircularPictureBox1.GradientAngle = 50F;
-            this.rjCircularPictureBox1.Location = new System.Drawing.Point(10, 10);
-            this.rjCircularPictureBox1.Name = "rjCircularPictureBox1";
-            this.rjCircularPictureBox1.Size = new System.Drawing.Size(60, 60);
-            this.rjCircularPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.rjCircularPictureBox1.TabIndex = 1;
-            this.rjCircularPictureBox1.TabStop = false;
+            this.friendPicture.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
+            this.friendPicture.BorderColor = System.Drawing.Color.GhostWhite;
+            this.friendPicture.BorderColor2 = System.Drawing.Color.Snow;
+            this.friendPicture.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            this.friendPicture.BorderSize = 0;
+            this.friendPicture.GradientAngle = 50F;
+            this.friendPicture.Location = new System.Drawing.Point(10, 10);
+            this.friendPicture.Name = "friendPicture";
+            this.friendPicture.Size = new System.Drawing.Size(60, 60);
+            this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.friendPicture.TabIndex = 1;
+            this.friendPicture.TabStop = false;
             // 
             // buttonDelete
             // 
@@ -192,7 +193,7 @@ namespace A_Friend.CustomControls
             this.Size = new System.Drawing.Size(912, 712);
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).EndInit();
             this.panelBottomRight.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -201,9 +202,9 @@ namespace A_Friend.CustomControls
         #endregion
 
         private System.Windows.Forms.Panel panelTopRight;
-        private System.Windows.Forms.Label labelUsername;
+        private System.Windows.Forms.Label labelFriendName;
         private System.Windows.Forms.Label label3;
-        private CirclePictureBox rjCircularPictureBox1;
+        private CirclePictureBox friendPicture;
         private CustomButton buttonDelete;
         private System.Windows.Forms.Panel panel_Chat;
         private System.Windows.Forms.Panel panelBottomRight;
