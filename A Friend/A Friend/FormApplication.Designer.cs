@@ -141,7 +141,7 @@ namespace A_Friend
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
             this.labelWarning.Location = new System.Drawing.Point(66, 62);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(158, 17);
+            this.labelWarning.Size = new System.Drawing.Size(188, 20);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "This user does not exist";
             // 
@@ -168,6 +168,7 @@ namespace A_Friend
             this.panelChat.Name = "panelChat";
             this.panelChat.Size = new System.Drawing.Size(912, 572);
             this.panelChat.TabIndex = 0;
+            this.panelChat.Click += new System.EventHandler(this.panelChat_Click);
             // 
             // panelRight
             // 
@@ -205,7 +206,7 @@ namespace A_Friend
             this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.labelUsername.Location = new System.Drawing.Point(72, 21);
             this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(83, 20);
+            this.labelUsername.Size = new System.Drawing.Size(102, 25);
             this.labelUsername.TabIndex = 6;
             this.labelUsername.Text = "Username";
             // 
@@ -226,7 +227,7 @@ namespace A_Friend
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -348,6 +349,7 @@ namespace A_Friend
             this.customTextBoxSearch.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.customTextBoxSearch.BorderRadius = 20;
             this.customTextBoxSearch.BorderSize = 2;
+            this.customTextBoxSearch.Cursor = System.Windows.Forms.Cursors.Default;
             this.customTextBoxSearch.Location = new System.Drawing.Point(13, 17);
             this.customTextBoxSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.customTextBoxSearch.Multiline = false;
@@ -356,15 +358,16 @@ namespace A_Friend
             this.customTextBoxSearch.PasswordChar = false;
             this.customTextBoxSearch.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.customTextBoxSearch.PlaceholderText = "Search";
-            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 38);
+            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 42);
             this.customTextBoxSearch.TabIndex = 0;
             this.customTextBoxSearch.Texts = "";
             this.customTextBoxSearch.UnderlinedStyle = false;
+            this.customTextBoxSearch._TextChanged += new System.EventHandler(this.customTextBoxSearch__TextChanged);
             this.customTextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBoxSearch_KeyDown);
             // 
             // FormApplication
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1215, 712);
             this.Controls.Add(this.panelRight);

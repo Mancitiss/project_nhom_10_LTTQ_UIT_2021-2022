@@ -14,9 +14,13 @@ namespace A_Friend
     {
 
         List<CustomControls.PanelChat> panelChats = new List<CustomControls.PanelChat>();
+        List<CustomControls.ContactItem> contactItems = new List<CustomControls.ContactItem>();
 
         public string currentUsername;
         private Panel panelRight2 = new Panel();
+        private Panel panelContact2 = new Panel();
+        private Panel panelContact3 = new Panel();
+        private bool check = true;
 
         public FormApplication()
         {
@@ -25,17 +29,8 @@ namespace A_Friend
             this.SetStyle(
             System.Windows.Forms.ControlStyles.UserPaint |
             System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
-            System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer,
-            true);
-
-            this.Controls.Add(panelRight2);
-            this.panelRight2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-           | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelRight2.Location = new System.Drawing.Point(300, 0);
-            this.panelRight2.Margin = new System.Windows.Forms.Padding(0);
-            this.panelRight2.Name = "panelRight2";
-            this.panelRight2.Size = new System.Drawing.Size(912, 712);
+            System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer, true);
+            InitializeSubPanels();
         }
 
         private void FormApplication_Load(object sender, EventArgs e)
@@ -62,8 +57,36 @@ namespace A_Friend
             AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
             AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
             AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
-            AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
+            AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));           
             this.ResumeLayout();
+        }
+
+        private void InitializeSubPanels()
+        {
+            this.Controls.Add(panelRight2);
+            this.panelRight2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelRight2.Location = new System.Drawing.Point(300, 0);
+            this.panelRight2.Margin = new System.Windows.Forms.Padding(0);
+            this.panelRight2.Name = "panelRight2";
+            this.panelRight2.Size = new System.Drawing.Size(912, 712);
+            this.panelLeft.Controls.Add(this.panelContact2);
+            this.panelContact2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelContact2.AutoScroll = true;
+            this.panelContact2.BackColor = System.Drawing.SystemColors.Window;
+            this.panelContact2.Location = new System.Drawing.Point(2, 80);
+            this.panelContact2.Size = new System.Drawing.Size(298, 572);
+            this.panelLeft.Controls.Add(this.panelContact3);
+            this.panelContact3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelContact3.AutoScroll = true;
+            this.panelContact3.BackColor = System.Drawing.SystemColors.Window;
+            this.panelContact3.Location = new System.Drawing.Point(2, 80);
+            this.panelContact3.Size = new System.Drawing.Size(298, 572);
         }
 
         public void AddMessage(string message, bool stacktoleft)
@@ -90,10 +113,24 @@ namespace A_Friend
             panelContact.ResumeLayout();
 
             panelContact.ScrollControlIntoView(contactItem);
-            contactItem.Click += delegate 
+            contactItem.Click += delegate
             {
-                showPanelChat(account); 
+                showPanelChat(account);
+                if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
+                {
+                    check = false;
+                    customTextBoxSearch.Texts = "";
+                    customTextBoxSearch.SetPlaceHolder();
+                    panelContact.Controls.Clear();
+                    foreach (CustomControls.ContactItem i in contactItems)
+                    {
+                        panelContact.Controls.Add(i);
+                    }
+                    panelContact.BringToFront();
+                    check = true;
+                }
             };
+            contactItems.Add(contactItem);
         }
         private CustomControls.PanelChat checkPanelChatExisted(string ID)
         {
@@ -116,8 +153,6 @@ namespace A_Friend
                 panelChats.Add(item);
             }
 
-            Console.WriteLine("asd;");
-
             if (panelRight.Controls.Count == 0)
             {
                 if (!(panelRight2.Controls[0] is CustomControls.PanelChat) || (panelRight2.Controls[0] as CustomControls.PanelChat).ID != account.id)
@@ -139,10 +174,10 @@ namespace A_Friend
                 }
             }
             item.Dock = DockStyle.Fill;
-        } 
+        }
 
         // state (0,1,2) => (offline, online, away)
-        public void TurnActiveState(string id, int state)
+        public void TurnActiveState(string id, byte state)
         {
             foreach (CustomControls.ContactItem item in panelContact.Controls)
             {
@@ -185,8 +220,8 @@ namespace A_Friend
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
-                    AddMessage(textboxWriting.Texts.Trim(), false); 
-                    textboxWriting.Texts = "";
+                    AddMessage(textboxWriting.Texts.Trim(), false);
+                    textboxWriting.Texts = "";                
                     textboxWriting.RemovePlaceHolder();
                 }
             }
@@ -227,7 +262,7 @@ namespace A_Friend
         {
             FormSettings frm = new FormSettings();
             frm.StartPosition = FormStartPosition.CenterScreen;
-            frm.ShowDialog(); 
+            frm.ShowDialog();
         }
 
         private void ButtonAdd_Click_1(object sender, EventArgs e)
@@ -266,6 +301,63 @@ namespace A_Friend
                     //Load chat history from database
                 }
             }
+        }
+
+        private void customTextBoxSearch__TextChanged(object sender, EventArgs e)
+        {
+            if (check)
+            {
+                string text = customTextBoxSearch.Texts.Trim();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    if (panelContact3.Controls.Count > 0)
+                    {
+                        panelContact2.SuspendLayout();
+                        panelContact2.Controls.Clear();
+                        foreach (CustomControls.ContactItem i in contactItems)
+                        {
+                            if (i.FriendName.ToLower().Contains(text.ToLower()))
+                            {
+                                panelContact2.Controls.Add(i);
+                            }
+                        }
+                        panelContact2.ResumeLayout(true);
+                        panelContact2.BringToFront();
+                        panelContact3.Controls.Clear();
+                    }
+                    else
+                    {
+                        panelContact.SuspendLayout();
+                        panelContact.Controls.Clear();
+                        foreach (CustomControls.ContactItem i in contactItems)
+                        {
+                            if (i.FriendName.ToLower().Contains(text.ToLower()))
+                            {
+                                panelContact.Controls.Add(i);
+                            }
+                        }
+                        panelContact.ResumeLayout(true);
+                        panelContact.BringToFront();
+                        panelContact2.Controls.Clear();
+                    }
+
+                }
+                else
+                {
+                    panelContact.Controls.Clear();
+                    panelContact2.Controls.Clear();
+                    foreach (CustomControls.ContactItem i in contactItems)
+                    {
+                        panelContact.Controls.Add(i);
+                    }
+                    panelContact.BringToFront();
+                }
+            }
+        }
+
+        private void panelChat_Click(object sender, EventArgs e)
+        {
+            panelChat.Focus();
         }
     }
 }
