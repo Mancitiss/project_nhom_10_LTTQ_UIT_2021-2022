@@ -95,6 +95,12 @@
     <Compile Include="CustomControls\CirclePictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\PanelChat.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\PanelChat.Designer.cs">
+      <DependentUpon>PanelChat.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormAddContact.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\CustomTextBox.resx">
       <DependentUpon>CustomTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\PanelChat.resx">
+      <DependentUpon>PanelChat.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormAddContact.resx">
       <DependentUpon>FormAddContact.cs</DependentUpon>

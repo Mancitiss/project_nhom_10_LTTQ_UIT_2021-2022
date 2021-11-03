@@ -140,6 +140,7 @@ namespace A_Friend
             this.MaximumSize = new System.Drawing.Size(392, 366);
             this.MinimumSize = new System.Drawing.Size(392, 366);
             this.Name = "FormAddContact";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormAddContact";
             this.ResumeLayout(false);
             this.PerformLayout();
