@@ -91,6 +91,7 @@ namespace A_Friend
                     client.Close();
                     return false;
                 }
+                FormApplication.currentID = user.id;
                 return true;
             } catch(Exception e)
             {
@@ -130,9 +131,45 @@ namespace A_Friend
                 data = data.Remove(0, 4);
                 if (instruction == "1901")
                 { // 1901 = message received
+                    Console.WriteLine("Data Received");
                     string sender = data.Substring(0, 19);
                     data = data.Remove(0, 19);
-                    Console.WriteLine("{0}: {1}", sender, data);
+                    //Console.WriteLine("{0}: {1}", sender, data);
+                    if (Program.mainform.Is_this_person_added(sender))
+                    {
+                        Program.mainform.panelChats[sender].AddMessage(data, true);
+                    } else
+                    {
+                        self.Send(Encoding.Unicode.GetBytes("0609" + sender));
+                        byte[] bytes_find = new Byte[self.ReceiveBufferSize];
+                        int numByte_find = self.Receive(bytes_find);
+                        Console.WriteLine("Messaged 2 Received");
+                        string data_found = Encoding.Unicode.GetString(bytes_find, 0, numByte_find);
+                        string instruction_found = data_found.Substring(0, 4);
+                        if (instruction_found == "1609")
+                        {
+                            data_found = data_found.Remove(0, 4);
+                            List<string> found = data_found.Split(' ').ToList<string>();
+                            Byte state;
+                            Console.WriteLine("I even reached here");
+                            if (Byte.TryParse(found[3], out state)) {
+                                Program.mainform.AddContact(new Account(found[1], found[2], found[0], state));
+                                Console.WriteLine("New Contact Added");
+                                Program.mainform.panelChats[sender].AddMessage(data, true);
+                                Console.WriteLine("Message Received");
+                            } else
+                            {
+                                Console.WriteLine("Data Corrupted");
+                            }
+                        }
+                        else if (instruction_found == "2609")
+                        {
+                            Console.WriteLine("No such account exists");
+                        } else
+                        {
+                            Console.WriteLine(data);
+                        }
+                    }
                 }
                 else
                 if (instruction == "0404") //0404 = error

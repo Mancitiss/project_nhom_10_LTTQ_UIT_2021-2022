@@ -191,6 +191,7 @@ namespace A_Friend
             this.ResetTexts();
             frm.Show();
             this.Hide();
+            Program.mainform = frm;
             Thread thread = new Thread(new ParameterizedThreadStart(AFriendClient.ExecuteClient));
             thread.IsBackground = true;
             thread.Start();

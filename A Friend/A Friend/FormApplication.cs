@@ -13,9 +13,9 @@ namespace A_Friend
     public partial class FormApplication : Form
     {
 
-        Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
+        public Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
         List<CustomControls.ContactItem> contactItems = new List<CustomControls.ContactItem>();
-
+        public static string currentID;
         public string currentUsername;
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
@@ -48,6 +48,7 @@ namespace A_Friend
             //AddContact("ThanhTu", "You: Now that date has arrived!", false);
             //AddContact("PhuongQuyen", "Now that date has arrived!", true);
             //AddContact("AnhPhong", "You: Just open a new terminal and run the following command ", false);
+            /*
             AddContact(new Account("DaiLoi", "Dai Loi", "1111", 1));
             AddContact(new Account("DangKhoa", "Dang Khoa", "2222", 2));
             AddContact(new Account("PhuongQuyen", "Phuong Quyen", "3333", 1));
@@ -57,7 +58,8 @@ namespace A_Friend
             AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
             AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
             AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
-            AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));           
+            AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));  
+            */
             this.ResumeLayout();
         }
 
@@ -141,6 +143,15 @@ namespace A_Friend
             return null;
         }
 
+        public bool Is_this_person_added(string ID)
+        {
+            if (panelChats.ContainsKey(ID))
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void showPanelChat(Account account)
         {
             var item = checkPanelChatExisted(account.id);
@@ -171,6 +182,7 @@ namespace A_Friend
                 }
             }
             item.Dock = DockStyle.Fill;
+            currentID = item.ID;
         }
 
         // state (0,1,2) => (offline, online, away)
@@ -210,7 +222,13 @@ namespace A_Friend
             {
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
-                AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
+                try
+                {
+                    AFriendClient.Send_to_id(AFriendClient.client, currentID, AFriendClient.user.id, textboxWriting.Texts);
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
         }
 
@@ -223,6 +241,13 @@ namespace A_Friend
                     AddMessage(textboxWriting.Texts.Trim(), false);
                     textboxWriting.Texts = "";                
                     textboxWriting.RemovePlaceHolder();
+                    try
+                    {
+                        AFriendClient.Send_to_id(AFriendClient.client, currentID, AFriendClient.user.id, textboxWriting.Texts);
+                    } catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
                 }
             }
         }
@@ -246,6 +271,7 @@ namespace A_Friend
             this.Hide();
             FormLogin lg = new FormLogin();
             lg.Show();
+            Program.mainform = null;
             try
             {
                 if (AFriendClient.user != null)
@@ -281,6 +307,7 @@ namespace A_Friend
 
         private void FormApplication_FormClosed(object sender, FormClosedEventArgs e)
         {
+            Program.mainform = null;
             Application.Exit();
         }
 

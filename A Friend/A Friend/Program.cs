@@ -9,6 +9,7 @@ namespace A_Friend
 {
     class Program
     {
+        public static FormApplication mainform;
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();
