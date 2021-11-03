@@ -13,7 +13,7 @@ namespace A_Friend
     public partial class FormApplication : Form
     {
 
-        List<CustomControls.PanelChat> panelChats = new List<CustomControls.PanelChat>();
+        Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
         List<CustomControls.ContactItem> contactItems = new List<CustomControls.ContactItem>();
 
         public string currentUsername;
@@ -134,12 +134,9 @@ namespace A_Friend
         }
         private CustomControls.PanelChat checkPanelChatExisted(string ID)
         {
-            foreach (CustomControls.PanelChat i in panelChats)
+            if (panelChats.ContainsKey(ID))
             {
-                if (i.ID == ID)
-                {
-                    return i;
-                }
+                return panelChats[ID];
             }
             return null;
         }
@@ -150,7 +147,7 @@ namespace A_Friend
             if (item == null)
             {
                 item = new CustomControls.PanelChat(account);
-                panelChats.Add(item);
+                panelChats.Add(item.ID, item);
             }
 
             if (panelRight.Controls.Count == 0)
