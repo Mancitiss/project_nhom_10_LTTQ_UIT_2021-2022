@@ -10,6 +10,6 @@ namespace A_Friend
     {
         public string username;
         public string id;
-        public string state;
+        public byte state;
     }
 }

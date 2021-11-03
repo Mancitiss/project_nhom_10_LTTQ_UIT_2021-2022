@@ -54,7 +54,7 @@ namespace A_Friend
         }
         private bool isFriend()
         {
-            //Check new username in list friends
+            //Check new username in friend list
             return true;
         }
     }

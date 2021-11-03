@@ -153,6 +153,16 @@ namespace A_Friend
             this.Hide();
             FormLogin lg = new FormLogin();
             lg.Show();
+            try
+            {
+                if (AFriendClient.user != null)
+                {
+                    AFriendClient.user.state = 0;
+                }
+            } catch (Exception ex)
+            {
+                AFriendClient.user = null;
+            }
         }
 
         private void SettingButton_Click(object sender, EventArgs e)
