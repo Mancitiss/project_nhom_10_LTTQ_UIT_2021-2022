@@ -61,7 +61,7 @@ namespace A_Friend
             this.ResumeLayout();
             notifyIconApp.BalloonTipTitle = "Notify";
             notifyIconApp.BalloonTipText = "Apps running in the background";
-            notifyIconApp.Text = "Messenger";
+            notifyIconApp.Text = "AppChat";
         }
 
         private void InitializeSubPanels()
@@ -282,11 +282,6 @@ namespace A_Friend
             return true;
         }
 
-        private void FormApplication_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Application.Exit();
-        }
-
         private void customTextBoxSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -369,24 +364,25 @@ namespace A_Friend
             notifyIconApp.Visible = false;
             WindowState = FormWindowState.Normal;
         }
-
-        private void FormApplication_Resize(object sender, EventArgs e)
+        private void closeMessengerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(WindowState == FormWindowState.Minimized)
+            System.Environment.Exit(1);
+            notifyIconApp.Icon = null;
+        }
+
+        private void FormApplication_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (WindowState == FormWindowState.Normal)
             {
-                this.Hide();
+                e.Cancel = true;
+                ((Control)sender).Hide();
                 notifyIconApp.Visible = true;
-                notifyIconApp.ShowBalloonTip(5000);
+                notifyIconApp.ShowBalloonTip(1000);
             }
-            else if(FormWindowState.Normal == this.WindowState)
+            else if (FormWindowState.Normal == this.WindowState)
             {
                 notifyIconApp.Visible = false;
             }
-        }
-
-        private void closeMessengerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }
