@@ -55,7 +55,7 @@ namespace A_Friend.CustomControls
             this.panelTopRight.Location = new System.Drawing.Point(0, 0);
             this.panelTopRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelTopRight.Name = "panelTopRight";
-            this.panelTopRight.Size = new System.Drawing.Size(912, 80);
+            this.panelTopRight.Size = new System.Drawing.Size(912, 60);
             this.panelTopRight.TabIndex = 1;
             this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
             // 
@@ -64,9 +64,9 @@ namespace A_Friend.CustomControls
             this.labelFriendName.AutoSize = true;
             this.labelFriendName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelFriendName.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.labelFriendName.Location = new System.Drawing.Point(89, 21);
+            this.labelFriendName.Location = new System.Drawing.Point(72, 10);
             this.labelFriendName.Name = "labelFriendName";
-            this.labelFriendName.Size = new System.Drawing.Size(102, 25);
+            this.labelFriendName.Size = new System.Drawing.Size(83, 20);
             this.labelFriendName.TabIndex = 6;
             this.labelFriendName.Text = "Username";
             // 
@@ -75,7 +75,7 @@ namespace A_Friend.CustomControls
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(17, 25);
+            this.label3.Size = new System.Drawing.Size(13, 20);
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
@@ -87,9 +87,9 @@ namespace A_Friend.CustomControls
             this.friendPicture.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             this.friendPicture.BorderSize = 0;
             this.friendPicture.GradientAngle = 50F;
-            this.friendPicture.Location = new System.Drawing.Point(10, 10);
+            this.friendPicture.Location = new System.Drawing.Point(18, 7);
             this.friendPicture.Name = "friendPicture";
-            this.friendPicture.Size = new System.Drawing.Size(60, 60);
+            this.friendPicture.Size = new System.Drawing.Size(45, 45);
             this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.friendPicture.TabIndex = 1;
             this.friendPicture.TabStop = false;
@@ -106,7 +106,7 @@ namespace A_Friend.CustomControls
             this.buttonDelete.FlatAppearance.BorderSize = 0;
             this.buttonDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonDelete.ForeColor = System.Drawing.Color.White;
-            this.buttonDelete.Location = new System.Drawing.Point(860, 21);
+            this.buttonDelete.Location = new System.Drawing.Point(860, 10);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(40, 40);
             this.buttonDelete.TabIndex = 0;
@@ -119,12 +119,14 @@ namespace A_Friend.CustomControls
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_Chat.AutoScroll = true;
             this.panel_Chat.BackColor = System.Drawing.SystemColors.Control;
-            this.panel_Chat.Location = new System.Drawing.Point(0, 80);
+            this.panel_Chat.Location = new System.Drawing.Point(0, 60);
             this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
             this.panel_Chat.Name = "panel_Chat";
-            this.panel_Chat.Size = new System.Drawing.Size(912, 572);
+            this.panel_Chat.Size = new System.Drawing.Size(912, 592);
             this.panel_Chat.TabIndex = 2;
             this.panel_Chat.Click += new System.EventHandler(this.panel_Chat_Click);
+            this.panel_Chat.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlAdded);
+            this.panel_Chat.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlRemoved);
             // 
             // panelBottomRight
             // 
@@ -154,7 +156,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -179,10 +181,11 @@ namespace A_Friend.CustomControls
             this.buttonSend.Size = new System.Drawing.Size(40, 40);
             this.buttonSend.TabIndex = 0;
             this.buttonSend.UseVisualStyleBackColor = false;
+            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
             // PanelChat
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panelBottomRight);
             this.Controls.Add(this.panel_Chat);

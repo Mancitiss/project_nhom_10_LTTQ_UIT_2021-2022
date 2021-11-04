@@ -30,6 +30,7 @@ namespace A_Friend.CustomControls
             this.DoubleBuffered = true;
             this.Name = "panelChat_" + account.id;
             labelFriendName.Text = account.name;
+            textboxWriting.PlaceholderText = "to " + account.name;
             this.id = account.id;
             State = account.state;
         }
@@ -54,21 +55,23 @@ namespace A_Friend.CustomControls
                     if (state == 0)
                     {
                         stateColor = Color.Gainsboro;
+                        panelTopRight.Invalidate();
                     }
                     else if (state == 1)
                     {
-                        stateColor = Color.Green;
+                        stateColor = Color.SpringGreen;
+                        panelTopRight.Invalidate();
                     }
                     else
                     {
                         stateColor = Color.Red;
+                        panelTopRight.Invalidate();
                     }
                     this.Invalidate();
                 }
             }
         }
-
-
+        
         public void AddMessage(string message, bool stacktoleft)
         {
             panel_Chat.SuspendLayout();
@@ -99,9 +102,9 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts))
             {
-                AddMessage(textboxWriting.Texts, false);
+                AddMessage(textboxWriting.Texts, true);
                 textboxWriting.Texts = "";
-                AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
+                //AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
             }
         }
 
@@ -119,7 +122,7 @@ namespace A_Friend.CustomControls
             panel_Chat.Focus();
         }
 
-        private void LoadMessage()
+        public void LoadMessage()
         {
             AddMessage("Chào bạn", true);
             AddMessage("Chào", false);
@@ -129,7 +132,44 @@ namespace A_Friend.CustomControls
 
         private void PanelChat_Load(object sender, EventArgs e)
         {
-            LoadMessage();
+            //LoadMessage();
+            textboxWriting.Focus();
+            this.ActiveControl = textboxWriting;
+        }
+
+        public string GetLastMessage()
+        {
+            if (panel_Chat.Controls.Count == 0)
+                return "";
+            ChatItem2 message = panel_Chat.Controls[panel_Chat.Controls.Count - 1] as ChatItem2;
+            return message.Texts; 
+        }
+        public string GetFirstMessage()
+        {
+            if (panel_Chat.Controls.Count == 0)
+                return "";
+            ChatItem2 message = panel_Chat.Controls[0] as ChatItem2;
+            return message.Texts; 
+        }
+
+        public bool IsLastMessageFromYou()
+        {
+            if (panel_Chat.Controls.Count == 0)
+                return true;
+            ChatItem2 message = panel_Chat.Controls[panel_Chat.Controls.Count - 1] as ChatItem2;
+            if (message.StackToLeft)
+                return false;
+            return true;
+        }
+
+        private void panel_Chat_ControlAdded(object sender, ControlEventArgs e)
+        {
+            this.OnControlAdded(e);
+        }
+
+        private void panel_Chat_ControlRemoved(object sender, ControlEventArgs e)
+        {
+            this.OnControlRemoved(e);
         }
     }
 }
