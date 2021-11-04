@@ -12,7 +12,10 @@ namespace A_Friend
 {
     public partial class FormApplication : Form
     {
-
+        public delegate void AddContactItem(Account acc);
+        public AddContactItem addContactItemDelegate;
+        public delegate void AddMessageItem(string str, bool left);
+        public AddMessageItem addMessageItemDelegate;
         public Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
         List<CustomControls.ContactItem> contactItems = new List<CustomControls.ContactItem>();
         public static string currentID;
@@ -31,6 +34,8 @@ namespace A_Friend
             System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
             System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer, true);
             InitializeSubPanels();
+            addContactItemDelegate = new AddContactItem(AddContact);
+            addMessageItemDelegate = new AddMessageItem(AddMessage);
         }
 
         private void FormApplication_Load(object sender, EventArgs e)
@@ -106,33 +111,49 @@ namespace A_Friend
 
         public void AddContact(Account account)
         {
-            panelContact.SuspendLayout();
-            var contactItem = new CustomControls.ContactItem(account);
-            contactItem.Dock = DockStyle.Top;
-            contactItem.BackColor = panelContact.BackColor;
-            panelContact.Controls.Add(contactItem);
-            //contactItem.BringToFront();
-            panelContact.ResumeLayout();
+            if (!panelChats.ContainsKey(account.id))
+            {
+                panelContact.SuspendLayout();
+                var contactItem = new CustomControls.ContactItem(account);
+                contactItem.Dock = DockStyle.Top;
+                contactItem.BackColor = panelContact.BackColor;
+                panelContact.Controls.Add(contactItem);
+                //contactItem.BringToFront();
+                panelContact.ResumeLayout();
 
-            panelContact.ScrollControlIntoView(contactItem);
-            contactItem.Click += delegate
+                panelContact.ScrollControlIntoView(contactItem);
+                contactItem.Click += delegate
+                {
+                    showPanelChat(account);
+                    if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
+                    {
+                        check = false;
+                        customTextBoxSearch.Texts = "";
+                        customTextBoxSearch.SetPlaceHolder();
+                        panelContact.Controls.Clear();
+                        foreach (CustomControls.ContactItem i in contactItems)
+                        {
+                            panelContact.Controls.Add(i);
+                        }
+                        panelContact.BringToFront();
+                        check = true;
+                    }
+                };
+                contactItems.Add(contactItem);
+                panelChats.Add(account.id, new CustomControls.PanelChat(account));
+                MessageBox.Show("Added Successfully!");
+            } else
+            {
+                Console.WriteLine("This User is already added to the list");
+                MessageBox.Show("This username is already added!");
+            }
+            if (account.id == AFriendClient.user.id)
             {
                 showPanelChat(account);
-                if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
-                {
-                    check = false;
-                    customTextBoxSearch.Texts = "";
-                    customTextBoxSearch.SetPlaceHolder();
-                    panelContact.Controls.Clear();
-                    foreach (CustomControls.ContactItem i in contactItems)
-                    {
-                        panelContact.Controls.Add(i);
-                    }
-                    panelContact.BringToFront();
-                    check = true;
-                }
-            };
-            contactItems.Add(contactItem);
+                Console.WriteLine("Shown");
+            }
+            Console.WriteLine("user id:" + AFriendClient.user.id);
+            Console.WriteLine("this id:" + account.id);
         }
         private CustomControls.PanelChat checkPanelChatExisted(string ID)
         {
@@ -220,11 +241,12 @@ namespace A_Friend
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts))
             {
-                AddMessage(textboxWriting.Texts, false);
-                textboxWriting.Texts = "";
                 try
                 {
                     AFriendClient.Send_to_id(AFriendClient.client, currentID, AFriendClient.user.id, textboxWriting.Texts);
+                    AddMessage(textboxWriting.Texts, false);
+                    textboxWriting.Texts = "";
+                    textboxWriting.RemovePlaceHolder();
                 } catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
@@ -238,12 +260,12 @@ namespace A_Friend
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
-                    AddMessage(textboxWriting.Texts.Trim(), false);
-                    textboxWriting.Texts = "";                
-                    textboxWriting.RemovePlaceHolder();
                     try
                     {
                         AFriendClient.Send_to_id(AFriendClient.client, currentID, AFriendClient.user.id, textboxWriting.Texts);
+                        AddMessage(textboxWriting.Texts, false);
+                        textboxWriting.Texts = "";
+                        textboxWriting.RemovePlaceHolder();
                     } catch (Exception ex)
                     {
                         Console.WriteLine(ex.ToString());

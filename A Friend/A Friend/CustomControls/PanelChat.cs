@@ -18,9 +18,14 @@ namespace A_Friend.CustomControls
         byte state;
         Color stateColor = Color.Gainsboro;
 
+        public delegate void AddMessageItem(string str, bool left);
+        public AddMessageItem AddMessageDelegate;
+
         public PanelChat()
         {
             InitializeComponent();
+            AddMessageDelegate = new AddMessageItem(AddMessage);
+            this.CreateControl();
         }
 
         public PanelChat(Account account)
@@ -32,6 +37,10 @@ namespace A_Friend.CustomControls
             labelFriendName.Text = account.name;
             this.id = account.id;
             State = account.state;
+            AddMessageDelegate = new AddMessageItem(AddMessage);
+            this.CreateControl();
+            Console.WriteLine("Handler created");
+            Console.WriteLine(this.id);
         }
 
         public string ID
@@ -80,6 +89,7 @@ namespace A_Friend.CustomControls
             chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
+
         }
 
         private void textboxWriting_KeyDown(object sender, KeyEventArgs e)
@@ -88,9 +98,11 @@ namespace A_Friend.CustomControls
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
-                    AddMessage(textboxWriting.Texts.Trim(), false);
+                    AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                    AddMessage(textboxWriting.Texts, false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
+                    Console.WriteLine("Wrote");
                 }
             }
         }
@@ -99,9 +111,11 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts))
             {
+                AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
-                AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
+                textboxWriting.RemovePlaceHolder();
+                Console.WriteLine("Wrote");
             }
         }
 

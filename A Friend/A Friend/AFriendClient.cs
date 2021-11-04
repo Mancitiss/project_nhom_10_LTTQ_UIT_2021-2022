@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace A_Friend
@@ -17,8 +18,11 @@ namespace A_Friend
         public static Socket client;
         public static Account user;
 
+        private static FormApplication UIForm;
+
         public static void ExecuteClient(object obj)
         {
+            UIForm = Program.mainform;
             try
             {
                 //Send_to_id(client, "0000000000000000002", "0000000000000000001", "alo"); How to send message
@@ -49,7 +53,9 @@ namespace A_Friend
                                 else
                                 {
                                     // There is data waiting to be read"
-                                    Receive_from_id(client);
+                                    Thread work = new Thread(new ParameterizedThreadStart(Receive_from_id));
+                                    work.IsBackground = true;
+                                    work.Start(client);
                                 }
                             }
                         }
@@ -120,8 +126,9 @@ namespace A_Friend
             }
         }
 
-        private static void Receive_from_id(Socket self)
+        private static void Receive_from_id(object obj)
         {
+            Socket self = (Socket)obj;
             byte[] bytes = new Byte[self.ReceiveBufferSize];
             int numByte = self.Receive(bytes);
             string data = Encoding.Unicode.GetString(bytes, 0, numByte);
@@ -134,42 +141,44 @@ namespace A_Friend
                     Console.WriteLine("Data Received");
                     string sender = data.Substring(0, 19);
                     data = data.Remove(0, 19);
-                    //Console.WriteLine("{0}: {1}", sender, data);
+                    Console.WriteLine("{0}: {1}", sender, data);
                     if (Program.mainform.Is_this_person_added(sender))
                     {
-                        Program.mainform.panelChats[sender].AddMessage(data, true);
+                        UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { data, true });
+                        Console.WriteLine("data added");
+                        Console.WriteLine(data);
                     } else
                     {
+                        Console.WriteLine("Ask for info");
                         self.Send(Encoding.Unicode.GetBytes("0609" + sender));
-                        byte[] bytes_find = new Byte[self.ReceiveBufferSize];
-                        int numByte_find = self.Receive(bytes_find);
-                        Console.WriteLine("Messaged 2 Received");
-                        string data_found = Encoding.Unicode.GetString(bytes_find, 0, numByte_find);
-                        string instruction_found = data_found.Substring(0, 4);
-                        if (instruction_found == "1609")
-                        {
-                            data_found = data_found.Remove(0, 4);
-                            List<string> found = data_found.Split(' ').ToList<string>();
-                            Byte state;
-                            Console.WriteLine("I even reached here");
-                            if (Byte.TryParse(found[3], out state)) {
-                                Program.mainform.AddContact(new Account(found[1], found[2], found[0], state));
-                                Console.WriteLine("New Contact Added");
-                                Program.mainform.panelChats[sender].AddMessage(data, true);
-                                Console.WriteLine("Message Received");
-                            } else
-                            {
-                                Console.WriteLine("Data Corrupted");
-                            }
-                        }
-                        else if (instruction_found == "2609")
-                        {
-                            Console.WriteLine("No such account exists");
-                        } else
-                        {
-                            Console.WriteLine(data);
-                        }
                     }
+                }
+                else 
+                if(instruction == "1609")
+                {
+                    string data_found = data;
+                    List<string> found = data_found.Split(' ').ToList<string>();
+                    Console.WriteLine(found[0] + found[1] + found[2] + found[3]);
+                    Byte state;
+                    Console.WriteLine("I even reached here");
+                    if (Byte.TryParse(found[3], out state))
+                    {
+                        UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], found[2], found[0], state) });
+                        Console.WriteLine("New Contact Added");
+                        /*
+                        UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
+                        Console.WriteLine("Message Received");*/
+                    }
+                    else
+                    {
+                        Console.WriteLine("Data Corrupted");
+                        System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
+                    }
+                }
+                else 
+                if (instruction == "2609")
+                {
+                    Console.WriteLine("No such account exists");
                 }
                 else
                 if (instruction == "0404") //0404 = error
