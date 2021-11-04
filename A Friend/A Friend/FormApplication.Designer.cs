@@ -44,6 +44,7 @@ namespace A_Friend
             this.panelRight = new System.Windows.Forms.Panel();
             this.panelTopRight = new System.Windows.Forms.Panel();
             this.labelUsername = new System.Windows.Forms.Label();
+            this.notifyIconApp = new System.Windows.Forms.NotifyIcon(this.components);
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.rjCircularPictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
@@ -52,6 +53,8 @@ namespace A_Friend
             this.SettingButton = new A_Friend.CustomControls.CustomButton();
             this.LogoutButton = new A_Friend.CustomControls.CustomButton();
             this.customTextBoxSearch = new A_Friend.CustomControls.CustomTextBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.closeMessengerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLeft.SuspendLayout();
             this.panelBottomLeft.SuspendLayout();
             this.panelTopLeft.SuspendLayout();
@@ -59,6 +62,7 @@ namespace A_Friend
             this.panelRight.SuspendLayout();
             this.panelTopRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolTip_DeleteC
@@ -141,7 +145,7 @@ namespace A_Friend
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
             this.labelWarning.Location = new System.Drawing.Point(66, 62);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(188, 20);
+            this.labelWarning.Size = new System.Drawing.Size(158, 17);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "This user does not exist";
             // 
@@ -206,9 +210,16 @@ namespace A_Friend
             this.labelUsername.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.labelUsername.Location = new System.Drawing.Point(72, 21);
             this.labelUsername.Name = "labelUsername";
-            this.labelUsername.Size = new System.Drawing.Size(102, 25);
+            this.labelUsername.Size = new System.Drawing.Size(83, 20);
             this.labelUsername.TabIndex = 6;
             this.labelUsername.Text = "Username";
+            // 
+            // notifyIconApp
+            // 
+            this.notifyIconApp.ContextMenuStrip = this.contextMenuStrip1;
+            this.notifyIconApp.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconApp.Icon")));
+            this.notifyIconApp.Text = "notifyIcon1";
+            this.notifyIconApp.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIconApp_MouseDoubleClick);
             // 
             // textboxWriting
             // 
@@ -227,7 +238,7 @@ namespace A_Friend
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -358,16 +369,33 @@ namespace A_Friend
             this.customTextBoxSearch.PasswordChar = false;
             this.customTextBoxSearch.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.customTextBoxSearch.PlaceholderText = "Search";
-            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 42);
+            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 38);
             this.customTextBoxSearch.TabIndex = 0;
             this.customTextBoxSearch.Texts = "";
             this.customTextBoxSearch.UnderlinedStyle = false;
             this.customTextBoxSearch._TextChanged += new System.EventHandler(this.customTextBoxSearch__TextChanged);
             this.customTextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBoxSearch_KeyDown);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.BackColor = System.Drawing.SystemColors.Control;
+            this.contextMenuStrip1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeMessengerToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            // 
+            // closeMessengerToolStripMenuItem
+            // 
+            this.closeMessengerToolStripMenuItem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.closeMessengerToolStripMenuItem.Name = "closeMessengerToolStripMenuItem";
+            this.closeMessengerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeMessengerToolStripMenuItem.Text = "Close Messenger";
+            this.closeMessengerToolStripMenuItem.Click += new System.EventHandler(this.closeMessengerToolStripMenuItem_Click);
+            // 
             // FormApplication
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1215, 712);
             this.Controls.Add(this.panelRight);
@@ -380,6 +408,7 @@ namespace A_Friend
             this.Text = "FormApplication";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormApplication_FormClosed);
             this.Load += new System.EventHandler(this.FormApplication_Load);
+            this.Resize += new System.EventHandler(this.FormApplication_Resize);
             this.panelLeft.ResumeLayout(false);
             this.panelBottomLeft.ResumeLayout(false);
             this.panelTopLeft.ResumeLayout(false);
@@ -389,6 +418,7 @@ namespace A_Friend
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rjCircularPictureBox1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -415,5 +445,8 @@ namespace A_Friend
         private System.Windows.Forms.Label labelUsername;
         private CustomControls.CirclePictureBox rjCircularPictureBox1;
         private CustomControls.CustomButton buttonDelete;
+        private System.Windows.Forms.NotifyIcon notifyIconApp;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem closeMessengerToolStripMenuItem;
     }
 }

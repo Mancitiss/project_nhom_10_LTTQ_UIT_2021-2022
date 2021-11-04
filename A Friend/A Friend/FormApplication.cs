@@ -59,6 +59,9 @@ namespace A_Friend
             AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
             AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));           
             this.ResumeLayout();
+            notifyIconApp.BalloonTipTitle = "Notify";
+            notifyIconApp.BalloonTipText = "Apps running in the background";
+            notifyIconApp.Text = "Messenger";
         }
 
         private void InitializeSubPanels()
@@ -358,6 +361,32 @@ namespace A_Friend
         private void panelChat_Click(object sender, EventArgs e)
         {
             panelChat.Focus();
+        }
+
+        private void notifyIconApp_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            notifyIconApp.Visible = false;
+            WindowState = FormWindowState.Normal;
+        }
+
+        private void FormApplication_Resize(object sender, EventArgs e)
+        {
+            if(WindowState == FormWindowState.Minimized)
+            {
+                this.Hide();
+                notifyIconApp.Visible = true;
+                notifyIconApp.ShowBalloonTip(5000);
+            }
+            else if(FormWindowState.Normal == this.WindowState)
+            {
+                notifyIconApp.Visible = false;
+            }
+        }
+
+        private void closeMessengerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
