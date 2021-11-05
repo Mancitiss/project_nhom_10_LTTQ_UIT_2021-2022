@@ -95,6 +95,8 @@ namespace A_Friend
 
         private void Login()
         {
+            timerDisconnect.Enabled = true;
+            timerDisconnect.Start();
             if (this.EmptyTextBoxes())
             {
                 if (EmptyTextBoxes())
@@ -196,6 +198,15 @@ namespace A_Friend
             Thread thread = new Thread(new ParameterizedThreadStart(AFriendClient.ExecuteClient));
             thread.IsBackground = true;
             thread.Start();
+        }
+        private void timerDisconnect_Tick(object sender, EventArgs e)
+        {
+            timerDisconnect.Stop();
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
+            {
+                AFriendClient.client.Close();
+                labelWarning.Text = "Cannot connect to the server";
+            }
         }
     }
 }

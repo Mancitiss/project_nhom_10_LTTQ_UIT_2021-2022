@@ -72,7 +72,8 @@ namespace A_Friend
 
         private void SignUp()
         {
-
+            timerDisconnect.Enabled = true;
+            timerDisconnect.Start();
             if (EmptyTextBoxes())
             {
                 labelWarning.Text = "Something is missing?";
@@ -238,6 +239,15 @@ namespace A_Friend
         {
             timerClosing.Stop();
             this.Close();
+        }
+        private void timerDisconnect_Tick(object sender, EventArgs e)
+        {
+            timerDisconnect.Stop();
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
+            {
+                AFriendClient.client.Close();
+                labelWarning.Text = "Cannot connect to the server";
+            }
         }
     }
 }
