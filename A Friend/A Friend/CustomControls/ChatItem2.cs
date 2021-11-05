@@ -22,6 +22,7 @@ namespace A_Friend.CustomControls
             InitializeComponent();
 
             labelBody.Text = text;
+            StackToLeft = stacktoleft;
             labelBody.MaximumSize = new Size(this.Width - 200 - 2 * labelBody.Left, int.MaxValue);
             panelBody.MaximumSize = new Size(this.Width - 200, int.MaxValue);
             buttonCopy.BackColor = this.BackColor;
@@ -48,6 +49,16 @@ namespace A_Friend.CustomControls
             this.MouseEnter += delegate { ShowButtons(); };
             this.MouseLeave += delegate { HideButtons(); };
         }
+
+        public string Texts
+        {
+            get
+            {
+                return labelBody.Text;
+            }
+        }
+
+        public bool StackToLeft { get; set; }
 
         public void ResizeBubbles()
         {
