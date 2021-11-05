@@ -12,6 +12,8 @@ namespace A_Friend
 {
     public partial class FormApplication : Form
     {
+        public A_Friend.CustomControls.PanelChat currentpanelchat;
+
         public delegate void AddContactItem(Account acc);
         public AddContactItem addContactItemDelegate;
         public delegate void AddMessageItem(string str, bool left);
@@ -67,6 +69,9 @@ namespace A_Friend
 
             ShowPanelChat(panelChats.Keys.Last());
             this.ResumeLayout();
+            notifyIconApp.BalloonTipTitle = "Notify";
+            notifyIconApp.BalloonTipText = "Apps running in the background";
+            notifyIconApp.Text = "AppChat";
         }
 
         private void InitializeSubPanels()
@@ -83,6 +88,15 @@ namespace A_Friend
             this.panelContact2.BackColor = panelContact.BackColor;
             this.panelContact2.Location = panelContact.Location;
             this.panelContact2.Size = panelContact.Size;
+        }
+
+        private void buttonSend_Click(object sender, EventArgs e)
+        {
+            currentpanelchat.buttonSend_Click(sender, e);
+        }
+        private void textboxWriting_KeyDown(object sender, KeyEventArgs e)
+        {
+            currentpanelchat.textboxWriting_KeyDown(sender, e);
         }
 
         public void AddContact(Account account)
@@ -172,6 +186,7 @@ namespace A_Friend
             }
             item.Dock = DockStyle.Fill;
             currentID = item.ID;
+            currentpanelchat = item;
         }
 
         // state (0,1,2) => (offline, online, away)
@@ -230,6 +245,29 @@ namespace A_Friend
             Application.Exit();
         }
 
+        private bool UsernameCheck()
+        {
+            //Check username in list friends
+            return true;
+        }
+        private void customTextBoxSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (customTextBoxSearch.Text == "")
+                {
+                    labelWarning.Text = "Please enter a username";
+                }
+                else
+                {
+                    if (!UsernameCheck())
+                        labelWarning.Text = "This user does not exist";
+                    else
+                        labelUsername.Text = customTextBoxSearch.Texts;
+                    //Load chat history from database
+                }
+            }
+        }
         private void customTextBoxSearch__TextChanged(object sender, EventArgs e)
         {
             if (check)
@@ -287,6 +325,33 @@ namespace A_Friend
         internal bool Is_this_person_added(string id)
         {
             return contactItems.ContainsKey(id);
+        }
+
+        private void notifyIconApp_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            notifyIconApp.Visible = false;
+            WindowState = FormWindowState.Normal;
+        }
+        private void closeMessengerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Environment.Exit(1);
+            notifyIconApp.Icon = null;
+        }
+
+        private void FormApplication_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (WindowState == FormWindowState.Normal)
+            {
+                e.Cancel = true;
+                ((Control)sender).Hide();
+                notifyIconApp.Visible = true;
+                notifyIconApp.ShowBalloonTip(1000);
+            }
+            else if (FormWindowState.Normal == this.WindowState)
+            {
+                notifyIconApp.Visible = false;
+            }
         }
     }
 }

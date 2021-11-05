@@ -20,11 +20,16 @@ namespace A_Friend.CustomControls
 
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem AddMessageDelegate;
+        /*
+        public delegate void ButtonSend_Click(object sender, EventArgs e);
+        public ButtonSend_Click ButtonSend_Click_Delegate;
+        */
 
         public PanelChat()
         {
             InitializeComponent();
             AddMessageDelegate = new AddMessageItem(AddMessage);
+            //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             this.CreateControl();
         }
 
@@ -39,6 +44,7 @@ namespace A_Friend.CustomControls
             this.id = account.id;
             State = account.state;
             AddMessageDelegate = new AddMessageItem(AddMessage);
+            //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             this.CreateControl();
             Console.WriteLine("Handler created");
             Console.WriteLine(this.id);
@@ -95,7 +101,7 @@ namespace A_Friend.CustomControls
 
         }
 
-        private void textboxWriting_KeyDown(object sender, KeyEventArgs e)
+        public void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -110,7 +116,7 @@ namespace A_Friend.CustomControls
             }
         }
 
-        private void buttonSend_Click(object sender, EventArgs e)
+        public void buttonSend_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts))
             {
