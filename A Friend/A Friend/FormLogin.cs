@@ -59,7 +59,8 @@ namespace A_Friend
 
         private void buttonExit_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            //Application.Exit();
+            Environment.Exit(0);
         }
 
         private void buttonLogIn_Click(object sender, EventArgs e)
@@ -186,7 +187,7 @@ namespace A_Friend
             timerClosing.Stop();
             var frm = new FormApplication();
             frm.Location = this.Location;
-            frm.StartPosition = FormStartPosition.Manual;
+            frm.StartPosition = FormStartPosition.CenterScreen;
             //frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
             this.ResetTexts();
             frm.Show();

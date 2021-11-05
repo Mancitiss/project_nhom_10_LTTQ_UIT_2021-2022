@@ -218,7 +218,7 @@ namespace A_Friend
                 {
                     AFriendClient.user.state = 0;
                 }
-            } catch (Exception ex)
+            } catch /*(Exception ex)*/
             {
                 AFriendClient.user = null;
             }
