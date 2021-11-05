@@ -45,8 +45,8 @@ namespace A_Friend
             this.LogoutButton = new A_Friend.CustomControls.CustomButton();
             this.panelContact = new System.Windows.Forms.Panel();
             this.panelTopLeft = new System.Windows.Forms.Panel();
-            this.labelWarning = new System.Windows.Forms.Label();
             this.customTextBoxSearch = new A_Friend.CustomControls.CustomTextBox();
+            this.labelWarning = new System.Windows.Forms.Label();
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.panelChat = new System.Windows.Forms.Panel();
@@ -217,6 +217,29 @@ namespace A_Friend
             // 
             // customTextBoxSearch
             // 
+            this.customTextBoxSearch.BackColor = System.Drawing.SystemColors.Window;
+            this.customTextBoxSearch.BorderColor = System.Drawing.SystemColors.Window;
+            this.customTextBoxSearch.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.customTextBoxSearch.BorderRadius = 20;
+            this.customTextBoxSearch.BorderSize = 2;
+            this.customTextBoxSearch.Cursor = System.Windows.Forms.Cursors.Default;
+            this.customTextBoxSearch.Location = new System.Drawing.Point(13, 7);
+            this.customTextBoxSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.customTextBoxSearch.Multiline = false;
+            this.customTextBoxSearch.Name = "customTextBoxSearch";
+            this.customTextBoxSearch.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
+            this.customTextBoxSearch.PasswordChar = false;
+            this.customTextBoxSearch.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.customTextBoxSearch.PlaceholderText = "Search";
+            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 45);
+            this.customTextBoxSearch.TabIndex = 0;
+            this.customTextBoxSearch.Texts = "";
+            this.customTextBoxSearch.UnderlinedStyle = false;
+            this.customTextBoxSearch._TextChanged += new System.EventHandler(this.customTextBoxSearch__TextChanged);
+            this.customTextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBoxSearch_KeyDown);
+            // 
+            // labelWarning
+            // 
             this.labelWarning.AutoSize = true;
             this.labelWarning.BackColor = System.Drawing.Color.Transparent;
             this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
@@ -226,29 +249,6 @@ namespace A_Friend
             this.labelWarning.Size = new System.Drawing.Size(158, 17);
             this.labelWarning.TabIndex = 0;
             this.labelWarning.Text = "This user does not exist";
-            // 
-            // customTextBoxSearch
-            // 
-            this.customTextBoxSearch.BackColor = System.Drawing.SystemColors.Window;
-            this.customTextBoxSearch.BorderColor = System.Drawing.SystemColors.Window;
-            this.customTextBoxSearch.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.customTextBoxSearch.BorderRadius = 20;
-            this.customTextBoxSearch.BorderSize = 2;
-            this.customTextBoxSearch.Cursor = System.Windows.Forms.Cursors.Default;
-            this.customTextBoxSearch.Location = new System.Drawing.Point(13, 17);
-            this.customTextBoxSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.customTextBoxSearch.Multiline = false;
-            this.customTextBoxSearch.Name = "customTextBoxSearch";
-            this.customTextBoxSearch.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
-            this.customTextBoxSearch.PasswordChar = false;
-            this.customTextBoxSearch.PlaceholderColor = System.Drawing.Color.DarkGray;
-            this.customTextBoxSearch.PlaceholderText = "Search";
-            this.customTextBoxSearch.Size = new System.Drawing.Size(271, 38);
-            this.customTextBoxSearch.TabIndex = 0;
-            this.customTextBoxSearch.Texts = "";
-            this.customTextBoxSearch.UnderlinedStyle = false;
-            this.customTextBoxSearch._TextChanged += new System.EventHandler(this.customTextBoxSearch__TextChanged);
-            this.customTextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBoxSearch_KeyDown);
             // 
             // panelBottomRight
             // 
@@ -383,13 +383,13 @@ namespace A_Friend
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.closeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(115, 28);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(114, 24);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeMessengerToolStripMenuItem_Click);
             // 

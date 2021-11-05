@@ -187,7 +187,7 @@ namespace A_Friend
             var frm = new FormApplication();
             frm.Location = this.Location;
             frm.StartPosition = FormStartPosition.Manual;
-            frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
+            //frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
             this.ResetTexts();
             frm.Show();
             this.Hide();

@@ -103,6 +103,7 @@ namespace A_Friend.CustomControls
 
         public void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
+            textboxWriting.Select();
             if (e.KeyCode == Keys.Enter)
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
