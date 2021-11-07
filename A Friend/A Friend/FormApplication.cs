@@ -22,6 +22,7 @@ namespace A_Friend
         public static string currentID;
 
         Dictionary<string, CustomControls.ContactItem> contactItems = new Dictionary<string, CustomControls.ContactItem>();
+        SortedDictionary<int, string> orderOfContactItems = new SortedDictionary<int, string>();
 
         public string currentUsername;
         private Panel panelRight2 = new Panel();
@@ -44,18 +45,6 @@ namespace A_Friend
         private void FormApplication_Load(object sender, EventArgs e)
         {
             this.SuspendLayout();
-            // Add some sample ContactItems
-            //AddContact("DaiKhoa", "You can differentiate between builds clearly", true);
-            //AddContact("ThanhPhong", "You: If you don’t have Microsoft Edge (dev or beta) installed ", false);
-            //AddContact("AnhQuyen", "Linux Mint, and other Ubuntu-based distros walks though the steps needed to add the Microsoft Linux repo", false);
-            //AddContact("DangTu", "So why use Edge?", true);
-            //AddContact("PhuongLoi", "Honestly, nothing Microsoft can do will ever be universally loved by Linux users. ", false);
-            //AddContact("AnhKhoa", "If you’re a fan of Edge", true);
-            //AddContact("DaiLoi", "You: hello", false);
-            //AddContact("DangKhoa", "You: Microsoft Edge for Linux has reached stable status after spending more than a year in development.", true);
-            //AddContact("ThanhTu", "You: Now that date has arrived!", false);
-            //AddContact("PhuongQuyen", "Now that date has arrived!", true);
-            //AddContact("AnhPhong", "You: Just open a new terminal and run the following command ", false);
             AddContact(new Account("DaiLoi", "Dai Loi", "1111", 1));
             AddContact(new Account("DangKhoa", "Dang Khoa", "2222", 2));
             AddContact(new Account("PhuongQuyen", "Phuong Quyen", "3333", 1));
@@ -111,6 +100,15 @@ namespace A_Friend
                 //contactItem.BringToFront();
                 panelContact.ResumeLayout();
 
+                if (orderOfContactItems.Count == 0)
+                {
+                    orderOfContactItems.Add(0, account.id);
+                }
+                else
+                {
+                    orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, account.id);
+                }
+
                 panelContact.ScrollControlIntoView(contactItem);
                 contactItems.Add(account.id, contactItem);
                 CustomControls.PanelChat panelChat = new CustomControls.PanelChat(account);
@@ -122,10 +120,17 @@ namespace A_Friend
                 panelChat.ControlAdded += delegate
                 {
                     contactItem.LastMessage = panelChat.GetLastMessage();
-
-                    if (!panelChat.IsLastMessageFromYou())
+                    if (contactItem.ID != orderOfContactItems.Values.Last())
                     {
-                        contactItem.Unread = true;
+                        BringContactItemToTop(panelChat.ID);
+                    }
+
+                    if (GetCurrentPanelChatId() != panelChat.ID)
+                    {
+                        if (!panelChat.IsLastMessageFromYou())
+                        {
+                            contactItem.Unread = true;
+                        }
                     }
                     else
                     {
@@ -148,15 +153,67 @@ namespace A_Friend
                         check = false;
                         customTextBoxSearch.Texts = "";
                         customTextBoxSearch.SetPlaceHolder();
+                        panelContact2.Controls.Clear();
                         panelContact.Controls.Clear();
-                        foreach (KeyValuePair<string, CustomControls.ContactItem> i in contactItems)
+                        foreach(KeyValuePair<int, string> i in orderOfContactItems)
                         {
-                            panelContact.Controls.Add(i.Value);
+                            panelContact.Controls.Add(contactItems[i.Value]);
                         }
                         panelContact.BringToFront();
                         check = true;
                     }
                 };
+            }
+        }
+
+        private string GetCurrentPanelChatId()
+        {
+            if (panelRight.Controls.Count > 0)
+            {
+                if (panelRight.Controls[0] is CustomControls.PanelChat)
+                {
+                    return (panelRight.Controls[0] as CustomControls.PanelChat).ID;
+                }
+            }
+
+            if (panelRight2.Controls.Count > 0)
+            {
+                if (panelRight2.Controls[0] is CustomControls.PanelChat)
+                {
+                    return (panelRight2.Controls[0] as CustomControls.PanelChat).ID;
+                }
+
+            }
+
+            return "";
+        }
+
+        private void BringContactItemToTop(string id)
+        {
+            if (orderOfContactItems.Count <= 1)
+                return;
+
+            int key = -1;
+            foreach (KeyValuePair<int, string> i in orderOfContactItems)
+            {
+                if (i.Value == id)
+                {
+                    key = i.Key;
+                    break;
+                }
+            }
+
+            if (key != -1)
+            {
+                orderOfContactItems.Remove(key);
+                orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, id);
+            }
+
+            CustomControls.ContactItem item = contactItems[id];
+            if (searchText == "")
+            {
+                panelContact.Controls.Remove(item);
+                panelContact.Controls.Add(item);
             }
         }
 
@@ -302,15 +359,14 @@ namespace A_Friend
                         panelContact.BringToFront();
                         panelContact2.Controls.Clear();
                     }
-
                 }
                 else
                 {
                     panelContact.Controls.Clear();
                     panelContact2.Controls.Clear();
-                    foreach (KeyValuePair<string, CustomControls.ContactItem> i in contactItems)
+                    foreach(KeyValuePair<int, string> i in orderOfContactItems)
                     {
-                        panelContact.Controls.Add(i.Value);
+                        panelContact.Controls.Add(contactItems[i.Value]);
                     }
                     panelContact.BringToFront();
                 }
