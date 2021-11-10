@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace A_Friend.CustomControls
 {
-    public class RJCircularPictureBox : PictureBox
+    public class CirclePictureBox : PictureBox
     {
         //Fields
         private int borderSize = 2;
@@ -20,7 +20,7 @@ namespace A_Friend.CustomControls
         private DashCap borderCapStyle = DashCap.Flat;
         private float gradientAngle = 50F;
         //Constructor
-        public RJCircularPictureBox()
+        public CirclePictureBox()
         {
             this.Size = new Size(100, 100);
             this.SizeMode = PictureBoxSizeMode.StretchImage;

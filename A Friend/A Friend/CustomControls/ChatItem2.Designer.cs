@@ -29,11 +29,12 @@ namespace A_Friend.CustomControls
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChatItem2));
             this.panelBody = new A_Friend.CustomControls.MessagePanel();
             this.labelBody = new System.Windows.Forms.Label();
             this.panelButton = new System.Windows.Forms.Panel();
-            this.buttonCopy = new A_Friend.CustomControls.CustomButton();
             this.buttonRemove = new A_Friend.CustomControls.CustomButton();
+            this.buttonCopy = new A_Friend.CustomControls.CustomButton();
             this.panelBody.SuspendLayout();
             this.panelButton.SuspendLayout();
             this.SuspendLayout();
@@ -71,28 +72,10 @@ namespace A_Friend.CustomControls
             this.panelButton.Size = new System.Drawing.Size(75, 118);
             this.panelButton.TabIndex = 2;
             // 
-            // buttonCopy
-            // 
-            this.buttonCopy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
-            this.buttonCopy.BackgroundImage = global::A_Friend.Properties.Resources.copy_regular;
-            this.buttonCopy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonCopy.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.buttonCopy.BorderRadius = 5;
-            this.buttonCopy.BorderSize = 0;
-            this.buttonCopy.FlatAppearance.BorderSize = 0;
-            this.buttonCopy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonCopy.ForeColor = System.Drawing.Color.White;
-            this.buttonCopy.Location = new System.Drawing.Point(5, 47);
-            this.buttonCopy.Name = "buttonCopy";
-            this.buttonCopy.Size = new System.Drawing.Size(30, 30);
-            this.buttonCopy.TabIndex = 0;
-            this.buttonCopy.UseVisualStyleBackColor = false;
-            this.buttonCopy.Click += new System.EventHandler(this.buttonCopy_Click);
-            // 
             // buttonRemove
             // 
             this.buttonRemove.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
-            this.buttonRemove.BackgroundImage = global::A_Friend.Properties.Resources.trash_alt_regular;
+            this.buttonRemove.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonRemove.BackgroundImage")));
             this.buttonRemove.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonRemove.BorderColor = System.Drawing.Color.PaleVioletRed;
             this.buttonRemove.BorderRadius = 5;
@@ -106,6 +89,24 @@ namespace A_Friend.CustomControls
             this.buttonRemove.TabIndex = 1;
             this.buttonRemove.UseVisualStyleBackColor = false;
             this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
+            // 
+            // buttonCopy
+            // 
+            this.buttonCopy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
+            this.buttonCopy.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonCopy.BackgroundImage")));
+            this.buttonCopy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonCopy.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.buttonCopy.BorderRadius = 5;
+            this.buttonCopy.BorderSize = 0;
+            this.buttonCopy.FlatAppearance.BorderSize = 0;
+            this.buttonCopy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonCopy.ForeColor = System.Drawing.Color.White;
+            this.buttonCopy.Location = new System.Drawing.Point(5, 47);
+            this.buttonCopy.Name = "buttonCopy";
+            this.buttonCopy.Size = new System.Drawing.Size(30, 30);
+            this.buttonCopy.TabIndex = 0;
+            this.buttonCopy.UseVisualStyleBackColor = false;
+            this.buttonCopy.Click += new System.EventHandler(this.buttonCopy_Click);
             // 
             // ChatItem2
             // 

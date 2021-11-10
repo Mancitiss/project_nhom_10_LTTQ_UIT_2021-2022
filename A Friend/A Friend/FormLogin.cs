@@ -59,7 +59,8 @@ namespace A_Friend
 
         private void buttonExit_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            //Application.Exit();
+            Environment.Exit(0);
         }
 
         private void buttonLogIn_Click(object sender, EventArgs e)
@@ -94,6 +95,8 @@ namespace A_Friend
 
         private void Login()
         {
+            timerDisconnect.Enabled = true;
+            timerDisconnect.Start();
             if (this.EmptyTextBoxes())
             {
                 if (EmptyTextBoxes())
@@ -186,14 +189,24 @@ namespace A_Friend
             timerClosing.Stop();
             var frm = new FormApplication();
             frm.Location = this.Location;
-            frm.StartPosition = FormStartPosition.Manual;
-            frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            //frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
             this.ResetTexts();
             frm.Show();
             this.Hide();
+            Program.mainform = frm;
             Thread thread = new Thread(new ParameterizedThreadStart(AFriendClient.ExecuteClient));
             thread.IsBackground = true;
             thread.Start();
+        }
+        private void timerDisconnect_Tick(object sender, EventArgs e)
+        {
+            timerDisconnect.Stop();
+            if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
+            {
+                AFriendClient.client.Close();
+                labelWarning.Text = "Cannot connect to the server";
+            }
         }
     }
 }

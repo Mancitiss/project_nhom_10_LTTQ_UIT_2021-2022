@@ -74,6 +74,12 @@
     <Compile Include="CustomControls\ChatItem2.Designer.cs">
       <DependentUpon>ChatItem2.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\ContactItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ContactItem.Designer.cs">
+      <DependentUpon>ContactItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -86,20 +92,20 @@
     <Compile Include="CustomControls\MessagePanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CustomControls\RJCircularPictureBox.cs">
+    <Compile Include="CustomControls\CirclePictureBox.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\PanelChat.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\PanelChat.Designer.cs">
+      <DependentUpon>PanelChat.cs</DependentUpon>
     </Compile>
     <Compile Include="FormAddContact.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormAddContact.Designer.cs">
       <DependentUpon>FormAddContact.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormApp.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormApp.Designer.cs">
-      <DependentUpon>FormApp.cs</DependentUpon>
     </Compile>
     <Compile Include="FormApplication.cs">
       <SubType>Form</SubType>
@@ -143,14 +149,17 @@
     <EmbeddedResource Include="CustomControls\ChatItem2.resx">
       <DependentUpon>ChatItem2.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\ContactItem.resx">
+      <DependentUpon>ContactItem.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\CustomTextBox.resx">
       <DependentUpon>CustomTextBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\PanelChat.resx">
+      <DependentUpon>PanelChat.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormAddContact.resx">
       <DependentUpon>FormAddContact.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormApp.resx">
-      <DependentUpon>FormApp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormApplication.resx">
       <DependentUpon>FormApplication.cs</DependentUpon>
@@ -186,6 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

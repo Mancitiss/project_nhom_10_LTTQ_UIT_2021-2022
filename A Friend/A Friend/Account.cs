@@ -6,10 +6,20 @@ using System.Threading.Tasks;
 
 namespace A_Friend
 {
-    class Account
+    public class Account
     {
         public string username;
+        public string name;
         public string id;
-        public string state;
+        public byte state;
+
+        public Account() { }
+        public Account(string username, string name, string id, byte state) 
+        { 
+            this.username = username;
+            this.name = name;
+            this.id = id;
+            this.state = state; 
+        }
     }
 }

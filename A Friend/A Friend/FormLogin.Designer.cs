@@ -37,6 +37,7 @@
             this.textBoxUserName = new A_Friend.CustomControls.CustomTextBox();
             this.buttonLogIn = new A_Friend.CustomControls.CustomButton();
             this.buttonExit = new A_Friend.CustomControls.CustomButton();
+            this.timerDisconnect = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // labelTittle
@@ -95,7 +96,7 @@
             this.textBoxPassword.BorderSize = 2;
             this.textBoxPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxPassword.Location = new System.Drawing.Point(33, 166);
-            this.textBoxPassword.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.textBoxPassword.Margin = new System.Windows.Forms.Padding(5);
             this.textBoxPassword.Multiline = false;
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.Padding = new System.Windows.Forms.Padding(21, 12, 21, 12);
@@ -118,7 +119,7 @@
             this.textBoxUserName.BorderSize = 2;
             this.textBoxUserName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxUserName.Location = new System.Drawing.Point(33, 92);
-            this.textBoxUserName.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.textBoxUserName.Margin = new System.Windows.Forms.Padding(5);
             this.textBoxUserName.Multiline = false;
             this.textBoxUserName.Name = "textBoxUserName";
             this.textBoxUserName.Padding = new System.Windows.Forms.Padding(21, 12, 21, 12);
@@ -170,6 +171,10 @@
             this.buttonExit.UseVisualStyleBackColor = false;
             this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
             // 
+            // timerDisconnect
+            // 
+            this.timerDisconnect.Interval = 19000;
+            // 
             // FormLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -184,7 +189,7 @@
             this.Controls.Add(this.buttonLogIn);
             this.Controls.Add(this.buttonExit);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LoginForm";
@@ -203,5 +208,6 @@
         private System.Windows.Forms.Label labelTittle;
         private System.Windows.Forms.Label labelWarning;
         private System.Windows.Forms.Timer timerClosing;
+        private System.Windows.Forms.Timer timerDisconnect;
     }
 }

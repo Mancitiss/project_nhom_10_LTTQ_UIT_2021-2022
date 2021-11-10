@@ -17,6 +17,7 @@ namespace A_Friend
         {
             InitializeComponent();
             labelWarning.Text = "";
+            txtNewUser.RemovePlaceHolder();
         }
 
         private void ButtonClose_Click(object sender, EventArgs e)
@@ -25,37 +26,12 @@ namespace A_Friend
         }
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
-            if (txtNewUser.Text == "")
+            if (txtNewUser.Texts == "")
                 labelWarning.Text = "Please enter a username";
             else
             {
-                if (!UsernameCheck())
-                {
-                    labelWarning.Text = "This user does not exist";
-                }
-                else
-                {
-                    if (isFriend())
-                        labelWarning.Text = "This user is already added";
-                    else
-                    {
-                        labelWarning.Text = "Added successfully";
-                        //Add user to list friends in database
-                        //Reload FormApplication
-                    }
-                }
+                AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + txtNewUser.Texts));
             }
-            
-        }
-        private bool UsernameCheck()
-        {
-            //Check new username in list users
-            return true;
-        }
-        private bool isFriend()
-        {
-            //Check new username in list friends
-            return true;
         }
     }
 }
