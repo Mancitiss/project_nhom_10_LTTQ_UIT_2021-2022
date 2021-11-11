@@ -21,6 +21,15 @@ namespace A_Friend.CustomControls
         public PanelChat()
         {
             InitializeComponent();
+            this.panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.panel_Chat_MouseWheel);
+        }
+
+        private void panel_Chat_MouseWheel(object sender, EventArgs e)
+        {
+            if (panel_Chat.VerticalScroll.Value==0)
+            {
+                LoadMessage();
+            }    
         }
 
         public PanelChat(Account account)
@@ -85,6 +94,17 @@ namespace A_Friend.CustomControls
             panel_Chat.ScrollControlIntoView(chatItem);
         }
 
+        private void AddMessageToTop(string message, bool stacktoleft)
+        {
+            panel_Chat.SuspendLayout();
+            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            chatItem.Dock = DockStyle.Top;
+            chatItem.BackColor = panel_Chat.BackColor;
+            panel_Chat.Controls.Add(chatItem);
+            chatItem.ResizeBubbles();
+            panel_Chat.ResumeLayout();
+        }
+
         private void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -94,6 +114,9 @@ namespace A_Friend.CustomControls
                     AddMessage(textboxWriting.Texts.Trim(), false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
+                    textboxWriting.Enabled = false;
+                    buttonSend.Enabled = false;
+                    timerChat.Start();
                 }
             }
         }
@@ -104,6 +127,10 @@ namespace A_Friend.CustomControls
             {
                 AddMessage(textboxWriting.Texts, true);
                 textboxWriting.Texts = "";
+                textboxWriting.RemovePlaceHolder();
+                textboxWriting.Enabled = false;
+                buttonSend.Enabled = false;
+                timerChat.Start();
                 //AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
             }
         }
@@ -124,15 +151,15 @@ namespace A_Friend.CustomControls
 
         public void LoadMessage()
         {
-            AddMessage("Chào bạn", true);
-            AddMessage("Chào", false);
-            AddMessage("Chào Tạm biệt", true);
-            AddMessage("Tạm biệt", false);
+            AddMessageToTop("Chào bạn", true);
+            AddMessageToTop("Chào", false);
+            AddMessageToTop("Chào Tạm biệt", true);
+            AddMessageToTop("Tạm biệt", false);
         }
 
         private void PanelChat_Load(object sender, EventArgs e)
         {
-            //LoadMessage();
+            LoadMessage();
             textboxWriting.Focus();
             this.ActiveControl = textboxWriting;
         }
@@ -170,6 +197,22 @@ namespace A_Friend.CustomControls
         private void panel_Chat_ControlRemoved(object sender, ControlEventArgs e)
         {
             this.OnControlRemoved(e);
+        }
+
+        private void timerChat_Tick(object sender, EventArgs e)
+        {
+            textboxWriting.Enabled = true;
+            buttonSend.Enabled = true;
+            textboxWriting.Focus();
+            timerChat.Stop();
+        }
+
+        private void panel_Chat_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (panel_Chat.VerticalScroll.Value == 0)
+            {
+                LoadMessage();
+            }
         }
     }
 }

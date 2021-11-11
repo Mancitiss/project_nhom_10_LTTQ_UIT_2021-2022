@@ -29,6 +29,7 @@ namespace A_Friend.CustomControls
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanelChat));
             this.panelTopRight = new System.Windows.Forms.Panel();
             this.labelFriendName = new System.Windows.Forms.Label();
@@ -39,6 +40,7 @@ namespace A_Friend.CustomControls
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
+            this.timerChat = new System.Windows.Forms.Timer(this.components);
             this.panelTopRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.panelBottomRight.SuspendLayout();
@@ -66,7 +68,7 @@ namespace A_Friend.CustomControls
             this.labelFriendName.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.labelFriendName.Location = new System.Drawing.Point(72, 10);
             this.labelFriendName.Name = "labelFriendName";
-            this.labelFriendName.Size = new System.Drawing.Size(83, 20);
+            this.labelFriendName.Size = new System.Drawing.Size(102, 25);
             this.labelFriendName.TabIndex = 6;
             this.labelFriendName.Text = "Username";
             // 
@@ -75,7 +77,7 @@ namespace A_Friend.CustomControls
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(13, 20);
+            this.label3.Size = new System.Drawing.Size(17, 25);
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
@@ -124,6 +126,7 @@ namespace A_Friend.CustomControls
             this.panel_Chat.Name = "panel_Chat";
             this.panel_Chat.Size = new System.Drawing.Size(912, 592);
             this.panel_Chat.TabIndex = 2;
+            this.panel_Chat.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_Chat_Scroll);
             this.panel_Chat.Click += new System.EventHandler(this.panel_Chat_Click);
             this.panel_Chat.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlAdded);
             this.panel_Chat.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlRemoved);
@@ -156,7 +159,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting.PasswordChar = false;
             this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.textboxWriting.PlaceholderText = "To ...";
-            this.textboxWriting.Size = new System.Drawing.Size(816, 46);
+            this.textboxWriting.Size = new System.Drawing.Size(816, 51);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
@@ -183,9 +186,14 @@ namespace A_Friend.CustomControls
             this.buttonSend.UseVisualStyleBackColor = false;
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
+            // timerChat
+            // 
+            this.timerChat.Interval = 1000;
+            this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
+            // 
             // PanelChat
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panelBottomRight);
             this.Controls.Add(this.panel_Chat);
@@ -215,5 +223,6 @@ namespace A_Friend.CustomControls
         private System.Windows.Forms.Panel panelBottomRight;
         private CustomTextBox textboxWriting;
         private CustomButton buttonSend;
+        private System.Windows.Forms.Timer timerChat;
     }
 }
