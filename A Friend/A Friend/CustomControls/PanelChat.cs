@@ -116,11 +116,17 @@ namespace A_Friend.CustomControls
                     AddMessage(textboxWriting.Texts.Trim(), false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
-                    textboxWriting.Enabled = false;
-                    buttonSend.Enabled = false;
-                    timerChat.Start();
+                    blockSending();
+                    AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
                 }
             }
+        }
+         
+        private void blockSending()
+        {
+            textboxWriting.Enabled = false;
+            buttonSend.Enabled = false;
+            timerChat.Start();
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -130,10 +136,8 @@ namespace A_Friend.CustomControls
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
-                textboxWriting.Enabled = false;
-                buttonSend.Enabled = false;
-                timerChat.Start();
-                //AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
+                blockSending();
+                AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
             }
         }
 
