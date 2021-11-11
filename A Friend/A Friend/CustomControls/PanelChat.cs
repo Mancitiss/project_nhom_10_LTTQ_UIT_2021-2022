@@ -21,7 +21,7 @@ namespace A_Friend.CustomControls
         public PanelChat()
         {
             InitializeComponent();
-            this.panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.panel_Chat_MouseWheel);
+            panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
         }
 
         private void panel_Chat_MouseWheel(object sender, EventArgs e)
@@ -100,6 +100,7 @@ namespace A_Friend.CustomControls
             var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             panel_Chat.Controls.Add(chatItem);
             chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
@@ -125,7 +126,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts))
             {
-                AddMessage(textboxWriting.Texts, true);
+                AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
                 textboxWriting.Enabled = false;
@@ -151,15 +152,17 @@ namespace A_Friend.CustomControls
 
         public void LoadMessage()
         {
+            panel_Chat.SuspendLayout();
             AddMessageToTop("Chào bạn", true);
             AddMessageToTop("Chào", false);
             AddMessageToTop("Chào Tạm biệt", true);
             AddMessageToTop("Tạm biệt", false);
+            panel_Chat.ResumeLayout();
         }
 
         private void PanelChat_Load(object sender, EventArgs e)
         {
-            LoadMessage();
+            //LoadMessage();
             textboxWriting.Focus();
             this.ActiveControl = textboxWriting;
         }
