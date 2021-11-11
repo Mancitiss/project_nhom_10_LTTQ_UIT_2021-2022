@@ -89,6 +89,7 @@ namespace A_Friend.CustomControls
             chatItem.BackColor = panel_Chat.BackColor;
             panel_Chat.Controls.Add(chatItem);
             chatItem.BringToFront();
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
