@@ -17,6 +17,7 @@ namespace A_Friend.CustomControls
         string id;
         byte state;
         Color stateColor = Color.Gainsboro;
+        bool locking = false;
 
         public PanelChat()
         {
@@ -80,7 +81,7 @@ namespace A_Friend.CustomControls
                 }
             }
         }
-        
+
         public void AddMessage(string message, bool stacktoleft)
         {
             panel_Chat.SuspendLayout();
@@ -94,6 +95,28 @@ namespace A_Friend.CustomControls
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
         }
+        public void AddMessage(string message, bool stacktoleft, Color textcolor, Color backcolor)
+        {
+            panel_Chat.SuspendLayout();
+            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            if (chatItem.TextColor != textcolor)
+            {
+                chatItem.TextColor = textcolor;
+            }
+            if (chatItem.BackGroundColor != backcolor)
+            {
+                chatItem.BackGroundColor = backcolor;
+            }
+            chatItem.Dock = DockStyle.Top;
+            chatItem.BackColor = panel_Chat.BackColor;
+            panel_Chat.Controls.Add(chatItem);
+            chatItem.BringToFront();
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            chatItem.ResizeBubbles();
+            panel_Chat.ResumeLayout();
+            panel_Chat.ScrollControlIntoView(chatItem);
+
+        }
 
         private void AddMessageToTop(string message, bool stacktoleft)
         {
@@ -106,10 +129,29 @@ namespace A_Friend.CustomControls
             chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
         }
+        private void AddMessageToTop(string message, bool stacktoleft, Color textcolor, Color backcolor)
+        {
+            panel_Chat.SuspendLayout();
+            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            if (chatItem.TextColor != textcolor)
+            {
+                chatItem.TextColor = textcolor;
+            }
+            if (chatItem.BackGroundColor != backcolor)
+            {
+                chatItem.BackGroundColor = backcolor;
+            }
+            chatItem.Dock = DockStyle.Top;
+            chatItem.BackColor = panel_Chat.BackColor;
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            panel_Chat.Controls.Add(chatItem);
+            chatItem.ResizeBubbles();
+            panel_Chat.ResumeLayout();
+        }
 
         private void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && !locking)
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
@@ -124,14 +166,13 @@ namespace A_Friend.CustomControls
          
         private void blockSending()
         {
-            textboxWriting.Enabled = false;
-            buttonSend.Enabled = false;
+            locking = true;
             timerChat.Start();
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textboxWriting.Texts))
+            if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
@@ -167,7 +208,6 @@ namespace A_Friend.CustomControls
 
         private void PanelChat_Load(object sender, EventArgs e)
         {
-            //LoadMessage();
             textboxWriting.Focus();
             this.ActiveControl = textboxWriting;
         }
@@ -209,8 +249,7 @@ namespace A_Friend.CustomControls
 
         private void timerChat_Tick(object sender, EventArgs e)
         {
-            textboxWriting.Enabled = true;
-            buttonSend.Enabled = true;
+            locking = false;
             textboxWriting.Focus();
             timerChat.Stop();
         }
