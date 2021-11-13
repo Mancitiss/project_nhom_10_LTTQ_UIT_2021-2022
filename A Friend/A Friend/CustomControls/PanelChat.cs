@@ -166,6 +166,7 @@ namespace A_Friend.CustomControls
 
         public void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
+            textboxWriting.Select();
             if (e.KeyCode == Keys.Enter && !locking)
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
@@ -187,7 +188,7 @@ namespace A_Friend.CustomControls
             timerChat.Start();
         }
 
-        private void buttonSend_Click(object sender, EventArgs e)
+        public void buttonSend_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
