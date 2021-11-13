@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
+using CryptSharp;
 
 namespace AFriendServer
 {
@@ -293,6 +294,7 @@ namespace AFriendServer
 
                 string data = Encoding.Unicode.GetString(bytes,
                                            0, numByte);
+                Console.WriteLine("Work: " + data);
                 if (data != null && data != "")
                 {
                     string instruction = data.Substring(0, 4);
