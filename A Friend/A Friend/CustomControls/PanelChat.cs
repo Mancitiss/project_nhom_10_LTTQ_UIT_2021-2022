@@ -177,7 +177,6 @@ namespace A_Friend.CustomControls
                     textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
                     blockSending();
-                    AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
                 }
             }
         }
@@ -197,7 +196,6 @@ namespace A_Friend.CustomControls
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
                 blockSending();
-                AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
             }
         }
 
@@ -269,7 +267,8 @@ namespace A_Friend.CustomControls
         private void timerChat_Tick(object sender, EventArgs e)
         {
             locking = false;
-            textboxWriting.Focus();
+            textboxWriting.Select();
+            
             timerChat.Stop();
         }
 
