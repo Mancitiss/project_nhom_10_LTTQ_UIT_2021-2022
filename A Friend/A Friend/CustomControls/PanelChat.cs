@@ -17,6 +17,7 @@ namespace A_Friend.CustomControls
         string id;
         byte state;
         Color stateColor = Color.Gainsboro;
+        bool locking = false;
 
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem AddMessageDelegate;
@@ -30,7 +31,16 @@ namespace A_Friend.CustomControls
             InitializeComponent();
             AddMessageDelegate = new AddMessageItem(AddMessage);
             //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
+            panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             this.CreateControl();
+        }
+
+        private void panel_Chat_MouseWheel(object sender, EventArgs e)
+        {
+            if (panel_Chat.VerticalScroll.Value==0)
+            {
+                LoadMessage();
+            }    
         }
 
         public PanelChat(Account account)
@@ -86,7 +96,7 @@ namespace A_Friend.CustomControls
                 }
             }
         }
-        
+
         public void AddMessage(string message, bool stacktoleft)
         {
             panel_Chat.SuspendLayout();
@@ -95,16 +105,68 @@ namespace A_Friend.CustomControls
             chatItem.BackColor = panel_Chat.BackColor;
             panel_Chat.Controls.Add(chatItem);
             chatItem.BringToFront();
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            chatItem.ResizeBubbles();
+            panel_Chat.ResumeLayout();
+            panel_Chat.ScrollControlIntoView(chatItem);
+        }
+        public void AddMessage(string message, bool stacktoleft, Color textcolor, Color backcolor)
+        {
+            panel_Chat.SuspendLayout();
+            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            if (chatItem.TextColor != textcolor)
+            {
+                chatItem.TextColor = textcolor;
+            }
+            if (chatItem.BackGroundColor != backcolor)
+            {
+                chatItem.BackGroundColor = backcolor;
+            }
+            chatItem.Dock = DockStyle.Top;
+            chatItem.BackColor = panel_Chat.BackColor;
+            panel_Chat.Controls.Add(chatItem);
+            chatItem.BringToFront();
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
 
         }
 
+        private void AddMessageToTop(string message, bool stacktoleft)
+        {
+            panel_Chat.SuspendLayout();
+            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            chatItem.Dock = DockStyle.Top;
+            chatItem.BackColor = panel_Chat.BackColor;
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            panel_Chat.Controls.Add(chatItem);
+            chatItem.ResizeBubbles();
+            panel_Chat.ResumeLayout();
+        }
+        private void AddMessageToTop(string message, bool stacktoleft, Color textcolor, Color backcolor)
+        {
+            panel_Chat.SuspendLayout();
+            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            if (chatItem.TextColor != textcolor)
+            {
+                chatItem.TextColor = textcolor;
+            }
+            if (chatItem.BackGroundColor != backcolor)
+            {
+                chatItem.BackGroundColor = backcolor;
+            }
+            chatItem.Dock = DockStyle.Top;
+            chatItem.BackColor = panel_Chat.BackColor;
+            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            panel_Chat.Controls.Add(chatItem);
+            chatItem.ResizeBubbles();
+            panel_Chat.ResumeLayout();
+        }
+
         public void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
-            textboxWriting.Select();
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && !locking)
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
@@ -113,18 +175,28 @@ namespace A_Friend.CustomControls
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
+                    blockSending();
+                    AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
                 }
             }
         }
-
-        public void buttonSend_Click(object sender, EventArgs e)
+         
+        private void blockSending()
         {
-            if (!string.IsNullOrEmpty(textboxWriting.Texts))
+            locking = true;
+            timerChat.Start();
+        }
+
+        private void buttonSend_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
                 AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
-                //AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
+                textboxWriting.RemovePlaceHolder();
+                blockSending();
+                AFriendClient.Send_to_id(AFriendClient.client, AFriendClient.user.id, AFriendClient.user.id, textboxWriting.Texts);
             }
         }
 
@@ -144,15 +216,16 @@ namespace A_Friend.CustomControls
 
         public void LoadMessage()
         {
-            AddMessage("Chào bạn", true);
-            AddMessage("Chào", false);
-            AddMessage("Chào Tạm biệt", true);
-            AddMessage("Tạm biệt", false);
+            panel_Chat.SuspendLayout();
+            AddMessageToTop("Chào bạn", true);
+            AddMessageToTop("Chào", false);
+            AddMessageToTop("Chào Tạm biệt", true);
+            AddMessageToTop("Tạm biệt", false);
+            panel_Chat.ResumeLayout();
         }
 
         private void PanelChat_Load(object sender, EventArgs e)
         {
-            //LoadMessage();
             textboxWriting.Focus();
             this.ActiveControl = textboxWriting;
         }
@@ -190,6 +263,21 @@ namespace A_Friend.CustomControls
         private void panel_Chat_ControlRemoved(object sender, ControlEventArgs e)
         {
             this.OnControlRemoved(e);
+        }
+
+        private void timerChat_Tick(object sender, EventArgs e)
+        {
+            locking = false;
+            textboxWriting.Focus();
+            timerChat.Stop();
+        }
+
+        private void panel_Chat_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (panel_Chat.VerticalScroll.Value == 0)
+            {
+                LoadMessage();
+            }
         }
     }
 }

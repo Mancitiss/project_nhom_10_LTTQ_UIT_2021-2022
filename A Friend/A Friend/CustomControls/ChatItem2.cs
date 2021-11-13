@@ -60,6 +60,22 @@ namespace A_Friend.CustomControls
 
         public bool StackToLeft { get; set; }
 
+        public Color TextColor
+        {
+            get { return labelBody.ForeColor; }
+            set { labelBody.ForeColor = value; }
+        }
+
+        public Color BackGroundColor
+        {
+            get { return panelBody.BackColor; }
+            set
+            {
+                labelBody.BackColor = value;
+                panelBody.BackColor = value;
+            }
+        }
+
         public void ResizeBubbles()
         {
             SuspendLayout();
