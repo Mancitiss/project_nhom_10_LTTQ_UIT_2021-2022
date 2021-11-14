@@ -38,11 +38,11 @@
             // 
             this.labelLastMessage.AutoSize = true;
             this.labelLastMessage.BackColor = System.Drawing.Color.Transparent;
-            this.labelLastMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLastMessage.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelLastMessage.ForeColor = System.Drawing.Color.DarkGray;
             this.labelLastMessage.Location = new System.Drawing.Point(100, 43);
             this.labelLastMessage.Name = "labelLastMessage";
-            this.labelLastMessage.Size = new System.Drawing.Size(122, 17);
+            this.labelLastMessage.Size = new System.Drawing.Size(113, 16);
             this.labelLastMessage.TabIndex = 2;
             this.labelLastMessage.Text = "You: last text here";
             this.labelLastMessage.Click += new System.EventHandler(this.labelLastMessage_Click);
@@ -51,9 +51,10 @@
             // 
             this.labelName.AutoSize = true;
             this.labelName.BackColor = System.Drawing.Color.Transparent;
+            this.labelName.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelName.Location = new System.Drawing.Point(99, 18);
             this.labelName.Name = "labelName";
-            this.labelName.Size = new System.Drawing.Size(100, 20);
+            this.labelName.Size = new System.Drawing.Size(99, 18);
             this.labelName.TabIndex = 3;
             this.labelName.Text = "Friend Name";
             this.labelName.Click += new System.EventHandler(this.labelName_Click);

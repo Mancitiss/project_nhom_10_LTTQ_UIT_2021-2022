@@ -27,6 +27,8 @@ namespace A_Friend
         public string currentUsername;
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
+        private Panel panelGetStarted = new Panel();
+        private FormGetStarted formGetStarted = new FormGetStarted();
         private bool check = true;
         private string searchText = "";
 
@@ -45,22 +47,34 @@ namespace A_Friend
         private void FormApplication_Load(object sender, EventArgs e)
         {
             this.SuspendLayout();
-            AddContact(new Account("DaiLoi", "Dai Loi", "1111", 1));
-            AddContact(new Account("DangKhoa", "Dang Khoa", "2222", 2));
-            AddContact(new Account("PhuongQuyen", "Phuong Quyen", "3333", 1));
-            AddContact(new Account("ThanhTu", "Thanh Tu", "4444", 1));
-            AddContact(new Account("AnhPhong", "Anh Phong", "5555", 0));
-            AddContact(new Account("LoiDai", "Le Loi", "9999", 0));
-            AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
-            AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
-            AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
-            AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
+            //AddContact(new Account("DaiLoi", "Lê Đoàn Đại Lợi", "1111", 1));
+            //AddContact(new Account("DangKhoa", "Võ Văn Đăng Khoa", "2222", 2));
+            //AddContact(new Account("PhuongQuyen", "Lê Thị Phương Quyên", "3333", 1));
+            //AddContact(new Account("ThanhTu", "Thanh Tu", "4444", 1));
+            //AddContact(new Account("AnhPhong", "Anh Phong", "5555", 0));
+            //AddContact(new Account("LoiDai", "Le Loi", "9999", 0));
+            //AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
+            //AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
+            //AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
+            //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
 
-            ShowPanelChat(panelChats.Keys.Last());
-            this.ResumeLayout();
+            if (panelChats.Count > 0)
+                ShowPanelChat(panelChats.Keys.Last());
+            else
+            {
+                panelRight.Controls.Clear();
+                customTextBoxSearch.Visible = false;
+                formGetStarted.Dock = DockStyle.Fill;
+                formGetStarted.TopLevel = false;
+                formGetStarted.FormBorderStyle = FormBorderStyle.None;
+                panelGetStarted.Controls.Add(formGetStarted);
+                panelGetStarted.BringToFront();
+                formGetStarted.Visible = true;
+            }
             notifyIconApp.BalloonTipTitle = "Notify";
             notifyIconApp.BalloonTipText = "Apps running in the background";
             notifyIconApp.Text = "AppChat";
+            this.ResumeLayout();
         }
 
         private void InitializeSubPanels()
@@ -77,6 +91,12 @@ namespace A_Friend
             this.panelContact2.BackColor = panelContact.BackColor;
             this.panelContact2.Location = panelContact.Location;
             this.panelContact2.Size = panelContact.Size;
+
+            this.Controls.Add(panelGetStarted);
+            panelGetStarted.SendToBack();
+            panelGetStarted.Anchor = panelRight.Anchor;
+            panelGetStarted.Location = new Point(0, 0);
+            panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top);
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -223,7 +243,7 @@ namespace A_Friend
 
             if (panelRight.Controls.Count == 0)
             {
-                if (!(panelRight2.Controls[0] is CustomControls.PanelChat) || (panelRight2.Controls[0] as CustomControls.PanelChat).ID != id)
+                if ((GetCurrentPanelChatId() == "") || !(panelRight2.Controls[0] is CustomControls.PanelChat) || (panelRight2.Controls[0] as CustomControls.PanelChat).ID != id)
                 {
                     panelRight.Controls.Add(item);
                     panelRight.BringToFront();
@@ -233,7 +253,7 @@ namespace A_Friend
             }
             else
             {
-                if (!(panelRight.Controls[0] is CustomControls.PanelChat) || (panelRight.Controls[0] as CustomControls.PanelChat).ID != id)
+                if ((GetCurrentPanelChatId() == "") || !(panelRight.Controls[0] is CustomControls.PanelChat) || (panelRight.Controls[0] as CustomControls.PanelChat).ID != id)
                 {
                     panelRight2.Controls.Add(item);
                     panelRight2.BringToFront();
@@ -288,11 +308,13 @@ namespace A_Friend
             frm.ShowDialog();
         }
 
-        private void ButtonAdd_Click_1(object sender, EventArgs e)
+        public void ButtonAdd_Click_1(object sender, EventArgs e)
         {
+            PanelGetStartedSlideToRight();
             FormAddContact frm = new FormAddContact();
             frm.StartPosition = FormStartPosition.CenterScreen;
             frm.ShowDialog();
+            PanelGetStartedFill();
             //Reload list friends
         }
 
@@ -309,21 +331,21 @@ namespace A_Friend
         }
         private void customTextBoxSearch_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (customTextBoxSearch.Text == "")
-                {
-                    labelWarning.Text = "Please enter a username";
-                }
-                else
-                {
-                    if (!UsernameCheck())
-                        labelWarning.Text = "This user does not exist";
-                    else
-                        labelUsername.Text = customTextBoxSearch.Texts;
-                    //Load chat history from database
-                }
-            }
+            //if (e.KeyCode == Keys.Enter)
+            //{
+            //    if (customTextBoxSearch.Text == "")
+            //    {
+            //        labelWarning.Text = "Please enter a username";
+            //    }
+            //    else
+            //    {
+            //        if (!UsernameCheck())
+            //            labelWarning.Text = "This user does not exist";
+            //        else
+            //            labelUsername.Text = customTextBoxSearch.Texts;
+            //        //Load chat history from database
+            //    }
+            //}
         }
         private void customTextBoxSearch__TextChanged(object sender, EventArgs e)
         {
@@ -375,7 +397,7 @@ namespace A_Friend
 
         private void panelChat_Click(object sender, EventArgs e)
         {
-            panelChat.Focus();
+            //panelChat.Focus();
         }
 
         internal bool Is_this_person_added(string id)
@@ -408,6 +430,29 @@ namespace A_Friend
             {
                 notifyIconApp.Visible = false;
             }
+        }
+
+        private void PanelGetStartedSlideToRight()
+        {
+            panelGetStarted.Location = panelRight.Location;
+            panelGetStarted.Size = new Size(panelRight.Width, panelGetStarted.Height);
+            formGetStarted.TopColor = panelTopLeft.BackColor;
+        }
+
+        private void PanelGetStartedFill()
+        {
+            panelGetStarted.Location = new Point(0, 0);
+            panelGetStarted.Size = new Size(this.Width, panelGetStarted.Height);
+            formGetStarted.TopColor = Color.White;
+        }
+
+        private void panelContact_ControlAdded(object sender, ControlEventArgs e)
+        {
+            if (panelGetStarted.Location.X != panelRight.Location.X)
+            {
+                PanelGetStartedSlideToRight();
+            }
+            customTextBoxSearch.Visible = true;
         }
     }
 }
