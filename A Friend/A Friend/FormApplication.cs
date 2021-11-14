@@ -441,9 +441,11 @@ namespace A_Friend
 
         private void PanelGetStartedFill()
         {
-            panelGetStarted.Location = new Point(0, 0);
-            panelGetStarted.Size = new Size(this.Width, panelGetStarted.Height);
-            formGetStarted.TopColor = Color.White;
+            if (contactItems.Count == 0) {
+                panelGetStarted.Location = new Point(0, 0);
+                panelGetStarted.Size = new Size(this.Width, panelGetStarted.Height);
+                formGetStarted.TopColor = Color.White;
+            }
         }
 
         private void panelContact_ControlAdded(object sender, ControlEventArgs e)
