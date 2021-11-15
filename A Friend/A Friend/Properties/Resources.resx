@@ -121,11 +121,14 @@
   <data name="plus_add_insert_icon_177905" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plus_add_insert_icon_177905.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="417-4175735_system-administrator-svg-png-icon-free-download-man-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="plus_add_insert_icon_1779051" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plus_add_insert_icon_1779051.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sign-out-option" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sign-out-option.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="417-4175735_system-administrator-svg-png-icon-free-download-man-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Cogs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cogs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -145,7 +148,7 @@
   <data name="copy-regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\copy-regular.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="plus_add_insert_icon_1779051" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plus_add_insert_icon_1779051.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="plus-circle_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plus-circle_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

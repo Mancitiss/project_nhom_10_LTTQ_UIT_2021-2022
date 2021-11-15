@@ -38,11 +38,12 @@ namespace A_Friend
             this.toolTip_Send = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelLeft = new System.Windows.Forms.Panel();
+            this.panelContact = new System.Windows.Forms.Panel();
+            this.panelAdd = new System.Windows.Forms.Panel();
             this.panelBottomLeft = new System.Windows.Forms.Panel();
             this.ButtonAdd = new A_Friend.CustomControls.CustomButton();
             this.SettingButton = new A_Friend.CustomControls.CustomButton();
             this.LogoutButton = new A_Friend.CustomControls.CustomButton();
-            this.panelContact = new System.Windows.Forms.Panel();
             this.panelTopLeft = new System.Windows.Forms.Panel();
             this.customTextBoxSearch = new A_Friend.CustomControls.CustomTextBox();
             this.labelWarning = new System.Windows.Forms.Label();
@@ -50,7 +51,6 @@ namespace A_Friend
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelRight = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.panelLeft.SuspendLayout();
             this.panelBottomLeft.SuspendLayout();
             this.panelTopLeft.SuspendLayout();
@@ -83,7 +83,7 @@ namespace A_Friend
             // 
             this.panelLeft.BackColor = System.Drawing.Color.White;
             this.panelLeft.Controls.Add(this.panelContact);
-            this.panelLeft.Controls.Add(this.panel2);
+            this.panelLeft.Controls.Add(this.panelAdd);
             this.panelLeft.Controls.Add(this.panelBottomLeft);
             this.panelLeft.Controls.Add(this.panelTopLeft);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
@@ -93,6 +93,26 @@ namespace A_Friend
             this.panelLeft.Name = "panelLeft";
             this.panelLeft.Size = new System.Drawing.Size(300, 712);
             this.panelLeft.TabIndex = 4;
+            // 
+            // panelContact
+            // 
+            this.panelContact.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelContact.AutoScroll = true;
+            this.panelContact.BackColor = System.Drawing.SystemColors.Window;
+            this.panelContact.Location = new System.Drawing.Point(0, 60);
+            this.panelContact.Name = "panelContact";
+            this.panelContact.Size = new System.Drawing.Size(300, 595);
+            this.panelContact.TabIndex = 2;
+            this.panelContact.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panelContact_ControlAdded);
+            // 
+            // panelAdd
+            // 
+            this.panelAdd.Location = new System.Drawing.Point(0, 577);
+            this.panelAdd.Name = "panelAdd";
+            this.panelAdd.Size = new System.Drawing.Size(300, 78);
+            this.panelAdd.TabIndex = 0;
             // 
             // panelBottomLeft
             // 
@@ -161,19 +181,6 @@ namespace A_Friend
             this.LogoutButton.UseVisualStyleBackColor = false;
             this.LogoutButton.Click += new System.EventHandler(this.LogoutButton_Click_1);
             // 
-            // panelContact
-            // 
-            this.panelContact.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelContact.AutoScroll = true;
-            this.panelContact.BackColor = System.Drawing.SystemColors.Window;
-            this.panelContact.Location = new System.Drawing.Point(0, 60);
-            this.panelContact.Name = "panelContact";
-            this.panelContact.Size = new System.Drawing.Size(298, 592);
-            this.panelContact.TabIndex = 2;
-            this.panelContact.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panelContact_ControlAdded);
-            // 
             // panelTopLeft
             // 
             this.panelTopLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
@@ -201,7 +208,7 @@ namespace A_Friend
             this.customTextBoxSearch.PasswordChar = false;
             this.customTextBoxSearch.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.customTextBoxSearch.PlaceholderText = "Search";
-            this.customTextBoxSearch.Size = new System.Drawing.Size(258, 48);
+            this.customTextBoxSearch.Size = new System.Drawing.Size(258, 43);
             this.customTextBoxSearch.TabIndex = 0;
             this.customTextBoxSearch.Texts = "";
             this.customTextBoxSearch.UnderlinedStyle = false;
@@ -235,13 +242,13 @@ namespace A_Friend
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.closeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(115, 28);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(104, 26);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(114, 24);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeMessengerToolStripMenuItem_Click);
             // 
@@ -257,16 +264,9 @@ namespace A_Friend
             this.panelRight.Size = new System.Drawing.Size(915, 712);
             this.panelRight.TabIndex = 3;
             // 
-            // panel2
-            // 
-            this.panel2.Location = new System.Drawing.Point(0, 577);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(300, 78);
-            this.panel2.TabIndex = 0;
-            // 
             // FormApplication
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1215, 712);
             this.Controls.Add(this.panelRight);
@@ -304,6 +304,6 @@ namespace A_Friend
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private Panel panelRight;
-        private Panel panel2;
+        private Panel panelAdd;
     }
 }

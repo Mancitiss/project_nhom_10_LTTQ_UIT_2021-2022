@@ -143,6 +143,16 @@ namespace A_Friend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap plus_circle_6 {
+            get {
+                object obj = ResourceManager.GetObject("plus-circle_6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap sign_out_option {
             get {
                 object obj = ResourceManager.GetObject("sign-out-option", resourceCulture);
