@@ -32,6 +32,7 @@ namespace A_Friend
             {
                 AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + txtNewUser.Texts));
             }
+            this.Hide();
         }
     }
 }

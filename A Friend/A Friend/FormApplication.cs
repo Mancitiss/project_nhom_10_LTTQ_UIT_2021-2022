@@ -311,9 +311,13 @@ namespace A_Friend
         public void ButtonAdd_Click_1(object sender, EventArgs e)
         {
             PanelGetStartedSlideToRight();
+            panelContact.Height = panelContact.Height - panel2.Height;
+            panelContact2.Height = panelContact.Height - panel2.Height;
+            panel2.Show();
             FormAddContact frm = new FormAddContact();
-            frm.StartPosition = FormStartPosition.CenterScreen;
-            frm.ShowDialog();
+            frm.TopLevel = false;
+            panel2.Controls.Add(frm);
+            frm.Show();
             PanelGetStartedFill();
             //Reload list friends
         }
