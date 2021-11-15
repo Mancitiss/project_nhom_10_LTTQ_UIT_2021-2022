@@ -135,7 +135,7 @@ namespace A_Friend
                 panelChats.Add(account.id, panelChat);
 
                 panelChat.LoadMessage();
-                contactItem.LastMessage = panelChat.GetFirstMessage();
+                contactItem.LastMessage = panelChat.GetLastMessage();
 
                 panelChat.ControlAdded += delegate
                 {

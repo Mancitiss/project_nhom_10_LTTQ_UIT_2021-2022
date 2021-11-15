@@ -18,6 +18,7 @@ namespace A_Friend.CustomControls
         byte state;
         Color stateColor = Color.Gainsboro;
         bool locking = false;
+        List<CustomControls.ChatItem2> chatItems = new List<ChatItem2>(); 
 
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem AddMessageDelegate;
@@ -97,12 +98,19 @@ namespace A_Friend.CustomControls
             }
         }
 
+        public void RemoveChatItem(CustomControls.ChatItem2 chatItem)
+        {
+            chatItems.Remove(chatItem);
+            panel_Chat.Controls.Remove(chatItem);
+        }
+
         public void AddMessage(string message, bool stacktoleft)
         {
             panel_Chat.SuspendLayout();
             var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
+            chatItems.Add(chatItem);
             panel_Chat.Controls.Add(chatItem);
             chatItem.BringToFront();
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
@@ -110,6 +118,7 @@ namespace A_Friend.CustomControls
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
         }
+
         public void AddMessage(string message, bool stacktoleft, Color textcolor, Color backcolor)
         {
             panel_Chat.SuspendLayout();
@@ -124,6 +133,7 @@ namespace A_Friend.CustomControls
             }
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
+            chatItems.Add(chatItem);
             panel_Chat.Controls.Add(chatItem);
             chatItem.BringToFront();
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
@@ -140,6 +150,7 @@ namespace A_Friend.CustomControls
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            chatItems.Insert(0, chatItem);
             panel_Chat.Controls.Add(chatItem);
             chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
@@ -159,6 +170,7 @@ namespace A_Friend.CustomControls
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            chatItems.Insert(0, chatItem);
             panel_Chat.Controls.Add(chatItem);
             chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
@@ -231,17 +243,15 @@ namespace A_Friend.CustomControls
 
         public string GetLastMessage()
         {
-            if (panel_Chat.Controls.Count == 0)
+            if (chatItems.Count == 0)
                 return "";
-            ChatItem2 message = panel_Chat.Controls[panel_Chat.Controls.Count - 1] as ChatItem2;
-            return message.Texts; 
+            return chatItems[chatItems.Count - 1].Texts;
         }
         public string GetFirstMessage()
         {
-            if (panel_Chat.Controls.Count == 0)
+            if (chatItems.Count == 0)
                 return "";
-            ChatItem2 message = panel_Chat.Controls[0] as ChatItem2;
-            return message.Texts; 
+            return chatItems[0].Texts;
         }
 
         public bool IsLastMessageFromYou()
