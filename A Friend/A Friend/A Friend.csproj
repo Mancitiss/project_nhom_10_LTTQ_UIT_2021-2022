@@ -208,5 +208,11 @@
   <ItemGroup>
     <None Include="Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus_add_insert_icon_177905.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus_add_insert_icon_1779051.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
