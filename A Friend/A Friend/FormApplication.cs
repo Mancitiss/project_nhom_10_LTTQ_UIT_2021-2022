@@ -307,17 +307,43 @@ namespace A_Friend
             frm.StartPosition = FormStartPosition.CenterScreen;
             frm.ShowDialog();
         }
-
+        int tempadd = 0;
         public void ButtonAdd_Click_1(object sender, EventArgs e)
         {
             PanelGetStartedSlideToRight();
-            panelContact.Height = panelContact.Height - panel2.Height;
-            panelContact2.Height = panelContact.Height - panel2.Height;
-            panel2.Show();
+            FormCollection forms = Application.OpenForms;
             FormAddContact frm = new FormAddContact();
-            frm.TopLevel = false;
-            panel2.Controls.Add(frm);
-            frm.Show();
+            //panelContact.Height = panelContact.Height - panel2.Height;
+            //panelContact2.Height = panelContact.Height - panel2.Height;
+            //panel2.Show();
+            //frm.TopLevel = false;
+            //panel2.Controls.Add(frm);
+            //frm.Show();
+            //i = Application.OpenForms.Count;
+            do
+            {
+                if (tempadd > 2)
+                {
+                    if (tempadd > 2)
+                    {
+                        panelAdd.Hide();
+                        panelContact.Height = panelContact.Height + panelAdd.Height;
+                        panelContact2.Height = panelContact.Height + panelAdd.Height;
+                        tempadd = 0;
+                        break;
+                    }
+                    return;
+                }
+                panelContact.Height = panelContact.Height - panelAdd.Height;
+                panelContact2.Height = panelContact.Height - panelAdd.Height;
+                panelAdd.Show();
+                frm.TopLevel = false;
+                panelAdd.Controls.Add(frm);
+                frm.Show();
+                tempadd = Application.OpenForms.Count;
+                break;
+            }
+            while (false);
             //PanelGetStartedFill();
             //Reload list friends
         }
