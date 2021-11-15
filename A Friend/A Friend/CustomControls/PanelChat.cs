@@ -228,10 +228,10 @@ namespace A_Friend.CustomControls
         public void LoadMessage()
         {
             panel_Chat.SuspendLayout();
-            AddMessageToTop("Chào bạn", true);
-            AddMessageToTop("Chào", false);
-            AddMessageToTop("Chào Tạm biệt", true);
-            AddMessageToTop("Tạm biệt", false);
+            AddMessage("Chào bạn", true);
+            AddMessage("Chào", false);
+            AddMessage("Chào Tạm biệt", true);
+            AddMessage("Tạm biệt", false);
             panel_Chat.ResumeLayout();
         }
 

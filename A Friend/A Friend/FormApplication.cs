@@ -318,7 +318,7 @@ namespace A_Friend
             frm.TopLevel = false;
             panel2.Controls.Add(frm);
             frm.Show();
-            PanelGetStartedFill();
+            //PanelGetStartedFill();
             //Reload list friends
         }
 
