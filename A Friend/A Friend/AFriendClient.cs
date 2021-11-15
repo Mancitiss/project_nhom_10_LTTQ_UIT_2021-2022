@@ -24,22 +24,9 @@ namespace A_Friend
 
         private static FormApplication UIForm;
 
-        private static List<Color> textlist;
-        private static List<Color> backlist;
-        private static int colori;
-
         public static void ExecuteClient(object obj)
         {
             UIForm = Program.mainform;
-            textlist = new List<Color>();
-            backlist = new List<Color>();
-            textlist.Add(Color.FromKnownColor(KnownColor.White));
-            backlist.Add(Color.FromArgb(0, 68, 69));
-            textlist.Add(Color.FromKnownColor(KnownColor.White));
-            backlist.Add(Color.FromArgb(44, 120, 115));
-            textlist.Add(Color.FromKnownColor(KnownColor.White));
-            backlist.Add(Color.FromArgb(111, 185, 143));
-            colori = 0;
             try
             {
                 //Send_to_id(client, "0000000000000000002", "0000000000000000001", "alo"); How to send message
@@ -164,8 +151,7 @@ namespace A_Friend
                         Console.WriteLine("{0}: {1}", sender, data);
                         if (Program.mainform.Is_this_person_added(sender))
                         {
-                            UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { data, true, textlist[colori], backlist[colori] });
-                            colori = (colori + 1) % 3;
+                            UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { data, true });
                             Console.WriteLine("data added");
                             Console.WriteLine(data);
                         }
@@ -197,8 +183,7 @@ namespace A_Friend
                             Console.WriteLine("New Contact Added");
                             if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
                             {
-                                UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message, true, textlist[colori], backlist[colori] });
-                                colori = (colori + 1) % 3;
+                                UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message, true });
                                 first_message_sender = String.Empty;
                                 first_message = String.Empty;
                             }
