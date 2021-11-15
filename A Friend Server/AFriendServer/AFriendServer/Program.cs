@@ -212,6 +212,7 @@ namespace AFriendServer
                     {
                         string receiver_id = data.Substring(4, 19);
                         data = data.Remove(4, 19);
+                        data = data.Insert(4, item.Key);
                         if (!Send_to_id(receiver_id, data))
                         {
                             s.Send(Encoding.Unicode.GetBytes("0404This person is not online"));

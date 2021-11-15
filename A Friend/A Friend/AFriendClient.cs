@@ -67,6 +67,7 @@ namespace A_Friend
                         {
                             client.Shutdown(SocketShutdown.Both);
                             client.Close();
+                            user.state = 0;
                         }
                     }
                     catch (Exception e)
@@ -120,7 +121,7 @@ namespace A_Friend
                 else Console.WriteLine("Wrong receiver ID");
                 return;
             }
-            string sent_message = "1901" + id + myid + str; // 1901 = send message
+            string sent_message = "1901" + id + str; // 1901 = send message // original was "1901" + id + myid + str;
             try
             {
                 self.Send(Encoding.Unicode.GetBytes(sent_message));
