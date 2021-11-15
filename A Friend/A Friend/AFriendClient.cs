@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace A_Friend
 {
@@ -14,15 +16,30 @@ namespace A_Friend
         private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
         private static IPAddress ipAddr = IPAddress.Any;
         private static string instruction;
+        private static string first_message = null;
+        private static string first_message_sender = null;
 
         public static Socket client;
         public static Account user;
 
         private static FormApplication UIForm;
 
+        private static List<Color> textlist;
+        private static List<Color> backlist;
+        private static int colori;
+
         public static void ExecuteClient(object obj)
         {
             UIForm = Program.mainform;
+            textlist = new List<Color>();
+            backlist = new List<Color>();
+            textlist.Add(Color.FromKnownColor(KnownColor.White));
+            backlist.Add(Color.FromArgb(0, 68, 69));
+            textlist.Add(Color.FromKnownColor(KnownColor.White));
+            backlist.Add(Color.FromArgb(44, 120, 115));
+            textlist.Add(Color.FromKnownColor(KnownColor.White));
+            backlist.Add(Color.FromArgb(111, 185, 143));
+            colori = 0;
             try
             {
                 //Send_to_id(client, "0000000000000000002", "0000000000000000001", "alo"); How to send message
@@ -99,7 +116,8 @@ namespace A_Friend
                 }
                 FormApplication.currentID = user.id;
                 return true;
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
                 return false;
@@ -146,12 +164,15 @@ namespace A_Friend
                         Console.WriteLine("{0}: {1}", sender, data);
                         if (Program.mainform.Is_this_person_added(sender))
                         {
-                            UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { data, true });
+                            UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { data, true, textlist[colori], backlist[colori] });
+                            colori = (colori + 1) % 3;
                             Console.WriteLine("data added");
                             Console.WriteLine(data);
                         }
                         else
                         {
+                            first_message_sender = sender;
+                            first_message = data;
                             Console.WriteLine("Ask for info");
                             self.Send(Encoding.Unicode.GetBytes("0609" + sender));
                         }
@@ -161,13 +182,26 @@ namespace A_Friend
                     {
                         string data_found = data;
                         List<string> found = data_found.Split(' ').ToList<string>();
-                        Console.WriteLine(found[0] + found[1] + found[2] + found[3]);
+                        Console.WriteLine(string.Join(" ", found));
+                        string name = "";
+                        for (int i = 2; i < found.Count - 1; i++)
+                        {
+                            name += found[i] + ' ';
+                        }
+                        name = name.Trim();
                         Byte state;
                         Console.WriteLine("I even reached here");
-                        if (Byte.TryParse(found[3], out state))
+                        if (Byte.TryParse(found[found.Count - 1], out state))
                         {
-                            UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], found[2], found[0], state) });
+                            UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
                             Console.WriteLine("New Contact Added");
+                            if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
+                            {
+                                UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message, true, textlist[colori], backlist[colori] });
+                                colori = (colori + 1) % 3;
+                                first_message_sender = String.Empty;
+                                first_message = String.Empty;
+                            }
                             /*
                             UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
                             Console.WriteLine("Message Received");*/
@@ -182,6 +216,8 @@ namespace A_Friend
                     if (instruction == "2609")
                     {
                         Console.WriteLine("No such account exists");
+                        first_message = String.Empty;
+                        first_message_sender = String.Empty;
                     }
                     else
                     if (instruction == "0404") //0404 = error
@@ -214,7 +250,8 @@ namespace A_Friend
                         Console.WriteLine("Ten tai khoan da ton tai");
                     }
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
@@ -233,7 +270,8 @@ namespace A_Friend
                 if (instruction == "1011")
                 {
                     success = true;
-                } else if (instruction == "1111")
+                }
+                else if (instruction == "1111")
                 {
 
                 }
