@@ -327,6 +327,8 @@ namespace A_Friend
                     if (tempadd > 2)
                     {
                         panelAdd.Hide();
+                        panelContact.Height = panelContact.Height + panelAdd.Height;
+                        panelContact2.Height = panelContact.Height + panelAdd.Height;
                         tempadd = 0;
                         break;
                     }
