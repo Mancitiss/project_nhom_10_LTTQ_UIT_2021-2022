@@ -13,33 +13,6 @@ using CryptSharp;
 
 namespace AFriendServer
 {
-    /*
-    class Account
-    {
-        public string id;
-        public string username;
-        public int state;
-        private string password;
-
-        public Account(string id, string username, string password)
-        {
-            this.id = id;
-            this.username = username;
-            this.password = password;
-            this.state = 0;
-        }
-
-        public bool check_pass(string pass)
-        {
-            if (pass == password)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-    */
-
     class Program
     {
         static Dictionary<string, Socket> dictionary;
@@ -216,70 +189,6 @@ namespace AFriendServer
                 Console.WriteLine(e.ToString());
             }
         }
-        /*
-        private static void ClientHandler(object obj)
-        {
-            string id = (string)obj;
-            Socket client = dictionary[id];
-            
-            try
-            {
-                while (true)
-                {
-                    try
-                    {
-                        Thread.Sleep(1000);
-                        if (Receive_message(client))
-                        {
-                            Console.WriteLine("{0} has quit", id);
-                            break;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("{0} has quit", id);
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-            try
-            {
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-                dictionary.Remove(id);
-                string str_id = id;
-                while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
-                using (SqlCommand cmd = new SqlCommand("update account set state=0 where id='" + str_id + "'", sql))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-
-            } catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            if (id != null)
-            {
-                if (dictionary.ContainsKey(id))
-                {
-                    dictionary.Remove(id);
-                }
-            }
-            try 
-            {
-                return;
-            }
-            catch (Exception e) 
-            { 
-                Console.WriteLine(e.ToString()); 
-            }
-        }*/
-
         private static void Receive_message(object si)
         {
             try
@@ -299,7 +208,7 @@ namespace AFriendServer
                 {
                     string instruction = data.Substring(0, 4);
 
-                    if (instruction == "1901")
+                    if (instruction == "1901") // message handlings
                     {
                         string receiver_id = data.Substring(4, 19);
                         data = data.Remove(4, 19);
@@ -308,7 +217,7 @@ namespace AFriendServer
                             s.Send(Encoding.Unicode.GetBytes("0404This person is not online"));
                         }
                     }
-                    else if (instruction == "2004")
+                    else if (instruction == "2004") // offline (quit)
                     {
                         s.Shutdown(SocketShutdown.Both);
                         s.Close();
@@ -321,7 +230,7 @@ namespace AFriendServer
                             cmd.ExecuteNonQuery();
                         }
                     }
-                    else if (instruction == "0609")
+                    else if (instruction == "0609") // lookup sb's info using id
                     {
                         data = data.Remove(0, 4);
                         string commandtext = "select top 1 id, username, name, state from account where id=@id";
@@ -335,11 +244,11 @@ namespace AFriendServer
                             }
                             else
                             {
-                                s.Send(Encoding.Unicode.GetBytes("2609"));
+                                s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
                             }
                         }
                     }
-                    else if (instruction == "0610")
+                    else if (instruction == "0610") // lookup sb's info using username
                     {
                         data = data.Remove(0, 4);
                         string commandtext = "select top 1 id, username, name, state from account where username=@username";
@@ -354,10 +263,38 @@ namespace AFriendServer
                             }
                             else
                             {
-                                s.Send(Encoding.Unicode.GetBytes("2609"));
+                                s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
                             }
                         }
                     }
+                    else
+                    {
+                        s.Shutdown(SocketShutdown.Both);
+                        s.Close();
+                        string str_id = item.Key;
+                        dictionary.Remove(item.Key);
+                        while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
+                        using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
+                        {
+                            cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
+                            cmd.ExecuteNonQuery();
+                        }
+                        Console.WriteLine("Received strange signal, socket closed");
+                    }
+                }
+                else
+                {
+                    s.Shutdown(SocketShutdown.Both);
+                    s.Close();
+                    string str_id = item.Key;
+                    dictionary.Remove(item.Key);
+                    while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
+                    using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
+                    {
+                        cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
+                        cmd.ExecuteNonQuery();
+                    }
+                    Console.WriteLine("Received strange signal, socket closed (2)");
                 }
                 Console.WriteLine("Work finished");
             }
@@ -505,7 +442,7 @@ namespace AFriendServer
                             }
                             string id_string = randomid.ToString();
                             while (id_string.Length < 19) id_string = '0' + id_string;
-                            using (SqlCommand command = new SqlCommand("insert into account values (@id, @username, @name, @pw, @state, @private)", sql))
+                            using (SqlCommand command = new SqlCommand("insert into account values (@id, @username, @name, @pw, @state, @private, @number_of_contacts)", sql))
                             {
                                 command.Parameters.AddWithValue("@id", id_string);
                                 command.Parameters.AddWithValue("@username", list_str[0]);
@@ -513,6 +450,7 @@ namespace AFriendServer
                                 command.Parameters.AddWithValue("@pw", list_str[1]);
                                 command.Parameters.AddWithValue("@state", 0);
                                 command.Parameters.AddWithValue("@private", 0);
+                                command.Parameters.AddWithValue("@number_of_contacts", 0);
                                 command.ExecuteNonQuery();
                             }
                             s.Send(Encoding.Unicode.GetBytes("1011")); // New account created
