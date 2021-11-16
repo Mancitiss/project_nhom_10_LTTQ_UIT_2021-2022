@@ -30,7 +30,9 @@ namespace A_Friend
                 labelWarning.Text = "Please enter a username";
             else
             {
-                AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + txtNewUser.Texts));
+                string data = txtNewUser.Texts;
+                string databyte = Encoding.Unicode.GetByteCount(data).ToString();
+                AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
             }
             this.Hide();
         }
