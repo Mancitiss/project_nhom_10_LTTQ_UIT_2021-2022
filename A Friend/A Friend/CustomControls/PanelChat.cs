@@ -18,7 +18,7 @@ namespace A_Friend.CustomControls
         byte state;
         Color stateColor = Color.Gainsboro;
         bool locking = false;
-        List<CustomControls.ChatItem2> chatItems = new List<ChatItem2>(); 
+        List<CustomControls.ChatItem2> chatItems = new List<ChatItem2>();
 
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem AddMessageDelegate;
@@ -40,10 +40,10 @@ namespace A_Friend.CustomControls
 
         private void panel_Chat_MouseWheel(object sender, EventArgs e)
         {
-            if (panel_Chat.VerticalScroll.Value==0)
+            if (panel_Chat.VerticalScroll.Value == 0)
             {
                 LoadMessage();
-            }    
+            }
         }
 
         public PanelChat(Account account)
@@ -183,7 +183,7 @@ namespace A_Friend.CustomControls
         public void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
             textboxWriting.Select();
-            if (e.KeyCode == Keys.Enter && !locking)
+            if (e.KeyCode == Keys.Enter && !locking && !(e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter))
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
@@ -193,10 +193,11 @@ namespace A_Friend.CustomControls
                     textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
                     blockSending();
+                    textboxWriting.Multiline = false;
                 }
-            }
+            }  
         }
-         
+
         private void blockSending()
         {
             locking = true;
@@ -222,8 +223,8 @@ namespace A_Friend.CustomControls
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 e.Graphics.DrawEllipse(pen, friendPicture.Left - 1, friendPicture.Top - 1, friendPicture.Width + 2, friendPicture.Width + 2);
             }
-            
-            using (Pen pen =  new Pen(Color.Gray, 1))
+
+            using (Pen pen = new Pen(Color.Gray, 1))
             {
                 e.Graphics.DrawLine(pen, 0, panelTopRight.Height - 1, panelTopRight.Width, panelTopRight.Height - 1);
                 e.Graphics.DrawLine(pen, 0, panelTopRight.Height, 0, 0);
@@ -288,7 +289,7 @@ namespace A_Friend.CustomControls
         {
             locking = false;
             textboxWriting.Select();
-            
+
             timerChat.Stop();
         }
 
@@ -309,7 +310,7 @@ namespace A_Friend.CustomControls
 
         private void panelBottomRight_Paint(object sender, PaintEventArgs e)
         {
-            using(Pen pen = new Pen(Color.Gray, 1))
+            using (Pen pen = new Pen(Color.Gray, 1))
             {
                 e.Graphics.DrawLine(pen, 0, 1, panelBottomRight.Width, 1);
                 e.Graphics.DrawLine(pen, 0, 0, 0, panelBottomRight.Height);
@@ -329,10 +330,15 @@ namespace A_Friend.CustomControls
 
         private void panel_Chat_Paint(object sender, PaintEventArgs e)
         {
-            using(Pen pen = new Pen(Color.Gray, 1))
+            using (Pen pen = new Pen(Color.Gray, 1))
             {
                 e.Graphics.DrawLine(pen, 0, 0, 0, panel_Chat.Height);
             }
+        }
+
+        private void textboxWriting__TextChanged(object sender, EventArgs e)
+        {
+            textboxWriting.Multiline = true;
         }
     }
 }

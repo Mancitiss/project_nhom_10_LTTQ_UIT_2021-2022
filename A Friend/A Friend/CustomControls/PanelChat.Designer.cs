@@ -69,7 +69,7 @@ namespace A_Friend.CustomControls
             this.labelFriendName.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.labelFriendName.Location = new System.Drawing.Point(72, 10);
             this.labelFriendName.Name = "labelFriendName";
-            this.labelFriendName.Size = new System.Drawing.Size(80, 18);
+            this.labelFriendName.Size = new System.Drawing.Size(99, 23);
             this.labelFriendName.TabIndex = 6;
             this.labelFriendName.Text = "Username";
             // 
@@ -78,7 +78,7 @@ namespace A_Friend.CustomControls
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(13, 20);
+            this.label3.Size = new System.Drawing.Size(17, 25);
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
@@ -142,6 +142,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Texts = "";
             this.textboxWriting.UnderlinedStyle = false;
+            this.textboxWriting._TextChanged += new System.EventHandler(this.textboxWriting__TextChanged);
             this.textboxWriting.SizeChanged += new System.EventHandler(this.textboxWriting_SizeChanged);
             this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
             // 
@@ -201,7 +202,7 @@ namespace A_Friend.CustomControls
             // 
             // PanelChat
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panelBottomRight);
             this.Controls.Add(this.panel_Chat);
