@@ -44,7 +44,7 @@ namespace A_Friend.CustomControls
             this.panelBody.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
             this.panelBody.Controls.Add(this.labelBody);
             this.panelBody.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelBody.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.panelBody.Font = new System.Drawing.Font("Arial", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panelBody.Location = new System.Drawing.Point(15, 0);
             this.panelBody.Margin = new System.Windows.Forms.Padding(0);
             this.panelBody.Name = "panelBody";
@@ -58,7 +58,7 @@ namespace A_Friend.CustomControls
             this.labelBody.Location = new System.Drawing.Point(10, 10);
             this.labelBody.Margin = new System.Windows.Forms.Padding(0);
             this.labelBody.Name = "labelBody";
-            this.labelBody.Size = new System.Drawing.Size(53, 20);
+            this.labelBody.Size = new System.Drawing.Size(51, 19);
             this.labelBody.TabIndex = 0;
             this.labelBody.Text = "label1";
             // 

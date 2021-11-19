@@ -113,6 +113,12 @@
     <Compile Include="FormApplication.Designer.cs">
       <DependentUpon>FormApplication.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormGetStarted.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormGetStarted.Designer.cs">
+      <DependentUpon>FormGetStarted.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -164,6 +170,9 @@
     <EmbeddedResource Include="FormApplication.resx">
       <DependentUpon>FormApplication.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormGetStarted.resx">
+      <DependentUpon>FormGetStarted.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
     </EmbeddedResource>
@@ -198,6 +207,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus_add_insert_icon_177905.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus_add_insert_icon_1779051.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus-circle_6.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

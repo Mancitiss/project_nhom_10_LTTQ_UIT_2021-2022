@@ -60,6 +60,22 @@ namespace A_Friend.CustomControls
 
         public bool StackToLeft { get; set; }
 
+        public Color TextColor
+        {
+            get { return labelBody.ForeColor; }
+            set { labelBody.ForeColor = value; }
+        }
+
+        public Color BackGroundColor
+        {
+            get { return panelBody.BackColor; }
+            set
+            {
+                labelBody.BackColor = value;
+                panelBody.BackColor = value;
+            }
+        }
+
         public void ResizeBubbles()
         {
             SuspendLayout();
@@ -121,9 +137,10 @@ namespace A_Friend.CustomControls
 
         private void buttonRemove_Click(object sender, EventArgs e)
         {
-            if (this.Parent.Controls.Count == 0)
-                return;
-            this.Parent.Controls.Remove(this);
+            if (this.Parent.Parent is PanelChat)
+            {
+                (this.Parent.Parent as PanelChat).RemoveChatItem(this);
+            }
         }
     }
 }

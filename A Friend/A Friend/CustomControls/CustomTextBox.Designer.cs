@@ -54,7 +54,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.textBox1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "CustomTextBox";
             this.Padding = new System.Windows.Forms.Padding(12, 8, 12, 8);
             this.Size = new System.Drawing.Size(250, 30);

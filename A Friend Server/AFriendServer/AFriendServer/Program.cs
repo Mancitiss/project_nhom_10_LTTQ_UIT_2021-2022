@@ -13,38 +13,17 @@ using CryptSharp;
 
 namespace AFriendServer
 {
-    /*
-    class Account
-    {
-        public string id;
-        public string username;
-        public int state;
-        private string password;
-
-        public Account(string id, string username, string password)
-        {
-            this.id = id;
-            this.username = username;
-            this.password = password;
-            this.state = 0;
-        }
-
-        public bool check_pass(string pass)
-        {
-            if (pass == password)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-    */
-
     class Program
     {
         static Dictionary<string, Socket> dictionary;
         static SqlConnection sql;
         static Random rand;
+
+        static DateTime datetime = new DateTime();
+
+        static Dictionary<string, int> byte_expected = new Dictionary<string, int>();
+        static Dictionary<string, bool> is_processing = new Dictionary<string, bool>();
+        static Dictionary<string, bool> is_locked = new Dictionary<string, bool>();
 
         public static Int64 NextInt64(Random rnd)
         {
@@ -97,6 +76,121 @@ namespace AFriendServer
             }
         }
 
+        private static void shutdown(KeyValuePair<string, Socket> item) 
+        {
+            Console.WriteLine("{0} has quit", item.Key);
+            item.Value.Shutdown(SocketShutdown.Both);
+            item.Value.Close();
+            string str_id = item.Key;
+            dictionary.Remove(item.Key);
+            byte_expected.Remove(item.Key);
+            is_processing.Remove(item.Key);
+            is_locked.Remove(item.Key);
+            while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
+            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
+            {
+                cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static void process_message(object obj)
+        {
+
+            KeyValuePair<string, Socket> item = (KeyValuePair<string, Socket>)obj;
+            try
+            {
+                int total_byte_received = 0;
+                byte[] data = new Byte[byte_expected[item.Key]];
+                int receivedbyte = item.Value.Receive(data);
+                if (receivedbyte > 0)
+                {
+                    total_byte_received += receivedbyte;
+                    byte_expected[item.Key] -= receivedbyte;
+                }
+                while (byte_expected[item.Key] > 0 && receivedbyte > 0)
+                {
+                    receivedbyte = item.Value.Receive(data, total_byte_received, byte_expected[item.Key], SocketFlags.None);
+                    Console.WriteLine("Received bytes:" + receivedbyte.ToString());
+                    if (receivedbyte > 0)
+                    {
+                        total_byte_received += receivedbyte;
+                        byte_expected[item.Key] -= receivedbyte;
+                    }
+                    else break;
+                }
+                if (byte_expected[item.Key] == 0)// all data received, save to database, send to socket
+                {
+                    string data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
+                    string receiver_id = data_string.Substring(0, 19);
+                    data_string = data_string.Remove(0, 19);
+                    //save to database start
+                    string id1, id2;
+                    if (item.Key.CompareTo(receiver_id) <= 0)
+                    {
+                        id1 = item.Key;
+                        id2 = receiver_id;
+                    } else
+                    {
+                        id1 = receiver_id;
+                        id2 = item.Key;
+                    }
+                    string sqlmessage = data_string;
+                    var sqlthread = new Thread(() =>
+                    {
+                        Console.WriteLine("sql message thread is running");
+                        bool finish = false;
+                        while (!finish)
+                        {
+                            try
+                            {
+                                using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message)", sql))
+                                {
+                                    command.Parameters.AddWithValue("@id1", id1);
+                                    command.Parameters.AddWithValue("@id2", id2);
+                                    command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
+                                    command.Parameters.AddWithValue("@datetimenow", DateTime.Now);
+                                    command.Parameters.AddWithValue("@sender", item.Key == id2);
+                                    command.Parameters.AddWithValue("@message", sqlmessage);
+                                    if (command.ExecuteNonQuery() >= 1) finish = true;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.ToString());
+                            }
+                        }
+                    });
+                    sqlthread.IsBackground = true;
+                    sqlthread.Start();
+                    //save to database end
+
+                    data_string = data_string.Insert(0, item.Key);
+
+                    //send to socket start
+                    if (!Send_to_id(receiver_id, data_string))
+                    {
+                        item.Value.Send(Encoding.Unicode.GetBytes("0404"));
+                    }
+                    //send to socket end
+                }
+                else // data corrupted
+                {
+                    byte_expected[item.Key] = 0;
+                    Console.WriteLine("Data Corrupted");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                is_processing[item.Key] = false;
+                is_locked[item.Key] = false;
+            }
+        }
+
         private static void Client_Loop(object obj)
         {
             while (true)
@@ -105,6 +199,7 @@ namespace AFriendServer
                 {
                     foreach (var item in dictionary)
                     {
+                        if (is_locked[item.Key]) continue;
                         try
                         {
                             //Console.WriteLine(item.Key + " is online");
@@ -112,58 +207,70 @@ namespace AFriendServer
                             {
                                 if (item.Value.Poll(1, SelectMode.SelectRead))
                                 {
-                                    if (!item.Value.Connected)
+                                    if (!item.Value.Connected) // Something bad has happened, shut down
                                     {
-                                        // Something bad has happened, shut down
-                                        Console.WriteLine("{0} has quit", item.Key);
                                         try
                                         {
-                                            item.Value.Shutdown(SocketShutdown.Both);
-                                            item.Value.Close();
-                                            string str_id = item.Key;
-                                            dictionary.Remove(item.Key);
-                                            while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
-                                            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
-                                            {
-                                                cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
-                                                cmd.ExecuteNonQuery();
-                                            }
-
+                                            shutdown(item);
                                         }
                                         catch (Exception e)
                                         {
                                             Console.WriteLine(e.ToString());
                                         }
                                     }
-                                    else
+                                    else // There is data waiting to be read"
                                     {
-                                        // There is data waiting to be read"
-                                        Console.WriteLine("new work created");
-                                        Thread work = new Thread(new ParameterizedThreadStart(Receive_message));
-                                        work.IsBackground = true;
-                                        work.Start(item);
+                                        if (is_locked[item.Key]) continue;
+                                        is_locked[item.Key] = true;
+                                        if (byte_expected[item.Key] == 0)
+                                        {
+                                            try
+                                            {
+                                                Console.WriteLine("new work created");
+                                                Thread work = new Thread(new ParameterizedThreadStart(Receive_message));
+                                                work.IsBackground = true;
+                                                work.Start(item);
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine(e.ToString());
+                                            }
+                                            finally
+                                            {
+                                                //is_locked[item.Key] = false;
+                                            }
+                                        }
+                                        else if (!is_processing[item.Key])
+                                        {
+                                            try
+                                            {
+                                                is_processing[item.Key] = true;
+                                                Thread process = new Thread(new ParameterizedThreadStart(process_message));
+                                                process.IsBackground = true;
+                                                process.Start(item);
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine(e.ToString());
+                                            }
+                                            finally
+                                            {
+                                                //is_locked[item.Key] = false;
+                                            }
+                                        }
+                                        
                                     }
                                 }
                             }
                             else
                             {
-                                Console.WriteLine(item.Key + " has quit");
-                                item.Value.Shutdown(SocketShutdown.Both);
-                                item.Value.Close();
-                                string str_id = item.Key;
-                                dictionary.Remove(item.Key);
-                                while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
-                                using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
-                                {
-                                    cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
-                                    cmd.ExecuteNonQuery();
-                                }
+                                shutdown(item);
                             }
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e.ToString());
-                        }
+                        } 
                     }
                 }
                 catch (Exception e)
@@ -216,154 +323,121 @@ namespace AFriendServer
                 Console.WriteLine(e.ToString());
             }
         }
-        /*
-        private static void ClientHandler(object obj)
-        {
-            string id = (string)obj;
-            Socket client = dictionary[id];
-            
-            try
-            {
-                while (true)
-                {
-                    try
-                    {
-                        Thread.Sleep(1000);
-                        if (Receive_message(client))
-                        {
-                            Console.WriteLine("{0} has quit", id);
-                            break;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("{0} has quit", id);
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-            try
-            {
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-                dictionary.Remove(id);
-                string str_id = id;
-                while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
-                using (SqlCommand cmd = new SqlCommand("update account set state=0 where id='" + str_id + "'", sql))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-
-            } catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            if (id != null)
-            {
-                if (dictionary.ContainsKey(id))
-                {
-                    dictionary.Remove(id);
-                }
-            }
-            try 
-            {
-                return;
-            }
-            catch (Exception e) 
-            { 
-                Console.WriteLine(e.ToString()); 
-            }
-        }*/
-
         private static void Receive_message(object si)
         {
+            KeyValuePair<string, Socket> item = (KeyValuePair<string, Socket>)si;
+            Socket s = item.Value;
             try
             {
-                KeyValuePair<string, Socket> item = (KeyValuePair<string, Socket>)si;
-                Socket s = item.Value;
-
-                byte[] bytes = new byte[s.ReceiveBufferSize];
+                byte[] bytes = new byte[8];
 
                 //read the identifier from client
-                int numByte = s.Receive(bytes);
+                int numByte = s.Receive(bytes, 8, SocketFlags.None);
 
-                string data = Encoding.Unicode.GetString(bytes,
-                                           0, numByte);
-                Console.WriteLine("Work: " + data);
-                if (data != null && data != "")
+                if (numByte != 0)
                 {
-                    string instruction = data.Substring(0, 4);
+                    string data = Encoding.Unicode.GetString(bytes,
+                                               0, numByte);
+                    Console.WriteLine("Work: " + data);
+                    if (data != null && data != "")
+                    {
+                        string instruction = data;
 
-                    if (instruction == "1901")
-                    {
-                        string receiver_id = data.Substring(4, 19);
-                        data = data.Remove(4, 19);
-                        if (!Send_to_id(receiver_id, data))
+                        if (instruction == "1901") // message handlings
                         {
-                            s.Send(Encoding.Unicode.GetBytes("0404This person is not online"));
+                            bytes = new byte[4];
+                            numByte = s.Receive(bytes, 4, SocketFlags.None);
+                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            int bytezize = Int32.Parse(data)*2;
+                            bytes = new byte[bytezize];
+                            numByte = s.Receive(bytes, bytezize, SocketFlags.None);
+                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            Int32.TryParse(data, out int temp);
+                            byte_expected[item.Key] = temp;
                         }
-                    }
-                    else if (instruction == "2004")
-                    {
-                        s.Shutdown(SocketShutdown.Both);
-                        s.Close();
-                        string str_id = item.Key;
-                        dictionary.Remove(item.Key);
-                        while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
-                        using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
+                        else if (instruction == "2004") // offline (quit)
                         {
-                            cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
-                            cmd.ExecuteNonQuery();
+                            shutdown(item);
                         }
-                    }
-                    else if (instruction == "0609")
-                    {
-                        data = data.Remove(0, 4);
-                        string commandtext = "select top 1 id, username, name, state from account where id=@id";
-                        SqlCommand command = new SqlCommand(commandtext, sql);
-                        command.Parameters.AddWithValue("@id", Int64.Parse(data));
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        else if (instruction == "0609") // lookup sb's info using id
                         {
-                            if (reader.Read())
+                            bytes = new byte[38];
+                            numByte = s.Receive(bytes, 38, SocketFlags.None);
+                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            string commandtext = "select top 1 id, username, name, state from account where id=@id";
+                            SqlCommand command = new SqlCommand(commandtext, sql);
+                            command.Parameters.AddWithValue("@id", Int64.Parse(data));
+                            using (SqlDataReader reader = command.ExecuteReader())
                             {
-                                s.Send(Encoding.Unicode.GetBytes("1609" + reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString()));
-                            }
-                            else
-                            {
-                                s.Send(Encoding.Unicode.GetBytes("2609"));
-                            }
-                        }
-                    }
-                    else if (instruction == "0610")
-                    {
-                        data = data.Remove(0, 4);
-                        string commandtext = "select top 1 id, username, name, state from account where username=@username";
-                        SqlCommand command = new SqlCommand(commandtext, sql);
-                        command.Parameters.AddWithValue("@username", data);
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                s.Send(Encoding.Unicode.GetBytes("1609" + reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString()));
-                                Console.WriteLine("Info sent");
-                            }
-                            else
-                            {
-                                s.Send(Encoding.Unicode.GetBytes("2609"));
+                                if (reader.Read())
+                                {
+                                    string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
+                                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                    s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                }
+                                else
+                                {
+                                    s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
+                                }
                             }
                         }
+                        else if (instruction == "0610") // lookup sb's info using username
+                        {
+                            bytes = new byte[4];
+                            numByte = s.Receive(bytes, 4, SocketFlags.None);
+                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            int bytezize = Int32.Parse(data) * 2;
+                            bytes = new byte[bytezize];
+                            numByte = s.Receive(bytes, bytezize, SocketFlags.None);
+                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            bytezize = Int32.Parse(data) ;
+                            bytes = new byte[bytezize];
+                            numByte = s.Receive(bytes, bytezize, SocketFlags.None);
+                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            string commandtext = "select top 1 id, username, name, state from account where username=@username";
+                            SqlCommand command = new SqlCommand(commandtext, sql);
+                            command.Parameters.AddWithValue("@username", data);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
+                                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                    s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                    Console.WriteLine("Info sent");
+                                }
+                                else
+                                {
+                                    s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shutdown(item);
+                            Console.WriteLine("Received strange signal, socket closed");
+                        }
                     }
+                    else
+                    {
+                        shutdown(item);
+                        Console.WriteLine("Received strange signal, socket closed (2)");
+                    }
+                    Console.WriteLine("Work finished");
+                } else
+                {
+                    shutdown(item);
+                    Console.WriteLine("Received strange signal, socket closed (3)");
                 }
-                Console.WriteLine("Work finished");
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 Console.WriteLine("Work quitted");
+            }
+            finally
+            {
+                is_locked[item.Key] = false;
             }
         }
 
@@ -381,7 +455,8 @@ namespace AFriendServer
             {
                 try
                 {
-                    dictionary[id].Send(Encoding.Unicode.GetBytes(data));
+                    string data_string = Encoding.Unicode.GetByteCount(data).ToString();
+                    dictionary[id].Send(Encoding.Unicode.GetBytes("1901" + data_string.Length.ToString().PadLeft(2, '0') + data_string + data));
                     success = true;
                 }
                 catch (Exception e)
@@ -428,8 +503,11 @@ namespace AFriendServer
                                     string str_id = id;
                                     while (id.Length < 19) id = '0' + id;
 
+                                    string username = reader["username"].ToString();
+                                    string usernamebyte = Encoding.Unicode.GetByteCount(username).ToString();
+
                                     s.Send(Encoding.Unicode.GetBytes("0200"
-                                        + id + reader["username"].ToString()));
+                                        + id + usernamebyte.Length.ToString().PadLeft(2, '0') + usernamebyte + username));
 
                                     using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
                                     {
@@ -439,12 +517,11 @@ namespace AFriendServer
 
                                     try
                                     {
-                                        s.Send(Encoding.Unicode.GetBytes("19010000000000000000000You are connected"));
 
 
                                         if (dictionary.ContainsKey(id))
                                         {
-                                            dictionary[id].Send(Encoding.Unicode.GetBytes("19010000000000000000000You are logged in from another device. You will be logged out."));
+                                            dictionary[id].Send(Encoding.Unicode.GetBytes("2004"));
                                             dictionary[id].Shutdown(SocketShutdown.Both);
                                             dictionary[id].Close();
                                             dictionary.Remove(id);
@@ -458,6 +535,29 @@ namespace AFriendServer
                                     try
                                     {
                                         //add the entry in the dictionary
+                                        try
+                                        {
+                                            byte_expected.Add(id, 0);
+                                        } catch (Exception e)
+                                        {
+                                            byte_expected[id] = 0;
+                                        }
+                                        try
+                                        {
+                                            is_processing.Add(id, false);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            is_processing[id] = false;
+                                        }
+                                        try
+                                        {
+                                            is_locked.Add(id, false);
+                                        }
+                                        catch (Exception e) 
+                                        {
+                                            is_locked[id] = false;
+                                        }
                                         dictionary.Add(id, s);
                                         Console.WriteLine("got id");
                                     }
@@ -505,7 +605,7 @@ namespace AFriendServer
                             }
                             string id_string = randomid.ToString();
                             while (id_string.Length < 19) id_string = '0' + id_string;
-                            using (SqlCommand command = new SqlCommand("insert into account values (@id, @username, @name, @pw, @state, @private)", sql))
+                            using (SqlCommand command = new SqlCommand("insert into account values (@id, @username, @name, @pw, @state, @private, @number_of_contacts)", sql))
                             {
                                 command.Parameters.AddWithValue("@id", id_string);
                                 command.Parameters.AddWithValue("@username", list_str[0]);
@@ -513,6 +613,7 @@ namespace AFriendServer
                                 command.Parameters.AddWithValue("@pw", list_str[1]);
                                 command.Parameters.AddWithValue("@state", 0);
                                 command.Parameters.AddWithValue("@private", 0);
+                                command.Parameters.AddWithValue("@number_of_contacts", 0);
                                 command.ExecuteNonQuery();
                             }
                             s.Send(Encoding.Unicode.GetBytes("1011")); // New account created
