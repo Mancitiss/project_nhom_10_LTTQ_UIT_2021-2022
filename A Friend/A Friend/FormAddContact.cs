@@ -36,5 +36,10 @@ namespace A_Friend
             }
             this.Hide();
         }
+
+        private void FormAddContact_Shown(object sender, EventArgs e)
+        {
+            txtNewUser.Focus();
+        }
     }
 }

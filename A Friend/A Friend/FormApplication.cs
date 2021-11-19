@@ -86,17 +86,23 @@ namespace A_Friend
             this.panelRight2.Margin = panelRight.Margin;
 
             this.panelLeft.Controls.Add(this.panelContact2);
+            this.panelContact2.Padding = panelContact.Padding;
+            this.panelContact2.Margin = panelContact.Margin;
             this.panelContact2.Anchor = panelContact.Anchor;
             this.panelContact2.AutoScroll = true;
             this.panelContact2.BackColor = panelContact.BackColor;
             this.panelContact2.Location = panelContact.Location;
             this.panelContact2.Size = panelContact.Size;
+            this.panelContact2.Paint += panelContact_Paint;
 
             this.Controls.Add(panelGetStarted);
             panelGetStarted.SendToBack();
             panelGetStarted.Anchor = panelRight.Anchor;
             panelGetStarted.Location = new Point(0, 0);
-            panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top);
+            panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top + 2);
+            panelGetStarted.Padding = new Padding(1);
+
+            panelAdd.SendToBack();
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -465,8 +471,14 @@ namespace A_Friend
         private void PanelGetStartedSlideToRight()
         {
             panelGetStarted.Location = panelRight.Location;
-            panelGetStarted.Size = new Size(panelRight.Width, panelGetStarted.Height);
+            panelGetStarted.Size = new Size(panelRight.Width, this.Height);
             formGetStarted.TopColor = panelTopLeft.BackColor;
+            var graphic = panelGetStarted.CreateGraphics(); 
+            using (Pen pen = new Pen (Color.Gray, 1))
+            {
+                graphic.DrawLine(pen, 0, 0, 0, panelGetStarted.Height - 1);
+            }
+
         }
 
         private void PanelGetStartedFill()
@@ -485,6 +497,32 @@ namespace A_Friend
                 PanelGetStartedSlideToRight();
             }
             customTextBoxSearch.Visible = true;
+        }
+
+        private void panelTopLeft_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen pen = new Pen(Color.Gray, 1))
+            {
+                e.Graphics.DrawLine(pen, 0, panelTopLeft.Height - 1, panelTopLeft.Width, panelTopLeft.Height -  1);
+                //e.Graphics.DrawLine(pen, panelTopLeft.Width - 1, 0, panelTopLeft.Width - 1, panelTopLeft.Height);
+            }
+        }
+
+        private void panelContact_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen pen = new Pen(Color.Gray, 1))
+            {
+                //e.Graphics.DrawLine(pen, panelContact.Width - 1, 0, panelContact.Width - 1, panelContact.Height);
+            }
+        }
+
+        private void panelBottomLeft_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen pen = new Pen(Color.Gray, 1))
+            {
+                e.Graphics.DrawLine(pen, 0, 1, panelBottomLeft.Width - 0, 1);
+                //e.Graphics.DrawLine(pen, panelBottomLeft.Width - 1, 0, panelBottomLeft.Width - 1, panelBottomLeft.Height);
+            }
         }
     }
 }

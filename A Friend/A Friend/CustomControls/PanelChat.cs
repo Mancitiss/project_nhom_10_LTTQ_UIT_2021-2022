@@ -18,7 +18,7 @@ namespace A_Friend.CustomControls
         byte state;
         Color stateColor = Color.Gainsboro;
         bool locking = false;
-        List<CustomControls.ChatItem2> chatItems = new List<ChatItem2>(); 
+        List<CustomControls.ChatItem2> chatItems = new List<ChatItem2>();
 
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem AddMessageDelegate;
@@ -34,14 +34,16 @@ namespace A_Friend.CustomControls
             //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             this.CreateControl();
+            textboxWriting.dynamicMode = true;
+            textboxWriting.SetMaximumTextLenght(2021);
         }
 
         private void panel_Chat_MouseWheel(object sender, EventArgs e)
         {
-            if (panel_Chat.VerticalScroll.Value==0)
+            if (panel_Chat.VerticalScroll.Value == 0)
             {
                 LoadMessage();
-            }    
+            }
         }
 
         public PanelChat(Account account)
@@ -59,6 +61,8 @@ namespace A_Friend.CustomControls
             this.CreateControl();
             Console.WriteLine("Handler created");
             Console.WriteLine(this.id);
+            textboxWriting.dynamicMode = true;
+            textboxWriting.SetMaximumTextLenght(2021);
         }
 
         public string ID
@@ -179,7 +183,7 @@ namespace A_Friend.CustomControls
         public void textboxWriting_KeyDown(object sender, KeyEventArgs e)
         {
             textboxWriting.Select();
-            if (e.KeyCode == Keys.Enter && !locking)
+            if (e.KeyCode == Keys.Enter && !locking && !(e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter))
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
@@ -189,10 +193,11 @@ namespace A_Friend.CustomControls
                     textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
                     blockSending();
+                    textboxWriting.Multiline = false;
                 }
-            }
+            }  
         }
-         
+
         private void blockSending()
         {
             locking = true;
@@ -218,6 +223,12 @@ namespace A_Friend.CustomControls
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 e.Graphics.DrawEllipse(pen, friendPicture.Left - 1, friendPicture.Top - 1, friendPicture.Width + 2, friendPicture.Width + 2);
             }
+
+            using (Pen pen = new Pen(Color.Gray, 1))
+            {
+                e.Graphics.DrawLine(pen, 0, panelTopRight.Height - 1, panelTopRight.Width, panelTopRight.Height - 1);
+                e.Graphics.DrawLine(pen, 0, panelTopRight.Height, 0, 0);
+            }
         }
 
         private void panel_Chat_Click(object sender, EventArgs e)
@@ -228,10 +239,10 @@ namespace A_Friend.CustomControls
         public void LoadMessage()
         {
             panel_Chat.SuspendLayout();
-            AddMessage("Chào bạn", true);
-            AddMessage("Chào", false);
-            AddMessage("Chào Tạm biệt", true);
-            AddMessage("Tạm biệt", false);
+            AddMessageToTop("Tạm biệt", false);
+            AddMessageToTop("Chào Tạm biệt", true);
+            AddMessageToTop("Chào", false);
+            AddMessageToTop("Chào bạn", true);
             panel_Chat.ResumeLayout();
         }
 
@@ -278,7 +289,7 @@ namespace A_Friend.CustomControls
         {
             locking = false;
             textboxWriting.Select();
-            
+
             timerChat.Stop();
         }
 
@@ -288,6 +299,46 @@ namespace A_Friend.CustomControls
             {
                 LoadMessage();
             }
+        }
+
+        private void textboxWriting_SizeChanged(object sender, EventArgs e)
+        {
+            panelBottomRight.Height = textboxWriting.Height + textboxWriting.Top * 2;
+            panelBottomRight.Location = new Point(0, this.Height - panelBottomRight.Height);
+            panel_Chat.Height = this.Height - panelBottomRight.Height - panelTopRight.Height;
+        }
+
+        private void panelBottomRight_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen pen = new Pen(Color.Gray, 1))
+            {
+                e.Graphics.DrawLine(pen, 0, 1, panelBottomRight.Width, 1);
+                e.Graphics.DrawLine(pen, 0, 0, 0, panelBottomRight.Height);
+            }
+        }
+
+        private void panelTopRight_Resize(object sender, EventArgs e)
+        {
+            panelTopRight.Invalidate();
+        }
+
+        private void panelBottomRight_Resize(object sender, EventArgs e)
+        {
+            textboxWriting.DynamicResize();
+            panelBottomRight.Invalidate();
+        }
+
+        private void panel_Chat_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen pen = new Pen(Color.Gray, 1))
+            {
+                e.Graphics.DrawLine(pen, 0, 0, 0, panel_Chat.Height);
+            }
+        }
+
+        private void textboxWriting__TextChanged(object sender, EventArgs e)
+        {
+            textboxWriting.Multiline = true;
         }
     }
 }

@@ -102,14 +102,18 @@ namespace A_Friend
             this.panelContact.AutoScroll = true;
             this.panelContact.BackColor = System.Drawing.SystemColors.Window;
             this.panelContact.Location = new System.Drawing.Point(0, 60);
+            this.panelContact.Margin = new System.Windows.Forms.Padding(0);
             this.panelContact.Name = "panelContact";
-            this.panelContact.Size = new System.Drawing.Size(300, 595);
+            this.panelContact.Padding = new System.Windows.Forms.Padding(1);
+            this.panelContact.Size = new System.Drawing.Size(300, 592);
             this.panelContact.TabIndex = 2;
             this.panelContact.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panelContact_ControlAdded);
+            this.panelContact.Paint += new System.Windows.Forms.PaintEventHandler(this.panelContact_Paint);
             // 
             // panelAdd
             // 
-            this.panelAdd.Location = new System.Drawing.Point(0, 577);
+            this.panelAdd.Location = new System.Drawing.Point(0, 574);
+            this.panelAdd.Margin = new System.Windows.Forms.Padding(0);
             this.panelAdd.Name = "panelAdd";
             this.panelAdd.Size = new System.Drawing.Size(300, 78);
             this.panelAdd.TabIndex = 0;
@@ -126,6 +130,7 @@ namespace A_Friend
             this.panelBottomLeft.Name = "panelBottomLeft";
             this.panelBottomLeft.Size = new System.Drawing.Size(300, 60);
             this.panelBottomLeft.TabIndex = 1;
+            this.panelBottomLeft.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomLeft_Paint);
             // 
             // ButtonAdd
             // 
@@ -183,24 +188,25 @@ namespace A_Friend
             // 
             // panelTopLeft
             // 
-            this.panelTopLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
+            this.panelTopLeft.BackColor = System.Drawing.Color.White;
             this.panelTopLeft.Controls.Add(this.customTextBoxSearch);
             this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Margin = new System.Windows.Forms.Padding(0);
             this.panelTopLeft.Name = "panelTopLeft";
             this.panelTopLeft.Size = new System.Drawing.Size(300, 60);
             this.panelTopLeft.TabIndex = 0;
+            this.panelTopLeft.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopLeft_Paint);
             // 
             // customTextBoxSearch
             // 
             this.customTextBoxSearch.BackColor = System.Drawing.SystemColors.Window;
-            this.customTextBoxSearch.BorderColor = System.Drawing.SystemColors.Window;
-            this.customTextBoxSearch.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.customTextBoxSearch.BorderColor = System.Drawing.SystemColors.Control;
+            this.customTextBoxSearch.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
             this.customTextBoxSearch.BorderRadius = 20;
             this.customTextBoxSearch.BorderSize = 2;
             this.customTextBoxSearch.Cursor = System.Windows.Forms.Cursors.Default;
             this.customTextBoxSearch.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.customTextBoxSearch.Location = new System.Drawing.Point(13, 7);
+            this.customTextBoxSearch.Location = new System.Drawing.Point(22, 9);
             this.customTextBoxSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.customTextBoxSearch.Multiline = false;
             this.customTextBoxSearch.Name = "customTextBoxSearch";
@@ -242,13 +248,13 @@ namespace A_Friend
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.closeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(104, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(115, 28);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(114, 24);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeMessengerToolStripMenuItem_Click);
             // 

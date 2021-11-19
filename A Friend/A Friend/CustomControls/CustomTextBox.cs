@@ -25,6 +25,8 @@ namespace A_Friend.CustomControls
         private string placeholderText = "";
         bool isPlaceholder = false;
         bool isPasswordChar = false;
+        public bool dynamicMode = false;
+        public int maxLine = 5;
 
         public CustomTextBox()
         {
@@ -328,6 +330,35 @@ namespace A_Friend.CustomControls
             {
                 _TextChanged.Invoke(sender, e);
             }
+            DynamicResize();
+        }
+
+        public void DynamicResize()
+        {
+            if (dynamicMode)
+            {
+                this.SuspendLayout();
+                int count = textBox1.GetLineFromCharIndex(int.MaxValue) + 1;
+                var textsize = TextRenderer.MeasureText("qqqwertyuiooopasdfghjklllzxcvbnm,,,<`1234567890-=[]\\;'./~!@#$%^&*()_+++{}:\"<>?", textBox1.Font);
+                if (count > maxLine)
+                {
+                    if (textBox1.ScrollBars == ScrollBars.None)
+                        textBox1.ScrollBars = ScrollBars.Vertical;
+                    int maxheight = 6 + maxLine * textsize.Height + this.Padding.Top + this.Padding.Bottom;
+                    if (this.Height <= maxheight)
+                    {
+                        this.Height = maxheight;
+                    }
+                }
+                else
+                {
+                    if (textBox1.ScrollBars != ScrollBars.None)
+                        textBox1.ScrollBars = ScrollBars.None;
+                    this.Height = 6 + count * textsize.Height + this.Padding.Top + this.Padding.Bottom;
+                }
+
+                this.ResumeLayout();
+            }
         }
 
         private void textBox1_Click(object sender, EventArgs e)
@@ -369,6 +400,11 @@ namespace A_Friend.CustomControls
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             this.OnKeyDown(e);
+        }
+
+        public void SetMaximumTextLenght(int lenght)
+        {
+            textBox1.MaxLength = lenght;
         }
     }
 }
