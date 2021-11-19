@@ -123,7 +123,16 @@ namespace AFriendServer
                     string receiver_id = data_string.Substring(0, 19);
                     data_string = data_string.Remove(0, 19);
                     //save to database start
-
+                    string id1, id2;
+                    if (item.Key.CompareTo(receiver_id) <= 0)
+                    {
+                        id1 = item.Key;
+                        id2 = receiver_id;
+                    } else
+                    {
+                        id1 = receiver_id;
+                        id2 = item.Key;
+                    }
 
 
                     //save to database end
