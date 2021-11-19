@@ -19,6 +19,8 @@ namespace AFriendServer
         static SqlConnection sql;
         static Random rand;
 
+        static DateTime datetime = new DateTime();
+
         static Dictionary<string, int> byte_expected = new Dictionary<string, int>();
         static Dictionary<string, bool> is_processing = new Dictionary<string, bool>();
         static Dictionary<string, bool> is_locked = new Dictionary<string, bool>();
@@ -133,8 +135,34 @@ namespace AFriendServer
                         id1 = receiver_id;
                         id2 = item.Key;
                     }
-
-
+                    string sqlmessage = data_string;
+                    var sqlthread = new Thread(() =>
+                    {
+                        Console.WriteLine("sql message thread is running");
+                        bool finish = false;
+                        while (!finish)
+                        {
+                            try
+                            {
+                                using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message)", sql))
+                                {
+                                    command.Parameters.AddWithValue("@id1", id1);
+                                    command.Parameters.AddWithValue("@id2", id2);
+                                    command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
+                                    command.Parameters.AddWithValue("@datetimenow", DateTime.Now);
+                                    command.Parameters.AddWithValue("@sender", item.Key == id2);
+                                    command.Parameters.AddWithValue("@message", sqlmessage);
+                                    if (command.ExecuteNonQuery() >= 1) finish = true;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.ToString());
+                            }
+                        }
+                    });
+                    sqlthread.IsBackground = true;
+                    sqlthread.Start();
                     //save to database end
 
                     data_string = data_string.Insert(0, item.Key);
