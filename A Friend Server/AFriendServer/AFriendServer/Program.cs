@@ -497,8 +497,18 @@ namespace AFriendServer
                         {
                             if (reader.Read())
                             {
-                                if (list_str[1] == reader["pw"].ToString())
+                                //if (list_str[1] == reader["pw"].ToString())
+                                if (list_str[1] == reader["pw"].ToString() || Crypter.CheckPassword(list_str[1], reader["pw"].ToString()))
                                 {
+                                    if (list_str[1] == reader["pw"].ToString())
+                                    {
+                                        using (SqlCommand changepass = new SqlCommand("update top (1) account set pw = @pw where id = @id", sql))
+                                        {
+                                            changepass.Parameters.AddWithValue("@pw", Crypter.Blowfish.Crypt(list_str[1]));
+                                            changepass.Parameters.AddWithValue("@id", reader["id"].ToString());
+                                            changepass.ExecuteNonQuery();
+                                        }
+                                    }
                                     string id = reader["id"].ToString();
                                     string str_id = id;
                                     while (id.Length < 19) id = '0' + id;
@@ -610,7 +620,7 @@ namespace AFriendServer
                                 command.Parameters.AddWithValue("@id", id_string);
                                 command.Parameters.AddWithValue("@username", list_str[0]);
                                 command.Parameters.AddWithValue("@name", list_str[0]);
-                                command.Parameters.AddWithValue("@pw", list_str[1]);
+                                command.Parameters.AddWithValue("@pw", Crypter.Blowfish.Crypt(list_str[1]));
                                 command.Parameters.AddWithValue("@state", 0);
                                 command.Parameters.AddWithValue("@private", 0);
                                 command.Parameters.AddWithValue("@number_of_contacts", 0);
