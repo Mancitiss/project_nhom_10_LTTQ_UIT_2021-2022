@@ -16,6 +16,8 @@ namespace A_Friend.CustomControls
         Account account;
         string id;
         byte state;
+        Int64 loadedmessagenumber = 0;
+
         Color stateColor = Color.Gainsboro;
         bool locking = false;
         List<CustomControls.ChatItem2> chatItems = new List<ChatItem2>();
