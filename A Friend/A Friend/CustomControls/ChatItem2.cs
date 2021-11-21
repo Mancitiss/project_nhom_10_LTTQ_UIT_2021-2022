@@ -137,10 +137,10 @@ namespace A_Friend.CustomControls
 
         private void buttonRemove_Click(object sender, EventArgs e)
         {
-            if (this.Parent.Parent is PanelChat)
-            {
-                (this.Parent.Parent as PanelChat).RemoveChatItem(this);
-            }
+            //if (this.Parent.Parent is PanelChat)
+            //{
+            //    (this.Parent.Parent as PanelChat).RemoveChatItem(this);
+            //}
         }
     }
 }

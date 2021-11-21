@@ -20,7 +20,9 @@ namespace A_Friend.CustomControls
 
         Color stateColor = Color.Gainsboro;
         bool locking = false;
-        List<CustomControls.ChatItem2> chatItems = new List<ChatItem2>();
+        List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
+        ChatItem currentChatItem;
+        bool currentChatItemShowing;
 
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem AddMessageDelegate;
@@ -40,14 +42,6 @@ namespace A_Friend.CustomControls
             textboxWriting.SetMaximumTextLenght(2021);
         }
 
-        private void panel_Chat_MouseWheel(object sender, EventArgs e)
-        {
-            if (panel_Chat.VerticalScroll.Value == 0)
-            {
-                LoadMessage();
-            }
-        }
-
         public PanelChat(Account account)
         {
             InitializeComponent();
@@ -65,6 +59,34 @@ namespace A_Friend.CustomControls
             Console.WriteLine(this.id);
             textboxWriting.dynamicMode = true;
             textboxWriting.SetMaximumTextLenght(2021);
+        }
+
+        private void panel_Chat_MouseWheel(object sender, EventArgs e)
+        {
+            if (panel_Chat.VerticalScroll.Value == 0)
+            {
+                LoadMessage();
+            }
+        }
+
+        public ChatItem CurrentChatItem
+        {
+            get
+            {
+                return currentChatItem;
+            }
+            set
+            {
+                if (value == currentChatItem) 
+                    return;
+                Console.WriteLine("set");
+                if (currentChatItem != null)
+                {
+                    currentChatItem.ShowDetail = currentChatItemShowing;
+                }
+                currentChatItem = value;
+                currentChatItemShowing = !value.ShowDetail;
+            }
         }
 
         public string ID
@@ -104,81 +126,84 @@ namespace A_Friend.CustomControls
             }
         }
 
-        public void RemoveChatItem(CustomControls.ChatItem2 chatItem)
+        public void RemoveMessage(CustomControls.ChatItem chatItem)
         {
             chatItems.Remove(chatItem);
             panel_Chat.Controls.Remove(chatItem);
+            // code to remove message
         }
 
         public void AddMessage(string message, bool stacktoleft)
         {
             panel_Chat.SuspendLayout();
-            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            ChatItem chatItem;
+            if (stacktoleft)
+                chatItem = new CustomControls.ChatItem(new Message(account.name, message, DateTime.Now));
+            else
+                chatItem = new CustomControls.ChatItem(new Message("", message, DateTime.Now));
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItems.Add(chatItem);
             panel_Chat.Controls.Add(chatItem);
             chatItem.BringToFront();
+            //chatItem.ShowDetail = true;
+            //CurrentChatItem = chatItem;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-            chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
         }
 
-        public void AddMessage(string message, bool stacktoleft, Color textcolor, Color backcolor)
+        public void AddMessage(Message message)
         {
             panel_Chat.SuspendLayout();
-            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
-            if (chatItem.TextColor != textcolor)
-            {
-                chatItem.TextColor = textcolor;
-            }
-            if (chatItem.BackGroundColor != backcolor)
-            {
-                chatItem.BackGroundColor = backcolor;
-            }
+            ChatItem chatItem = new ChatItem(message);
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItems.Add(chatItem);
             panel_Chat.Controls.Add(chatItem);
             chatItem.BringToFront();
+            //chatItem.ShowDetail = true;
+            //CurrentChatItem = chatItem;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-            chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
-
         }
 
         private void AddMessageToTop(string message, bool stacktoleft)
         {
             panel_Chat.SuspendLayout();
-            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
+            ChatItem chatItem;
+            if (stacktoleft)
+                chatItem = new CustomControls.ChatItem(new Message(account.name, message, DateTime.Now));
+            else
+                chatItem = new CustomControls.ChatItem(new Message("", message, DateTime.Now));
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            //if (chatItems.Count == 0)
+            //{
+            //    chatItem.ShowDetail = true;
+            //    CurrentChatItem = chatItem;
+            //}
             chatItems.Insert(0, chatItem);
             panel_Chat.Controls.Add(chatItem);
-            chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
         }
-        private void AddMessageToTop(string message, bool stacktoleft, Color textcolor, Color backcolor)
+
+        private void AddMessageToTop(Message message)
         {
             panel_Chat.SuspendLayout();
-            var chatItem = new CustomControls.ChatItem2(message, stacktoleft);
-            if (chatItem.TextColor != textcolor)
-            {
-                chatItem.TextColor = textcolor;
-            }
-            if (chatItem.BackGroundColor != backcolor)
-            {
-                chatItem.BackGroundColor = backcolor;
-            }
+            ChatItem chatItem = new ChatItem(message);
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            //if (chatItems.Count == 0)
+            //{
+            //    chatItem.ShowDetail = true;
+            //    CurrentChatItem = chatItem;
+            //}
             chatItems.Insert(0, chatItem);
             panel_Chat.Controls.Add(chatItem);
-            chatItem.ResizeBubbles();
             panel_Chat.ResumeLayout();
         }
 
@@ -189,7 +214,7 @@ namespace A_Friend.CustomControls
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                    //AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                     AddMessage(textboxWriting.Texts, false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
@@ -210,7 +235,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
-                AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                //AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
@@ -242,7 +267,8 @@ namespace A_Friend.CustomControls
         {
             panel_Chat.SuspendLayout();
             AddMessageToTop("Tạm biệt", false);
-            AddMessageToTop("Chào Tạm biệt", true);
+            AddMessageToTop("Không, Chào Tạm biệt", true);
+            AddMessageToTop("Bạn Khỏe không", false);
             AddMessageToTop("Chào", false);
             AddMessageToTop("Chào bạn", true);
             panel_Chat.ResumeLayout();
@@ -258,21 +284,21 @@ namespace A_Friend.CustomControls
         {
             if (chatItems.Count == 0)
                 return "";
-            return chatItems[chatItems.Count - 1].Texts;
+            return chatItems[chatItems.Count - 1].message.text;
         }
         public string GetFirstMessage()
         {
             if (chatItems.Count == 0)
                 return "";
-            return chatItems[0].Texts;
+            return chatItems[0].message.text;
         }
 
         public bool IsLastMessageFromYou()
         {
             if (panel_Chat.Controls.Count == 0)
                 return true;
-            ChatItem2 message = panel_Chat.Controls[panel_Chat.Controls.Count - 1] as ChatItem2;
-            if (message.StackToLeft)
+            ChatItem message = panel_Chat.Controls[panel_Chat.Controls.Count - 1] as ChatItem;
+            if (!string.IsNullOrEmpty(message.message.author))
                 return false;
             return true;
         }
