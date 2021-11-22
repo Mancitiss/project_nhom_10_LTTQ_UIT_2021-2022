@@ -167,7 +167,10 @@ namespace AFriendServer
                                         Send_to_id(item.Key, msgobj);
                                         if (!Send_to_id(receiver_id, msgobj))
                                         {
-                                            item.Value.Send(Encoding.Unicode.GetBytes("0404"));
+                                            item.Value.Send(Encoding.Unicode.GetBytes("0404"+receiver_id));
+                                        } else
+                                        {
+                                            item.Value.Send(Encoding.Unicode.GetBytes("2211"+receiver_id));
                                         }
                                         //send to socket end
                                     }
