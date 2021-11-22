@@ -225,7 +225,7 @@ namespace A_Friend.CustomControls
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
-                    blockSending();
+                    //blockSending();
                     textboxWriting.Multiline = false;
                 }
             }  
@@ -245,7 +245,7 @@ namespace A_Friend.CustomControls
                 //AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
-                blockSending();
+                //blockSending();
                 textboxWriting.Multiline = false;
             }
         }
