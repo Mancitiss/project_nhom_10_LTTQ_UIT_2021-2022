@@ -131,13 +131,13 @@ namespace A_Friend.CustomControls
         {
             if (messageObject.sender == false)
             {
-                if (messageObject.id1 == FormApplication.currentID)
+                if (messageObject.id1 == AFriendClient.user.id)
                 {
                     return true;
                 }
                 return false;
             }
-            if (messageObject.id2 == FormApplication.currentID)
+            if (messageObject.id2 == AFriendClient.user.id)
             {
                 return true;
             }
