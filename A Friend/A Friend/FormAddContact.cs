@@ -27,7 +27,9 @@ namespace A_Friend
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
             if (txtNewUser.Texts == "")
+            {
                 labelWarning.Text = "Please enter a username";
+            }  
             else
             {
                 string data = txtNewUser.Texts;
