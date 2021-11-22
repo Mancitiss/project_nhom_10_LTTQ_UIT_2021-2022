@@ -164,13 +164,10 @@ namespace AFriendServer
                                         MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
                                         //data_string = data_string.Insert(0, item.Key);
                                         //send to socket start
+                                        Send_to_id(item.Key, msgobj);
                                         if (!Send_to_id(receiver_id, msgobj))
                                         {
                                             item.Value.Send(Encoding.Unicode.GetBytes("0404"));
-                                        }
-                                        else
-                                        {
-                                            if (item.Key != receiver_id) Send_to_id(item.Key, msgobj);
                                         }
                                         //send to socket end
                                     }
