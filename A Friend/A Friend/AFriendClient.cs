@@ -219,8 +219,8 @@ namespace A_Friend
                     if (instruction == "2211") // 2211 = this id is online
                     {
                         Console.WriteLine("This person is online");
-                        bytes = new byte[18];
-                        numByte = self.Receive(bytes, 18, SocketFlags.None);
+                        bytes = new byte[38];
+                        numByte = self.Receive(bytes, 38, SocketFlags.None);
                         data = Encoding.Unicode.GetString(bytes, 0, numByte);
                         string online_id = data;
                     }
