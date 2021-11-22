@@ -18,6 +18,8 @@ namespace A_Friend
         public AddContactItem addContactItemDelegate;
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem addMessageItemDelegate;
+        public delegate void TurnContactActiveState(string id, byte state);
+        public TurnContactActiveState turnContactActiveStateDelegate;
         public Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
         public static string currentID;
 
@@ -41,6 +43,7 @@ namespace A_Friend
             System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer, true);
             InitializeSubPanels();
             addContactItemDelegate = new AddContactItem(AddContact);
+            turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
         }
 
@@ -275,17 +278,22 @@ namespace A_Friend
         // state (0,1,2) => (offline, online, away)
         public void TurnActiveState(string id, byte state)
         {
+            Console.WriteLine(id);
             if (panelChats.ContainsKey(id))
             {
                 CustomControls.PanelChat item = panelChats[id];
                 item.State = state;
+                Console.WriteLine("state changed");
             }
 
             if (contactItems.ContainsKey(id))
             {
                 CustomControls.ContactItem item = contactItems[id];
                 item.State = state;
+                Console.WriteLine("state changed");
             }
+
+            Console.WriteLine("state changed");
 
         }
 
