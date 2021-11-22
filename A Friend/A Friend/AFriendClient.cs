@@ -216,7 +216,23 @@ namespace A_Friend
                 if (data != null && data != "")
                 {
                     instruction = data;
-                    if (instruction == "1901")
+                    if (instruction == "2211") // 2211 = this id is online
+                    {
+                        Console.WriteLine("This person is online");
+                        bytes = new byte[18];
+                        numByte = self.Receive(bytes, 18, SocketFlags.None);
+                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                        string online_id = data;
+                    }
+                    else if (instruction == "0404") //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
+                    {
+                        Console.WriteLine("This person is not online");
+                        bytes = new byte[18];
+                        numByte = self.Receive(bytes, 18, SocketFlags.None);
+                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                        string offline_id = data;
+                    }
+                    else if (instruction == "1901")
                     { // 1901 = message received
                         bytes = new byte[4];
                         numByte = self.Receive(bytes, 4, SocketFlags.None);
@@ -227,8 +243,7 @@ namespace A_Friend
                         data = Encoding.Unicode.GetString(bytes, 0, numByte);
                         byte_expected = Int32.Parse(data);
                     }
-                    else
-                    if (instruction == "1609")
+                    else if (instruction == "1609")
                     {
                         bytes = new byte[4];
                         numByte = self.Receive(bytes, 4, SocketFlags.None);
@@ -272,20 +287,13 @@ namespace A_Friend
                             System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
                         }
                     }
-                    else
-                    if (instruction == "2609")
+                    else if (instruction == "2609")
                     {
                         Console.WriteLine("No such account exists");
                         first_message = null;
                         first_message_sender = String.Empty;
                     }
-                    else
-                    if (instruction == "0404") //0404 = error
-                    {
-                        Console.WriteLine("This person is not online");
-                    }
-                    else
-                    if (instruction == "0200")
+                    else if (instruction == "0200")
                     { // 0200 = logged in successfully
                         user = new Account();
                         bytes = new byte[38];
@@ -308,24 +316,20 @@ namespace A_Friend
                         user.username = data;
                         user.state = 1;
                     }
-                    else
-                    if (instruction == "-200") // -200 = logged in failed
+                    else if (instruction == "-200") // -200 = logged in failed
                     {
                         Console.WriteLine("Thong tin dang nhap bi sai");
 
                     }
-                    else
-                    if (instruction == "1011") // 1011 = New account created successfully
+                    else if (instruction == "1011") // 1011 = New account created successfully
                     {
                         Console.WriteLine("Tao tai khoan thanh cong");
                     }
-                    else
-                    if (instruction == "1111") // 1111 = Username exists
+                    else if (instruction == "1111") // 1111 = Username exists
                     {
                         Console.WriteLine("Ten tai khoan da ton tai");
                     }
-                    else
-                    if (instruction == "2004") // 2004 = loggin from another deive
+                    else if (instruction == "2004") // 2004 = loggin from another deive
                     {
                         Console.WriteLine("You are logged in from another device, you will be logged out");
                         user.state = 0;
