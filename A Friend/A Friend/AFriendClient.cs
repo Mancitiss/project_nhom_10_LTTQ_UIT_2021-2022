@@ -94,18 +94,37 @@ namespace A_Friend
                                             string sender = msgobj.id1;
                                             if (msgobj.sender) sender = msgobj.id2;
                                             //Console.WriteLine("{0}: {1}", sender, msgobj.message);
-                                            if (Program.mainform.Is_this_person_added(sender))
+                                            if (user.id == msgobj.id2) //if me = user2 add user1
                                             {
-                                                UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { msgobj });
-                                                Console.WriteLine("data added");
-                                                Console.WriteLine(msgobj.message);
-                                            }
-                                            else
+                                                if (Program.mainform.Is_this_person_added(msgobj.id1))
+                                                {
+                                                    UIForm.panelChats[msgobj.id1].Invoke(UIForm.panelChats[msgobj.id1].AddMessageDelegate, new object[] { msgobj });
+                                                    Console.WriteLine("data added");
+                                                    Console.WriteLine(msgobj.message);
+                                                }
+                                                else
+                                                {
+                                                    first_message_sender = sender;
+                                                    first_message = msgobj;
+                                                    Console.WriteLine("Ask for info");
+                                                    client.Send(Encoding.Unicode.GetBytes("0609" + sender));
+                                                }
+                                            } 
+                                            else if (user.id == msgobj.id1) // if me = user1 add user2
                                             {
-                                                first_message_sender = sender;
-                                                first_message = msgobj;
-                                                Console.WriteLine("Ask for info");
-                                                client.Send(Encoding.Unicode.GetBytes("0609" + sender));
+                                                if (Program.mainform.Is_this_person_added(msgobj.id2))
+                                                {
+                                                    UIForm.panelChats[msgobj.id2].Invoke(UIForm.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
+                                                    Console.WriteLine("data added");
+                                                    Console.WriteLine(msgobj.message);
+                                                }
+                                                else
+                                                {
+                                                    first_message_sender = sender;
+                                                    first_message = msgobj;
+                                                    Console.WriteLine("Ask for info");
+                                                    client.Send(Encoding.Unicode.GetBytes("0609" + sender));
+                                                }
                                             }
                                         }
                                         else // data corrupted
