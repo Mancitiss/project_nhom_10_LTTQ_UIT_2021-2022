@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace A_Friend
+namespace AFriendServer
 {
-    public class MessageObject
+    internal class MessageObject
     {
-        public string id1; 
-        public string id2; 
-        public long messagenumber; 
-        public DateTime timesent; 
-        public bool sender; 
+        public string id1;
+        public string id2;
+        public long messagenumber;
+        public DateTime timesent;
+        public bool sender;
         public string message;
 
         public MessageObject(string id1, string id2, long messagenumber, DateTime timesent, bool sender, string message)
@@ -25,6 +25,6 @@ namespace A_Friend
             this.message = message;
         }
 
-        public MessageObject() { } 
+        public MessageObject() { }
     }
 }

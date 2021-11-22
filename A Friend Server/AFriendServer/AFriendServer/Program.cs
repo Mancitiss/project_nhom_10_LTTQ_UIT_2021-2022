@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using CryptSharp;
+using Jil;
 
 namespace AFriendServer
 {
@@ -18,8 +19,6 @@ namespace AFriendServer
         static Dictionary<string, Socket> dictionary;
         static SqlConnection sql;
         static Random rand;
-
-        static DateTime datetime = new DateTime();
 
         static Dictionary<string, int> byte_expected = new Dictionary<string, int>();
         static Dictionary<string, bool> is_processing = new Dictionary<string, bool>();
@@ -136,43 +135,54 @@ namespace AFriendServer
                         id2 = item.Key;
                     }
                     string sqlmessage = data_string;
-                    var sqlthread = new Thread(() =>
+                    try
                     {
-                        Console.WriteLine("sql message thread is running");
-                        bool finish = false;
-                        while (!finish)
+                        bool success = false;
+                        DateTime now = DateTime.Now;
+                        using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message)", sql))
                         {
-                            try
+                            command.Parameters.AddWithValue("@id1", id1);
+                            command.Parameters.AddWithValue("@id2", id2);
+                            command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
+                            command.Parameters.AddWithValue("@datetimenow", now);
+                            command.Parameters.AddWithValue("@sender", item.Key == id2);
+                            command.Parameters.AddWithValue("@message", sqlmessage);
+                            if (command.ExecuteNonQuery() >= 1) success = true;
+                        }
+                        if (success)
+                        {
+                            using (SqlCommand another_command = new SqlCommand("select top 1 * from message where id1 = @id1 and id2 = @id2 and timesent = @timesent and sender = @sender", sql))
                             {
-                                using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message)", sql))
+                                another_command.Parameters.AddWithValue("@id1", id1);
+                                another_command.Parameters.AddWithValue("@id2", id2);
+                                another_command.Parameters.AddWithValue("@timesent", now);
+                                another_command.Parameters.AddWithValue("sender", item.Key == id2);
+                                using (SqlDataReader reader = another_command.ExecuteReader())
                                 {
-                                    command.Parameters.AddWithValue("@id1", id1);
-                                    command.Parameters.AddWithValue("@id2", id2);
-                                    command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
-                                    command.Parameters.AddWithValue("@datetimenow", DateTime.Now);
-                                    command.Parameters.AddWithValue("@sender", item.Key == id2);
-                                    command.Parameters.AddWithValue("@message", sqlmessage);
-                                    if (command.ExecuteNonQuery() >= 1) finish = true;
+                                    if (reader.Read())
+                                    {
+                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
+                                        //data_string = data_string.Insert(0, item.Key);
+                                        //send to socket start
+                                        if (!Send_to_id(receiver_id, msgobj))
+                                        {
+                                            item.Value.Send(Encoding.Unicode.GetBytes("0404"));
+                                        }
+                                        else
+                                        {
+                                            if (item.Key != receiver_id) Send_to_id(item.Key, msgobj);
+                                        }
+                                        //send to socket end
+                                    }
                                 }
                             }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.ToString());
-                            }
                         }
-                    });
-                    sqlthread.IsBackground = true;
-                    sqlthread.Start();
-                    //save to database end
-
-                    data_string = data_string.Insert(0, item.Key);
-
-                    //send to socket start
-                    if (!Send_to_id(receiver_id, data_string))
-                    {
-                        item.Value.Send(Encoding.Unicode.GetBytes("0404"));
                     }
-                    //send to socket end
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
+                    //save to database end
                 }
                 else // data corrupted
                 {
@@ -441,13 +451,7 @@ namespace AFriendServer
             }
         }
 
-        private static void Send_to_socket(Socket s, string str)
-        {
-            // do something
-
-        }
-
-        private static bool Send_to_id(string id, string data)
+        private static bool Send_to_id(string id, MessageObject msgobj)
         {
             // do something
             bool success = false;
@@ -455,6 +459,7 @@ namespace AFriendServer
             {
                 try
                 {
+                    string data = JSON.Serialize<MessageObject>(msgobj);
                     string data_string = Encoding.Unicode.GetByteCount(data).ToString();
                     dictionary[id].Send(Encoding.Unicode.GetBytes("1901" + data_string.Length.ToString().PadLeft(2, '0') + data_string + data));
                     success = true;

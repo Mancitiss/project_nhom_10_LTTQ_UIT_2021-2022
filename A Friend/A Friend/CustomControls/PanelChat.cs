@@ -24,7 +24,7 @@ namespace A_Friend.CustomControls
         ChatItem currentChatItem;
         bool currentChatItemShowing;
 
-        public delegate void AddMessageItem(string str, bool left);
+        public delegate void AddMessageItem(MessageObject message);
         public AddMessageItem AddMessageDelegate;
         /*
         public delegate void ButtonSend_Click(object sender, EventArgs e);
@@ -221,7 +221,7 @@ namespace A_Friend.CustomControls
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
                     AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                    AddMessage(textboxWriting.Texts, false);
+                    //AddMessage(textboxWriting.Texts, false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
@@ -242,10 +242,11 @@ namespace A_Friend.CustomControls
             if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
                 AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                AddMessage(textboxWriting.Texts, false);
+                //AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
                 blockSending();
+                textboxWriting.Multiline = false;
             }
         }
 

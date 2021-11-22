@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
+using Jil;
 
 namespace A_Friend
 {
@@ -16,7 +17,7 @@ namespace A_Friend
         private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
         private static IPAddress ipAddr = IPAddress.Any;
         private static string instruction;
-        private static string first_message = null;
+        private static MessageObject first_message = null;
         private static string first_message_sender = null;
 
         private static int byte_expected = 0;
@@ -26,6 +27,8 @@ namespace A_Friend
         public static Account user;
 
         private static FormApplication UIForm;
+
+        Random rand = new Random();
 
         public static void ExecuteClient(object obj)
         {
@@ -61,9 +64,7 @@ namespace A_Friend
                                     // There is data waiting to be read"
                                     if (byte_expected == 0)
                                     {
-                                        Thread work = new Thread(new ParameterizedThreadStart(Receive_from_id));
-                                        work.IsBackground = true;
-                                        work.Start(client);
+                                        Receive_from_id(client);
                                     }
                                     else
                                     {
@@ -89,19 +90,20 @@ namespace A_Friend
                                         {
                                             string data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
                                             Console.WriteLine("Data Received");
-                                            string sender = data_string.Substring(0, 19);
-                                            data_string = data_string.Remove(0, 19);
-                                            Console.WriteLine("{0}: {1}", sender, data_string);
+                                            MessageObject msgobj = JSON.Deserialize<MessageObject>(data_string);
+                                            string sender = msgobj.id1;
+                                            if (msgobj.sender) sender = msgobj.id2;
+                                            //Console.WriteLine("{0}: {1}", sender, msgobj.message);
                                             if (Program.mainform.Is_this_person_added(sender))
                                             {
-                                                UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { data_string, true });
+                                                UIForm.panelChats[sender].Invoke(UIForm.panelChats[sender].AddMessageDelegate, new object[] { msgobj });
                                                 Console.WriteLine("data added");
-                                                Console.WriteLine(data_string);
+                                                Console.WriteLine(msgobj.message);
                                             }
                                             else
                                             {
                                                 first_message_sender = sender;
-                                                first_message = data_string;
+                                                first_message = msgobj;
                                                 Console.WriteLine("Ask for info");
                                                 client.Send(Encoding.Unicode.GetBytes("0609" + sender));
                                             }
@@ -185,11 +187,10 @@ namespace A_Friend
             }
         }
 
-        private static void Receive_from_id(object obj)
+        private static void Receive_from_id(Socket self)
         {
             try
             {
-                Socket self = (Socket)obj;
                 byte[] bytes = new Byte[8];
                 int numByte = self.Receive(bytes);
                 string data = Encoding.Unicode.GetString(bytes, 0, numByte);
@@ -238,9 +239,9 @@ namespace A_Friend
                             Console.WriteLine("New Contact Added");
                             if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
                             {
-                                UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message, true });
+                                UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
                                 first_message_sender = String.Empty;
-                                first_message = String.Empty;
+                                first_message = null;
                             }
                             /*
                             UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
@@ -256,7 +257,7 @@ namespace A_Friend
                     if (instruction == "2609")
                     {
                         Console.WriteLine("No such account exists");
-                        first_message = String.Empty;
+                        first_message = null;
                         first_message_sender = String.Empty;
                     }
                     else
