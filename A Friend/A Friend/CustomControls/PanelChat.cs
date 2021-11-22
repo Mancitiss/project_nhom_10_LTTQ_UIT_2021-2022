@@ -13,7 +13,7 @@ namespace A_Friend.CustomControls
 {
     public partial class PanelChat : UserControl
     {
-        Account account;
+        public Account account;
         string id;
         byte state;
         Int64 loadedmessagenumber = 0;
@@ -137,14 +137,16 @@ namespace A_Friend.CustomControls
         {
             panel_Chat.SuspendLayout();
             ChatItem chatItem;
+            Random random = new Random();
             if (stacktoleft)
-                chatItem = new CustomControls.ChatItem(new Message(account.name, message, DateTime.Now));
+                chatItem = new CustomControls.ChatItem(new MessageObject(this.account.id,FormApplication.currentID, random.Next(-1000000000, 0), DateTime.Now, false, message));
             else
-                chatItem = new CustomControls.ChatItem(new Message("", message, DateTime.Now));
+                chatItem = new CustomControls.ChatItem(new MessageObject(FormApplication.currentID, this.account.id,random.Next(-1000000000, 0), DateTime.Now, false, message));
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItems.Add(chatItem);
             panel_Chat.Controls.Add(chatItem);
+            chatItem.UpdateDateTime();
             chatItem.BringToFront();
             //chatItem.ShowDetail = true;
             //CurrentChatItem = chatItem;
@@ -153,7 +155,7 @@ namespace A_Friend.CustomControls
             panel_Chat.ScrollControlIntoView(chatItem);
         }
 
-        public void AddMessage(Message message)
+        public void AddMessage(MessageObject message)
         {
             panel_Chat.SuspendLayout();
             ChatItem chatItem = new ChatItem(message);
@@ -161,6 +163,7 @@ namespace A_Friend.CustomControls
             chatItem.BackColor = panel_Chat.BackColor;
             chatItems.Add(chatItem);
             panel_Chat.Controls.Add(chatItem);
+            chatItem.UpdateDateTime();
             chatItem.BringToFront();
             //chatItem.ShowDetail = true;
             //CurrentChatItem = chatItem;
@@ -173,10 +176,11 @@ namespace A_Friend.CustomControls
         {
             panel_Chat.SuspendLayout();
             ChatItem chatItem;
+            Random random = new Random();
             if (stacktoleft)
-                chatItem = new CustomControls.ChatItem(new Message(account.name, message, DateTime.Now));
+                chatItem = new CustomControls.ChatItem(new MessageObject(this.account.id,FormApplication.currentID, random.Next(-1000000000, 0), DateTime.Now, false, message));
             else
-                chatItem = new CustomControls.ChatItem(new Message("", message, DateTime.Now));
+                chatItem = new CustomControls.ChatItem(new MessageObject(FormApplication.currentID, this.account.id,random.Next(-1000000000, 0), DateTime.Now, false, message));
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
@@ -187,10 +191,11 @@ namespace A_Friend.CustomControls
             //}
             chatItems.Insert(0, chatItem);
             panel_Chat.Controls.Add(chatItem);
+            chatItem.UpdateDateTime();
             panel_Chat.ResumeLayout();
         }
 
-        private void AddMessageToTop(Message message)
+        private void AddMessageToTop(MessageObject message)
         {
             panel_Chat.SuspendLayout();
             ChatItem chatItem = new ChatItem(message);
@@ -204,6 +209,7 @@ namespace A_Friend.CustomControls
             //}
             chatItems.Insert(0, chatItem);
             panel_Chat.Controls.Add(chatItem);
+            chatItem.UpdateDateTime();
             panel_Chat.ResumeLayout();
         }
 
@@ -214,7 +220,7 @@ namespace A_Friend.CustomControls
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
-                    //AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                    AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                     AddMessage(textboxWriting.Texts, false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
@@ -235,7 +241,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
-                //AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                 AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
@@ -284,13 +290,13 @@ namespace A_Friend.CustomControls
         {
             if (chatItems.Count == 0)
                 return "";
-            return chatItems[chatItems.Count - 1].message.text;
+            return chatItems[chatItems.Count - 1].messageObject.message;
         }
         public string GetFirstMessage()
         {
             if (chatItems.Count == 0)
                 return "";
-            return chatItems[0].message.text;
+            return chatItems[0].messageObject.message;
         }
 
         public bool IsLastMessageFromYou()
@@ -298,9 +304,9 @@ namespace A_Friend.CustomControls
             if (panel_Chat.Controls.Count == 0)
                 return true;
             ChatItem message = panel_Chat.Controls[panel_Chat.Controls.Count - 1] as ChatItem;
-            if (!string.IsNullOrEmpty(message.message.author))
-                return false;
-            return true;
+            if (message.IsMyMessage())
+                return true;
+            return false;
         }
 
         private void panel_Chat_ControlAdded(object sender, ControlEventArgs e)

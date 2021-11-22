@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace A_Friend
 {
-    internal class MessageObject
+    public class MessageObject
     {
         public string id1; 
         public string id2; 

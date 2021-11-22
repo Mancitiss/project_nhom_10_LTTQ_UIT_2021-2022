@@ -37,13 +37,13 @@ namespace A_Friend.CustomControls
             this.toolTip_Copy = new System.Windows.Forms.ToolTip(this.components);
             this.labelAuthor = new System.Windows.Forms.Label();
             this.panelTop = new System.Windows.Forms.Panel();
-            this.panelBottom = new System.Windows.Forms.Panel();
             this.panelBody = new A_Friend.CustomControls.MessagePanel();
             this.labelBody = new System.Windows.Forms.Label();
+            this.panelBottom = new System.Windows.Forms.Panel();
             this.panelButton.SuspendLayout();
             this.panelTop.SuspendLayout();
-            this.panelBottom.SuspendLayout();
             this.panelBody.SuspendLayout();
+            this.panelBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelButton
@@ -126,17 +126,6 @@ namespace A_Friend.CustomControls
             this.panelTop.Size = new System.Drawing.Size(743, 132);
             this.panelTop.TabIndex = 4;
             // 
-            // panelBottom
-            // 
-            this.panelBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBottom.Controls.Add(this.labelAuthor);
-            this.panelBottom.Location = new System.Drawing.Point(15, 137);
-            this.panelBottom.Margin = new System.Windows.Forms.Padding(0);
-            this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
-            this.panelBottom.Size = new System.Drawing.Size(743, 23);
-            this.panelBottom.TabIndex = 5;
-            // 
             // panelBody
             // 
             this.panelBody.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
@@ -162,6 +151,17 @@ namespace A_Friend.CustomControls
             this.labelBody.TabIndex = 0;
             this.labelBody.Text = "labelBody";
             // 
+            // panelBottom
+            // 
+            this.panelBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBottom.Controls.Add(this.labelAuthor);
+            this.panelBottom.Location = new System.Drawing.Point(15, 137);
+            this.panelBottom.Margin = new System.Windows.Forms.Padding(0);
+            this.panelBottom.Name = "panelBottom";
+            this.panelBottom.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
+            this.panelBottom.Size = new System.Drawing.Size(743, 23);
+            this.panelBottom.TabIndex = 5;
+            // 
             // ChatItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -177,10 +177,10 @@ namespace A_Friend.CustomControls
             this.Load += new System.EventHandler(this.ChatItem_Load);
             this.panelButton.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
-            this.panelBottom.ResumeLayout(false);
-            this.panelBottom.PerformLayout();
             this.panelBody.ResumeLayout(false);
             this.panelBody.PerformLayout();
+            this.panelBottom.ResumeLayout(false);
+            this.panelBottom.PerformLayout();
             this.ResumeLayout(false);
 
         }
