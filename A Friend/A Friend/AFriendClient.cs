@@ -68,27 +68,10 @@ namespace A_Friend
                                     }
                                     else
                                     {
-                                        int total_byte_received = 0;
-                                        byte[] data = new Byte[byte_expected];
-                                        int receivedbyte = client.Receive(data);
-                                        if (receivedbyte > 0)
+                                        string data_string;
+                                        if (Socket_receive(byte_expected, out data_string))// all data received, send to UI
                                         {
-                                            total_byte_received += receivedbyte;
-                                            byte_expected -= receivedbyte;
-                                        }
-                                        while (byte_expected > 0 && receivedbyte > 0)
-                                        {
-                                            receivedbyte = client.Receive(data, total_byte_received, byte_expected, SocketFlags.None); 
-                                            if (receivedbyte > 0) 
-                                            { 
-                                                total_byte_received += receivedbyte; 
-                                                byte_expected -= receivedbyte; 
-                                            } 
-                                            else break;
-                                        }
-                                        if (byte_expected == 0)// all data received, send to UI
-                                        {
-                                            string data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
+                                            byte_expected = 0;
                                             Console.WriteLine("Data Received");
                                             MessageObject msgobj = JSON.Deserialize<MessageObject>(data_string);
                                             string sender = msgobj.id1;
@@ -210,90 +193,132 @@ namespace A_Friend
             }
         }
 
+        private static bool receive_data_automatically(out string data)
+        {
+            if (Socket_receive(4, out data))
+            {
+                int bytesize;
+                if (Int32.TryParse(data, out bytesize))
+                {
+                    bytesize = bytesize * 2;
+                    if (Socket_receive(bytesize, out data))
+                    {
+                        if (Int32.TryParse(data, out bytesize))
+                        {
+                            if (Socket_receive(bytesize, out data))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            data = "";
+            return false;
+        }
+
+        private static bool Socket_receive(int byte_expected, out string data_string) 
+        {
+            int total_byte_received = 0;
+            byte[] data = new byte[byte_expected];
+            int received_byte;
+            do
+            {
+                received_byte = client.Receive(data, total_byte_received, byte_expected, SocketFlags.None);
+                if (received_byte > 0)
+                {
+                    total_byte_received += received_byte;
+                    byte_expected -= received_byte;
+                }
+                else break;
+            } while (byte_expected > 0 &&  received_byte > 0);
+            if (byte_expected == 0) // all data received
+            {
+                data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
+                return true;
+            } else // data corrupted
+            {
+                data_string = "";
+                return false;
+            }
+        }
+
         private static void Receive_from_id(Socket self)
         {
             try
             {
-                byte[] bytes = new Byte[8];
-                int numByte = self.Receive(bytes);
-                string data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                if (data != null && data != "")
+                string data;
+                if (Socket_receive(8, out data))
                 {
                     instruction = data;
                     if (instruction == "2211") // 2211 = this id is online
                     {
                         Console.WriteLine("This person is online");
-                        bytes = new byte[38];
-                        numByte = self.Receive(bytes, 38, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        string online_id = data;
-                        Console.WriteLine(online_id);
-                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate,new object[] { online_id, (byte)1 });
+                        string online_id;
+                        if (Socket_receive(38, out online_id))
+                        {
+                            Console.WriteLine(online_id);
+                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
+                        }
                     }
                     else if (instruction == "0404") //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
                     {
                         Console.WriteLine("This person is not online");
-                        bytes = new byte[38];
-                        numByte = self.Receive(bytes, 38, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        string offline_id = data;
-                        Console.WriteLine(offline_id);
-                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
+                        string offline_id;
+                        if (Socket_receive(38, out offline_id))
+                        {
+                            Console.WriteLine(offline_id);
+                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
+                        }
                     }
                     else if (instruction == "1901")
                     { // 1901 = message received
-                        bytes = new byte[4];
-                        numByte = self.Receive(bytes, 4, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        int bytezize = Int32.Parse(data) * 2;
-                        bytes = new byte[bytezize];
-                        numByte = self.Receive(bytes, bytezize, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        byte_expected = Int32.Parse(data);
+                        if (Socket_receive(4, out data))
+                        {
+                            int bytesize;
+                            if (Int32.TryParse(data, out bytesize))
+                            {
+                                bytesize = bytesize * 2;
+                                if (Socket_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
+                            }
+                        }
                     }
                     else if (instruction == "1609")
                     {
-                        bytes = new byte[4];
-                        numByte = self.Receive(bytes, 4, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        int bytezize = Int32.Parse(data) * 2;
-                        bytes = new byte[bytezize];
-                        numByte = self.Receive(bytes, bytezize, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        bytezize = Int32.Parse(data);
-                        bytes = new byte[bytezize];
-                        numByte = self.Receive(bytes, bytezize, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        string data_found = data;
-                        List<string> found = data_found.Split(' ').ToList<string>();
-                        Console.WriteLine(string.Join(" ", found));
-                        string name = "";
-                        for (int i = 2; i < found.Count - 1; i++)
+
+                        string data_found;
+                        if (receive_data_automatically(out data_found))
                         {
-                            name += found[i] + ' ';
-                        }
-                        name = name.Trim();
-                        Byte state;
-                        Console.WriteLine("I even reached here");
-                        if (Byte.TryParse(found[found.Count - 1], out state))
-                        {
-                            UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
-                            Console.WriteLine("New Contact Added");
-                            if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
+                            List<string> found = data_found.Split(' ').ToList<string>();
+                            Console.WriteLine(string.Join(" ", found));
+                            string name = "";
+                            for (int i = 2; i < found.Count - 1; i++)
                             {
-                                UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
-                                first_message_sender = String.Empty;
-                                first_message = null;
+                                name += found[i] + ' ';
                             }
-                            /*
-                            UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
-                            Console.WriteLine("Message Received");*/
-                        }
-                        else
-                        {
-                            Console.WriteLine("Data Corrupted");
-                            System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
-                        }
+                            name = name.Trim();
+                            Byte state;
+                            Console.WriteLine("I even reached here");
+                            if (Byte.TryParse(found[found.Count - 1], out state))
+                            {
+                                UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
+                                Console.WriteLine("New Contact Added");
+                                if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
+                                {
+                                    UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
+                                    first_message_sender = String.Empty;
+                                    first_message = null;
+                                }
+                                /*
+                                UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
+                                Console.WriteLine("Message Received");*/
+                            }
+                            else
+                            {
+                                Console.WriteLine("Data Corrupted");
+                                System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
+                            }
+                        }          
                     }
                     else if (instruction == "2609")
                     {
@@ -304,24 +329,8 @@ namespace A_Friend
                     else if (instruction == "0200")
                     { // 0200 = logged in successfully
                         user = new Account();
-                        bytes = new byte[38];
-                        numByte = self.Receive(bytes, 38, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        user.id = data;
-                        bytes = new byte[4];
-                        numByte = self.Receive(bytes, 4, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        Console.WriteLine(data);
-                        int bytezize = Int32.Parse(data)*2;
-                        bytes = new byte[bytezize];
-                        numByte = self.Receive(bytes, bytezize, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        Console.WriteLine(data);
-                        bytezize = Int32.Parse(data);
-                        bytes = new byte[bytezize];
-                        numByte = self.Receive(bytes, bytezize, SocketFlags.None);
-                        data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                        user.username = data;
+                        if (Socket_receive(38, out data)) user.id = data;
+                        receive_data_automatically(out user.name);
                         user.state = 1;
                     }
                     else if (instruction == "-200") // -200 = logged in failed

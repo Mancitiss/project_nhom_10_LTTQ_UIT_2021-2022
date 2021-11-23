@@ -99,28 +99,10 @@ namespace AFriendServer
             KeyValuePair<string, Socket> item = (KeyValuePair<string, Socket>)obj;
             try
             {
-                int total_byte_received = 0;
-                byte[] data = new Byte[byte_expected[item.Key]];
-                int receivedbyte = item.Value.Receive(data);
-                if (receivedbyte > 0)
+                string data_string;
+                if (Socket_receive(item.Value, byte_expected[item.Key], out data_string))// all data received, save to database, send to socket
                 {
-                    total_byte_received += receivedbyte;
-                    byte_expected[item.Key] -= receivedbyte;
-                }
-                while (byte_expected[item.Key] > 0 && receivedbyte > 0)
-                {
-                    receivedbyte = item.Value.Receive(data, total_byte_received, byte_expected[item.Key], SocketFlags.None);
-                    Console.WriteLine("Received bytes:" + receivedbyte.ToString());
-                    if (receivedbyte > 0)
-                    {
-                        total_byte_received += receivedbyte;
-                        byte_expected[item.Key] -= receivedbyte;
-                    }
-                    else break;
-                }
-                if (byte_expected[item.Key] == 0)// all data received, save to database, send to socket
-                {
-                    string data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
+                    byte_expected[item.Key] = 0;
                     string receiver_id = data_string.Substring(0, 19);
                     data_string = data_string.Remove(0, 19);
                     //save to database start
@@ -333,6 +315,57 @@ namespace AFriendServer
                 Console.WriteLine(e.ToString());
             }
         }
+
+        private static bool receive_data_automatically(Socket s, out string data)
+        {
+            if (Socket_receive(s, 4, out data))
+            {
+                int bytesize;
+                if (Int32.TryParse(data, out bytesize))
+                {
+                    bytesize = bytesize * 2;
+                    if (Socket_receive(s, bytesize, out data))
+                    {
+                        if (Int32.TryParse(data, out bytesize))
+                        {
+                            if (Socket_receive(s, bytesize, out data))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            data = "";
+            return false;
+        }
+
+        private static bool Socket_receive(Socket s, int byte_expected, out string data_string)
+        {
+            int total_byte_received = 0;
+            byte[] data = new byte[byte_expected];
+            int received_byte;
+            do
+            {
+                received_byte = s.Receive(data, total_byte_received, byte_expected, SocketFlags.None);
+                if (received_byte > 0)
+                {
+                    total_byte_received += received_byte;
+                    byte_expected -= received_byte;
+                }
+                else break;
+            } while (byte_expected > 0 && received_byte > 0);
+            if (byte_expected == 0) // all data received
+            {
+                data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
+                return true;
+            }
+            else // data corrupted
+            {
+                data_string = "";
+                return false;
+            }
+        }
         private static void Receive_message(object si)
         {
             KeyValuePair<string, Socket> item = (KeyValuePair<string, Socket>)si;
@@ -355,13 +388,9 @@ namespace AFriendServer
 
                         if (instruction == "1901") // message handlings
                         {
-                            bytes = new byte[4];
-                            numByte = s.Receive(bytes, 4, SocketFlags.None);
-                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                            int bytezize = Int32.Parse(data)*2;
-                            bytes = new byte[bytezize];
-                            numByte = s.Receive(bytes, bytezize, SocketFlags.None);
-                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            Socket_receive(s, 4, out data);
+                            int bytesize = Int32.Parse(data)*2;
+                            Socket_receive(s, bytesize, out data);
                             Int32.TryParse(data, out int temp);
                             byte_expected[item.Key] = temp;
                         }
@@ -393,17 +422,7 @@ namespace AFriendServer
                         }
                         else if (instruction == "0610") // lookup sb's info using username
                         {
-                            bytes = new byte[4];
-                            numByte = s.Receive(bytes, 4, SocketFlags.None);
-                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                            int bytezize = Int32.Parse(data) * 2;
-                            bytes = new byte[bytezize];
-                            numByte = s.Receive(bytes, bytezize, SocketFlags.None);
-                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                            bytezize = Int32.Parse(data) ;
-                            bytes = new byte[bytezize];
-                            numByte = s.Receive(bytes, bytezize, SocketFlags.None);
-                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
+                            receive_data_automatically(s, out data);
                             string commandtext = "select top 1 id, username, name, state from account where username=@username";
                             SqlCommand command = new SqlCommand(commandtext, sql);
                             command.Parameters.AddWithValue("@username", data);
