@@ -101,6 +101,8 @@ namespace A_Friend
                                                     UIForm.panelChats[msgobj.id1].Invoke(UIForm.panelChats[msgobj.id1].AddMessageDelegate, new object[] { msgobj });
                                                     Console.WriteLine("data added");
                                                     Console.WriteLine(msgobj.message);
+                                                    if (!msgobj.sender)
+                                                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id1, (byte)1 });
                                                 }
                                                 else
                                                 {
@@ -117,6 +119,8 @@ namespace A_Friend
                                                     UIForm.panelChats[msgobj.id2].Invoke(UIForm.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
                                                     Console.WriteLine("data added");
                                                     Console.WriteLine(msgobj.message);
+                                                    if (msgobj.sender)
+                                                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id2, (byte)1 });
                                                 }
                                                 else
                                                 {
@@ -223,14 +227,18 @@ namespace A_Friend
                         numByte = self.Receive(bytes, 38, SocketFlags.None);
                         data = Encoding.Unicode.GetString(bytes, 0, numByte);
                         string online_id = data;
+                        Console.WriteLine(online_id);
+                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate,new object[] { online_id, (byte)1 });
                     }
                     else if (instruction == "0404") //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
                     {
                         Console.WriteLine("This person is not online");
-                        bytes = new byte[18];
-                        numByte = self.Receive(bytes, 18, SocketFlags.None);
+                        bytes = new byte[38];
+                        numByte = self.Receive(bytes, 38, SocketFlags.None);
                         data = Encoding.Unicode.GetString(bytes, 0, numByte);
                         string offline_id = data;
+                        Console.WriteLine(offline_id);
+                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
                     }
                     else if (instruction == "1901")
                     { // 1901 = message received
