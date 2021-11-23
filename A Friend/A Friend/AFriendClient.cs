@@ -222,6 +222,7 @@ namespace A_Friend
             int total_byte_received = 0;
             byte[] data = new byte[byte_expected];
             int received_byte;
+            Console.WriteLine("Expected: {0}", byte_expected);
             do
             {
                 received_byte = client.Receive(data, total_byte_received, byte_expected, SocketFlags.None);
@@ -232,6 +233,7 @@ namespace A_Friend
                 }
                 else break;
             } while (byte_expected > 0 &&  received_byte > 0);
+            Console.WriteLine("Received: {0}",total_byte_received );
             if (byte_expected == 0) // all data received
             {
                 data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
@@ -251,7 +253,24 @@ namespace A_Friend
                 if (Socket_receive(8, out data))
                 {
                     instruction = data;
-                    if (instruction == "2211") // 2211 = this id is online
+                    Console.WriteLine(data);
+                    if (instruction == "6475") 
+                    {
+                        string panelid;
+                        if (Socket_receive(38, out panelid))
+                        {
+                            Console.WriteLine(panelid);
+                            string objectdatastring;
+                            if (receive_data_automatically(out objectdatastring))
+                            {
+                                Console.WriteLine("Old messages have come");
+                                List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
+                                UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
+                                Console.WriteLine("Message Loaded");
+                            }
+                        }
+                    }
+                    else if (instruction == "2211") // 2211 = this id is online
                     {
                         Console.WriteLine("This person is online");
                         string online_id;

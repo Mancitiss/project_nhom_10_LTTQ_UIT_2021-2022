@@ -26,6 +26,9 @@ namespace A_Friend.CustomControls
 
         public delegate void AddMessageItem(MessageObject message);
         public AddMessageItem AddMessageDelegate;
+
+        public delegate void LoadMessageItem(List<MessageObject> messageObjects);
+        public LoadMessageItem LoadMessageDelegate;
         /*
         public delegate void ButtonSend_Click(object sender, EventArgs e);
         public ButtonSend_Click ButtonSend_Click_Delegate;
@@ -34,6 +37,7 @@ namespace A_Friend.CustomControls
         public PanelChat()
         {
             InitializeComponent();
+            LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
             //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
@@ -52,6 +56,7 @@ namespace A_Friend.CustomControls
             textboxWriting.PlaceholderText = "to " + account.name;
             this.id = account.id;
             State = account.state;
+            LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
             //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             this.CreateControl();
@@ -65,7 +70,31 @@ namespace A_Friend.CustomControls
         {
             if (panel_Chat.VerticalScroll.Value == 0)
             {
-                LoadMessage();
+                //LoadMessage();
+                Int64 num = this.loadedmessagenumber - 1;
+                if (num > 1)
+                {
+                    string datasend = num.ToString();
+                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                    Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
+                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                }
+            }
+        }
+
+        private void panel_Chat_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (panel_Chat.VerticalScroll.Value == 0)
+            {
+                //LoadMessage();
+                Int64 num = this.loadedmessagenumber - 1;
+                if (num > 1)
+                {
+                    string datasend = num.ToString();
+                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                    Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
+                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                }
             }
         }
 
@@ -197,6 +226,8 @@ namespace A_Friend.CustomControls
 
         private void AddMessageToTop(MessageObject message)
         {
+            this.loadedmessagenumber = message.messagenumber;
+            Console.WriteLine(this.loadedmessagenumber);
             panel_Chat.SuspendLayout();
             ChatItem chatItem = new ChatItem(message);
             chatItem.Dock = DockStyle.Top;
@@ -272,12 +303,25 @@ namespace A_Friend.CustomControls
 
         public void LoadMessage()
         {
+            /*
             panel_Chat.SuspendLayout();
             AddMessageToTop("Tạm biệt", false);
             AddMessageToTop("Không, Chào Tạm biệt", true);
             AddMessageToTop("Bạn Khỏe không", false);
             AddMessageToTop("Chào", false);
             AddMessageToTop("Chào bạn", true);
+            panel_Chat.ResumeLayout();
+            */
+            AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
+        }
+
+        public void LoadMessage(List<MessageObject> messageObjects)
+        {
+            panel_Chat.SuspendLayout();
+            foreach(MessageObject messageObject in messageObjects)
+            {
+                AddMessageToTop(messageObject);
+            }
             panel_Chat.ResumeLayout();
         }
 
@@ -328,13 +372,7 @@ namespace A_Friend.CustomControls
             timerChat.Stop();
         }
 
-        private void panel_Chat_Scroll(object sender, ScrollEventArgs e)
-        {
-            if (panel_Chat.VerticalScroll.Value == 0)
-            {
-                LoadMessage();
-            }
-        }
+        
 
         private void textboxWriting_SizeChanged(object sender, EventArgs e)
         {

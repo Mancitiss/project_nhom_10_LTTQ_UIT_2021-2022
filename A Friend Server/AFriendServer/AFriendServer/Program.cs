@@ -372,24 +372,109 @@ namespace AFriendServer
             Socket s = item.Value;
             try
             {
-                byte[] bytes = new byte[8];
-
-                //read the identifier from client
-                int numByte = s.Receive(bytes, 8, SocketFlags.None);
-
-                if (numByte != 0)
-                {
-                    string data = Encoding.Unicode.GetString(bytes,
-                                               0, numByte);
+                string data;
+                if(Socket_receive(s, 8, out data)) 
+                { 
                     Console.WriteLine("Work: " + data);
                     if (data != null && data != "")
                     {
                         string instruction = data;
-
-                        if (instruction == "1901") // message handlings
+                        if (instruction == "6475") // load messages
+                        {
+                            string receiver_id;
+                            if (Socket_receive(s, 38, out receiver_id))
+                            {
+                                Console.WriteLine(receiver_id);
+                                string id1, id2;
+                                if (item.Key.CompareTo(receiver_id) <= 0)
+                                {
+                                    id1 = item.Key;
+                                    id2 = receiver_id;
+                                }
+                                else
+                                {
+                                    id1 = receiver_id;
+                                    id2 = item.Key;
+                                }
+                                if (receive_data_automatically(s, out data))
+                                {
+                                    Console.WriteLine(data);
+                                    Int64 num;
+                                    if (Int64.TryParse(data, out num))
+                                    {
+                                        if (num == 0)
+                                        {
+                                            SqlCommand command = new SqlCommand("select top 1 count from friend where id1=@id1 and id2=@id2", sql);
+                                            command.Parameters.AddWithValue("@id1", id1);
+                                            command.Parameters.AddWithValue("@id2", id2);
+                                            using (SqlDataReader reader = command.ExecuteReader())
+                                            {
+                                                if (reader.Read())
+                                                {
+                                                    num = (Int64)reader["count"];
+                                                }
+                                            }
+                                            Console.WriteLine(num);
+                                            int i = 0;
+                                            List<MessageObject>messageObjects = new List<MessageObject>();
+                                            while (num > 0 && i < 50)
+                                            {
+                                                command = new SqlCommand("select top 1 * from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql);
+                                                command.Parameters.AddWithValue("@id1", id1);
+                                                command.Parameters.AddWithValue("@id2", id2);
+                                                command.Parameters.AddWithValue("@messagenumber", num);
+                                                using (SqlDataReader reader = command.ExecuteReader())
+                                                {
+                                                    if (reader.Read())
+                                                    {
+                                                        Console.WriteLine((DateTime)reader["timesent"]);
+                                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
+                                                        messageObjects.Add(msgobj);
+                                                    }
+                                                }
+                                                num = num - 1;
+                                                i = i + 1;
+                                            }
+                                            string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
+                                            string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                            s.Send(Encoding.Unicode.GetBytes("6475"+receiver_id+datasendbyte.Length.ToString().PadLeft(2,'0')+datasendbyte+datasend));
+                                            Console.WriteLine("Old messages sent");
+                                        }
+                                        else if (num>1)
+                                        {
+                                            int i = 0;
+                                            SqlCommand command;
+                                            List<MessageObject> messageObjects = new List<MessageObject>();
+                                            while (num > 0 && i < 50)
+                                            {
+                                                command = new SqlCommand("select top 1 * from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql);
+                                                command.Parameters.AddWithValue("@id1", id1);
+                                                command.Parameters.AddWithValue("@id2", id2);
+                                                command.Parameters.AddWithValue("@messagenumber", num);
+                                                using (SqlDataReader reader = command.ExecuteReader())
+                                                {
+                                                    if (reader.Read())
+                                                    {
+                                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
+                                                        messageObjects.Add(msgobj);
+                                                    }
+                                                }
+                                                num = num - 1;
+                                                i = i + 1;
+                                            }
+                                            string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
+                                            string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                            s.Send(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                            Console.WriteLine("Old messages sent");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else if (instruction == "1901") // message handlings
                         {
                             Socket_receive(s, 4, out data);
-                            int bytesize = Int32.Parse(data)*2;
+                            int bytesize = Int32.Parse(data) * 2;
                             Socket_receive(s, bytesize, out data);
                             Int32.TryParse(data, out int temp);
                             byte_expected[item.Key] = temp;
@@ -400,44 +485,46 @@ namespace AFriendServer
                         }
                         else if (instruction == "0609") // lookup sb's info using id
                         {
-                            bytes = new byte[38];
-                            numByte = s.Receive(bytes, 38, SocketFlags.None);
-                            data = Encoding.Unicode.GetString(bytes, 0, numByte);
-                            string commandtext = "select top 1 id, username, name, state from account where id=@id";
-                            SqlCommand command = new SqlCommand(commandtext, sql);
-                            command.Parameters.AddWithValue("@id", Int64.Parse(data));
-                            using (SqlDataReader reader = command.ExecuteReader())
+                            if (Socket_receive(s, 38, out data))
                             {
-                                if (reader.Read())
+                                string commandtext = "select top 1 id, username, name, state from account where id=@id";
+                                SqlCommand command = new SqlCommand(commandtext, sql);
+                                command.Parameters.AddWithValue("@id", Int64.Parse(data));
+                                using (SqlDataReader reader = command.ExecuteReader())
                                 {
-                                    string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
-                                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                    s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                                }
-                                else
-                                {
-                                    s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
+                                    if (reader.Read())
+                                    {
+                                        string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
+                                        string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                        s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                    }
+                                    else
+                                    {
+                                        s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
+                                    }
                                 }
                             }
                         }
                         else if (instruction == "0610") // lookup sb's info using username
                         {
-                            receive_data_automatically(s, out data);
-                            string commandtext = "select top 1 id, username, name, state from account where username=@username";
-                            SqlCommand command = new SqlCommand(commandtext, sql);
-                            command.Parameters.AddWithValue("@username", data);
-                            using (SqlDataReader reader = command.ExecuteReader())
+                            if (receive_data_automatically(s, out data))
                             {
-                                if (reader.Read())
+                                string commandtext = "select top 1 id, username, name, state from account where username=@username";
+                                SqlCommand command = new SqlCommand(commandtext, sql);
+                                command.Parameters.AddWithValue("@username", data);
+                                using (SqlDataReader reader = command.ExecuteReader())
                                 {
-                                    string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
-                                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                    s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                                    Console.WriteLine("Info sent");
-                                }
-                                else
-                                {
-                                    s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
+                                    if (reader.Read())
+                                    {
+                                        string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
+                                        string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                        s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                        Console.WriteLine("Info sent");
+                                    }
+                                    else
+                                    {
+                                        s.Send(Encoding.Unicode.GetBytes("2609")); // info not found
+                                    }
                                 }
                             }
                         }
@@ -551,8 +638,6 @@ namespace AFriendServer
 
                                     try
                                     {
-
-
                                         if (dictionary.ContainsKey(id))
                                         {
                                             dictionary[id].Send(Encoding.Unicode.GetBytes("2004"));
