@@ -227,5 +227,11 @@
   <ItemGroup>
     <None Include="Resources\plus-circle_6.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\211634_camera_icon %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\353430_checkbox_pen_edit_pencil_icon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
