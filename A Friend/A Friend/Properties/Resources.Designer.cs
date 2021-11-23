@@ -63,6 +63,26 @@ namespace A_Friend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _211634_camera_icon__1_ {
+            get {
+                object obj = ResourceManager.GetObject("211634_camera_icon (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _353430_checkbox_pen_edit_pencil_icon {
+            get {
+                object obj = ResourceManager.GetObject("353430_checkbox_pen_edit_pencil_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap _417_4175735_system_administrator_svg_png_icon_free_download_man_icon {
             get {
                 object obj = ResourceManager.GetObject("417-4175735_system-administrator-svg-png-icon-free-download-man-icon", resourceCulture);
