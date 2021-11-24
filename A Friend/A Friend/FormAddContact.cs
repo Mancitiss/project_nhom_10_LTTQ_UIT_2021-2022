@@ -44,6 +44,21 @@ namespace A_Friend
             //this.Hide();
         }
 
+        private void AddContact()
+        {
+            if (txtNewUser.Texts == "")
+            {
+                //labelWarning.Text = "Please enter a username";
+                ChangeWarning("Please enter your friend user name", Color.Red);
+            }  
+            else
+            {
+                string data = txtNewUser.Texts;
+                string databyte = Encoding.Unicode.GetByteCount(data).ToString();
+                AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
+            }
+        }
+
         private void FormAddContact_Shown(object sender, EventArgs e)
         {
             txtNewUser.Focus();
@@ -53,7 +68,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                ButtonAdd.PerformClick();
+                AddContact();
             }
         }
 
@@ -61,6 +76,9 @@ namespace A_Friend
         {
             labelWarning.Text = text;
             labelWarning.ForeColor = textcolor;
+            //txtNewUser.Texts = "";
+            txtNewUser.Location = new Point(txtNewUser.Location.X, (int)(this.Height / 2 - txtNewUser.Height / 2 - labelWarning.Height / 2));
+            labelWarning.Location = new Point(0, txtNewUser.Bottom);
         }
 
         private void FormAddContact_Paint(object sender, PaintEventArgs e)
@@ -70,6 +88,21 @@ namespace A_Friend
                 e.Graphics.DrawLine(pen, 0, 1, this.Width, 1);
                 //e.Graphics.DrawLine(pen, panelBottomLeft.Width - 1, 0, panelBottomLeft.Width - 1, panelBottomLeft.Height);
             }
+        }
+
+        private void txtNewUser__TextChanged(object sender, EventArgs e)
+        {
+            labelWarning.Text = "";
+            txtNewUser.Location = new Point(txtNewUser.Location.X, (int)(this.Height / 2 - txtNewUser.Height / 2));
+            txtNewUser.BringToFront();
+        }
+
+        public void ResetTexts()
+        {
+            txtNewUser.Texts = "";
+            labelWarning.Text = "";
+            txtNewUser.Location = new Point(txtNewUser.Location.X, (int)(this.Height / 2 - txtNewUser.Height / 2));
+            txtNewUser.BringToFront();
         }
     }
 }

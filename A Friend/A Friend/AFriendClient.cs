@@ -341,9 +341,9 @@ namespace A_Friend
                             Console.WriteLine("I even reached here");
                             if (Byte.TryParse(found[found.Count - 1], out state))
                             {
+                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) }); 
                                 UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
                                 Console.WriteLine("New Contact Added");
-                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) }); 
                                 if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
                                 {
                                     UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });

@@ -51,18 +51,18 @@ namespace A_Friend
         private void FormApplication_Load(object sender, EventArgs e)
         {
             this.SuspendLayout();
-            /*
-            AddContact(new Account("DaiLoi", "Lê Đoàn Đại Lợi", "1111", 1));
-            AddContact(new Account("DangKhoa", "Võ Văn Đăng Khoa", "2222", 2));
-            AddContact(new Account("PhuongQuyen", "Lê Thị Phương Quyên", "3333", 1));
-            AddContact(new Account("ThanhTu", "Thanh Tu", "4444", 1));
-            AddContact(new Account("AnhPhong", "Anh Phong", "5555", 0));
-            AddContact(new Account("LoiDai", "Le Loi", "9999", 0));
-            AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
-            AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
-            AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
-            AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
-            */
+
+            //AddContact(new Account("DaiLoi", "Lê Đoàn Đại Lợi", "1111", 1));
+            //AddContact(new Account("DangKhoa", "Võ Văn Đăng Khoa", "2222", 2));
+            //AddContact(new Account("PhuongQuyen", "Lê Thị Phương Quyên", "3333", 1));
+            //AddContact(new Account("ThanhTu", "Thanh Tu", "4444", 1));
+            //AddContact(new Account("AnhPhong", "Anh Phong", "5555", 0));
+            //AddContact(new Account("LoiDai", "Le Loi", "9999", 0));
+            //AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
+            //AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
+            //AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
+            //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
+
             if (panelChats.Count > 0)
                 ShowPanelChat(panelChats.Keys.Last());
             else
@@ -206,6 +206,10 @@ namespace A_Friend
                         check = true;
                     }
                 };
+            }
+            else
+            {
+                formAddContact.ChangeWarning("This user existed in your contacting list!", Color.Red);
             }
         }
 
@@ -381,18 +385,19 @@ namespace A_Friend
                 formAddContact.Visible = true;
             }
 
-            if (panelContact.Height == panelContact.Height - panelAdd.Height)
+            if (panelContact.Height == panelBottomLeft.Top - panelTopLeft.Bottom)
             {
-                panelContact.Height = panelContact.Height + panelAdd.Height;
-                panelContact2.Height = panelContact.Height + panelAdd.Height;
-                panelAdd.Hide();
+                panelContact.Height -= panelAdd.Height;
+                panelContact2.Height -= panelAdd.Height;
+                formAddContact.ResetTexts();
+                formAddContact.ChangeWarning("Enter your friend's user name", Color.FromArgb(143, 228, 185));
+                panelAdd.Show();
             }
             else
             {
-                panelContact.Height = panelContact.Height - panelAdd.Height;
-                panelContact2.Height = panelContact.Height - panelAdd.Height;
-                formAddContact.ChangeWarning("Enter your friend's user name", Color.FromArgb(143, 228, 185));
-                panelAdd.Show();
+                panelContact.Height += panelAdd.Height;
+                panelContact2.Height += panelAdd.Height;
+                panelAdd.Hide();
             }
         }
 
