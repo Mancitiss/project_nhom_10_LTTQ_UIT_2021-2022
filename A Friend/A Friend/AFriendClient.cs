@@ -388,6 +388,11 @@ namespace A_Friend
                     {
                         Console.WriteLine("Old Password is not correct!!");
                     }
+                    else if (instruction == "1012")
+                    {
+                        Console.WriteLine("Name changed!");
+                        //if name not change then it is your internet connection problem
+                    }
                 }
             }
             catch (Exception e)

@@ -36,11 +36,11 @@ namespace A_Friend
 
         private void customButtonChange1_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(customTextBoxUsername.Text))
+            if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
                 MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
-                //
+                AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
                 panelUsername.Hide();
             }
         }
