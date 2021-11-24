@@ -655,7 +655,7 @@ namespace AFriendServer
                     Console.WriteLine(list_str[1]);
                     try
                     {
-                        string commandtext = "select top 1 id, username, pw from account where username=@username";
+                        string commandtext = "select top 1 id, name, pw from account where username=@username";
                         SqlCommand command = new SqlCommand(commandtext, sql);
                         command.Parameters.AddWithValue("@username", list_str[0]);
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -678,11 +678,11 @@ namespace AFriendServer
                                     string str_id = id;
                                     while (id.Length < 19) id = '0' + id;
 
-                                    string username = reader["username"].ToString();
-                                    string usernamebyte = Encoding.Unicode.GetByteCount(username).ToString();
+                                    string name = reader["name"].ToString();
+                                    string namebyte = Encoding.Unicode.GetByteCount(name).ToString();
 
                                     s.Send(Encoding.Unicode.GetBytes("0200"
-                                        + id + usernamebyte.Length.ToString().PadLeft(2, '0') + usernamebyte + username));
+                                        + id + namebyte.Length.ToString().PadLeft(2, '0') + namebyte + name));
 
                                     using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
                                     {

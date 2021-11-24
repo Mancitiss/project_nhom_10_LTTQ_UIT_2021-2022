@@ -19,6 +19,7 @@ namespace A_Friend
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
+            this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
             panelUsername.Hide();
         }
@@ -41,7 +42,9 @@ namespace A_Friend
             else
             {
                 AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
-                panelUsername.Hide();
+                AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
+                //panelUsername.Hide();
+                this.Close();
             }
         }
 
