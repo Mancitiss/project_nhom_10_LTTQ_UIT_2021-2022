@@ -30,6 +30,7 @@ namespace A_Friend
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
+        public FormAddContact formAddContact;
         private FormGetStarted formGetStarted = new FormGetStarted();
         private bool check = true;
         private string searchText = "";
@@ -105,6 +106,17 @@ namespace A_Friend
             panelGetStarted.Location = new Point(0, 0);
             panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top + 2);
             panelGetStarted.Padding = new Padding(1);
+            panelGetStarted.Resize += delegate { 
+                if (panelGetStarted.Width != this.Width)
+                {
+                    var graphic = panelGetStarted.CreateGraphics();
+                    using (Pen pen = new Pen(Color.Gray, 1))
+                    {
+                        graphic.DrawLine(pen, 0, 0, 0, panelGetStarted.Height - 1);
+                    }
+                }
+            };    
+
             panelAdd.Hide();
         }
 
@@ -320,45 +332,68 @@ namespace A_Friend
             frm.StartPosition = FormStartPosition.CenterScreen;
             frm.ShowDialog();
         }
-        int tempadd = 0;
+        //int tempadd = 0;
         public void ButtonAdd_Click_1(object sender, EventArgs e)
         {
             PanelGetStartedSlideToRight();
-            FormCollection forms = Application.OpenForms;
-            FormAddContact frm = new FormAddContact();
-            //panelContact.Height = panelContact.Height - panel2.Height;
-            //panelContact2.Height = panelContact.Height - panel2.Height;
-            //panel2.Show();
-            //frm.TopLevel = false;
-            //panel2.Controls.Add(frm);
-            //frm.Show();
-            //i = Application.OpenForms.Count;
-            do
+            //FormCollection forms = Application.OpenForms;
+            //FormAddContact frm = new FormAddContact();
+            ////panelContact.Height = panelContact.Height - panel2.Height;
+            ////panelContact2.Height = panelContact.Height - panel2.Height;
+            ////panel2.Show();
+            ////frm.TopLevel = false;
+            ////panel2.Controls.Add(frm);
+            ////frm.Show();
+            ////i = Application.OpenForms.Count;
+            //do
+            //{
+            //    if (tempadd >= 2)
+            //    {
+            //        if (tempadd >= 2)
+            //        {
+            //            panelAdd.Hide();
+            //            panelContact.Height = panelContact.Height + panelAdd.Height;
+            //            panelContact2.Height = panelContact.Height + panelAdd.Height;
+            //            tempadd = 0;
+            //            break;
+            //        }
+            //        return;
+            //    }
+            //    panelContact.Height = panelContact.Height - panelAdd.Height;
+            //    panelContact2.Height = panelContact.Height - panelAdd.Height;
+            //    panelAdd.Show();
+            //    frm.TopLevel = false;
+            //    panelAdd.Controls.Add(frm);
+            //    frm.Show();
+            //    tempadd = Application.OpenForms.Count;
+            //    break;
+            //}
+            //while (false);
+            ////PanelGetStartedFill();
+            ////Reload list friends
+            if (formAddContact == null)
             {
-                if (tempadd >= 2)
-                {
-                    if (tempadd >= 2)
-                    {
-                        panelAdd.Hide();
-                        panelContact.Height = panelContact.Height + panelAdd.Height;
-                        panelContact2.Height = panelContact.Height + panelAdd.Height;
-                        tempadd = 0;
-                        break;
-                    }
-                    return;
-                }
+                formAddContact = new FormAddContact();
+                formAddContact.Dock = DockStyle.Fill;
+                formAddContact.TopLevel = false;
+                panelAdd.Controls.Add(formAddContact);
+                panelAdd.BringToFront();
+                formAddContact.Visible = true;
+            }
+
+            if (panelContact.Height == panelContact.Height - panelAdd.Height)
+            {
+                panelContact.Height = panelContact.Height + panelAdd.Height;
+                panelContact2.Height = panelContact.Height + panelAdd.Height;
+                panelAdd.Hide();
+            }
+            else
+            {
                 panelContact.Height = panelContact.Height - panelAdd.Height;
                 panelContact2.Height = panelContact.Height - panelAdd.Height;
+                formAddContact.ChangeWarning("Enter your friend's user name", Color.FromArgb(143, 228, 185));
                 panelAdd.Show();
-                frm.TopLevel = false;
-                panelAdd.Controls.Add(frm);
-                frm.Show();
-                tempadd = Application.OpenForms.Count;
-                break;
             }
-            while (false);
-            //PanelGetStartedFill();
-            //Reload list friends
         }
 
         private void FormApplication_FormClosed(object sender, FormClosedEventArgs e)

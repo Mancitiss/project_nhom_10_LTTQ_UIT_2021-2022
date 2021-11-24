@@ -332,6 +332,7 @@ namespace A_Friend
                             {
                                 UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
                                 Console.WriteLine("New Contact Added");
+                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) }); 
                                 if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
                                 {
                                     UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
@@ -352,6 +353,7 @@ namespace A_Friend
                     else if (instruction == "2609")
                     {
                         Console.WriteLine("No such account exists");
+                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That user name doesn't eixst!", Color.Red }); 
                         first_message = null;
                         first_message_sender = String.Empty;
                     }

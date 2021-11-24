@@ -12,12 +12,16 @@ namespace A_Friend
 {
     public partial class FormAddContact : Form
     {
+        public delegate void ChangeWarningLabel(string text, Color color);
+        public ChangeWarningLabel changeWarningLabelDelegate;
 
         public FormAddContact()
         {
             InitializeComponent();
-            labelWarning.Text = "";
+            labelWarning.ForeColor = Color.FromArgb(143, 228, 185);
+            labelWarning.Text = "Enter your friend user name";
             txtNewUser.RemovePlaceHolder();
+            changeWarningLabelDelegate = new ChangeWarningLabel(ChangeWarning);
         }
 
         private void ButtonClose_Click(object sender, EventArgs e)
@@ -28,7 +32,8 @@ namespace A_Friend
         {
             if (txtNewUser.Texts == "")
             {
-                labelWarning.Text = "Please enter a username";
+                //labelWarning.Text = "Please enter a username";
+                ChangeWarning("Please enter your friend user name", Color.Red);
             }  
             else
             {
@@ -36,7 +41,7 @@ namespace A_Friend
                 string databyte = Encoding.Unicode.GetByteCount(data).ToString();
                 AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
             }
-            this.Hide();
+            //this.Hide();
         }
 
         private void FormAddContact_Shown(object sender, EventArgs e)
@@ -49,6 +54,21 @@ namespace A_Friend
             if (e.KeyCode == Keys.Enter)
             {
                 ButtonAdd.PerformClick();
+            }
+        }
+
+        public void ChangeWarning(string text, Color textcolor)
+        {
+            labelWarning.Text = text;
+            labelWarning.ForeColor = textcolor;
+        }
+
+        private void FormAddContact_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen pen = new Pen(Color.Gray, 1))
+            {
+                e.Graphics.DrawLine(pen, 0, 1, this.Width, 1);
+                //e.Graphics.DrawLine(pen, panelBottomLeft.Width - 1, 0, panelBottomLeft.Width - 1, panelBottomLeft.Height);
             }
         }
     }
