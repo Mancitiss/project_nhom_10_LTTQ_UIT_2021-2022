@@ -386,7 +386,7 @@ namespace A_Friend
                     {
                         Console.WriteLine("Ten tai khoan da ton tai");
                     }
-                    else if (instruction == "2004") // 2004 = loggin from another deive
+                    else if (instruction == "2004") // 2004 = loggin from another device
                     {
                         Console.WriteLine("You are logged in from another device, you will be logged out");
                         user.state = 0;

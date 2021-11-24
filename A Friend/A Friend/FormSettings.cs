@@ -24,18 +24,13 @@ namespace A_Friend
             panelUsername.Hide();
         }
 
-        private void customButtonClose_Click(object sender, EventArgs e)
-        {
-            this.Close(); 
-        }
-
         private void customButtonUsername_Click(object sender, EventArgs e)
         {
+            panelPassword.Hide();
             panelUsername.Show();
-
         }
 
-        private void customButtonChange1_Click(object sender, EventArgs e)
+        private void buttonSaveUsername_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
                 MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -50,18 +45,19 @@ namespace A_Friend
 
         private void customButtonPassword_Click(object sender, EventArgs e)
         {
+            panelUsername.Hide();
             panelPassword.Show();
         }
 
-        private void customButtonChange2_Click(object sender, EventArgs e)
+        private void buttonSavePassword_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(customTextBoxPassword.Texts) || string.IsNullOrEmpty(customTextBoxCPassord.Texts) || string.IsNullOrEmpty(customTextBoxNPassword.Texts))
+            if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
                 MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
-                if (customTextBoxCPassord.Texts.Equals(customTextBoxNPassword.Texts))
+                if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
                 {
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(customTextBoxPassword.Texts) + AFriendClient.data_with_byte(customTextBoxCPassord.Texts)));
+                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
                 }
                 panelPassword.Hide();
             }
@@ -77,14 +73,9 @@ namespace A_Friend
             }*/
         }
 
-        private void customButtonClose1_Click(object sender, EventArgs e)
+        private void customButtonExit_Click(object sender, EventArgs e)
         {
-            panelUsername.Hide();
-        }
-
-        private void customButtonClose2_Click(object sender, EventArgs e)
-        {
-            panelPassword.Hide();
+            this.Close();
         }
     }
 }

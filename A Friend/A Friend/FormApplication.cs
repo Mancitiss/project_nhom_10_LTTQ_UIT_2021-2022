@@ -318,7 +318,9 @@ namespace A_Friend
         {
             FormSettings frm = new FormSettings();
             frm.StartPosition = FormStartPosition.CenterScreen;
+            this.Hide();
             frm.ShowDialog();
+            this.Show();
         }
         int tempadd = 0;
         public void ButtonAdd_Click_1(object sender, EventArgs e)

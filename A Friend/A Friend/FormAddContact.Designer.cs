@@ -40,10 +40,9 @@ namespace A_Friend
             this.labelWarning.BackColor = System.Drawing.SystemColors.Window;
             this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
-            this.labelWarning.Location = new System.Drawing.Point(8, 43);
-            this.labelWarning.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelWarning.Location = new System.Drawing.Point(11, 53);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(167, 15);
+            this.labelWarning.Size = new System.Drawing.Size(202, 18);
             this.labelWarning.TabIndex = 5;
             this.labelWarning.Text = "This username does not exist";
             // 
@@ -54,15 +53,15 @@ namespace A_Friend
             this.txtNewUser.BorderFocusColor = System.Drawing.Color.HotPink;
             this.txtNewUser.BorderRadius = 0;
             this.txtNewUser.BorderSize = 3;
-            this.txtNewUser.Location = new System.Drawing.Point(4, 12);
-            this.txtNewUser.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.txtNewUser.Location = new System.Drawing.Point(5, 15);
+            this.txtNewUser.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.txtNewUser.Multiline = false;
             this.txtNewUser.Name = "txtNewUser";
-            this.txtNewUser.Padding = new System.Windows.Forms.Padding(12, 8, 12, 8);
+            this.txtNewUser.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
             this.txtNewUser.PasswordChar = false;
             this.txtNewUser.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.txtNewUser.PlaceholderText = "";
-            this.txtNewUser.Size = new System.Drawing.Size(155, 30);
+            this.txtNewUser.Size = new System.Drawing.Size(207, 38);
             this.txtNewUser.TabIndex = 0;
             this.txtNewUser.Texts = "";
             this.txtNewUser.UnderlinedStyle = false;
@@ -74,24 +73,25 @@ namespace A_Friend
             this.ButtonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ButtonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ButtonAdd.ForeColor = System.Drawing.Color.White;
-            this.ButtonAdd.Location = new System.Drawing.Point(167, 12);
+            this.ButtonAdd.Location = new System.Drawing.Point(223, 15);
+            this.ButtonAdd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ButtonAdd.Name = "ButtonAdd";
-            this.ButtonAdd.Size = new System.Drawing.Size(30, 30);
+            this.ButtonAdd.Size = new System.Drawing.Size(40, 37);
             this.ButtonAdd.TabIndex = 6;
             this.ButtonAdd.UseVisualStyleBackColor = true;
             this.ButtonAdd.Click += new System.EventHandler(this.ButtonAdd_Click);
             // 
             // FormAddContact
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(198, 59);
+            this.ClientSize = new System.Drawing.Size(264, 73);
             this.Controls.Add(this.ButtonAdd);
             this.Controls.Add(this.labelWarning);
             this.Controls.Add(this.txtNewUser);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "FormAddContact";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormAddContact";
