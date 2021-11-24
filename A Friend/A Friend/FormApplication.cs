@@ -30,7 +30,7 @@ namespace A_Friend
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
-        public FormAddContact formAddContact;
+        public FormAddContact formAddContact = new FormAddContact();
         private FormGetStarted formGetStarted = new FormGetStarted();
         private bool check = true;
         private string searchText = "";
@@ -118,6 +118,11 @@ namespace A_Friend
             };    
 
             panelAdd.Hide();
+            formAddContact.Dock = DockStyle.Fill;
+            formAddContact.TopLevel = false;
+            panelAdd.Controls.Add(formAddContact);
+            panelAdd.BringToFront();
+            formAddContact.Visible = true;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -375,15 +380,15 @@ namespace A_Friend
             //while (false);
             ////PanelGetStartedFill();
             ////Reload list friends
-            if (formAddContact == null)
-            {
-                formAddContact = new FormAddContact();
-                formAddContact.Dock = DockStyle.Fill;
-                formAddContact.TopLevel = false;
-                panelAdd.Controls.Add(formAddContact);
-                panelAdd.BringToFront();
-                formAddContact.Visible = true;
-            }
+            //if (formAddContact == null)
+            //{
+            //    formAddContact = new FormAddContact();
+            //    formAddContact.Dock = DockStyle.Fill;
+            //    formAddContact.TopLevel = false;
+            //    panelAdd.Controls.Add(formAddContact);
+            //    panelAdd.BringToFront();
+            //    formAddContact.Visible = true;
+            //}
 
             if (panelContact.Height == panelBottomLeft.Top - panelTopLeft.Bottom)
             {
