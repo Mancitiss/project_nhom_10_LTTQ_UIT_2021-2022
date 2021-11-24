@@ -155,10 +155,10 @@ namespace A_Friend.CustomControls
         {
             if (IsMyMessage())
             {
-                if (messageObject.timesent < DateTime.Today)
+                if (messageObject.timesent.ToLocalTime() < DateTime.Today)
                 {
                     labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToLocalTime().ToShortTimeString()}";
-                    labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
+                    //labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
                 }
                 else
                 {
