@@ -50,6 +50,7 @@ namespace A_Friend
         private void FormApplication_Load(object sender, EventArgs e)
         {
             this.SuspendLayout();
+            /*
             AddContact(new Account("DaiLoi", "Lê Đoàn Đại Lợi", "1111", 1));
             AddContact(new Account("DangKhoa", "Võ Văn Đăng Khoa", "2222", 2));
             AddContact(new Account("PhuongQuyen", "Lê Thị Phương Quyên", "3333", 1));
@@ -60,7 +61,7 @@ namespace A_Friend
             AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
             AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
             AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
-
+            */
             if (panelChats.Count > 0)
                 ShowPanelChat(panelChats.Keys.Last());
             else

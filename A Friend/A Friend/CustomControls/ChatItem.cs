@@ -96,6 +96,7 @@ namespace A_Friend.CustomControls
             this.DoubleBuffered = true;
 
             this.messageObject = messageObject;
+            this.messageObject.timesent = this.messageObject.timesent.ToLocalTime();
             labelBody.Text = messageObject.message;
             buttonCopy.Enabled = false;
             buttonRemove.Enabled = false;
