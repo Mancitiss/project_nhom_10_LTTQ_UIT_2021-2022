@@ -22,6 +22,7 @@ namespace A_Friend
 
         private static int byte_expected = 0;
 
+        internal static string temp_name;
 
         public static Socket client;
         public static Account user;
@@ -29,6 +30,16 @@ namespace A_Friend
         private static FormApplication UIForm;
 
         Random rand = new Random();
+
+
+        internal static void change_name()
+        {
+            if (!string.IsNullOrEmpty(temp_name))
+            {
+                user.name = temp_name;
+            }
+            temp_name = null;
+        }
 
         public static void ExecuteClient(object obj)
         {
@@ -391,6 +402,8 @@ namespace A_Friend
                     else if (instruction == "1012")
                     {
                         Console.WriteLine("Name changed!");
+                        change_name();
+                        //MessageBox.Show("What a beautiful name!");
                         //if name not change then it is your internet connection problem
                     }
                 }
