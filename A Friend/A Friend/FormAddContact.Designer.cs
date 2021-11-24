@@ -65,6 +65,7 @@ namespace A_Friend
             this.txtNewUser.TabIndex = 0;
             this.txtNewUser.Texts = "";
             this.txtNewUser.UnderlinedStyle = false;
+            this.txtNewUser.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtNewUser_KeyDown);
             // 
             // ButtonAdd
             // 

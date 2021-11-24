@@ -41,5 +41,13 @@ namespace A_Friend
         {
             txtNewUser.Focus();
         }
+
+        private void txtNewUser_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                ButtonAdd.PerformClick();
+            }
+        }
     }
 }

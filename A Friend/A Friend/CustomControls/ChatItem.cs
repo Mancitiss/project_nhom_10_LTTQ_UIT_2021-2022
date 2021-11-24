@@ -153,36 +153,33 @@ namespace A_Friend.CustomControls
 
         public void UpdateDateTime()
         {
-            if (messageObject.timesent > DateTime.Today)
+            if (IsMyMessage())
             {
-                if (IsMyMessage())
+                if (messageObject.timesent < DateTime.Today)
                 {
-                    labelAuthor.Text = $"{messageObject.timesent.ToShortTimeString()}";
+                    labelAuthor.Text = $"{messageObject.timesent.ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToShortTimeString()}";
                 }
                 else
                 {
-                    if (this.Parent.Parent != null && this.Parent.Parent is PanelChat)
-                    {
-                        string author = (this.Parent.Parent as PanelChat).account.name;
-                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToShortTimeString()}";
-                    }
+                    labelAuthor.Text = $"{messageObject.timesent.ToShortTimeString()}";
                 }
             }
             else
             {
-                if (IsMyMessage())
+                if (this.Parent.Parent != null && this.Parent.Parent is PanelChat)
                 {
-                    labelAuthor.Text = $"{messageObject.timesent.ToShortDateString()}";
-                }
-                else
-                {
-                    if (this.Parent.Parent != null && this.Parent.Parent is PanelChat)
+                    string author = (this.Parent.Parent as PanelChat).account.name;
+                    if (messageObject.timesent < DateTime.Today)
                     {
-                        string author = (this.Parent.Parent as PanelChat).account.name;
-                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToShortDateString()}";
+                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToShortTimeString()}";
+                    }
+                    else
+                    {
+                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToShortTimeString()}";
                     }
                 }
             }
+
         }
 
         public Color BackgroundColor
@@ -194,7 +191,7 @@ namespace A_Friend.CustomControls
 
             set
             {
-                labelBody.BackColor= value;
+                labelBody.BackColor = value;
                 panelBody.BackColor = value;
             }
         }
@@ -217,7 +214,7 @@ namespace A_Friend.CustomControls
                 {
                     this.Height = 5 + panelTop.Height;
                 }
-            } 
+            }
         }
 
         protected override void OnResize(EventArgs e)

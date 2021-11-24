@@ -111,7 +111,7 @@ namespace A_Friend.CustomControls
             this.labelAuthor.ForeColor = System.Drawing.SystemColors.GrayText;
             this.labelAuthor.Location = new System.Drawing.Point(10, 5);
             this.labelAuthor.Name = "labelAuthor";
-            this.labelAuthor.Size = new System.Drawing.Size(50, 18);
+            this.labelAuthor.Size = new System.Drawing.Size(62, 23);
             this.labelAuthor.TabIndex = 3;
             this.labelAuthor.Text = "label1";
             // 
@@ -147,7 +147,7 @@ namespace A_Friend.CustomControls
             this.labelBody.Location = new System.Drawing.Point(5, 5);
             this.labelBody.Name = "labelBody";
             this.labelBody.Padding = new System.Windows.Forms.Padding(5);
-            this.labelBody.Size = new System.Drawing.Size(87, 28);
+            this.labelBody.Size = new System.Drawing.Size(106, 33);
             this.labelBody.TabIndex = 0;
             this.labelBody.Text = "labelBody";
             // 
@@ -164,7 +164,7 @@ namespace A_Friend.CustomControls
             // 
             // ChatItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.panelTop);
