@@ -75,7 +75,7 @@ namespace A_Friend
             timerDisconnect.Enabled = true;
             timerDisconnect.Start();
             if (EmptyTextBoxes())
-            {            
+            {
                 labelWarning.Text = "Something is missing?";
                 labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
                 labelWarning.TextAlign = ContentAlignment.MiddleCenter;
@@ -114,9 +114,9 @@ namespace A_Friend
                         }
                         else
                         {
-                            if (ExistUserName())
+                            if (!checkBytes())
                             {
-                                labelWarning.Text = "That user name already exists";
+                                labelWarning.Text = "Username or Password has over the limit of characters";
                                 labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
                                 labelWarning.TextAlign = ContentAlignment.MiddleCenter;
                                 labelWarning.ForeColor = Color.Red;
@@ -124,9 +124,9 @@ namespace A_Friend
                             }
                             else
                             {
-                                if (!checkBytes())
+                                if (ExistUserName())
                                 {
-                                    labelWarning.Text = "Username or Password has over the limit of characters";
+                                    labelWarning.Text = "That user name already exists";
                                     labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
                                     labelWarning.TextAlign = ContentAlignment.MiddleCenter;
                                     labelWarning.ForeColor = Color.Red;
@@ -179,7 +179,7 @@ namespace A_Friend
 
         private bool checkBytes()
         {
-            if (textBoxPassword.Texts.Length < 100 && Encoding.Unicode.GetByteCount(textBoxUserName.Texts) < 64)
+            if (Encoding.Unicode.GetByteCount(textBoxPassword.Texts) < 128 && Encoding.Unicode.GetByteCount(textBoxUserName.Texts) < 64)
                 return true;
             return false;
         }

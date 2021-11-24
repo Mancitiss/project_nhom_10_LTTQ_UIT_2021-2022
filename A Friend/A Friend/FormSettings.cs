@@ -52,7 +52,7 @@ namespace A_Friend
 
         private void customButtonChange2_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(customTextBoxPassword.Texts) || string.IsNullOrEmpty(customTextBoxPassword.Text) || string.IsNullOrEmpty(customTextBoxNPassword.Texts))
+            if (string.IsNullOrEmpty(customTextBoxPassword.Texts) || string.IsNullOrEmpty(customTextBoxCPassord.Texts) || string.IsNullOrEmpty(customTextBoxNPassword.Texts))
                 MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
