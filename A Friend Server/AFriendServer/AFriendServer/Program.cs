@@ -528,6 +528,44 @@ namespace AFriendServer
                                 }
                             }
                         }
+                        else if (instruction == "4269")
+                        {
+                            string opw;
+                            if (receive_data_automatically(s, out opw))
+                            {
+                                string pw;
+                                if (receive_data_automatically(s, out pw))
+                                {
+                                    SqlCommand command = new SqlCommand("Select top 1 pw from account where id=@id", sql);
+                                    Int64 longkey;
+                                    if (Int64.TryParse(item.Key, out longkey))
+                                    {
+                                        command.Parameters.AddWithValue("@id", Int64.Parse(item.Key));
+                                        using (SqlDataReader reader = command.ExecuteReader())
+                                        {
+                                            if (reader.Read())
+                                            {
+                                                if (Crypter.CheckPassword(opw, reader["pw"].ToString()))
+                                                {
+                                                    using (SqlCommand changepass = new SqlCommand("update top (1) account set pw = @pw where id = @id", sql))
+                                                    {
+                                                        changepass.Parameters.AddWithValue("@pw", Crypter.Blowfish.Crypt(pw));
+                                                        changepass.Parameters.AddWithValue("@id", item.Key);
+                                                        if (changepass.ExecuteNonQuery() == 1)
+                                                        {
+                                                            s.Send(Encoding.Unicode.GetBytes("4269"));
+                                                        }
+                                                    }
+                                                } else
+                                                {
+                                                    s.Send(Encoding.Unicode.GetBytes("9624"));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         else
                         {
                             shutdown(item);

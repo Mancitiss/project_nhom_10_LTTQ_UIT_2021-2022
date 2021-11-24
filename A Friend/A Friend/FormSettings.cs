@@ -56,7 +56,10 @@ namespace A_Friend
                 MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
-                //
+                if (customTextBoxCPassord.Texts.Equals(customTextBoxNPassword.Texts))
+                {
+                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(customTextBoxPassword.Texts) + AFriendClient.data_with_byte(customTextBoxCPassord.Texts)));
+                }
                 panelPassword.Hide();
             }
         }

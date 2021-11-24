@@ -193,6 +193,16 @@ namespace A_Friend
             }
         }
 
+        internal static string data_with_byte(string data)
+        {
+            if (!string.IsNullOrEmpty(data))
+            {
+                string databyte = Encoding.Unicode.GetByteCount(data).ToString();
+                return databyte.Length.ToString().PadLeft(2, '0') + databyte + data;
+            }
+            return "";
+        }
+
         private static bool receive_data_automatically(out string data)
         {
             if (Socket_receive(4, out data))
@@ -369,6 +379,14 @@ namespace A_Friend
                     {
                         Console.WriteLine("You are logged in from another device, you will be logged out");
                         user.state = 0;
+                    }
+                    else if (instruction == "4269")
+                    {
+                        Console.WriteLine("Password changed successfully!");
+                    }
+                    else if (instruction == "9624")
+                    {
+                        Console.WriteLine("Old Password is not correct!!");
                     }
                 }
             }
