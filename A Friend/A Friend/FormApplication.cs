@@ -101,8 +101,7 @@ namespace A_Friend
             panelGetStarted.Location = new Point(0, 0);
             panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top + 2);
             panelGetStarted.Padding = new Padding(1);
-
-            panelAdd.SendToBack();
+            panelAdd.Hide();
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
