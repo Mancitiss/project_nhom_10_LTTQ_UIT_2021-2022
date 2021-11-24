@@ -566,6 +566,22 @@ namespace AFriendServer
                                 }
                             }
                         }
+                        else if (instruction == "1012")
+                        {
+                            string newname;
+                            if (receive_data_automatically(s, out newname))
+                            {
+                                using (SqlCommand changename = new SqlCommand("update top (1) account set name = @name where id = @id", sql))
+                                {
+                                    changename.Parameters.AddWithValue("@name", newname);
+                                    changename.Parameters.AddWithValue("@id", item.Key);
+                                    if (changename.ExecuteNonQuery() == 1)
+                                    {
+                                        s.Send(Encoding.Unicode.GetBytes("1012"));
+                                    }
+                                }
+                            }
+                        }
                         else
                         {
                             shutdown(item);
