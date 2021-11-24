@@ -94,7 +94,7 @@ namespace A_Friend.CustomControls
             InitializeComponent();
 
             this.DoubleBuffered = true;
-            
+
             this.messageObject = messageObject;
             labelBody.Text = messageObject.message;
             buttonCopy.Enabled = false;
@@ -127,6 +127,13 @@ namespace A_Friend.CustomControls
             labelAuthor.MouseEnter += delegate { ShowButtons(); };
         }
 
+        public double ID
+        {
+            get
+            {
+                return this.messageObject.messagenumber;
+            }
+        }
         public bool IsMyMessage()
         {
             if (messageObject.sender == false)
@@ -263,7 +270,7 @@ namespace A_Friend.CustomControls
         {
             if (this.Parent.Parent is PanelChat)
             {
-                (this.Parent.Parent as PanelChat).RemoveMessage(this);
+                (this.Parent.Parent as PanelChat).RemoveMessage(this.ID);
             }
         }
 
