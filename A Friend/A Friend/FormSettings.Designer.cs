@@ -34,6 +34,8 @@ namespace A_Friend
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.panelPassword = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.customTextBoxCPassord = new A_Friend.CustomControls.CustomTextBox();
             this.customButtonClose2 = new A_Friend.CustomControls.CustomButton();
             this.customButtonChange2 = new A_Friend.CustomControls.CustomButton();
             this.customTextBoxPassword = new A_Friend.CustomControls.CustomTextBox();
@@ -47,8 +49,6 @@ namespace A_Friend
             this.customButtonUsername = new A_Friend.CustomControls.CustomButton();
             this.customButtonAvatar = new A_Friend.CustomControls.CustomButton();
             this.circlePictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
-            this.customTextBoxCPassord = new A_Friend.CustomControls.CustomTextBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.panelPassword.SuspendLayout();
             this.panelUsername.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.circlePictureBox1)).BeginInit();
@@ -105,6 +105,35 @@ namespace A_Friend
             this.panelPassword.Name = "panelPassword";
             this.panelPassword.Size = new System.Drawing.Size(348, 189);
             this.panelPassword.TabIndex = 10;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 17);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(120, 17);
+            this.label4.TabIndex = 18;
+            this.label4.Text = "Current Password";
+            // 
+            // customTextBoxCPassord
+            // 
+            this.customTextBoxCPassord.BackColor = System.Drawing.SystemColors.Window;
+            this.customTextBoxCPassord.BorderColor = System.Drawing.Color.SteelBlue;
+            this.customTextBoxCPassord.BorderFocusColor = System.Drawing.Color.HotPink;
+            this.customTextBoxCPassord.BorderRadius = 0;
+            this.customTextBoxCPassord.BorderSize = 2;
+            this.customTextBoxCPassord.Location = new System.Drawing.Point(128, 97);
+            this.customTextBoxCPassord.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.customTextBoxCPassord.Multiline = false;
+            this.customTextBoxCPassord.Name = "customTextBoxCPassord";
+            this.customTextBoxCPassord.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.customTextBoxCPassord.PasswordChar = true;
+            this.customTextBoxCPassord.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.customTextBoxCPassord.PlaceholderText = "";
+            this.customTextBoxCPassord.Size = new System.Drawing.Size(180, 38);
+            this.customTextBoxCPassord.TabIndex = 17;
+            this.customTextBoxCPassord.Texts = "";
+            this.customTextBoxCPassord.UnderlinedStyle = false;
             // 
             // customButtonClose2
             // 
@@ -329,35 +358,6 @@ namespace A_Friend
             this.circlePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.circlePictureBox1.TabIndex = 1;
             this.circlePictureBox1.TabStop = false;
-            // 
-            // customTextBoxCPassord
-            // 
-            this.customTextBoxCPassord.BackColor = System.Drawing.SystemColors.Window;
-            this.customTextBoxCPassord.BorderColor = System.Drawing.Color.SteelBlue;
-            this.customTextBoxCPassord.BorderFocusColor = System.Drawing.Color.HotPink;
-            this.customTextBoxCPassord.BorderRadius = 0;
-            this.customTextBoxCPassord.BorderSize = 2;
-            this.customTextBoxCPassord.Location = new System.Drawing.Point(128, 97);
-            this.customTextBoxCPassord.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.customTextBoxCPassord.Multiline = false;
-            this.customTextBoxCPassord.Name = "customTextBoxCPassord";
-            this.customTextBoxCPassord.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
-            this.customTextBoxCPassord.PasswordChar = true;
-            this.customTextBoxCPassord.PlaceholderColor = System.Drawing.Color.DarkGray;
-            this.customTextBoxCPassord.PlaceholderText = "";
-            this.customTextBoxCPassord.Size = new System.Drawing.Size(180, 38);
-            this.customTextBoxCPassord.TabIndex = 17;
-            this.customTextBoxCPassord.Texts = "";
-            this.customTextBoxCPassord.UnderlinedStyle = false;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 17);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(120, 17);
-            this.label4.TabIndex = 18;
-            this.label4.Text = "Current Password";
             // 
             // FormSettings
             // 
