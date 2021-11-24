@@ -733,6 +733,31 @@ namespace AFriendServer
                                         }
                                         dictionary.Add(id, s);
                                         Console.WriteLine("got id");
+
+                                        Int64 id_int = (Int64)reader["id"];
+                                        SqlCommand friendcommand = new SqlCommand("select id1, id2 from friend where id1=@id or id2=@id", sql);
+                                        friendcommand.Parameters.AddWithValue("@id", id_int);
+                                        using (SqlDataReader friendreader = friendcommand.ExecuteReader())
+                                        {
+                                            while (friendreader.Read())
+                                            {
+                                                Int64 friendid = (Int64)friendreader["id1"];
+                                                if (id_int == friendid) friendid = (Int64)friendreader["id2"];
+                                                
+                                                string friendcommandtext = "select top 1 id, username, name, state from account where id=@id";
+                                                SqlCommand friendcommandget = new SqlCommand(friendcommandtext, sql);
+                                                friendcommandget.Parameters.AddWithValue("@id", friendid);
+                                                using (SqlDataReader readerget = friendcommandget.ExecuteReader())
+                                                {
+                                                    if (readerget.Read())
+                                                    {
+                                                        string datasend = readerget["id"].ToString().PadLeft(19, '0') + " " + readerget["username"].ToString() + " " + readerget["name"].ToString() + " " + readerget["state"].ToString();
+                                                        string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                                        s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                     catch (Exception e)
                                     {
