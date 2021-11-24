@@ -124,7 +124,7 @@ namespace A_Friend
                             }
                             else
                             {
-                                if (checkBytes())
+                                if (!checkBytes())
                                 {
                                     labelWarning.Text = "Username or Password has over the limit of characters";
                                     labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
@@ -179,7 +179,7 @@ namespace A_Friend
 
         private bool checkBytes()
         {
-            if (textBoxPassword.Texts.Count() < 100 && Encoding.ASCII.GetByteCount(textBoxUserName.Texts) < 64)
+            if (textBoxPassword.Texts.Length < 100 && Encoding.Unicode.GetByteCount(textBoxUserName.Texts) < 64)
                 return true;
             return false;
         }
