@@ -157,11 +157,12 @@ namespace A_Friend.CustomControls
             {
                 if (messageObject.timesent < DateTime.Today)
                 {
-                    labelAuthor.Text = $"{messageObject.timesent.ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToShortTimeString()}";
+                    labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToLocalTime().ToShortTimeString()}";
+                    labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
                 }
                 else
                 {
-                    labelAuthor.Text = $"{messageObject.timesent.ToShortTimeString()}";
+                    labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
                 }
             }
             else
@@ -171,11 +172,11 @@ namespace A_Friend.CustomControls
                     string author = (this.Parent.Parent as PanelChat).account.name;
                     if (messageObject.timesent < DateTime.Today)
                     {
-                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToShortTimeString()}";
+                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToLocalTime().ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToLocalTime().ToShortTimeString()}";
                     }
                     else
                     {
-                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToShortTimeString()}";
+                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToLocalTime().ToShortTimeString()}";
                     }
                 }
             }
