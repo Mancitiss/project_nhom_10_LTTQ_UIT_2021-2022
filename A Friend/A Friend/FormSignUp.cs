@@ -203,8 +203,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                buttonSignUp.Focus();
-                SignUp();
+                buttonSignUp.PerformClick();
             }
         }
 
@@ -212,8 +211,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                buttonSignUp.Focus();
-                SignUp();
+                buttonSignUp.PerformClick();
             }
         }
 
@@ -221,8 +219,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                buttonSignUp.Focus();
-                SignUp();
+                buttonSignUp.PerformClick();
             }
         }
 

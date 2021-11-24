@@ -144,6 +144,7 @@ namespace A_Friend
                 panelChats.Add(account.id, panelChat);
 
                 panelChat.LoadMessage();
+                panelChat.ScrollToBottom();
                 contactItem.LastMessage = panelChat.GetLastMessage();
 
                 panelChat.ControlAdded += delegate
@@ -176,6 +177,7 @@ namespace A_Friend
                 {
                     ShowPanelChat(account.id);
                     contactItem.Unread = false;
+                    panelChat.ScrollToBottom();
 
                     if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
                     {

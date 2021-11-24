@@ -152,8 +152,7 @@ namespace A_Friend
         {
             if  (e.KeyCode == Keys.Enter) 
             {
-                buttonLogIn.Focus();
-                Login();
+                buttonLogIn.PerformClick();
             }
         }
 
@@ -161,8 +160,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                buttonLogIn.Focus();
-                Login();
+                buttonLogIn.PerformClick();
             }
         }
 

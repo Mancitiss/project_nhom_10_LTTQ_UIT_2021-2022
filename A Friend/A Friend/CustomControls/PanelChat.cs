@@ -81,6 +81,7 @@ namespace A_Friend.CustomControls
                     AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
+                    panel_Chat.VerticalScroll.Value = 5;
                 }
             }
         }
@@ -99,6 +100,7 @@ namespace A_Friend.CustomControls
                     AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
+                    panel_Chat.VerticalScroll.Value = 5;
                 }
             }
         }
@@ -344,6 +346,10 @@ namespace A_Friend.CustomControls
                 AddMessageToTop(messageObject);
             }
             panel_Chat.ResumeLayout();
+            if (panel_Chat.Controls.Count > messageObjects.Count)
+            {
+                panel_Chat.ScrollControlIntoView(panel_Chat.Controls[panel_Chat.Controls.Count - messageObjects.Count - 1]);
+            }
         }
 
         private void PanelChat_Load(object sender, EventArgs e)
@@ -429,6 +435,14 @@ namespace A_Friend.CustomControls
         private void textboxWriting__TextChanged(object sender, EventArgs e)
         {
             textboxWriting.Multiline = true;
+        }
+
+        public void ScrollToBottom()
+        {
+            if (panel_Chat.Controls.Count > 0)
+            {
+                panel_Chat.ScrollControlIntoView(panel_Chat.Controls[0]);
+            }
         }
     }
 }
