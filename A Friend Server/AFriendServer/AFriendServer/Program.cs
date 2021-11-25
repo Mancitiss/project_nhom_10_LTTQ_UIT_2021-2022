@@ -443,7 +443,7 @@ namespace AFriendServer
                                             Console.WriteLine("Old messages sent");
                                             if (loaded[item.Key] <= 0)
                                             {
-
+                                                loaded.Remove(item.Key);
                                             }
                                             else if (loaded[item.Key] > 1)
                                             {
@@ -452,6 +452,7 @@ namespace AFriendServer
                                             {
                                                 s.Send(Encoding.Unicode.GetBytes("2411"));
                                                 loaded[item.Key] -= 1;
+                                                loaded.Remove(item.Key);
                                             }
                                         }
                                         else if (num>1)
@@ -780,6 +781,11 @@ namespace AFriendServer
                                                     }
                                                 }
                                             }
+                                        }
+                                        if (loaded[id] == 0)
+                                        {
+                                            s.Send(Encoding.Unicode.GetBytes("2411"));
+                                            loaded.Remove(id);
                                         }
                                     }
                                     catch (Exception e)
