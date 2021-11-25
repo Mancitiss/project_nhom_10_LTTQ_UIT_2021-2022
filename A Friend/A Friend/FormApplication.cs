@@ -44,6 +44,8 @@ namespace A_Friend
         public FormApplication()
         {
             InitializeComponent();
+            this.ResizeBegin += FormApplication_ResizeBegin;
+            this.ResizeEnd += FormApplication_ResizeEnd;
             this.SetStyle(
             System.Windows.Forms.ControlStyles.UserPaint |
             System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
@@ -53,6 +55,16 @@ namespace A_Friend
             turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
             sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
+        }
+
+        private void FormApplication_ResizeBegin(Object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+        }
+
+        private void FormApplication_ResizeEnd(Object sender, EventArgs e)
+        {
+            this.ResumeLayout(true);
         }
 
         private void FormApplication_Load(object sender, EventArgs e)
