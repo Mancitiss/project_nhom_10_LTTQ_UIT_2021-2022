@@ -38,8 +38,8 @@ namespace A_Friend
             this.toolTip_Send = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelLeft = new System.Windows.Forms.Panel();
-            this.panelContact = new System.Windows.Forms.Panel();
             this.panelAdd = new System.Windows.Forms.Panel();
+            this.panelContact = new System.Windows.Forms.Panel();
             this.panelBottomLeft = new System.Windows.Forms.Panel();
             this.ButtonAdd = new A_Friend.CustomControls.CustomButton();
             this.SettingButton = new A_Friend.CustomControls.CustomButton();
@@ -82,8 +82,8 @@ namespace A_Friend
             // panelLeft
             // 
             this.panelLeft.BackColor = System.Drawing.Color.White;
-            this.panelLeft.Controls.Add(this.panelContact);
             this.panelLeft.Controls.Add(this.panelAdd);
+            this.panelLeft.Controls.Add(this.panelContact);
             this.panelLeft.Controls.Add(this.panelBottomLeft);
             this.panelLeft.Controls.Add(this.panelTopLeft);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
@@ -93,6 +93,16 @@ namespace A_Friend
             this.panelLeft.Name = "panelLeft";
             this.panelLeft.Size = new System.Drawing.Size(300, 712);
             this.panelLeft.TabIndex = 4;
+            // 
+            // panelAdd
+            // 
+            this.panelAdd.BackColor = System.Drawing.Color.White;
+            this.panelAdd.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelAdd.Location = new System.Drawing.Point(0, 574);
+            this.panelAdd.Margin = new System.Windows.Forms.Padding(0);
+            this.panelAdd.Name = "panelAdd";
+            this.panelAdd.Size = new System.Drawing.Size(300, 78);
+            this.panelAdd.TabIndex = 3;
             // 
             // panelContact
             // 
@@ -109,14 +119,6 @@ namespace A_Friend
             this.panelContact.TabIndex = 2;
             this.panelContact.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panelContact_ControlAdded);
             this.panelContact.Paint += new System.Windows.Forms.PaintEventHandler(this.panelContact_Paint);
-            // 
-            // panelAdd
-            // 
-            this.panelAdd.Location = new System.Drawing.Point(0, 574);
-            this.panelAdd.Margin = new System.Windows.Forms.Padding(0);
-            this.panelAdd.Name = "panelAdd";
-            this.panelAdd.Size = new System.Drawing.Size(300, 78);
-            this.panelAdd.TabIndex = 0;
             // 
             // panelBottomLeft
             // 

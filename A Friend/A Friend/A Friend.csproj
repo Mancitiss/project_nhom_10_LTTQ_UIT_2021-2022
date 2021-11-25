@@ -39,17 +39,18 @@
     <Reference Include="CustomControls">
       <HintPath>D:\Learn\Lập trình Winform\Code\Custom Controls\CustomControls.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.Desktop.v21.1, Version=21.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Data.v21.1, Version=21.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Printing.v21.1.Core, Version=21.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Sparkline.v21.1.Core, Version=21.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Utils.v21.1, Version=21.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.XtraEditors.v21.1, Version=21.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="Jil, Version=2.17.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jil.2.17.0\lib\net45\Jil.dll</HintPath>
+    </Reference>
+    <Reference Include="Sigil, Version=5.0.0.0, Culture=neutral, PublicKeyToken=2d06c3494341c8ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sigil.5.0.0\lib\net461\Sigil.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -113,11 +114,23 @@
     <Compile Include="FormApplication.Designer.cs">
       <DependentUpon>FormApplication.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormContactRemoved.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormContactRemoved.Designer.cs">
+      <DependentUpon>FormContactRemoved.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormGetStarted.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormGetStarted.Designer.cs">
       <DependentUpon>FormGetStarted.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormRemoveContactWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRemoveContactWarning.Designer.cs">
+      <DependentUpon>FormRemoveContactWarning.cs</DependentUpon>
     </Compile>
     <Compile Include="FormSettings.cs">
       <SubType>Form</SubType>
@@ -137,6 +150,8 @@
     <Compile Include="FormLogin.Designer.cs">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageObject.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -170,11 +185,18 @@
     <EmbeddedResource Include="FormApplication.resx">
       <DependentUpon>FormApplication.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormContactRemoved.resx">
+      <DependentUpon>FormContactRemoved.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormGetStarted.resx">
       <DependentUpon>FormGetStarted.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormRemoveContactWarning.resx">
+      <DependentUpon>FormRemoveContactWarning.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSignUp.resx">
       <DependentUpon>FormSignUp.cs</DependentUpon>
@@ -188,6 +210,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\copy-regular.png" />
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +239,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\plus-circle_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\211634_camera_icon %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\353430_checkbox_pen_edit_pencil_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

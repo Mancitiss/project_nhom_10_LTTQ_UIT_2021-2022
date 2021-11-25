@@ -114,13 +114,24 @@ namespace A_Friend
                         }
                         else
                         {
-                            if (ExistUserName())
+                            if (!checkBytes())
                             {
-                                labelWarning.Text = "That user name already exists";
+                                labelWarning.Text = "Username or Password has over the limit of characters";
                                 labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
                                 labelWarning.TextAlign = ContentAlignment.MiddleCenter;
                                 labelWarning.ForeColor = Color.Red;
                                 return;
+                            }
+                            else
+                            {
+                                if (ExistUserName())
+                                {
+                                    labelWarning.Text = "That user name already exists";
+                                    labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
+                                    labelWarning.TextAlign = ContentAlignment.MiddleCenter;
+                                    labelWarning.ForeColor = Color.Red;
+                                    return;
+                                }
                             }
                         }
                     }
@@ -128,7 +139,7 @@ namespace A_Friend
             }
             labelWarning.Text = "You have signed up successfully".ToUpper();
             labelWarning.Font = ChangeFontSize(labelWarning.Font, 12);
-            labelWarning.TextAlign = ContentAlignment.MiddleLeft;
+            labelWarning.TextAlign = ContentAlignment.MiddleCenter;
             labelWarning.ForeColor = Color.FromArgb(143, 228, 185);
             timerClosing.Start();
         }
@@ -166,6 +177,13 @@ namespace A_Friend
             return false;
         }
 
+        private bool checkBytes()
+        {
+            if (Encoding.Unicode.GetByteCount(textBoxPassword.Texts) < 128 && Encoding.Unicode.GetByteCount(textBoxUserName.Texts) < 64)
+                return true;
+            return false;
+        }
+
         private bool ExistUserName()
         {
             return !AFriendClient.Signed_up(textBoxUserName.Texts, textBoxPassword.Texts);
@@ -185,8 +203,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                buttonSignUp.Focus();
-                SignUp();
+                buttonSignUp.PerformClick();
             }
         }
 
@@ -194,8 +211,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                buttonSignUp.Focus();
-                SignUp();
+                buttonSignUp.PerformClick();
             }
         }
 
@@ -203,8 +219,7 @@ namespace A_Friend
         {
             if (e.KeyCode == Keys.Enter)
             {
-                buttonSignUp.Focus();
-                SignUp();
+                buttonSignUp.PerformClick();
             }
         }
 
@@ -240,6 +255,7 @@ namespace A_Friend
             timerClosing.Stop();
             this.Close();
         }
+
         private void timerDisconnect_Tick(object sender, EventArgs e)
         {
             timerDisconnect.Stop();

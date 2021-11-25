@@ -31,85 +31,66 @@ namespace A_Friend
         {
             this.labelWarning = new System.Windows.Forms.Label();
             this.txtNewUser = new A_Friend.CustomControls.CustomTextBox();
-            this.ButtonAdd = new A_Friend.CustomControls.CustomButton();
             this.SuspendLayout();
             // 
             // labelWarning
             // 
-            this.labelWarning.AutoSize = true;
+            this.labelWarning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.labelWarning.BackColor = System.Drawing.SystemColors.Window;
-            this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
-            this.labelWarning.Location = new System.Drawing.Point(11, 53);
+            this.labelWarning.Location = new System.Drawing.Point(0, 52);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(202, 18);
+            this.labelWarning.Size = new System.Drawing.Size(295, 23);
             this.labelWarning.TabIndex = 5;
             this.labelWarning.Text = "This username does not exist";
+            this.labelWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // txtNewUser
             // 
             this.txtNewUser.BackColor = System.Drawing.SystemColors.Window;
-            this.txtNewUser.BorderColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.txtNewUser.BorderFocusColor = System.Drawing.Color.HotPink;
-            this.txtNewUser.BorderRadius = 0;
+            this.txtNewUser.BorderColor = System.Drawing.Color.DarkGray;
+            this.txtNewUser.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
+            this.txtNewUser.BorderRadius = 30;
             this.txtNewUser.BorderSize = 3;
-            this.txtNewUser.Location = new System.Drawing.Point(5, 15);
-            this.txtNewUser.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.txtNewUser.Location = new System.Drawing.Point(17, 6);
+            this.txtNewUser.Margin = new System.Windows.Forms.Padding(8);
             this.txtNewUser.Multiline = false;
             this.txtNewUser.Name = "txtNewUser";
-            this.txtNewUser.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.txtNewUser.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
             this.txtNewUser.PasswordChar = false;
             this.txtNewUser.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.txtNewUser.PlaceholderText = "";
-            this.txtNewUser.Size = new System.Drawing.Size(207, 38);
+            this.txtNewUser.Size = new System.Drawing.Size(263, 45);
             this.txtNewUser.TabIndex = 0;
             this.txtNewUser.Texts = "";
             this.txtNewUser.UnderlinedStyle = false;
-            // 
-            // ButtonAdd
-            // 
-            this.ButtonAdd.BackColor = System.Drawing.SystemColors.Window;
-            this.ButtonAdd.BackgroundImage = global::A_Friend.Properties.Resources.plus_circle_6;
-            this.ButtonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.ButtonAdd.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.ButtonAdd.BorderRadius = 0;
-            this.ButtonAdd.BorderSize = 0;
-            this.ButtonAdd.FlatAppearance.BorderSize = 0;
-            this.ButtonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ButtonAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.ButtonAdd.ForeColor = System.Drawing.Color.White;
-            this.ButtonAdd.Location = new System.Drawing.Point(219, 15);
-            this.ButtonAdd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ButtonAdd.Name = "ButtonAdd";
-            this.ButtonAdd.Size = new System.Drawing.Size(45, 38);
-            this.ButtonAdd.TabIndex = 3;
-            this.ButtonAdd.UseVisualStyleBackColor = false;
-            this.ButtonAdd.Click += new System.EventHandler(this.ButtonAdd_Click);
+            this.txtNewUser._TextChanged += new System.EventHandler(this.txtNewUser__TextChanged);
+            this.txtNewUser.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtNewUser_KeyDown);
             // 
             // FormAddContact
             // 
-            this.AcceptButton = this.ButtonAdd;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(269, 78);
+            this.ClientSize = new System.Drawing.Size(297, 78);
             this.Controls.Add(this.labelWarning);
-            this.Controls.Add(this.ButtonAdd);
             this.Controls.Add(this.txtNewUser);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FormAddContact";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormAddContact";
             this.Shown += new System.EventHandler(this.FormAddContact_Shown);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.FormAddContact_Paint);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
         private CustomControls.CustomTextBox txtNewUser;
-        private CustomControls.CustomButton ButtonAdd;
         private System.Windows.Forms.Label labelWarning;
     }
 }

@@ -52,7 +52,7 @@
             this.labelName.AutoSize = true;
             this.labelName.BackColor = System.Drawing.Color.Transparent;
             this.labelName.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelName.Location = new System.Drawing.Point(99, 18);
+            this.labelName.Location = new System.Drawing.Point(100, 20);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(99, 18);
             this.labelName.TabIndex = 3;

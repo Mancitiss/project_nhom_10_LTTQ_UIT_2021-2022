@@ -15,90 +15,250 @@ namespace A_Friend.CustomControls
 {
     public partial class ChatItem : UserControl
     {
-        public ChatItem(string text, bool stacktoleft)
+        private bool showDetail = true;
+        //public Message message;
+        public MessageObject messageObject;
+        //public ChatItem(Message message)
+        //{
+        //    InitializeComponent();
+
+        //    this.DoubleBuffered = true;
+
+        //    this.message = message;
+        //    labelBody.Text = message.text;
+        //    buttonCopy.Enabled = false;
+        //    buttonRemove.Enabled = false;
+        //    buttonCopy.Visible = false;
+        //    buttonRemove.Visible = false;
+
+        //    if (string.IsNullOrEmpty(message.author))
+        //    {
+        //        panelBody.Dock = DockStyle.Right;
+        //        panelButton.Dock = DockStyle.Right;
+        //        labelAuthor.Dock = DockStyle.Right;
+        //    }
+        //    else
+        //    {
+        //        BackgroundColor = Color.FromArgb(100, 100, 165);
+        //    }
+
+        //    if (message.time > DateTime.Today)
+        //    {
+        //        if (string.IsNullOrEmpty(message.author))
+        //        {
+        //            labelAuthor.Text = $"{message.time.ToShortTimeString()}";
+        //        }
+        //        else
+        //        {
+        //            labelAuthor.Text = $"{message.author}, {message.time.ToShortTimeString()}";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (string.IsNullOrEmpty(message.author))
+        //        {
+        //            labelAuthor.Text = $"{message.time.ToShortDateString()}";
+        //        }
+        //        else
+        //        {
+        //            labelAuthor.Text = $"{message.author}, {message.time.ToLongDateString()}";
+        //        }
+        //    }
+
+        //    this.MouseEnter += delegate { ShowButtons(); };
+        //    foreach (Control control in this.Controls)
+        //    {
+        //        control.MouseEnter += delegate { ShowButtons(); };
+        //    }
+
+        //    foreach (Control control in panelTop.Controls)
+        //    {
+        //        control.MouseEnter += delegate { ShowButtons(); };
+        //    }
+
+        //    labelAuthor.MouseEnter += delegate { ShowButtons(); };
+
+        //    labelBody.Click += delegate
+        //    {
+        //        ShowDetail = !showDetail;
+        //        if (this.Parent.Parent is PanelChat)
+        //        {
+        //            if (this != (this.Parent.Parent as PanelChat).CurrentChatItem)
+        //                (this.Parent.Parent as PanelChat).CurrentChatItem = this;
+        //        }
+        //    };
+        //}
+
+        public ChatItem(MessageObject messageObject)
         {
             InitializeComponent();
 
-            textBoxBody.Text = text;
+            this.DoubleBuffered = true;
+
+            this.messageObject = messageObject;
+            labelBody.Text = messageObject.message;
             buttonCopy.Enabled = false;
             buttonRemove.Enabled = false;
             buttonCopy.Visible = false;
             buttonRemove.Visible = false;
 
-            if (stacktoleft)
-            {
-                textBoxBody.BackColor = Color.FromArgb(100, 100, 165);
-                panelBody.BackColor = Color.FromArgb(100, 100, 165);
-            }
-            else
+            if (IsMyMessage())
             {
                 panelBody.Dock = DockStyle.Right;
                 panelButton.Dock = DockStyle.Right;
+                labelAuthor.Dock = DockStyle.Right;
+            }
+            else
+            {
+                BackgroundColor = Color.FromArgb(100, 100, 165);
             }
 
-            panelBody.MouseEnter += delegate { ShowButtons(); };
-            textBoxBody.MouseEnter += delegate { ShowButtons(); };
-            panelButton.MouseEnter += delegate { ShowButtons(); };
             this.MouseEnter += delegate { ShowButtons(); };
+            foreach (Control control in this.Controls)
+            {
+                control.MouseEnter += delegate { ShowButtons(); };
+            }
+
+            foreach (Control control in panelTop.Controls)
+            {
+                control.MouseEnter += delegate { ShowButtons(); };
+            }
+
+            labelAuthor.MouseEnter += delegate { ShowButtons(); };
         }
 
+        public double ID
+        {
+            get
+            {
+                return this.messageObject.messagenumber;
+            }
+        }
+        public bool IsMyMessage()
+        {
+            if (messageObject.sender == false)
+            {
+                if (messageObject.id1 == AFriendClient.user.id)
+                {
+                    return true;
+                }
+                return false;
+            }
+            if (messageObject.id2 == AFriendClient.user.id)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void UpdateDateTime()
+        {
+            if (IsMyMessage())
+            {
+                if (messageObject.timesent.ToLocalTime() < DateTime.Today)
+                {
+                    labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToLocalTime().ToShortTimeString()}";
+                    //labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
+                }
+                else
+                {
+                    labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
+                }
+            }
+            else
+            {
+                if (this.Parent.Parent != null && this.Parent.Parent is PanelChat)
+                {
+                    string author = (this.Parent.Parent as PanelChat).account.name;
+                    if (messageObject.timesent < DateTime.Today)
+                    {
+                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToLocalTime().ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToLocalTime().ToShortTimeString()}";
+                    }
+                    else
+                    {
+                        labelAuthor.Text = $"{author}, {messageObject.timesent.ToLocalTime().ToShortTimeString()}";
+                    }
+                }
+            }
+
+        }
+
+        public Color BackgroundColor
+        {
+            get
+            {
+                return panelBody.BackColor;
+            }
+
+            set
+            {
+                labelBody.BackColor = value;
+                panelBody.BackColor = value;
+            }
+        }
+
+        public bool ShowDetail
+        {
+            get
+            {
+                return showDetail;
+            }
+            set
+            {
+                showDetail = value;
+                panelBottom.Visible = value;
+                if (value)
+                {
+                    this.Height = 5 + panelTop.Height + panelBottom.Height;
+                }
+                else
+                {
+                    this.Height = 5 + panelTop.Height;
+                }
+            }
+        }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            ResizeBubbles();
             buttonCopy.Location = new Point(buttonCopy.Left, (int)(buttonCopy.Parent.Height / 2 - buttonCopy.Height / 2));
             buttonRemove.Location = new Point(buttonRemove.Left, (int)(buttonRemove.Parent.Height / 2 - buttonRemove.Height / 2));
         }
 
-        public void ResizeBubbles(int maxwidth)
+        public void ResizeBubbles()
         {
-            string body = textBoxBody.Text.Trim();
-            int fontheight = textBoxBody.Font.Height;
-            var gfx = this.CreateGraphics();
-            int lines = 1;
-            double stringwidth = gfx.MeasureString(body, textBoxBody.Font).Width;
+            SuspendLayout();
+            int maxwidth = this.Width - 200;
+            labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
+            //panelBody.MaximumSize = new Size(maxwidth, int.MaxValue);
 
-            if (stringwidth < maxwidth + panelBody.Width - textBoxBody.Width)
+            var size = TextRenderer.MeasureText("qwertyuiopasdfghjklzxcbnm1234567890", labelBody.Font);
+            if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= size.Height)
             {
-                panelBody.Width = (int)(stringwidth + panelBody.Width - textBoxBody.Width);
-                this.Height += (lines * fontheight) - textBoxBody.Height + 1;
-                return;
+                panelBody.Width = labelBody.Width + 2 * labelBody.Left;
+            }
+            panelBody.Width = labelBody.Width + 2 * labelBody.Left;
+            panelTop.Height = labelBody.Height + 2 * labelBody.Top;
+
+            if (showDetail)
+            {
+                this.Height = 5 + panelTop.Height + panelBottom.Height;
             }
             else
             {
-                lines = 0;
-                panelBody.Width = maxwidth + panelBody.Width - textBoxBody.Width;
-                string noescapebody = body.Replace("\r\n", string.Empty).Replace("\r\n", string.Empty);
-                stringwidth = gfx.MeasureString(noescapebody, textBoxBody.Font).Width;
-
-                while (stringwidth > 0)
-                {
-                    stringwidth -= panelBody.Width;
-                    lines++;
-                }
+                this.Height = 5 + panelTop.Height;
             }
-            if (body.Contains("\n"))
-            {
-                while (body.Contains("\r\n"))
-                {
-                    body = body.Remove(body.IndexOf("\r\n"), "\r\n".Length);
-                    lines++;
-                }
-                while (body.Contains("\n"))
-                {
-                    body = body.Remove(body.IndexOf("\n"), "\n".Length);
-                    lines++;
-                }
-            }
+            panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
 
-            this.Height += (lines * fontheight) - textBoxBody.Height + 5;
+            ResumeLayout();
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
             Thread t = new Thread((ThreadStart)(() =>
             {
-                Clipboard.SetText(textBoxBody.Text);
+                Clipboard.SetText(labelBody.Text);
             }));
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
@@ -106,9 +266,10 @@ namespace A_Friend.CustomControls
 
         private void buttonRemove_Click(object sender, EventArgs e)
         {
-            if (this.Parent.Controls.Count == 0)
-                return;
-            this.Parent.Controls.Remove(this);
+            if (this.Parent.Parent is PanelChat)
+            {
+                (this.Parent.Parent as PanelChat).RemoveMessage(this.ID);
+            }
         }
 
         public void HideButtons()
@@ -139,8 +300,17 @@ namespace A_Friend.CustomControls
 
         protected override void OnMouseLeave(EventArgs e)
         {
+            if (ClientRectangle.Contains(PointToClient(Control.MousePosition)))
+            {
+                return;
+            }
             base.OnMouseLeave(e);
             HideButtons();
+        }
+
+        private void ChatItem_Load(object sender, EventArgs e)
+        {
+            ResizeBubbles();
         }
     }
 }

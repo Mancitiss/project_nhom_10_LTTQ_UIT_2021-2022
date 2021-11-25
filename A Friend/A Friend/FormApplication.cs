@@ -12,12 +12,17 @@ namespace A_Friend
 {
     public partial class FormApplication : Form
     {
+        public delegate void SortContactItemsdelegate();
+        public SortContactItemsdelegate sort_contact_item_delegate;
+
         public A_Friend.CustomControls.PanelChat currentpanelchat;
 
         public delegate void AddContactItem(Account acc);
         public AddContactItem addContactItemDelegate;
         public delegate void AddMessageItem(string str, bool left);
         public AddMessageItem addMessageItemDelegate;
+        public delegate void TurnContactActiveState(string id, byte state);
+        public TurnContactActiveState turnContactActiveStateDelegate;
         public Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
         public static string currentID;
 
@@ -28,9 +33,12 @@ namespace A_Friend
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
+        public FormAddContact formAddContact = new FormAddContact();
+        private FormContactRemoved formContactRemoved = new FormContactRemoved();
         private FormGetStarted formGetStarted = new FormGetStarted();
         private bool check = true;
         private string searchText = "";
+        private bool loaded = false;
 
         public FormApplication()
         {
@@ -41,12 +49,15 @@ namespace A_Friend
             System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer, true);
             InitializeSubPanels();
             addContactItemDelegate = new AddContactItem(AddContact);
+            turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
+            sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
         }
 
         private void FormApplication_Load(object sender, EventArgs e)
         {
             this.SuspendLayout();
+
             //AddContact(new Account("DaiLoi", "Lê Đoàn Đại Lợi", "1111", 1));
             //AddContact(new Account("DangKhoa", "Võ Văn Đăng Khoa", "2222", 2));
             //AddContact(new Account("PhuongQuyen", "Lê Thị Phương Quyên", "3333", 1));
@@ -101,8 +112,23 @@ namespace A_Friend
             panelGetStarted.Location = new Point(0, 0);
             panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top + 2);
             panelGetStarted.Padding = new Padding(1);
+            panelGetStarted.Resize += delegate { 
+                if (panelGetStarted.Width != this.Width)
+                {
+                    var graphic = panelGetStarted.CreateGraphics();
+                    using (Pen pen = new Pen(Color.Gray, 1))
+                    {
+                        graphic.DrawLine(pen, 0, 0, 0, panelGetStarted.Height - 1);
+                    }
+                }
+            };    
 
-            panelAdd.SendToBack();
+            panelAdd.Hide();
+            formAddContact.Dock = DockStyle.Fill;
+            formAddContact.TopLevel = false;
+            panelAdd.Controls.Add(formAddContact);
+            panelAdd.BringToFront();
+            formAddContact.Visible = true;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -122,9 +148,13 @@ namespace A_Friend
                 var contactItem = new CustomControls.ContactItem(account);
                 contactItem.Dock = DockStyle.Top;
                 contactItem.BackColor = panelContact.BackColor;
-                panelContact.Controls.Add(contactItem);
                 //contactItem.BringToFront();
+                if (loaded)
+                {
+                    panelContact.Controls.Add(contactItem);
+                }
                 panelContact.ResumeLayout();
+
 
                 if (orderOfContactItems.Count == 0)
                 {
@@ -135,12 +165,16 @@ namespace A_Friend
                     orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, account.id);
                 }
 
-                panelContact.ScrollControlIntoView(contactItem);
+                if (loaded)
+                {
+                    panelContact.ScrollControlIntoView(contactItem);
+                }
                 contactItems.Add(account.id, contactItem);
                 CustomControls.PanelChat panelChat = new CustomControls.PanelChat(account);
                 panelChats.Add(account.id, panelChat);
 
                 panelChat.LoadMessage();
+                panelChat.ScrollToBottom();
                 contactItem.LastMessage = panelChat.GetLastMessage();
 
                 panelChat.ControlAdded += delegate
@@ -173,6 +207,7 @@ namespace A_Friend
                 {
                     ShowPanelChat(account.id);
                     contactItem.Unread = false;
+                    panelChat.ScrollToBottom();
 
                     if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
                     {
@@ -190,6 +225,46 @@ namespace A_Friend
                     }
                 };
             }
+            else
+            {
+                formAddContact.ChangeWarning("This user existed in your contacting list!", Color.Red);
+            }
+        }
+
+        public void SortContactItems()
+        {
+            int lenght = contactItems.Count;
+            for (int i = 0; i < contactItems.Count; i++)
+            {
+                string min = "";
+                int j = 0;
+                foreach (KeyValuePair<int, string> keyValuePair in orderOfContactItems)
+                {
+                    if (j == lenght)
+                        break;
+                    if (min == "")
+                    {
+                        min = keyValuePair.Value;
+                    }
+                    else
+                    {
+                        if (panelChats[min].DateTimeOflastMessage > panelChats[keyValuePair.Value].DateTimeOflastMessage)
+                        {
+                            min = keyValuePair.Value;
+                        }
+                    }
+                    j++;
+                }
+                lenght--;
+                BringContactItemToTop(min);
+            }
+
+            foreach (KeyValuePair <int, string> keyValuePair1 in orderOfContactItems)
+            {
+                panelContact.Controls.Add(contactItems[keyValuePair1.Value]);
+            }
+
+            loaded = true;
         }
 
         private string GetCurrentPanelChatId()
@@ -235,11 +310,14 @@ namespace A_Friend
                 orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, id);
             }
 
-            CustomControls.ContactItem item = contactItems[id];
-            if (searchText == "")
+            if (loaded)
             {
-                panelContact.Controls.Remove(item);
-                panelContact.Controls.Add(item);
+                CustomControls.ContactItem item = contactItems[id];
+                if (searchText == "")
+                {
+                    panelContact.Controls.Remove(item);
+                    panelContact.Controls.Add(item);
+                }
             }
         }
 
@@ -287,6 +365,8 @@ namespace A_Friend
                 item.State = state;
             }
 
+            Console.WriteLine("state changed");
+
         }
 
         private void LogoutButton_Click_1(object sender, EventArgs e)
@@ -311,47 +391,73 @@ namespace A_Friend
         {
             FormSettings frm = new FormSettings();
             frm.StartPosition = FormStartPosition.CenterScreen;
+            this.Hide();
             frm.ShowDialog();
+            this.Show();
         }
-        int tempadd = 0;
+        //int tempadd = 0;
         public void ButtonAdd_Click_1(object sender, EventArgs e)
         {
             PanelGetStartedSlideToRight();
-            FormCollection forms = Application.OpenForms;
-            FormAddContact frm = new FormAddContact();
-            //panelContact.Height = panelContact.Height - panel2.Height;
-            //panelContact2.Height = panelContact.Height - panel2.Height;
-            //panel2.Show();
-            //frm.TopLevel = false;
-            //panel2.Controls.Add(frm);
-            //frm.Show();
-            //i = Application.OpenForms.Count;
-            do
+            //FormCollection forms = Application.OpenForms;
+            //FormAddContact frm = new FormAddContact();
+            ////panelContact.Height = panelContact.Height - panel2.Height;
+            ////panelContact2.Height = panelContact.Height - panel2.Height;
+            ////panel2.Show();
+            ////frm.TopLevel = false;
+            ////panel2.Controls.Add(frm);
+            ////frm.Show();
+            ////i = Application.OpenForms.Count;
+            //do
+            //{
+            //    if (tempadd >= 2)
+            //    {
+            //        if (tempadd >= 2)
+            //        {
+            //            panelAdd.Hide();
+            //            panelContact.Height = panelContact.Height + panelAdd.Height;
+            //            panelContact2.Height = panelContact.Height + panelAdd.Height;
+            //            tempadd = 0;
+            //            break;
+            //        }
+            //        return;
+            //    }
+            //    panelContact.Height = panelContact.Height - panelAdd.Height;
+            //    panelContact2.Height = panelContact.Height - panelAdd.Height;
+            //    panelAdd.Show();
+            //    frm.TopLevel = false;
+            //    panelAdd.Controls.Add(frm);
+            //    frm.Show();
+            //    tempadd = Application.OpenForms.Count;
+            //    break;
+            //}
+            //while (false);
+            ////PanelGetStartedFill();
+            ////Reload list friends
+            //if (formAddContact == null)
+            //{
+            //    formAddContact = new FormAddContact();
+            //    formAddContact.Dock = DockStyle.Fill;
+            //    formAddContact.TopLevel = false;
+            //    panelAdd.Controls.Add(formAddContact);
+            //    panelAdd.BringToFront();
+            //    formAddContact.Visible = true;
+            //}
+
+            if (panelContact.Height == panelBottomLeft.Top - panelTopLeft.Bottom)
             {
-                if (tempadd > 2)
-                {
-                    if (tempadd > 2)
-                    {
-                        panelAdd.Hide();
-                        panelContact.Height = panelContact.Height + panelAdd.Height;
-                        panelContact2.Height = panelContact.Height + panelAdd.Height;
-                        tempadd = 0;
-                        break;
-                    }
-                    return;
-                }
-                panelContact.Height = panelContact.Height - panelAdd.Height;
-                panelContact2.Height = panelContact.Height - panelAdd.Height;
+                panelContact.Height -= panelAdd.Height;
+                panelContact2.Height -= panelAdd.Height;
+                formAddContact.ResetTexts();
+                formAddContact.ChangeWarning("Enter your friend's user name", Color.FromArgb(143, 228, 185));
                 panelAdd.Show();
-                frm.TopLevel = false;
-                panelAdd.Controls.Add(frm);
-                frm.Show();
-                tempadd = Application.OpenForms.Count;
-                break;
             }
-            while (false);
-            //PanelGetStartedFill();
-            //Reload list friends
+            else
+            {
+                panelContact.Height += panelAdd.Height;
+                panelContact2.Height += panelAdd.Height;
+                panelAdd.Hide();
+            }
         }
 
         private void FormApplication_FormClosed(object sender, FormClosedEventArgs e)
@@ -523,6 +629,67 @@ namespace A_Friend
                 e.Graphics.DrawLine(pen, 0, 1, panelBottomLeft.Width - 0, 1);
                 //e.Graphics.DrawLine(pen, panelBottomLeft.Width - 1, 0, panelBottomLeft.Width - 1, panelBottomLeft.Height);
             }
+        }
+
+        public void RemoveContact(string id)
+        {
+            if (!panelChats.ContainsKey(id) || !contactItems.ContainsKey(id))
+                return;
+
+            if (panelContact.Controls.Contains(contactItems[id]))
+            {
+                panelContact.Controls.Remove(contactItems[id]); 
+            }
+            else if (panelContact2.Controls.Contains(contactItems[id]))
+            {
+                panelContact2.Controls.Remove(contactItems[id]); 
+            }
+
+            if (panelRight.Controls.Contains(panelChats[id]))
+            {
+                if (id == GetCurrentPanelChatId())
+                {
+                    panelRight.Controls.Remove(panelChats[id]);
+                    formContactRemoved.Dock = DockStyle.Fill;
+                    formContactRemoved.TopLevel = false;
+                    panelRight.Controls.Add(formContactRemoved);
+                    panelRight.BringToFront();
+                    formContactRemoved.Visible = true;
+                }
+                else
+                {
+                    panelRight.Controls.Remove(panelChats[id]);
+                }
+            }
+            else if (panelRight2.Controls.Contains(panelChats[id]))
+            {
+                if (id == GetCurrentPanelChatId())
+                {
+                    panelRight2.Controls.Remove(panelChats[id]);
+                    formContactRemoved.Dock = DockStyle.Fill;
+                    formContactRemoved.TopLevel = false;
+                    panelRight2.Controls.Add(formContactRemoved);
+                    panelRight2.BringToFront();
+                    formContactRemoved.Visible = true;
+                }
+                else
+                {
+                    panelRight2.Controls.Remove(panelChats[id]);
+                }
+            }
+
+            panelChats.Remove(id);
+            contactItems.Remove(id);
+            foreach (KeyValuePair<int, string> pair in orderOfContactItems)
+            {
+                if (pair.Value == id)
+                {
+                    orderOfContactItems.Remove(pair.Key);
+                    break;
+                }
+            }
+
+            //code to remove or block contact
         }
     }
 }
