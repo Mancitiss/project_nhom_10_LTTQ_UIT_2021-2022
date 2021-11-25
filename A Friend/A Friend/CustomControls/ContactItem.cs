@@ -75,7 +75,7 @@ namespace A_Friend.CustomControls
         {
             get
             {
-                return labelName.Text;
+                return account.name;
             }
             set
             {

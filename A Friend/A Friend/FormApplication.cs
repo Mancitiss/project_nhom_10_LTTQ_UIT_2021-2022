@@ -35,6 +35,7 @@ namespace A_Friend
         private FormGetStarted formGetStarted = new FormGetStarted();
         private bool check = true;
         private string searchText = "";
+        private bool loaded = false;
 
         public FormApplication()
         {
@@ -143,9 +144,13 @@ namespace A_Friend
                 var contactItem = new CustomControls.ContactItem(account);
                 contactItem.Dock = DockStyle.Top;
                 contactItem.BackColor = panelContact.BackColor;
-                panelContact.Controls.Add(contactItem);
                 //contactItem.BringToFront();
+                if (loaded)
+                {
+                    panelContact.Controls.Add(contactItem);
+                }
                 panelContact.ResumeLayout();
+
 
                 if (orderOfContactItems.Count == 0)
                 {
@@ -156,7 +161,10 @@ namespace A_Friend
                     orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, account.id);
                 }
 
-                panelContact.ScrollControlIntoView(contactItem);
+                if (loaded)
+                {
+                    panelContact.ScrollControlIntoView(contactItem);
+                }
                 contactItems.Add(account.id, contactItem);
                 CustomControls.PanelChat panelChat = new CustomControls.PanelChat(account);
                 panelChats.Add(account.id, panelChat);
@@ -219,6 +227,36 @@ namespace A_Friend
             }
         }
 
+        public void SortContactItems()
+        {
+            for (int i = 0; i < contactItems.Count; i++)
+            {
+                string max = "";
+                foreach (KeyValuePair<int, string> keyValuePair in orderOfContactItems)
+                {
+                    if (max == "")
+                    {
+                        max = keyValuePair.Value;
+                    }
+                    else
+                    {
+                        if (panelChats[max].DateTimeOflastMessage < panelChats[keyValuePair.Value].DateTimeOflastMessage)
+                        {
+                            max = keyValuePair.Value;
+                        }
+                    }
+                }
+                BringContactItemToTop(max);
+            }
+
+            foreach (KeyValuePair <int, string> keyValuePair1 in orderOfContactItems)
+            {
+                panelContact.Controls.Add(contactItems[keyValuePair1.Value]);
+            }
+
+            loaded = true;
+        }
+
         private string GetCurrentPanelChatId()
         {
             if (panelRight.Controls.Count > 0)
@@ -262,11 +300,14 @@ namespace A_Friend
                 orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, id);
             }
 
-            CustomControls.ContactItem item = contactItems[id];
-            if (searchText == "")
+            if (loaded)
             {
-                panelContact.Controls.Remove(item);
-                panelContact.Controls.Add(item);
+                CustomControls.ContactItem item = contactItems[id];
+                if (searchText == "")
+                {
+                    panelContact.Controls.Remove(item);
+                    panelContact.Controls.Add(item);
+                }
             }
         }
 

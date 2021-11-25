@@ -162,6 +162,21 @@ namespace A_Friend.CustomControls
             }
         }
 
+        public DateTime DateTimeOflastMessage
+        {
+            get
+            {
+                if (chatItems.Count == 0)
+                {
+                    return DateTime.Now;
+                }
+                else
+                {
+                    return chatItems[chatItems.Count - 1].messageObject.timesent;
+                }
+            }
+        }
+
         public void RemoveMessage(double messagenumber)
         {
             chatItems.Remove(messages[messagenumber]);
@@ -447,7 +462,7 @@ namespace A_Friend.CustomControls
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("You will no longer see messages from this person until you add this person to your contacting list one more time, are you to continue?", "Warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("You will no longer see messages from this person until you add this person to your contacting list again, are you sure to continue?", "Warning", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
                 if (dialogResult == DialogResult.Yes)
             {
