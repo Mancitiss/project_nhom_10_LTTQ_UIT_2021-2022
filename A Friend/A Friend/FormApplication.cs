@@ -12,6 +12,9 @@ namespace A_Friend
 {
     public partial class FormApplication : Form
     {
+        public delegate void SortContactItemsdelegate();
+        public SortContactItemsdelegate sort_contact_item_delegate;
+
         public A_Friend.CustomControls.PanelChat currentpanelchat;
 
         public delegate void AddContactItem(Account acc);
@@ -47,6 +50,7 @@ namespace A_Friend
             InitializeSubPanels();
             addContactItemDelegate = new AddContactItem(AddContact);
             turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
+            sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
         }
 

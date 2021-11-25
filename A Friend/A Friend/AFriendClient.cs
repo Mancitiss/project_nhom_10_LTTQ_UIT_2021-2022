@@ -401,6 +401,10 @@ namespace A_Friend
                     {
                         Console.WriteLine("Old Password is not correct!!");
                     }
+                    else if (instruction == "2411")
+                    {
+                        UIForm.Invoke(UIForm.sort_contact_item_delegate);
+                    }
                     else if (instruction == "1012")
                     {
                         Console.WriteLine("Name changed!");

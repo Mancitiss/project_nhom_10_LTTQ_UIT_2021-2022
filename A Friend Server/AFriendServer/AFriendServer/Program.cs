@@ -23,6 +23,7 @@ namespace AFriendServer
         static Dictionary<string, int> byte_expected = new Dictionary<string, int>();
         static Dictionary<string, bool> is_processing = new Dictionary<string, bool>();
         static Dictionary<string, bool> is_locked = new Dictionary<string, bool>();
+        static Dictionary<string, int> loaded = new Dictionary<string, int>();
 
         public static Int64 NextInt64(Random rnd)
         {
@@ -85,6 +86,7 @@ namespace AFriendServer
             byte_expected.Remove(item.Key);
             is_processing.Remove(item.Key);
             is_locked.Remove(item.Key);
+            loaded.Remove(item.Key);
             while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
             using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
             {
@@ -439,6 +441,18 @@ namespace AFriendServer
                                             string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                             s.Send(Encoding.Unicode.GetBytes("6475"+receiver_id+datasendbyte.Length.ToString().PadLeft(2,'0')+datasendbyte+datasend));
                                             Console.WriteLine("Old messages sent");
+                                            if (loaded[item.Key] <= 0)
+                                            {
+
+                                            }
+                                            else if (loaded[item.Key] > 1)
+                                            {
+                                                loaded[item.Key] -= 1;
+                                            } else if (loaded[item.Key] == 1)
+                                            {
+                                                s.Send(Encoding.Unicode.GetBytes("2411"));
+                                                loaded[item.Key] -= 1;
+                                            }
                                         }
                                         else if (num>1)
                                         {
@@ -710,6 +724,14 @@ namespace AFriendServer
                                         //add the entry in the dictionary
                                         try
                                         {
+                                            loaded.Add(id, 0);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            loaded[id] = 0;
+                                        }
+                                        try
+                                        {
                                             byte_expected.Add(id, 0);
                                         } catch (Exception e)
                                         {
@@ -741,6 +763,7 @@ namespace AFriendServer
                                         {
                                             while (friendreader.Read())
                                             {
+                                                loaded[id] += 1;
                                                 Int64 friendid = (Int64)friendreader["id1"];
                                                 if (id_int == friendid) friendid = (Int64)friendreader["id2"];
                                                 
