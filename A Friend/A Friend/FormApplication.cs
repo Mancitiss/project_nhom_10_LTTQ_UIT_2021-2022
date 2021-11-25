@@ -233,24 +233,30 @@ namespace A_Friend
 
         public void SortContactItems()
         {
+            int lenght = contactItems.Count;
             for (int i = 0; i < contactItems.Count; i++)
             {
-                string max = "";
+                string min = "";
+                int j = 0;
                 foreach (KeyValuePair<int, string> keyValuePair in orderOfContactItems)
                 {
-                    if (max == "")
+                    if (j == lenght)
+                        break;
+                    if (min == "")
                     {
-                        max = keyValuePair.Value;
+                        min = keyValuePair.Value;
                     }
                     else
                     {
-                        if (panelChats[max].DateTimeOflastMessage < panelChats[keyValuePair.Value].DateTimeOflastMessage)
+                        if (panelChats[min].DateTimeOflastMessage > panelChats[keyValuePair.Value].DateTimeOflastMessage)
                         {
-                            max = keyValuePair.Value;
+                            min = keyValuePair.Value;
                         }
                     }
+                    j++;
                 }
-                BringContactItemToTop(max);
+                lenght--;
+                BringContactItemToTop(min);
             }
 
             foreach (KeyValuePair <int, string> keyValuePair1 in orderOfContactItems)
