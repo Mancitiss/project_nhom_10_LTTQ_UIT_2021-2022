@@ -39,6 +39,7 @@ namespace A_Friend
         private bool check = true;
         private string searchText = "";
         private bool loaded = false;
+        public FormSettings formSettings = new FormSettings();
 
         public FormApplication()
         {
@@ -389,10 +390,10 @@ namespace A_Friend
 
         private void SettingButton_Click(object sender, EventArgs e)
         {
-            FormSettings frm = new FormSettings();
-            frm.StartPosition = FormStartPosition.CenterScreen;
+            //FormSettings frm = new FormSettings();
+            formSettings.StartPosition = FormStartPosition.CenterScreen;
             this.Hide();
-            frm.ShowDialog();
+            formSettings.ShowDialog();
             this.Show();
         }
         //int tempadd = 0;

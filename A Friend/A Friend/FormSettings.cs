@@ -12,9 +12,22 @@ namespace A_Friend
 {
     public partial class FormSettings : Form
     {
+        public delegate void ChangeSettingsWarning(string text);
+        public ChangeSettingsWarning changeSettingsWarning;
+
         public FormSettings()
         {
             InitializeComponent();
+            labelUsername.Location = new Point((this.Width - labelUsername.Width) / 2 - 5, labelUsername.Top);
+            customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
+            labelWarning.Text = "";
+            changeSettingsWarning = new ChangeSettingsWarning(ChangeLabel);
+        }
+
+        public void ChangeLabel(string text)
+        {
+            labelWarning.Text = text;
+            labelWarning.Location = new Point((this.Width - labelWarning.Width) / 2 - 5, labelWarning.Top);
         }
 
         private void FormSettings_Load(object sender, EventArgs e)
@@ -33,7 +46,8 @@ namespace A_Friend
         private void buttonSaveUsername_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
-                MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ChangeLabel("Please enter new name!");
             else
             {
                 AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
@@ -52,7 +66,8 @@ namespace A_Friend
         private void buttonSavePassword_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
-                MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ChangeLabel("Please enter your password!");
             else
             {
                 if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
