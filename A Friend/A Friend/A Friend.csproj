@@ -114,11 +114,23 @@
     <Compile Include="FormApplication.Designer.cs">
       <DependentUpon>FormApplication.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormContactRemoved.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormContactRemoved.Designer.cs">
+      <DependentUpon>FormContactRemoved.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormGetStarted.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormGetStarted.Designer.cs">
       <DependentUpon>FormGetStarted.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormRemoveContactWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRemoveContactWarning.Designer.cs">
+      <DependentUpon>FormRemoveContactWarning.cs</DependentUpon>
     </Compile>
     <Compile Include="FormSettings.cs">
       <SubType>Form</SubType>
@@ -173,8 +185,14 @@
     <EmbeddedResource Include="FormApplication.resx">
       <DependentUpon>FormApplication.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormContactRemoved.resx">
+      <DependentUpon>FormContactRemoved.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormGetStarted.resx">
       <DependentUpon>FormGetStarted.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRemoveContactWarning.resx">
+      <DependentUpon>FormRemoveContactWarning.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>

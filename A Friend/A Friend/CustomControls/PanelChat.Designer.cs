@@ -114,6 +114,7 @@ namespace A_Friend.CustomControls
             this.buttonDelete.Size = new System.Drawing.Size(40, 40);
             this.buttonDelete.TabIndex = 0;
             this.buttonDelete.UseVisualStyleBackColor = false;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
             // panel_Chat
             // 

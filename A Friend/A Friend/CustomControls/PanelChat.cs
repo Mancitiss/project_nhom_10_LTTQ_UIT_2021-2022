@@ -444,5 +444,18 @@ namespace A_Friend.CustomControls
                 panel_Chat.ScrollControlIntoView(panel_Chat.Controls[0]);
             }
         }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("You will no longer see messages from this person until you add this person to your contacting list one more time, are you to continue?", "Warning", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+                if (dialogResult == DialogResult.Yes)
+            {
+                if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
+                {
+                    (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
+                }
+            }
+        }
     }
 }

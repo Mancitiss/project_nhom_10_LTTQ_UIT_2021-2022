@@ -31,6 +31,7 @@ namespace A_Friend
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
         public FormAddContact formAddContact = new FormAddContact();
+        private FormContactRemoved formContactRemoved = new FormContactRemoved();
         private FormGetStarted formGetStarted = new FormGetStarted();
         private bool check = true;
         private string searchText = "";
@@ -577,6 +578,67 @@ namespace A_Friend
                 e.Graphics.DrawLine(pen, 0, 1, panelBottomLeft.Width - 0, 1);
                 //e.Graphics.DrawLine(pen, panelBottomLeft.Width - 1, 0, panelBottomLeft.Width - 1, panelBottomLeft.Height);
             }
+        }
+
+        public void RemoveContact(string id)
+        {
+            if (!panelChats.ContainsKey(id) || !contactItems.ContainsKey(id))
+                return;
+
+            if (panelContact.Controls.Contains(contactItems[id]))
+            {
+                panelContact.Controls.Remove(contactItems[id]); 
+            }
+            else if (panelContact2.Controls.Contains(contactItems[id]))
+            {
+                panelContact2.Controls.Remove(contactItems[id]); 
+            }
+
+            if (panelRight.Controls.Contains(panelChats[id]))
+            {
+                if (id == GetCurrentPanelChatId())
+                {
+                    panelRight.Controls.Remove(panelChats[id]);
+                    formContactRemoved.Dock = DockStyle.Fill;
+                    formContactRemoved.TopLevel = false;
+                    panelRight.Controls.Add(formContactRemoved);
+                    panelRight.BringToFront();
+                    formContactRemoved.Visible = true;
+                }
+                else
+                {
+                    panelRight.Controls.Remove(panelChats[id]);
+                }
+            }
+            else if (panelRight2.Controls.Contains(panelChats[id]))
+            {
+                if (id == GetCurrentPanelChatId())
+                {
+                    panelRight2.Controls.Remove(panelChats[id]);
+                    formContactRemoved.Dock = DockStyle.Fill;
+                    formContactRemoved.TopLevel = false;
+                    panelRight2.Controls.Add(formContactRemoved);
+                    panelRight2.BringToFront();
+                    formContactRemoved.Visible = true;
+                }
+                else
+                {
+                    panelRight2.Controls.Remove(panelChats[id]);
+                }
+            }
+
+            panelChats.Remove(id);
+            contactItems.Remove(id);
+            foreach (KeyValuePair<int, string> pair in orderOfContactItems)
+            {
+                if (pair.Value == id)
+                {
+                    orderOfContactItems.Remove(pair.Key);
+                    break;
+                }
+            }
+
+            //code to remove or block contact
         }
     }
 }

@@ -19,7 +19,7 @@ namespace A_Friend
         {
             InitializeComponent();
             labelWarning.ForeColor = Color.FromArgb(143, 228, 185);
-            labelWarning.Text = "Enter your friend user name";
+            labelWarning.Text = "Enter your friend's username";
             txtNewUser.RemovePlaceHolder();
             changeWarningLabelDelegate = new ChangeWarningLabel(ChangeWarning);
         }
@@ -33,7 +33,7 @@ namespace A_Friend
             if (txtNewUser.Texts == "")
             {
                 //labelWarning.Text = "Please enter a username";
-                ChangeWarning("Please enter your friend user name", Color.Red);
+                ChangeWarning("Please enter your friend's username", Color.Red);
             }  
             else
             {
@@ -49,7 +49,7 @@ namespace A_Friend
             if (txtNewUser.Texts == "")
             {
                 //labelWarning.Text = "Please enter a username";
-                ChangeWarning("Please enter your friend user name", Color.Red);
+                ChangeWarning("Please enter your friend's username", Color.Red);
             }  
             else
             {

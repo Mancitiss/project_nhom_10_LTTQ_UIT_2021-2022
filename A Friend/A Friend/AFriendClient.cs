@@ -364,7 +364,7 @@ namespace A_Friend
                     else if (instruction == "2609")
                     {
                         Console.WriteLine("No such account exists");
-                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That user name doesn't eixst!", Color.Red }); 
+                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red }); 
                         first_message = null;
                         first_message_sender = String.Empty;
                     }
