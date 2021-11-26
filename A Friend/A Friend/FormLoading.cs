@@ -16,7 +16,7 @@ namespace A_Friend
         private Pen circlePen;
         private Rectangle rect;
         private int startAngle = 0;
-        private int curveAnge = 120;
+        private int curveAngle = 120;
         public FormLoading()
         {
             InitializeComponent();
@@ -30,6 +30,14 @@ namespace A_Friend
             rect.Height = 100;
             rect.Location = new Point((int)(this.Width / 2- rect.Width / 2), (int)(this.Height / 2 - rect.Height / 2));
             labelTittle.Location = new Point((int)(this.Width / 2 - labelTittle.Width / 2), rect.Bottom + 10);
+        }
+
+        public int StartAngel
+        {
+            get
+            {
+                return startAngle;
+            }
         }
 
         private void FormLoading_Load(object sender, EventArgs e)
@@ -48,7 +56,7 @@ namespace A_Friend
         {
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             e.Graphics.DrawArc(circlePen, rect, 0, 360);
-            e.Graphics.DrawArc(curvePen, rect, startAngle, curveAnge);
+            e.Graphics.DrawArc(curvePen, rect, startAngle, curveAngle);
         }
 
         private void timer_Tick(object sender, EventArgs e)

@@ -255,5 +255,8 @@
   <ItemGroup>
     <None Include="Resources\353430_checkbox_pen_edit_pencil_icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\no_result_found.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
