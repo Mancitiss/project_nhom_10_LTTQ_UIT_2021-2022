@@ -441,17 +441,22 @@ namespace AFriendServer
                                             string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                             s.Send(Encoding.Unicode.GetBytes("6475"+receiver_id+datasendbyte.Length.ToString().PadLeft(2,'0')+datasendbyte+datasend));
                                             Console.WriteLine("Old messages sent");
-                                            if (loaded[item.Key] <= 0)
+                                            if (loaded.ContainsKey(item.Key))
                                             {
-
-                                            }
-                                            else if (loaded[item.Key] > 1)
-                                            {
-                                                loaded[item.Key] -= 1;
-                                            } else if (loaded[item.Key] == 1)
-                                            {
-                                                s.Send(Encoding.Unicode.GetBytes("2411"));
-                                                loaded[item.Key] -= 1;
+                                                if (loaded[item.Key] <= 0)
+                                                {
+                                                    loaded.Remove(item.Key);
+                                                }
+                                                else if (loaded[item.Key] > 1)
+                                                {
+                                                    loaded[item.Key] -= 1;
+                                                }
+                                                else if (loaded[item.Key] == 1)
+                                                {
+                                                    s.Send(Encoding.Unicode.GetBytes("2411"));
+                                                    loaded[item.Key] -= 1;
+                                                    loaded.Remove(item.Key);
+                                                }
                                             }
                                         }
                                         else if (num>1)
@@ -780,6 +785,11 @@ namespace AFriendServer
                                                     }
                                                 }
                                             }
+                                        }
+                                        if (loaded[id] == 0)
+                                        {
+                                            s.Send(Encoding.Unicode.GetBytes("2411"));
+                                            loaded.Remove(id);
                                         }
                                     }
                                     catch (Exception e)

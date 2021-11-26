@@ -396,10 +396,13 @@ namespace A_Friend
                     else if (instruction == "4269")
                     {
                         Console.WriteLine("Password changed successfully!");
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!"});
                     }
                     else if (instruction == "9624")
                     {
                         Console.WriteLine("Old Password is not correct!!");
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!" });
+
                     }
                     else if (instruction == "2411")
                     {
@@ -409,6 +412,7 @@ namespace A_Friend
                     {
                         Console.WriteLine("Name changed!");
                         change_name();
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!" });
                         //MessageBox.Show("What a beautiful name!");
                         //if name not change then it is your internet connection problem
                     }

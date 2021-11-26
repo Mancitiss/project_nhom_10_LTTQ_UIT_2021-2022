@@ -39,10 +39,13 @@ namespace A_Friend
         private bool check = true;
         private string searchText = "";
         private bool loaded = false;
+        public FormSettings formSettings = new FormSettings();
 
         public FormApplication()
         {
             InitializeComponent();
+            this.ResizeBegin += FormApplication_ResizeBegin;
+            this.ResizeEnd += FormApplication_ResizeEnd;
             this.SetStyle(
             System.Windows.Forms.ControlStyles.UserPaint |
             System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
@@ -52,6 +55,16 @@ namespace A_Friend
             turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
             sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
+        }
+
+        private void FormApplication_ResizeBegin(Object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+        }
+
+        private void FormApplication_ResizeEnd(Object sender, EventArgs e)
+        {
+            this.ResumeLayout(true);
         }
 
         private void FormApplication_Load(object sender, EventArgs e)
@@ -389,10 +402,10 @@ namespace A_Friend
 
         private void SettingButton_Click(object sender, EventArgs e)
         {
-            FormSettings frm = new FormSettings();
-            frm.StartPosition = FormStartPosition.CenterScreen;
+            //FormSettings frm = new FormSettings();
+            formSettings.StartPosition = FormStartPosition.CenterScreen;
             this.Hide();
-            frm.ShowDialog();
+            formSettings.ShowDialog();
             this.Show();
         }
         //int tempadd = 0;
