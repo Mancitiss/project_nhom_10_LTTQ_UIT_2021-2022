@@ -34,6 +34,7 @@ namespace A_Friend
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
         private Panel panelLoading = new Panel();
+        private PictureBox pictureBoxNotFound = new PictureBox();
         private FormContactRemoved formContactRemoved = new FormContactRemoved();
         private FormGetStarted formGetStarted = new FormGetStarted();
         private FormLoading formLoading = new FormLoading();    
@@ -156,6 +157,10 @@ namespace A_Friend
             formLoading.Visible = true;
             panelLoading.Controls.Add(formLoading);
             panelLoading.BringToFront();
+
+            pictureBoxNotFound.Dock = DockStyle.Fill;
+            pictureBoxNotFound.Image = global::A_Friend.Properties.Resources.no_result_found;
+            pictureBoxNotFound.SizeMode = PictureBoxSizeMode.Zoom;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -554,6 +559,16 @@ namespace A_Friend
                                 panelContact2.Controls.Add(i.Value);
                             }
                         }
+                        if (panelContact2.Controls.Count == 0)
+                        {
+                            if (panelContact.Controls.Contains(pictureBoxNotFound))
+                            {
+                                return;
+                            }
+                            panelContact2.Controls.Add(pictureBoxNotFound);
+                            pictureBoxNotFound.BringToFront();
+                            Console.WriteLine("not found");
+                        }
                         panelContact2.BringToFront();
                         panelContact.Controls.Clear();
                     }
@@ -566,6 +581,18 @@ namespace A_Friend
                                 panelContact.Controls.Add(i.Value);
                             }
                         }
+                        if (panelContact.Controls.Count == 0)
+                        {
+                            if (panelContact2.Controls.Contains(pictureBoxNotFound))
+                            {
+                                return;
+                            }
+                            panelContact.Controls.Add(pictureBoxNotFound);
+                            pictureBoxNotFound.BringToFront();
+                            Console.WriteLine("not found2");
+                        }
+                        //panelContact2.BringToFront();
+                        //panelContact.Controls.Clear();
                         panelContact.BringToFront();
                         panelContact2.Controls.Clear();
                     }
