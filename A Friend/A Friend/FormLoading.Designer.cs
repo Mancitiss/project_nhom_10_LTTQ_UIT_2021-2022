@@ -60,6 +60,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "FormLoading";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormLoading";
             this.Load += new System.EventHandler(this.FormLoading_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.FormLoading_Paint);

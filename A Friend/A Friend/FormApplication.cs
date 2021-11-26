@@ -33,13 +33,15 @@ namespace A_Friend
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
-        public FormAddContact formAddContact = new FormAddContact();
+        private Panel panelLoading = new Panel();
         private FormContactRemoved formContactRemoved = new FormContactRemoved();
         private FormGetStarted formGetStarted = new FormGetStarted();
+        private FormLoading formLoading = new FormLoading();    
+        public FormSettings formSettings = new FormSettings();
+        public FormAddContact formAddContact = new FormAddContact();
         private bool check = true;
         private string searchText = "";
         private bool loaded = false;
-        public FormSettings formSettings = new FormSettings();
 
         public FormApplication()
         {
@@ -82,19 +84,19 @@ namespace A_Friend
             //AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
             //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
 
-            if (panelChats.Count > 0)
-                ShowPanelChat(panelChats.Keys.Last());
-            else
-            {
-                panelRight.Controls.Clear();
-                customTextBoxSearch.Visible = false;
-                formGetStarted.Dock = DockStyle.Fill;
-                formGetStarted.TopLevel = false;
-                formGetStarted.FormBorderStyle = FormBorderStyle.None;
-                panelGetStarted.Controls.Add(formGetStarted);
-                panelGetStarted.BringToFront();
-                formGetStarted.Visible = true;
-            }
+            //if (panelChats.Count > 0)
+            //    ShowPanelChat(panelChats.Keys.Last());
+            //else
+            //{
+            //    panelRight.Controls.Clear();
+            //    customTextBoxSearch.Visible = false;
+            //    formGetStarted.Dock = DockStyle.Fill;
+            //    formGetStarted.TopLevel = false;
+            //    formGetStarted.FormBorderStyle = FormBorderStyle.None;
+            //    panelGetStarted.Controls.Add(formGetStarted);
+            //    panelGetStarted.BringToFront();
+            //    formGetStarted.Visible = true;
+            //}
             notifyIconApp.BalloonTipTitle = "Notify";
             notifyIconApp.BalloonTipText = "Apps running in the background";
             notifyIconApp.Text = "AppChat";
@@ -142,6 +144,18 @@ namespace A_Friend
             panelAdd.Controls.Add(formAddContact);
             panelAdd.BringToFront();
             formAddContact.Visible = true;
+
+            this.Controls.Add(panelLoading);
+            panelLoading.Location = new Point(0, 0);
+            panelLoading.Size = this.Size;
+            panelLoading.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            formLoading.TopLevel = false;
+            formLoading.Size = panelLoading.Size;
+            formLoading.Anchor = panelLoading.Anchor;
+            //formLoading.Dock = DockStyle.Fill;
+            formLoading.Visible = true;
+            panelLoading.Controls.Add(formLoading);
+            panelLoading.BringToFront();
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -278,6 +292,25 @@ namespace A_Friend
             }
 
             loaded = true;
+
+            panelLoading.SendToBack();
+            formLoading.StopSpinning();
+            formLoading.Dispose();
+            panelLoading.Dispose();
+
+            if (panelChats.Count > 0)
+                ShowPanelChat(orderOfContactItems.Values.Last());
+            else
+            {
+                panelRight.Controls.Clear();
+                customTextBoxSearch.Visible = false;
+                formGetStarted.Dock = DockStyle.Fill;
+                formGetStarted.TopLevel = false;
+                formGetStarted.FormBorderStyle = FormBorderStyle.None;
+                panelGetStarted.Controls.Add(formGetStarted);
+                panelGetStarted.BringToFront();
+                formGetStarted.Visible = true;
+            }
         }
 
         private string GetCurrentPanelChatId()
