@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace A_Friend
@@ -80,15 +81,20 @@ namespace A_Friend
 
         private void customButtonAvatar_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Custom Files|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
-            if (ofd.ShowDialog() == DialogResult.OK)
+            Thread thread = new Thread(() =>
             {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "Custom Files|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
 
-                Bitmap bitmap = new Bitmap(ofd.FileName);
-                circlePictureBox1.Image = bitmap;
-                circlePictureBox1.Crop(circlePictureBox1.Image);
-            }
+                    Bitmap bitmap = new Bitmap(ofd.FileName);
+                    //circlePictureBox1.Image = bitmap;
+                    circlePictureBox1.Crop((Image)(bitmap));
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
         }
 
         private void customButtonExit_Click(object sender, EventArgs e)

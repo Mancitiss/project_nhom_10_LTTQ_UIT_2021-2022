@@ -125,9 +125,9 @@ namespace A_Friend.CustomControls
             return (Image)(bmpCrop);
         }
 
-        public void Crop (Image img)
+        public void Crop(Image img)
         {
-            if(img.Width != img.Height)
+            if (img.Width != img.Height)
             {
                 if (Convert.ToInt32(img.Height) < Convert.ToInt32(img.Width))
                 {
