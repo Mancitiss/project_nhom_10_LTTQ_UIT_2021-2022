@@ -117,5 +117,28 @@ namespace A_Friend.CustomControls
                     graph.DrawEllipse(penBorder, rectBorder);
             }
         }
+
+        private Image cropImage(Image img, Rectangle rec)
+        {
+            Bitmap bmpImage = new Bitmap(img);
+            Bitmap bmpCrop = bmpImage.Clone(rec, bmpImage.PixelFormat);
+            return (Image)(bmpCrop);
+        }
+
+        public void Crop (Image img)
+        {
+            if(img.Width != img.Height)
+            {
+                if (Convert.ToInt32(img.Height) < Convert.ToInt32(img.Width))
+                {
+                    img = cropImage(img, new Rectangle(Convert.ToInt32((img.Width - img.Height) / 2), 0, Convert.ToInt32(img.Height), Convert.ToInt32(img.Height)));
+                }
+                else
+                {
+                    img = cropImage(img, new Rectangle(0, Convert.ToInt32((img.Height - img.Width) / 2), Convert.ToInt32(img.Width), Convert.ToInt32(img.Width)));
+                }
+            }
+            this.Image = img;
+        }
     }
 }

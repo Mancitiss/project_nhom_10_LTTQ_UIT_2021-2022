@@ -82,10 +82,13 @@ namespace A_Friend
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Custom Files|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
-            /*if(ofd.ShowDialog() == DialogResult.OK)
+            if (ofd.ShowDialog() == DialogResult.OK)
             {
-               
-            }*/
+
+                Bitmap bitmap = new Bitmap(ofd.FileName);
+                circlePictureBox1.Image = bitmap;
+                circlePictureBox1.Crop(circlePictureBox1.Image);
+            }
         }
 
         private void customButtonExit_Click(object sender, EventArgs e)
