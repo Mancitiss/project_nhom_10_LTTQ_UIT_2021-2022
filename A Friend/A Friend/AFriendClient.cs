@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using Jil;
+using System.IO;
 
 namespace A_Friend
 {
@@ -23,14 +24,12 @@ namespace A_Friend
         private static int byte_expected = 0;
 
         internal static string temp_name;
+        internal static string temp_image;
 
         public static Socket client;
         public static Account user;
 
         private static FormApplication UIForm;
-
-        Random rand = new Random();
-
 
         internal static void change_name()
         {
@@ -416,6 +415,11 @@ namespace A_Friend
                         //MessageBox.Show("What a beautiful name!");
                         //if name not change then it is your internet connection problem
                     }
+                    //else if(instruction == "1013")
+                    //{
+                    //    Console.WriteLine("Name changed!");
+                    //    StringToImage();
+                    //}
                 }
             }
             catch (Exception e)

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -77,20 +79,47 @@ namespace A_Friend
                 panelPassword.Hide();
             }
         }
+        public string ImageToString(string path)
+        {
+            if (path == null)
+            throw new ArgumentNullException("path");
+            Image im = Image.FromFile(path);
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
+        }
+        public Image StringToImage(string imageString)
+        {
 
+            if (imageString == null)
+                throw new ArgumentNullException("imageString");
+            byte[] array = Convert.FromBase64String(imageString);
+            Image image = Image.FromStream(new MemoryStream(array));
+            return image;
+        }
         private void customButtonAvatar_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Custom Files|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
-            /*if(ofd.ShowDialog() == DialogResult.OK)
+            Thread thread = new Thread((ThreadStart)(() =>
             {
-               
-            }*/
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    circlePictureBox1.Image = Image.FromFile(ofd.FileName);
+                    string imageAsString = ImageToString(ofd.FileName);
+                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("" + AFriendClient.data_with_byte(imageAsString.Trim())));
+                    AFriendClient.temp_image = imageAsString.Trim();
+                }
+            }));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
         }
 
         private void customButtonExit_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-    }
+    } 
 }
