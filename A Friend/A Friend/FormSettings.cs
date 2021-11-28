@@ -8,8 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Windows.Forms;
+using Jil;
 
 namespace A_Friend
 {
@@ -18,9 +18,14 @@ namespace A_Friend
         public delegate void ChangeSettingsWarning(string text);
         public ChangeSettingsWarning changeSettingsWarning;
 
+
         public FormSettings()
         {
             InitializeComponent();
+            if (AFriendClient.user.avatar != null)
+            {
+                this.circlePictureBox1.Image = AFriendClient.user.avatar; // can fix dong nay
+            }
             labelUsername.Location = new Point((this.Width - labelUsername.Width) / 2 - 5, labelUsername.Top);
             customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
             labelWarning.Text = "";
@@ -109,8 +114,12 @@ namespace A_Friend
                 {
                     circlePictureBox1.Image = Image.FromFile(ofd.FileName);
                     string imageAsString = ImageToString(ofd.FileName);
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("" + AFriendClient.data_with_byte(imageAsString.Trim())));
+                    AFriendClient.client.Send(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
                     AFriendClient.temp_image = imageAsString.Trim();
+                    /*
+                    Console.WriteLine(imageAsString);
+                    Console.WriteLine(Encoding.ASCII.GetByteCount(imageAsString));
+                    */
                 }
             }));
             thread.SetApartmentState(ApartmentState.STA);

@@ -54,9 +54,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CustomControls">
-      <HintPath>D:\Learn\Lập trình Winform\Code\Custom Controls\CustomControls.dll</HintPath>
-    </Reference>
     <Reference Include="Jil, Version=2.17.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Jil.2.17.0\lib\net45\Jil.dll</HintPath>
     </Reference>

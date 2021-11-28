@@ -318,6 +318,29 @@ namespace AFriendServer
             }
         }
 
+        private static bool receive_ASCII_data_automatically(Socket s, out string data)
+        {
+            if (Socket_receive_ASCII(s, 2, out data))
+            {
+                int bytesize;
+                if (Int32.TryParse(data, out bytesize))
+                {
+                    if (Socket_receive_ASCII(s, bytesize, out data))
+                    {
+                        if (Int32.TryParse(data, out bytesize))
+                        {
+                            if (Socket_receive_ASCII(s, bytesize, out data))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            data = "";
+            return false;
+        }
+
         private static bool receive_data_automatically(Socket s, out string data)
         {
             if (Socket_receive(s, 4, out data))
@@ -340,6 +363,33 @@ namespace AFriendServer
             }
             data = "";
             return false;
+        }
+
+        private static bool Socket_receive_ASCII(Socket s, int byte_expected, out string data_string)
+        {
+            int total_byte_received = 0;
+            byte[] data = new byte[byte_expected];
+            int received_byte;
+            do
+            {
+                received_byte = s.Receive(data, total_byte_received, byte_expected, SocketFlags.None);
+                if (received_byte > 0)
+                {
+                    total_byte_received += received_byte;
+                    byte_expected -= received_byte;
+                }
+                else break;
+            } while (byte_expected > 0 && received_byte > 0);
+            if (byte_expected == 0) // all data received
+            {
+                data_string = Encoding.ASCII.GetString(data, 0, total_byte_received);
+                return true;
+            }
+            else // data corrupted
+            {
+                data_string = "";
+                return false;
+            }
         }
 
         private static bool Socket_receive(Socket s, int byte_expected, out string data_string)
@@ -368,6 +418,8 @@ namespace AFriendServer
                 return false;
             }
         }
+
+
         private static void Receive_message(object si)
         {
             KeyValuePair<string, Socket> item = (KeyValuePair<string, Socket>)si;
@@ -547,6 +599,19 @@ namespace AFriendServer
                                 }
                             }
                         }
+                        else if (instruction == "0601")
+                        {
+                            string img_string;
+                            if (receive_ASCII_data_automatically(s, out img_string))
+                            {
+                                using (SqlCommand command = new SqlCommand("update top (1) account set avatar=@avatar where id=@id", sql))
+                                {
+                                    command.Parameters.AddWithValue("@avatar", img_string);
+                                    command.Parameters.AddWithValue("@id", Int64.Parse(item.Key));
+                                    command.ExecuteNonQuery();
+                                }
+                            }
+                        }
                         else if (instruction == "4269")
                         {
                             string opw;
@@ -652,6 +717,18 @@ namespace AFriendServer
             return success;
         }
 
+        private static byte[] Combine(params byte[][] arrays)
+        {
+            byte[] rv = new byte[arrays.Sum(a => a.Length)];
+            int offset = 0;
+            foreach (byte[] array in arrays)
+            {
+                System.Buffer.BlockCopy(array, 0, rv, offset, array.Length);
+                offset += array.Length;
+            }
+            return rv;
+        }
+
         private static bool Receive_from_socket_not_logged_in(Socket s)
         {
             // do something
@@ -674,11 +751,13 @@ namespace AFriendServer
                     Console.WriteLine(list_str[1]);
                     try
                     {
-                        string commandtext = "select top 1 id, name, pw from account where username=@username";
+                        Console.WriteLine("Before avatar");
+                        string commandtext = "select top 1 id, name, pw, avatar from account where username=@username";
                         SqlCommand command = new SqlCommand(commandtext, sql);
                         command.Parameters.AddWithValue("@username", list_str[0]);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
+                            Console.WriteLine("After avatar");
                             if (reader.Read())
                             {
                                 //if (list_str[1] == reader["pw"].ToString())
@@ -702,13 +781,9 @@ namespace AFriendServer
 
                                     s.Send(Encoding.Unicode.GetBytes("0200"
                                         + id + namebyte.Length.ToString().PadLeft(2, '0') + namebyte + name));
-
-                                    using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
-                                    {
-                                        cmd.Parameters.AddWithValue("@id", str_id);
-                                        cmd.ExecuteNonQuery();
-                                    }
-
+                                    Console.WriteLine("Before state");
+                                    //state was here
+                                    Console.WriteLine("Before dictionaries");
                                     try
                                     {
                                         if (dictionary.ContainsKey(id))
@@ -801,6 +876,18 @@ namespace AFriendServer
                                     {
                                         Console.WriteLine("Im still running");
                                     }*/
+                                    if (reader["avatar"].GetType() != typeof(DBNull))
+                                    {
+                                        Console.WriteLine("Before get avatar");
+                                        string tmp = reader["avatar"].ToString();
+                                        string tmpbyte = Encoding.ASCII.GetByteCount(tmp).ToString();
+                                        s.Send(Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(tmpbyte.Length.ToString().PadLeft(2, '0') + tmpbyte + tmp)));
+                                    }
+                                    using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
+                                    {
+                                        cmd.Parameters.AddWithValue("@id", str_id);
+                                        cmd.ExecuteNonQuery();
+                                    }
                                 }
                                 else
                                 {
@@ -808,6 +895,7 @@ namespace AFriendServer
                                     s.Shutdown(SocketShutdown.Both);
                                     s.Close();
                                 }
+
                             }
                             else
                             {
@@ -836,7 +924,7 @@ namespace AFriendServer
                             }
                             string id_string = randomid.ToString();
                             while (id_string.Length < 19) id_string = '0' + id_string;
-                            using (SqlCommand command = new SqlCommand("insert into account values (@id, @username, @name, @pw, @state, @private, @number_of_contacts)", sql))
+                            using (SqlCommand command = new SqlCommand("insert into account values (@id, @username, @name, @pw, @state, @private, @number_of_contacts, @avatar)", sql))
                             {
                                 command.Parameters.AddWithValue("@id", id_string);
                                 command.Parameters.AddWithValue("@username", list_str[0]);
@@ -845,6 +933,7 @@ namespace AFriendServer
                                 command.Parameters.AddWithValue("@state", 0);
                                 command.Parameters.AddWithValue("@private", 0);
                                 command.Parameters.AddWithValue("@number_of_contacts", 0);
+                                command.Parameters.AddWithValue("@avatar", DBNull.Value);
                                 command.ExecuteNonQuery();
                             }
                             s.Send(Encoding.Unicode.GetBytes("1011")); // New account created

@@ -307,6 +307,7 @@ namespace A_Friend
             this.circlePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.circlePictureBox1.TabIndex = 1;
             this.circlePictureBox1.TabStop = false;
+            this.circlePictureBox1.Image = AFriendClient.user.avatar;
             // 
             // FormSettings
             // 
