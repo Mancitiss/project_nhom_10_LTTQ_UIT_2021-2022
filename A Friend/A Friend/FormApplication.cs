@@ -83,9 +83,7 @@ namespace A_Friend
             //AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
             //AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
             //AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
-            //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
-<<<<<<< HEAD
-            
+            //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));          
             if (panelChats.Count > 0)
                 ShowPanelChat(panelChats.Keys.Last());
             else
@@ -99,7 +97,6 @@ namespace A_Friend
                 panelGetStarted.BringToFront();
                 formGetStarted.Visible = true;
             }
-=======
 
             //if (panelChats.Count > 0)
             //    ShowPanelChat(panelChats.Keys.Last());
@@ -114,7 +111,6 @@ namespace A_Friend
             //    panelGetStarted.BringToFront();
             //    formGetStarted.Visible = true;
             //}
->>>>>>> dfa46af411bc6359fa9caa4b2f95713a5193f947
             notifyIconApp.BalloonTipTitle = "Notify";
             notifyIconApp.BalloonTipText = "Apps running in the background";
             notifyIconApp.Text = "AppChat";
