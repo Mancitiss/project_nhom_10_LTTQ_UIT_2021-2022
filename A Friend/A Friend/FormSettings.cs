@@ -86,20 +86,27 @@ namespace A_Friend
                 ChangeLabel("Please enter your password!");
             else
             {
-                if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
+                if (!checkBytes())
                 {
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
+                    ChangeLabel("Username or Password has over the limit of characters");
                 }
-                panelPassword.Hide();
-                textBoxNewPassword.Texts = "";
-                textBoxCurrentPassword.Texts = "";
-                textBoxConfirmPassword.Texts = "";
+                else
+                {
+                    if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
+                    {
+                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
+                    }
+                    panelPassword.Hide();
+                    textBoxNewPassword.Texts = "";
+                    textBoxCurrentPassword.Texts = "";
+                    textBoxConfirmPassword.Texts = "";
+                }
             }
         }
         public string ImageToString(string path)
         {
             if (path == null)
-            throw new ArgumentNullException("path");
+                throw new ArgumentNullException("path");
             Image im = Image.FromFile(path);
             MemoryStream ms = new MemoryStream();
             im.Save(ms, im.RawFormat);
@@ -149,5 +156,12 @@ namespace A_Friend
         {
             labelWarning.Text = "";
         }
-    } 
+
+        private bool checkBytes()
+        {
+            if (Encoding.Unicode.GetByteCount(textBoxNewPassword.Texts) < 128)
+                return true;
+            return false;
+        }
+    }
 }
