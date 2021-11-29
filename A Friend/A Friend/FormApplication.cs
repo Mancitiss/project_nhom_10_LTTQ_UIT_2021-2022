@@ -217,17 +217,18 @@ namespace A_Friend
                         BringContactItemToTop(panelChat.ID);
                     }
 
-                    if (GetCurrentPanelChatId() != panelChat.ID)
-                    {
-                        if (!panelChat.IsLastMessageFromYou())
-                        {
-                            contactItem.Unread = true;
-                        }
-                    }
-                    else
-                    {
-                        contactItem.Unread = false;
-                    }
+                    //this stuff to display unread message with different color on ContactItem
+                    //if (GetCurrentPanelChatId() != panelChat.ID)
+                    //{
+                    //    if (!panelChat.IsLastMessageFromYou())
+                    //    {
+                    //        contactItem.Unread = true;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    contactItem.Unread = false;
+                    //}
                 };
 
                 panelChat.ControlRemoved += delegate
