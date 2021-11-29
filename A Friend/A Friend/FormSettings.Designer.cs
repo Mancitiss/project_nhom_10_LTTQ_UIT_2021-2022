@@ -94,6 +94,7 @@ namespace A_Friend
             this.textBoxConfirmPassword.TabIndex = 7;
             this.textBoxConfirmPassword.Texts = "";
             this.textBoxConfirmPassword.UnderlinedStyle = false;
+            this.textBoxConfirmPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
             // 
             // buttonSavePassword
             // 
@@ -134,6 +135,7 @@ namespace A_Friend
             this.textBoxCurrentPassword.TabIndex = 5;
             this.textBoxCurrentPassword.Texts = "";
             this.textBoxCurrentPassword.UnderlinedStyle = false;
+            this.textBoxCurrentPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
             // 
             // textBoxNewPassword
             // 
@@ -155,6 +157,7 @@ namespace A_Friend
             this.textBoxNewPassword.TabIndex = 6;
             this.textBoxNewPassword.Texts = "";
             this.textBoxNewPassword.UnderlinedStyle = false;
+            this.textBoxNewPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
             // 
             // panelUsername
             // 
@@ -186,6 +189,7 @@ namespace A_Friend
             this.customTextBoxUsername.TabIndex = 3;
             this.customTextBoxUsername.Texts = "";
             this.customTextBoxUsername.UnderlinedStyle = false;
+            this.customTextBoxUsername.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
             // 
             // buttonSaveUsername
             // 

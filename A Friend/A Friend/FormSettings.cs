@@ -50,12 +50,14 @@ namespace A_Friend
 
         private void customButtonUsername_Click(object sender, EventArgs e)
         {
+            labelUsername.Text = "";
             panelPassword.Hide();
             panelUsername.Show();
         }
 
         private void buttonSaveUsername_Click(object sender, EventArgs e)
         {
+            labelUsername.Text = "";
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
                 //MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter new name!");
@@ -64,21 +66,21 @@ namespace A_Friend
                 AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
                 AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
                 panelUsername.Hide();
-                textBoxNewPassword.Texts = "";
-                textBoxCurrentPassword.Texts = "";
-                textBoxConfirmPassword.Texts = "";
+                customTextBoxUsername.Texts = "";
                 //this.Close();
             }
         }
 
         private void customButtonPassword_Click(object sender, EventArgs e)
         {
+            labelUsername.Text = "";
             panelUsername.Hide();
             panelPassword.Show();
         }
 
         private void buttonSavePassword_Click(object sender, EventArgs e)
         {
+            labelUsername.Text = "";
             if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
                 //MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter your password!");
@@ -89,7 +91,9 @@ namespace A_Friend
                     AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
                 }
                 panelPassword.Hide();
-                customTextBoxUsername.Texts = "";
+                textBoxNewPassword.Texts = "";
+                textBoxCurrentPassword.Texts = "";
+                textBoxConfirmPassword.Texts = "";
             }
         }
         public string ImageToString(string path)
@@ -113,13 +117,14 @@ namespace A_Friend
         }
         private void customButtonAvatar_Click(object sender, EventArgs e)
         {
+            labelUsername.Text = "";
             Thread thread = new Thread((ThreadStart)(() =>
             {
                 OpenFileDialog ofd = new OpenFileDialog();
                 ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    circlePictureBox1.Image = Image.FromFile(ofd.FileName);
+                    circlePictureBox1.Crop(Image.FromFile(ofd.FileName));
                     string imageAsString = ImageToString(ofd.FileName);
                     AFriendClient.client.Send(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
                     AFriendClient.temp_image = imageAsString.Trim();
@@ -136,7 +141,13 @@ namespace A_Friend
 
         private void customButtonExit_Click(object sender, EventArgs e)
         {
+            labelUsername.Text = "";
             this.Close();
+        }
+
+        private void textBoxCurrentPassword_Enter(object sender, EventArgs e)
+        {
+            labelUsername.Text = "";
         }
     } 
 }
