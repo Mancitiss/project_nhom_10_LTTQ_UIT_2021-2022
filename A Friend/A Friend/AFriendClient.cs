@@ -498,12 +498,12 @@ namespace A_Friend
                     else if (instruction == "4269")
                     {
                         Console.WriteLine("Password changed successfully!");
-                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!"});
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!", Color.FromArgb(143, 228, 185) });
                     }
                     else if (instruction == "9624")
                     {
                         Console.WriteLine("Old Password is not correct!!");
-                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!" });
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!", Color.FromArgb(213, 54, 41) });
 
                     }
                     else if (instruction == "2411")
@@ -514,7 +514,7 @@ namespace A_Friend
                     {
                         Console.WriteLine("Name changed!");
                         change_name();
-                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!" });
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
                         //MessageBox.Show("What a beautiful name!");
                         //if name not change then it is your internet connection problem
                     }

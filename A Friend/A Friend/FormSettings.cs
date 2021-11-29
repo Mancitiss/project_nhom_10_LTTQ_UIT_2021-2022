@@ -15,7 +15,7 @@ namespace A_Friend
 {
     public partial class FormSettings : Form
     {
-        public delegate void ChangeSettingsWarning(string text);
+        public delegate void ChangeSettingsWarning(string text, Color color);
         public ChangeSettingsWarning changeSettingsWarning;
 
 
@@ -33,9 +33,10 @@ namespace A_Friend
             changeSettingsWarning = new ChangeSettingsWarning(ChangeLabel);
         }
 
-        public void ChangeLabel(string text)
+        public void ChangeLabel(string text, Color color)
         {
             labelWarning.Text = text;
+            labelWarning.ForeColor = color;
             //labelWarning.Location = new Point((this.Width - labelWarning.Width) / 2 - 5, labelWarning.Top);
         }
 
@@ -60,7 +61,7 @@ namespace A_Friend
             labelWarning.Text = "";
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
                 //MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ChangeLabel("Please enter new name!");
+                ChangeLabel("Please enter new name!", Color.FromArgb(213, 54, 41));
             else
             {
                 AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
@@ -83,12 +84,12 @@ namespace A_Friend
             labelWarning.Text = "";
             if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
                 //MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ChangeLabel("Please enter your password!");
+                ChangeLabel("Please enter your password!", Color.FromArgb(213, 54, 41));
             else
             {
                 if (!checkBytes())
                 {
-                    ChangeLabel("Username or Password has over the limit of characters");
+                    ChangeLabel("Username or Password has over the limit of characters", Color.FromArgb(213, 54, 41));
                 }
                 else
                 {
