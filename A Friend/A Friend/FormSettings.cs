@@ -50,14 +50,14 @@ namespace A_Friend
 
         private void customButtonUsername_Click(object sender, EventArgs e)
         {
-            labelUsername.Text = "";
+            labelWarning.Text = "";
             panelPassword.Hide();
             panelUsername.Show();
         }
 
         private void buttonSaveUsername_Click(object sender, EventArgs e)
         {
-            labelUsername.Text = "";
+            labelWarning.Text = "";
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
                 //MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter new name!");
@@ -73,14 +73,14 @@ namespace A_Friend
 
         private void customButtonPassword_Click(object sender, EventArgs e)
         {
-            labelUsername.Text = "";
+            labelWarning.Text = "";
             panelUsername.Hide();
             panelPassword.Show();
         }
 
         private void buttonSavePassword_Click(object sender, EventArgs e)
         {
-            labelUsername.Text = "";
+            labelWarning.Text = "";
             if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
                 //MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter your password!");
@@ -117,7 +117,7 @@ namespace A_Friend
         }
         private void customButtonAvatar_Click(object sender, EventArgs e)
         {
-            labelUsername.Text = "";
+            labelWarning.Text = "";
             Thread thread = new Thread((ThreadStart)(() =>
             {
                 OpenFileDialog ofd = new OpenFileDialog();
@@ -141,13 +141,13 @@ namespace A_Friend
 
         private void customButtonExit_Click(object sender, EventArgs e)
         {
-            labelUsername.Text = "";
+            labelWarning.Text = "";
             this.Close();
         }
 
         private void textBoxCurrentPassword_Enter(object sender, EventArgs e)
         {
-            labelUsername.Text = "";
+            labelWarning.Text = "";
         }
     } 
 }
