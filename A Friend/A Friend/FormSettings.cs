@@ -22,12 +22,13 @@ namespace A_Friend
         public FormSettings()
         {
             InitializeComponent();
+            this.circlePictureBox1.Image = AFriendClient.user.avatar;
             if (AFriendClient.user.avatar != null)
             {
                 this.circlePictureBox1.Image = AFriendClient.user.avatar; // can fix dong nay
             }
-            labelUsername.Location = new Point((this.Width - labelUsername.Width) / 2 - 5, labelUsername.Top);
-            customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
+            //labelUsername.Location = new Point((this.Width - labelUsername.Width) / 2 - 5, labelUsername.Top);
+            //customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
             labelWarning.Text = "";
             changeSettingsWarning = new ChangeSettingsWarning(ChangeLabel);
         }
@@ -35,12 +36,12 @@ namespace A_Friend
         public void ChangeLabel(string text)
         {
             labelWarning.Text = text;
-            labelWarning.Location = new Point((this.Width - labelWarning.Width) / 2 - 5, labelWarning.Top);
+            //labelWarning.Location = new Point((this.Width - labelWarning.Width) / 2 - 5, labelWarning.Top);
         }
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
-            this.labelUsername.Text = AFriendClient.user.name;
+            //this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
             panelUsername.Hide();
         }
@@ -60,8 +61,11 @@ namespace A_Friend
             {
                 AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
                 AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
-                //panelUsername.Hide();
-                this.Close();
+                panelUsername.Hide();
+                textBoxNewPassword.Texts = "";
+                textBoxCurrentPassword.Texts = "";
+                textBoxConfirmPassword.Texts = "";
+                //this.Close();
             }
         }
 
@@ -83,6 +87,7 @@ namespace A_Friend
                     AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
                 }
                 panelPassword.Hide();
+                customTextBoxUsername.Texts = "";
             }
         }
         public string ImageToString(string path)

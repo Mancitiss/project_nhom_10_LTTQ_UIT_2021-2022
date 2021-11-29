@@ -284,5 +284,8 @@
     </BootstrapperPackage>
     <None Include="Resources\no_result_found.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\camera-outline.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

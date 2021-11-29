@@ -103,6 +103,16 @@ namespace A_Friend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap camera_outline {
+            get {
+                object obj = ResourceManager.GetObject("camera-outline", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Cogs {
             get {
                 object obj = ResourceManager.GetObject("Cogs", resourceCulture);

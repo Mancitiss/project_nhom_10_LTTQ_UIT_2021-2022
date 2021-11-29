@@ -84,20 +84,7 @@ namespace A_Friend
             //AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
             //AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
             //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));          
-            if (panelChats.Count > 0)
-                ShowPanelChat(panelChats.Keys.Last());
-            else
-            {
-                panelRight.Controls.Clear();
-                customTextBoxSearch.Visible = false;
-                formGetStarted.Dock = DockStyle.Fill;
-                formGetStarted.TopLevel = false;
-                formGetStarted.FormBorderStyle = FormBorderStyle.None;
-                panelGetStarted.Controls.Add(formGetStarted);
-                panelGetStarted.BringToFront();
-                formGetStarted.Visible = true;
-            }
-
+          
             //if (panelChats.Count > 0)
             //    ShowPanelChat(panelChats.Keys.Last());
             //else
