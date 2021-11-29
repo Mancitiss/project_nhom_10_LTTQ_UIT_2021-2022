@@ -206,5 +206,11 @@ namespace A_Friend
                 labelWarning.Text = "Cannot connect to the server";
             }
         }
+
+        private void FormLogin_Load(object sender, EventArgs e)
+        {
+            this.Text = "\t";
+            this.ControlBox = false;
+        }
     }
 }

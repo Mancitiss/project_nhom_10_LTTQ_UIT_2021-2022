@@ -41,9 +41,11 @@ namespace A_Friend
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
-            //this.labelUsername.Text = AFriendClient.user.name;
+            this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
             panelUsername.Hide();
+            this.ControlBox = false;
+            this.Text = " ";
         }
 
         private void customButtonUsername_Click(object sender, EventArgs e)
