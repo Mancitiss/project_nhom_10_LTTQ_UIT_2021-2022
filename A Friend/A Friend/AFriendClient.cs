@@ -380,9 +380,13 @@ namespace A_Friend
                                 {
                                     Program.mainform.contactItems[panelid].Unread = false;
                                 } 
-                                else
+                                else if (boolstr == "0" && !Program.mainform.panelChats[panelid].IsLastMessageFromYou())
                                 {
                                     Program.mainform.contactItems[panelid].Unread = true;
+                                }
+                                else
+                                {
+                                    Program.mainform.contactItems[panelid].Unread = false;
                                 }
                             }
                         }

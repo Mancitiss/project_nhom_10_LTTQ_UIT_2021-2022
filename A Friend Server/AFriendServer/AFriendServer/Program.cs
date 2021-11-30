@@ -571,7 +571,13 @@ namespace AFriendServer
                                 {
                                     using (SqlCommand command = new SqlCommand("update top (1) seen set seen=@bool where id1=@id1 and id2=@id2", sql))
                                     {
-                                        command.Parameters.AddWithValue("@bool", boolstr);
+                                        if (boolstr == "0")
+                                        {
+                                            command.Parameters.AddWithValue("@bool", 0);
+                                        } else
+                                        {
+                                            command.Parameters.AddWithValue("@bool", 1);
+                                        }
                                         command.Parameters.AddWithValue("@id1", id1);
                                         command.Parameters.AddWithValue("@id2", id2);
                                         command.ExecuteNonQuery();

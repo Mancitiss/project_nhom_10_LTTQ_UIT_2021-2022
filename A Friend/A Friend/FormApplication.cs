@@ -181,6 +181,7 @@ namespace A_Friend
                 var contactItem = new CustomControls.ContactItem(account);
                 contactItem.Dock = DockStyle.Top;
                 contactItem.BackColor = panelContact.BackColor;
+                contactItem.Unread = true;
                 //contactItem.BringToFront();
                 if (loaded)
                 {
@@ -240,6 +241,7 @@ namespace A_Friend
                 contactItem.Click += delegate
                 {
                     ShowPanelChat(account.id);
+                    //contactItem.Unread = true;
                     panelChat.ScrollToBottom();
 
                     if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
