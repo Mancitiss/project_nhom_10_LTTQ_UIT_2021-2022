@@ -481,7 +481,7 @@ namespace AFriendServer
                                                 {
                                                     if (reader.Read())
                                                     {
-                                                        Console.WriteLine((DateTime)reader["timesent"]);
+                                                        //Console.WriteLine((DateTime)reader["timesent"]);
                                                         MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
                                                         messageObjects.Add(msgobj);
                                                     }
@@ -492,7 +492,7 @@ namespace AFriendServer
                                             string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
                                             string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                             s.Send(Encoding.Unicode.GetBytes("6475"+receiver_id+datasendbyte.Length.ToString().PadLeft(2,'0')+datasendbyte+datasend));
-                                            Console.WriteLine("Old messages sent");
+                                            //Console.WriteLine("Old messages sent");
                                             if (loaded.ContainsKey(item.Key))
                                             {
                                                 if (loaded[item.Key] <= 0)
@@ -536,7 +536,7 @@ namespace AFriendServer
                                             string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
                                             string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                             s.Send(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                                            Console.WriteLine("Old messages sent");
+                                            //Console.WriteLine("Old messages sent");
                                         }
                                     }
                                 }
