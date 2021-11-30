@@ -550,6 +550,35 @@ namespace AFriendServer
                             Int32.TryParse(data, out int temp);
                             byte_expected[item.Key] = temp;
                         }
+                        else if (instruction == "1234")
+                        {
+                            string receiver_id;
+                            if (Socket_receive(s, 38, out receiver_id))
+                            {
+                                string id1, id2;
+                                if (item.Key.CompareTo(receiver_id) <= 0)
+                                {
+                                    id1 = item.Key;
+                                    id2 = receiver_id;
+                                }
+                                else
+                                {
+                                    id1 = receiver_id;
+                                    id2 = item.Key;
+                                }
+                                string boolstr;
+                                if (Socket_receive(s, 2, out boolstr))
+                                {
+                                    using (SqlCommand command = new SqlCommand("update top (1) seen set seen=@bool where id1=@id1 and id2=@id2", sql))
+                                    {
+                                        command.Parameters.AddWithValue("@bool", boolstr);
+                                        command.Parameters.AddWithValue("@id1", id1);
+                                        command.Parameters.AddWithValue("@id2", id2);
+                                        command.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                        }
                         else if (instruction == "0708")
                         {
                             string receiver_id;
