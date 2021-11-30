@@ -56,6 +56,8 @@ namespace A_Friend.CustomControls
             this.panelButton.Name = "panelButton";
             this.panelButton.Size = new System.Drawing.Size(80, 132);
             this.panelButton.TabIndex = 2;
+            this.panelButton.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.panelButton.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
             // buttonRemove
             // 
@@ -114,6 +116,8 @@ namespace A_Friend.CustomControls
             this.labelAuthor.Size = new System.Drawing.Size(50, 18);
             this.labelAuthor.TabIndex = 3;
             this.labelAuthor.Text = "label1";
+            this.labelAuthor.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.labelAuthor.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
             // panelTop
             // 
@@ -125,6 +129,8 @@ namespace A_Friend.CustomControls
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(743, 132);
             this.panelTop.TabIndex = 4;
+            this.panelTop.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.panelTop.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
             // panelBody
             // 
@@ -137,6 +143,8 @@ namespace A_Friend.CustomControls
             this.panelBody.Padding = new System.Windows.Forms.Padding(5);
             this.panelBody.Size = new System.Drawing.Size(300, 132);
             this.panelBody.TabIndex = 1;
+            this.panelBody.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.panelBody.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
             // labelBody
             // 
@@ -150,6 +158,8 @@ namespace A_Friend.CustomControls
             this.labelBody.Size = new System.Drawing.Size(87, 28);
             this.labelBody.TabIndex = 0;
             this.labelBody.Text = "labelBody";
+            this.labelBody.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.labelBody.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
             // panelBottom
             // 
@@ -161,6 +171,8 @@ namespace A_Friend.CustomControls
             this.panelBottom.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
             this.panelBottom.Size = new System.Drawing.Size(743, 23);
             this.panelBottom.TabIndex = 5;
+            this.panelBottom.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.panelBottom.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
             // ChatItem
             // 
@@ -175,6 +187,8 @@ namespace A_Friend.CustomControls
             this.Padding = new System.Windows.Forms.Padding(15, 5, 15, 5);
             this.Size = new System.Drawing.Size(773, 160);
             this.Load += new System.EventHandler(this.ChatItem_Load);
+            this.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             this.panelButton.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelBody.ResumeLayout(false);
