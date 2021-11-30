@@ -26,16 +26,21 @@ namespace A_Friend
         public Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
         public static string currentID;
 
-        Dictionary<string, CustomControls.ContactItem> contactItems = new Dictionary<string, CustomControls.ContactItem>();
+        internal Dictionary<string, CustomControls.ContactItem> contactItems = new Dictionary<string, CustomControls.ContactItem>();
         SortedDictionary<int, string> orderOfContactItems = new SortedDictionary<int, string>();
 
         public string currentUsername;
+        public CustomControls.ContactItem currentContactItem; 
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
-        public FormAddContact formAddContact = new FormAddContact();
+        private Panel panelLoading = new Panel();
+        private PictureBox pictureBoxNotFound = new PictureBox();
         private FormContactRemoved formContactRemoved = new FormContactRemoved();
         private FormGetStarted formGetStarted = new FormGetStarted();
+        private FormLoading formLoading = new FormLoading();    
+        public FormSettings formSettings = new FormSettings();
+        public FormAddContact formAddContact = new FormAddContact();
         private bool check = true;
         private string searchText = "";
         private bool loaded = false;
@@ -43,6 +48,8 @@ namespace A_Friend
         public FormApplication()
         {
             InitializeComponent();
+            this.ResizeBegin += FormApplication_ResizeBegin;
+            this.ResizeEnd += FormApplication_ResizeEnd;
             this.SetStyle(
             System.Windows.Forms.ControlStyles.UserPaint |
             System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
@@ -52,6 +59,16 @@ namespace A_Friend
             turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
             sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
+        }
+
+        private void FormApplication_ResizeBegin(Object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+        }
+
+        private void FormApplication_ResizeEnd(Object sender, EventArgs e)
+        {
+            this.ResumeLayout(true);
         }
 
         private void FormApplication_Load(object sender, EventArgs e)
@@ -67,21 +84,21 @@ namespace A_Friend
             //AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
             //AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
             //AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
-            //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));
-
-            if (panelChats.Count > 0)
-                ShowPanelChat(panelChats.Keys.Last());
-            else
-            {
-                panelRight.Controls.Clear();
-                customTextBoxSearch.Visible = false;
-                formGetStarted.Dock = DockStyle.Fill;
-                formGetStarted.TopLevel = false;
-                formGetStarted.FormBorderStyle = FormBorderStyle.None;
-                panelGetStarted.Controls.Add(formGetStarted);
-                panelGetStarted.BringToFront();
-                formGetStarted.Visible = true;
-            }
+            //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));          
+          
+            //if (panelChats.Count > 0)
+            //    ShowPanelChat(panelChats.Keys.Last());
+            //else
+            //{
+            //    panelRight.Controls.Clear();
+            //    customTextBoxSearch.Visible = false;
+            //    formGetStarted.Dock = DockStyle.Fill;
+            //    formGetStarted.TopLevel = false;
+            //    formGetStarted.FormBorderStyle = FormBorderStyle.None;
+            //    panelGetStarted.Controls.Add(formGetStarted);
+            //    panelGetStarted.BringToFront();
+            //    formGetStarted.Visible = true;
+            //}
             notifyIconApp.BalloonTipTitle = "Notify";
             notifyIconApp.BalloonTipText = "Apps running in the background";
             notifyIconApp.Text = "AppChat";
@@ -129,6 +146,22 @@ namespace A_Friend
             panelAdd.Controls.Add(formAddContact);
             panelAdd.BringToFront();
             formAddContact.Visible = true;
+
+            this.Controls.Add(panelLoading);
+            panelLoading.Location = new Point(0, 0);
+            panelLoading.Size = this.Size;
+            panelLoading.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            formLoading.TopLevel = false;
+            formLoading.Size = panelLoading.Size;
+            formLoading.Anchor = panelLoading.Anchor;
+            //formLoading.Dock = DockStyle.Fill;
+            formLoading.Visible = true;
+            panelLoading.Controls.Add(formLoading);
+            panelLoading.BringToFront();
+
+            pictureBoxNotFound.Dock = DockStyle.Fill;
+            pictureBoxNotFound.Image = global::A_Friend.Properties.Resources.no_result_found;
+            pictureBoxNotFound.SizeMode = PictureBoxSizeMode.Zoom;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
@@ -148,6 +181,7 @@ namespace A_Friend
                 var contactItem = new CustomControls.ContactItem(account);
                 contactItem.Dock = DockStyle.Top;
                 contactItem.BackColor = panelContact.BackColor;
+                contactItem.Unread = true;
                 //contactItem.BringToFront();
                 if (loaded)
                 {
@@ -185,17 +219,18 @@ namespace A_Friend
                         BringContactItemToTop(panelChat.ID);
                     }
 
-                    if (GetCurrentPanelChatId() != panelChat.ID)
-                    {
-                        if (!panelChat.IsLastMessageFromYou())
-                        {
-                            contactItem.Unread = true;
-                        }
-                    }
-                    else
-                    {
-                        contactItem.Unread = false;
-                    }
+                    //this stuff to display unread message with different color on ContactItem
+                    //if (loaded)
+                    //{
+                    //    if (!panelChat.IsLastMessageFromYou())
+                    //    {
+                    //        contactItem.Unread = true;
+                    //    }
+                    //    else
+                    //    {
+                    //        contactItem.Unread = false;
+                    //    }
+                    //}
                 };
 
                 panelChat.ControlRemoved += delegate
@@ -206,14 +241,15 @@ namespace A_Friend
                 contactItem.Click += delegate
                 {
                     ShowPanelChat(account.id);
-                    contactItem.Unread = false;
+                    //contactItem.Unread = true;
                     panelChat.ScrollToBottom();
 
                     if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
                     {
                         check = false;
                         customTextBoxSearch.Texts = "";
-                        customTextBoxSearch.SetPlaceHolder();
+                        this.ActiveControl = contactItem;
+                        //customTextBoxSearch.SetPlaceHolder();
                         panelContact2.Controls.Clear();
                         panelContact.Controls.Clear();
                         foreach(KeyValuePair<int, string> i in orderOfContactItems)
@@ -222,6 +258,23 @@ namespace A_Friend
                         }
                         panelContact.BringToFront();
                         check = true;
+                    }
+
+                    if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                    {
+                        contactItem.Unread = false; 
+                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        Console.WriteLine("you seen");
+                    }
+                };
+
+                panelChat.Click += delegate
+                {
+                    if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                    {
+                        contactItem.Unread = false; 
+                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        Console.WriteLine("you seen");
                     }
                 };
             }
@@ -265,6 +318,30 @@ namespace A_Friend
             }
 
             loaded = true;
+
+            panelLoading.SendToBack();
+            formLoading.StopSpinning();
+            formLoading.Dispose();
+            panelLoading.Dispose();
+
+            if (panelChats.Count > 0)
+            {
+                ShowPanelChat(orderOfContactItems.Values.Last());
+                panelChats[orderOfContactItems.Values.Last()].ScrollToBottom();
+                this.currentContactItem = contactItems[orderOfContactItems.Values.Last()];
+                this.currentContactItem.Clicked = true;
+            }
+            else
+            {
+                panelRight.Controls.Clear();
+                customTextBoxSearch.Visible = false;
+                formGetStarted.Dock = DockStyle.Fill;
+                formGetStarted.TopLevel = false;
+                formGetStarted.FormBorderStyle = FormBorderStyle.None;
+                panelGetStarted.Controls.Add(formGetStarted);
+                panelGetStarted.BringToFront();
+                formGetStarted.Visible = true;
+            }
         }
 
         private string GetCurrentPanelChatId()
@@ -389,10 +466,10 @@ namespace A_Friend
 
         private void SettingButton_Click(object sender, EventArgs e)
         {
-            FormSettings frm = new FormSettings();
-            frm.StartPosition = FormStartPosition.CenterScreen;
+            //FormSettings frm = new FormSettings();
+            formSettings.StartPosition = FormStartPosition.CenterScreen;
             this.Hide();
-            frm.ShowDialog();
+            formSettings.ShowDialog();
             this.Show();
         }
         //int tempadd = 0;
@@ -508,6 +585,16 @@ namespace A_Friend
                                 panelContact2.Controls.Add(i.Value);
                             }
                         }
+                        if (panelContact2.Controls.Count == 0)
+                        {
+                            if (panelContact.Controls.Contains(pictureBoxNotFound))
+                            {
+                                return;
+                            }
+                            panelContact2.Controls.Add(pictureBoxNotFound);
+                            pictureBoxNotFound.BringToFront();
+                            Console.WriteLine("not found");
+                        }
                         panelContact2.BringToFront();
                         panelContact.Controls.Clear();
                     }
@@ -520,6 +607,18 @@ namespace A_Friend
                                 panelContact.Controls.Add(i.Value);
                             }
                         }
+                        if (panelContact.Controls.Count == 0)
+                        {
+                            if (panelContact2.Controls.Contains(pictureBoxNotFound))
+                            {
+                                return;
+                            }
+                            panelContact.Controls.Add(pictureBoxNotFound);
+                            pictureBoxNotFound.BringToFront();
+                            Console.WriteLine("not found2");
+                        }
+                        //panelContact2.BringToFront();
+                        //panelContact.Controls.Clear();
                         panelContact.BringToFront();
                         panelContact2.Controls.Clear();
                     }
@@ -635,14 +734,14 @@ namespace A_Friend
         {
             if (!panelChats.ContainsKey(id) || !contactItems.ContainsKey(id))
                 return;
-
+            this.ActiveControl = null;
             if (panelContact.Controls.Contains(contactItems[id]))
             {
-                panelContact.Controls.Remove(contactItems[id]); 
+                panelContact.Controls.Remove(contactItems[id]);
             }
-            else if (panelContact2.Controls.Contains(contactItems[id]))
+            if (panelContact2.Controls.Contains(contactItems[id]))
             {
-                panelContact2.Controls.Remove(contactItems[id]); 
+                panelContact2.Controls.Remove(contactItems[id]);
             }
 
             if (panelRight.Controls.Contains(panelChats[id]))

@@ -18,8 +18,9 @@ namespace A_Friend.CustomControls
         string id;
         Color mouseOnColor = Color.FromArgb(65, 165, 238);
         Color stateColor = Color.Gainsboro;
-        int borderSize = 40;
-        bool isMouseOn = false;
+        int borderSize = 20;
+        bool mouseOn = false;
+        bool clicked = false;
         bool unread = false;
 
         public ContactItem()
@@ -37,6 +38,19 @@ namespace A_Friend.CustomControls
             this.FriendName = account.name;
             this.id = account.id;
             State = account.state;
+        }
+
+        public bool Clicked
+        {
+            get
+            {
+                return clicked;
+            }
+            set
+            {
+                clicked = value;
+                this.Invalidate();
+            }
         }
 
         public Color MouseOnColor { get => mouseOnColor; set => mouseOnColor = value; }
@@ -66,7 +80,7 @@ namespace A_Friend.CustomControls
                 }
                 else
                 {
-                    labelLastMessage.ForeColor = Color.DarkGray;
+                    labelLastMessage.ForeColor = Color.DimGray;
                 }
             }
         }
@@ -79,28 +93,30 @@ namespace A_Friend.CustomControls
             }
             set
             {
-                if (value.Length <= 18)
-                {
-                    labelName.Text = value;
-                }
-                else
-                {
-                    labelName.Text = value.Substring(0, 15) + "...";
-                }
+                labelName.Text = value;
+                //if (value.Length <= 18)
+                //{
+                //    labelName.Text = value;
+                //}
+                //else
+                //{
+                //    labelName.Text = value.Substring(0, 15) + "...";
+                //}
             }
         }
         public string LastMessage
         {
             set
             {
-                if (value.Trim().Length <= 23)
-                {
-                    labelLastMessage.Text = value.Trim().Replace('\n', '-');
-                }
-                else
-                {
-                    labelLastMessage.Text = value.Trim().Replace('\n', '-').Substring(0,20) + "...";
-                }
+                labelLastMessage.Text = value.Trim().Replace('\n', '-');
+                //if (value.Trim().Length <= 23)
+                //{
+                //    labelLastMessage.Text = value.Trim().Replace('\n', '-');
+                //}
+                //else
+                //{
+                //    labelLastMessage.Text = value.Trim().Replace('\n', '-').Substring(0,20) + "...";
+                //}
             }
         }
 
@@ -166,34 +182,34 @@ namespace A_Friend.CustomControls
 
         private void ContactItem_Paint(object sender, PaintEventArgs e)
         {
-            if (isMouseOn)
+            if(clicked)
             {
-                using (var path = GetFigurePath(this.ClientRectangle, borderSize))
-                using (Brush brush = new SolidBrush(mouseOnColor))
+                var rect = new Rectangle(10, 2, this.Width - 20, this.Height - 4);
+                using (var path = GetFigurePath(rect, borderSize))
+                using (var brush = new SolidBrush(Color.FromArgb(30, Color.Gray)))
                 {
-                    this.Region = new Region(path);
                     e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-                    labelLastMessage.BackColor = mouseOnColor;
-                    labelName.BackColor = mouseOnColor;
                     e.Graphics.FillPath(brush, path);
                 }
             }
-            else
+            else if (mouseOn)
             {
-                this.Region = new Region(this.ClientRectangle); 
-
-                labelLastMessage.BackColor = this.BackColor;
-                labelName.BackColor= this.BackColor;    
-                e.Graphics.DrawLine(new Pen(Color.SkyBlue, 2), 30, this.Height - 2, this.Width - 30, this.Height - 2);
+                var rect = new Rectangle(10, 2, this.Width - 20, this.Height - 4);
+                using (var path = GetFigurePath(rect, borderSize))
+                using (var brush = new SolidBrush(Color.FromArgb(20, Color.Gray)))
+                {
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    e.Graphics.FillPath(brush, path);
+                }
             }
 
-            using(Pen pen = new Pen(stateColor, 2))
-            using(var path = GetFigurePath(new Rectangle(friendPicture.Left - 1, friendPicture.Top - 1, friendPicture.Width + 2, friendPicture.Width + 2), friendPicture.Width + 2))
+            using (Pen pen = new Pen(stateColor, 2))
+            using (var path = GetFigurePath(new Rectangle(friendPicture.Left - 1, friendPicture.Top - 1, friendPicture.Width + 2, friendPicture.Width + 2), friendPicture.Width + 2))
             {
-                e.Graphics.SmoothingMode= SmoothingMode.AntiAlias;
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 e.Graphics.DrawPath(pen, path);
             }
+            //base.OnPaint(e);
         }
 
         private void labelName_Resize(object sender, EventArgs e)
@@ -221,30 +237,45 @@ namespace A_Friend.CustomControls
             this.Invalidate();
         }
 
-        //protected override void OnMouseLeave(EventArgs e)
-        //{
+        private void ContactItem_Click(object sender, EventArgs e)
+        {
+            if (this.Parent.Parent.Parent is FormApplication)
+            {
+                FormApplication parent = this.Parent.Parent.Parent as FormApplication;
+                if (parent.currentContactItem != null && parent.currentContactItem != this)
+                {
+                    parent.currentContactItem.Clicked = false;
+                }
+                parent.currentContactItem = this;
+                Clicked = true;
+            } 
+        }
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            if (ClientRectangle.Contains(PointToClient(Control.MousePosition)))
+            {
+                base.OnMouseEnter(e);
+            }
+        }
 
-        //    if (this.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
-        //        return;
-        //    else
-        //    {
-        //        base.OnMouseLeave(e);
-        //        isMouseOn = false;
-        //        this.Invalidate();
-        //    }
-        //}
-        //protected override void OnMouseEnter(EventArgs e)
-        //{
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            if (!ClientRectangle.Contains(PointToClient(Control.MousePosition)))
+            {
+                base.OnMouseLeave(e);
+            }
+        }
 
-        //    if (!this.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
-        //        return;
-        //    else
-        //    {
-        //        base.OnMouseLeave(e);
-        //        if (!isMouseOn)
-        //            this.Invalidate();
-        //        isMouseOn = true;
-        //    }
-        //}
+        private void ContactItem_MouseEnter(object sender, EventArgs e)
+        {
+            mouseOn = true;
+            this.Invalidate();
+        }
+
+        private void ContactItem_Leave(object sender, EventArgs e)
+        {
+            mouseOn = false;
+            this.Invalidate();
+        }
     }
 }

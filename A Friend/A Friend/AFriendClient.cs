@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using Jil;
+using System.IO;
 
 namespace A_Friend
 {
@@ -23,14 +24,12 @@ namespace A_Friend
         private static int byte_expected = 0;
 
         internal static string temp_name;
+        internal static string temp_image;
 
         public static Socket client;
         public static Account user;
 
         private static FormApplication UIForm;
-
-        Random rand = new Random();
-
 
         internal static void change_name()
         {
@@ -204,11 +203,33 @@ namespace A_Friend
             }
         }
 
+        internal static byte[] Combine(params byte[][] arrays)
+        {
+            byte[] rv = new byte[arrays.Sum(a => a.Length)];
+            int offset = 0;
+            foreach (byte[] array in arrays)
+            {
+                System.Buffer.BlockCopy(array, 0, rv, offset, array.Length);
+                offset += array.Length;
+            }
+            return rv;
+        }
+
         internal static string data_with_byte(string data)
         {
             if (!string.IsNullOrEmpty(data))
             {
                 string databyte = Encoding.Unicode.GetByteCount(data).ToString();
+                return databyte.Length.ToString().PadLeft(2, '0') + databyte + data;
+            }
+            return "";
+        }
+
+        internal static string data_with_ASCII_byte(string data)
+        {
+            if (!string.IsNullOrEmpty(data))
+            {
+                string databyte = Encoding.ASCII.GetByteCount(data).ToString();
                 return databyte.Length.ToString().PadLeft(2, '0') + databyte + data;
             }
             return "";
@@ -227,6 +248,29 @@ namespace A_Friend
                         if (Int32.TryParse(data, out bytesize))
                         {
                             if (Socket_receive(bytesize, out data))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            data = "";
+            return false;
+        }
+
+        private static bool receive_ASCII_data_automatically(out string data)
+        {
+            if (Socket_receive_ASCII(2, out data))
+            {
+                int bytesize;
+                if (Int32.TryParse(data, out bytesize))
+                {
+                    if (Socket_receive_ASCII(bytesize, out data))
+                    {
+                        if (Int32.TryParse(data, out bytesize))
+                        {
+                            if (Socket_receive_ASCII(bytesize, out data))
                             {
                                 return true;
                             }
@@ -266,6 +310,55 @@ namespace A_Friend
             }
         }
 
+        private static bool Socket_receive_ASCII(int byte_expected, out string data_string)
+        {
+            int total_byte_received = 0;
+            byte[] data = new byte[byte_expected];
+            int received_byte;
+            Console.WriteLine("Expected: {0}", byte_expected);
+            do
+            {
+                received_byte = client.Receive(data, total_byte_received, byte_expected, SocketFlags.None);
+                if (received_byte > 0)
+                {
+                    total_byte_received += received_byte;
+                    byte_expected -= received_byte;
+                }
+                else break;
+            } while (byte_expected > 0 && received_byte > 0);
+            Console.WriteLine("Received: {0}", total_byte_received);
+            if (byte_expected == 0) // all data received
+            {
+                data_string = Encoding.ASCII.GetString(data, 0, total_byte_received);
+                return true;
+            }
+            else // data corrupted
+            {
+                data_string = "";
+                return false;
+            }
+        }
+
+        public static string ImageToString(string path)
+        {
+            if (path == null)
+                throw new ArgumentNullException("path");
+            Image im = Image.FromFile(path);
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
+        }
+        public static Image StringToImage(string imageString)
+        {
+
+            if (imageString == null)
+                throw new ArgumentNullException("imageString");
+            byte[] array = Convert.FromBase64String(imageString);
+            Image image = Image.FromStream(new MemoryStream(array));
+            return image;
+        }
+
         private static void Receive_from_id(Socket self)
         {
             try
@@ -275,7 +368,30 @@ namespace A_Friend
                 {
                     instruction = data;
                     Console.WriteLine(data);
-                    if (instruction == "6475") 
+                    if (instruction == "0708")
+                    {
+                        string panelid;
+                        if (Socket_receive(38, out panelid))
+                        {
+                            string boolstr;
+                            if (Socket_receive(2, out boolstr))
+                            {
+                                if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
+                                {
+                                    Program.mainform.contactItems[panelid].Unread = false;
+                                } 
+                                else if (boolstr == "0" && !Program.mainform.panelChats[panelid].IsLastMessageFromYou())
+                                {
+                                    Program.mainform.contactItems[panelid].Unread = true;
+                                }
+                                else
+                                {
+                                    Program.mainform.contactItems[panelid].Unread = false;
+                                }
+                            }
+                        }
+                    }
+                    else if (instruction == "6475")
                     {
                         string panelid;
                         if (Socket_receive(38, out panelid))
@@ -288,6 +404,7 @@ namespace A_Friend
                                 List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
                                 UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
                                 Console.WriteLine("Message Loaded");
+                                self.Send(Encoding.Unicode.GetBytes("0708" + panelid));
                             }
                         }
                     }
@@ -341,7 +458,7 @@ namespace A_Friend
                             Console.WriteLine("I even reached here");
                             if (Byte.TryParse(found[found.Count - 1], out state))
                             {
-                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) }); 
+                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
                                 UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
                                 Console.WriteLine("New Contact Added");
                                 if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
@@ -359,12 +476,21 @@ namespace A_Friend
                                 Console.WriteLine("Data Corrupted");
                                 System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
                             }
-                        }          
+                        }
+                    }
+                    else if (instruction == "0601")
+                    {
+                        string img_string = "";
+                        if (receive_ASCII_data_automatically(out img_string))
+                        {
+                            user.avatar = StringToImage(img_string);
+                            Console.WriteLine("Image received");
+                        }
                     }
                     else if (instruction == "2609")
                     {
                         Console.WriteLine("No such account exists");
-                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red }); 
+                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
                         first_message = null;
                         first_message_sender = String.Empty;
                     }
@@ -396,10 +522,13 @@ namespace A_Friend
                     else if (instruction == "4269")
                     {
                         Console.WriteLine("Password changed successfully!");
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!", Color.FromArgb(143, 228, 185) });
                     }
                     else if (instruction == "9624")
                     {
                         Console.WriteLine("Old Password is not correct!!");
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!", Color.FromArgb(213, 54, 41) });
+
                     }
                     else if (instruction == "2411")
                     {
@@ -409,9 +538,15 @@ namespace A_Friend
                     {
                         Console.WriteLine("Name changed!");
                         change_name();
+                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
                         //MessageBox.Show("What a beautiful name!");
                         //if name not change then it is your internet connection problem
                     }
+                    //else if(instruction == "0601")
+                    //{
+                    //    Console.WriteLine("Name changed!");
+                    //    StringToImage();
+                    //}
                 }
             }
             catch (Exception e)

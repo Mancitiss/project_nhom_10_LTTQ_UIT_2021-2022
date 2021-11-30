@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace A_Friend
 {
@@ -12,14 +13,18 @@ namespace A_Friend
         public string name;
         public string id;
         public byte state;
+        public Image avatar;
 
-        public Account() { }
+        public Account() 
+        {
+
+        }
         public Account(string username, string name, string id, byte state) 
         { 
             this.username = username;
             this.name = name;
             this.id = id;
-            this.state = state; 
+            this.state = state;
         }
     }
 }

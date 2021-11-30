@@ -112,19 +112,6 @@ namespace A_Friend.CustomControls
             {
                 BackgroundColor = Color.FromArgb(100, 100, 165);
             }
-
-            this.MouseEnter += delegate { ShowButtons(); };
-            foreach (Control control in this.Controls)
-            {
-                control.MouseEnter += delegate { ShowButtons(); };
-            }
-
-            foreach (Control control in panelTop.Controls)
-            {
-                control.MouseEnter += delegate { ShowButtons(); };
-            }
-
-            labelAuthor.MouseEnter += delegate { ShowButtons(); };
         }
 
         public double ID
@@ -300,17 +287,44 @@ namespace A_Friend.CustomControls
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            if (ClientRectangle.Contains(PointToClient(Control.MousePosition)))
+            if (!ClientRectangle.Contains(PointToClient(Control.MousePosition)))
             {
-                return;
+                base.OnMouseLeave(e);
             }
-            base.OnMouseLeave(e);
-            HideButtons();
         }
 
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            if (ClientRectangle.Contains(PointToClient(Control.MousePosition)))
+            {
+                base.OnMouseEnter(e);
+            }
+        }
+        
         private void ChatItem_Load(object sender, EventArgs e)
         {
             ResizeBubbles();
+        }
+
+        private void ChatItem_MouseEnter(object sender, EventArgs e)
+        {
+            if (ClientRectangle.Contains(PointToClient(Control.MousePosition)))
+            {
+                ShowButtons();
+            }
+        }
+
+        private void ChatItem_MouseLeave(object sender, EventArgs e)
+        {
+            if (!ClientRectangle.Contains(PointToClient(Control.MousePosition)))
+            {
+                HideButtons();
+            }
+        }
+
+        private void labelBody_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
         }
     }
 }
