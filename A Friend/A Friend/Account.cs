@@ -15,13 +15,16 @@ namespace A_Friend
         public byte state;
         public Image avatar;
 
-        public Account() { }
+        public Account() 
+        {
+
+        }
         public Account(string username, string name, string id, byte state) 
         { 
             this.username = username;
             this.name = name;
             this.id = id;
-            this.state = state; 
+            this.state = state;
         }
     }
 }

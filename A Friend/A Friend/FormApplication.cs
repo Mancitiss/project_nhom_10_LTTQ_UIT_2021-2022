@@ -26,7 +26,7 @@ namespace A_Friend
         public Dictionary<string, CustomControls.PanelChat> panelChats = new Dictionary<string, CustomControls.PanelChat>();
         public static string currentID;
 
-        Dictionary<string, CustomControls.ContactItem> contactItems = new Dictionary<string, CustomControls.ContactItem>();
+        internal Dictionary<string, CustomControls.ContactItem> contactItems = new Dictionary<string, CustomControls.ContactItem>();
         SortedDictionary<int, string> orderOfContactItems = new SortedDictionary<int, string>();
 
         public string currentUsername;

@@ -18,7 +18,7 @@ namespace A_Friend
         public delegate void ChangeSettingsWarning(string text, Color color);
         public ChangeSettingsWarning changeSettingsWarning;
 
-
+  
         public FormSettings()
         {
             InitializeComponent();

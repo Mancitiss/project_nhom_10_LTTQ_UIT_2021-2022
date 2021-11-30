@@ -427,8 +427,8 @@ namespace AFriendServer
             try
             {
                 string data;
-                if(Socket_receive(s, 8, out data)) 
-                { 
+                if (Socket_receive(s, 8, out data))
+                {
                     Console.WriteLine("Work: " + data);
                     if (data != null && data != "")
                     {
@@ -470,7 +470,7 @@ namespace AFriendServer
                                             }
                                             Console.WriteLine(num);
                                             int i = 0;
-                                            List<MessageObject>messageObjects = new List<MessageObject>();
+                                            List<MessageObject> messageObjects = new List<MessageObject>();
                                             while (num > 0 && i < 50)
                                             {
                                                 command = new SqlCommand("select top 1 * from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql);
@@ -491,7 +491,7 @@ namespace AFriendServer
                                             }
                                             string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
                                             string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                            s.Send(Encoding.Unicode.GetBytes("6475"+receiver_id+datasendbyte.Length.ToString().PadLeft(2,'0')+datasendbyte+datasend));
+                                            s.Send(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                             //Console.WriteLine("Old messages sent");
                                             if (loaded.ContainsKey(item.Key))
                                             {
@@ -511,7 +511,7 @@ namespace AFriendServer
                                                 }
                                             }
                                         }
-                                        else if (num>1)
+                                        else if (num > 1)
                                         {
                                             int i = 0;
                                             SqlCommand command;
@@ -549,6 +549,44 @@ namespace AFriendServer
                             Socket_receive(s, bytesize, out data);
                             Int32.TryParse(data, out int temp);
                             byte_expected[item.Key] = temp;
+                        }
+                        else if (instruction == "0708")
+                        {
+                            string receiver_id;
+                            if (Socket_receive(s, 38, out receiver_id))
+                            {
+                                string id1, id2;
+                                if (item.Key.CompareTo(receiver_id) <= 0)
+                                {
+                                    id1 = item.Key;
+                                    id2 = receiver_id;
+                                }
+                                else
+                                {
+                                    id1 = receiver_id;
+                                    id2 = item.Key;
+                                }
+                                string commandtext = "select top 1 seen from seen where id1=@id1 and id2=@id2";
+                                SqlCommand command = new SqlCommand(commandtext, sql);
+                                command.Parameters.AddWithValue("@id1", Int64.Parse(id1));
+                                command.Parameters.AddWithValue("@id2", Int64.Parse(id2));
+                                bool result = false;
+                                using (SqlDataReader reader = command.ExecuteReader())
+                                {
+                                    if (reader.Read())
+                                    {
+                                        result = (bool)reader[0];
+                                    }
+                                }
+                                if (result)
+                                {
+                                    s.Send(Encoding.Unicode.GetBytes("0708" + receiver_id + "1"));
+                                }
+                                else
+                                {
+                                    s.Send(Encoding.Unicode.GetBytes("0708" + receiver_id + "0"));
+                                }
+                            }
                         }
                         else if (instruction == "2004") // offline (quit)
                         {
@@ -640,7 +678,8 @@ namespace AFriendServer
                                                             s.Send(Encoding.Unicode.GetBytes("4269"));
                                                         }
                                                     }
-                                                } else
+                                                }
+                                                else
                                                 {
                                                     s.Send(Encoding.Unicode.GetBytes("9624"));
                                                 }
@@ -678,11 +717,13 @@ namespace AFriendServer
                         Console.WriteLine("Received strange signal, socket closed (2)");
                     }
                     Console.WriteLine("Work finished");
-                } else
+                }
+                else
                 {
                     shutdown(item);
                     Console.WriteLine("Received strange signal, socket closed (3)");
                 }
+
             }
             catch (Exception e)
             {

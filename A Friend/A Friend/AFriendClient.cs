@@ -368,7 +368,26 @@ namespace A_Friend
                 {
                     instruction = data;
                     Console.WriteLine(data);
-                    if (instruction == "6475") 
+                    if (instruction == "0708")
+                    {
+                        string panelid;
+                        if (Socket_receive(38, out panelid))
+                        {
+                            string boolstr;
+                            if (Socket_receive(2, out boolstr))
+                            {
+                                if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
+                                {
+                                    Program.mainform.contactItems[panelid].Unread = true;
+                                } 
+                                else
+                                {
+                                    Program.mainform.contactItems[panelid].Unread = true;
+                                }
+                            }
+                        }
+                    }
+                    else if (instruction == "6475")
                     {
                         string panelid;
                         if (Socket_receive(38, out panelid))
@@ -381,6 +400,7 @@ namespace A_Friend
                                 List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
                                 UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
                                 Console.WriteLine("Message Loaded");
+                                self.Send(Encoding.Unicode.GetBytes("0708" + panelid));
                             }
                         }
                     }
@@ -434,7 +454,7 @@ namespace A_Friend
                             Console.WriteLine("I even reached here");
                             if (Byte.TryParse(found[found.Count - 1], out state))
                             {
-                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) }); 
+                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
                                 UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
                                 Console.WriteLine("New Contact Added");
                                 if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
@@ -452,7 +472,7 @@ namespace A_Friend
                                 Console.WriteLine("Data Corrupted");
                                 System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
                             }
-                        }          
+                        }
                     }
                     else if (instruction == "0601")
                     {
@@ -466,7 +486,7 @@ namespace A_Friend
                     else if (instruction == "2609")
                     {
                         Console.WriteLine("No such account exists");
-                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red }); 
+                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
                         first_message = null;
                         first_message_sender = String.Empty;
                     }
