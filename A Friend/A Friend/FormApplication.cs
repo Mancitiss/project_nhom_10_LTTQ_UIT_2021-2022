@@ -30,6 +30,7 @@ namespace A_Friend
         SortedDictionary<int, string> orderOfContactItems = new SortedDictionary<int, string>();
 
         public string currentUsername;
+        public CustomControls.ContactItem currentContactItem; 
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
@@ -246,7 +247,8 @@ namespace A_Friend
                     {
                         check = false;
                         customTextBoxSearch.Texts = "";
-                        customTextBoxSearch.SetPlaceHolder();
+                        this.ActiveControl = contactItem;
+                        //customTextBoxSearch.SetPlaceHolder();
                         panelContact2.Controls.Clear();
                         panelContact.Controls.Clear();
                         foreach(KeyValuePair<int, string> i in orderOfContactItems)
@@ -305,7 +307,11 @@ namespace A_Friend
             panelLoading.Dispose();
 
             if (panelChats.Count > 0)
+            {
                 ShowPanelChat(orderOfContactItems.Values.Last());
+                this.currentContactItem = contactItems[orderOfContactItems.Values.Last()];
+                this.currentContactItem.Clicked = true;
+            }
             else
             {
                 panelRight.Controls.Clear();
@@ -709,14 +715,14 @@ namespace A_Friend
         {
             if (!panelChats.ContainsKey(id) || !contactItems.ContainsKey(id))
                 return;
-
+            this.ActiveControl = null;
             if (panelContact.Controls.Contains(contactItems[id]))
             {
-                panelContact.Controls.Remove(contactItems[id]); 
+                panelContact.Controls.Remove(contactItems[id]);
             }
-            else if (panelContact2.Controls.Contains(contactItems[id]))
+            if (panelContact2.Controls.Contains(contactItems[id]))
             {
-                panelContact2.Controls.Remove(contactItems[id]); 
+                panelContact2.Controls.Remove(contactItems[id]);
             }
 
             if (panelRight.Controls.Contains(panelChats[id]))
