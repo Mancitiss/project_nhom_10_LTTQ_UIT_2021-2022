@@ -219,16 +219,16 @@ namespace A_Friend
                     }
 
                     //this stuff to display unread message with different color on ContactItem
-                    //if (GetCurrentPanelChatId() != panelChat.ID)
+                    //if (loaded)
                     //{
                     //    if (!panelChat.IsLastMessageFromYou())
                     //    {
                     //        contactItem.Unread = true;
                     //    }
-                    //}
-                    //else
-                    //{
-                    //    contactItem.Unread = false;
+                    //    else
+                    //    {
+                    //        contactItem.Unread = false;
+                    //    }
                     //}
                 };
 
@@ -240,7 +240,6 @@ namespace A_Friend
                 contactItem.Click += delegate
                 {
                     ShowPanelChat(account.id);
-                    contactItem.Unread = false;
                     panelChat.ScrollToBottom();
 
                     if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
@@ -257,6 +256,23 @@ namespace A_Friend
                         }
                         panelContact.BringToFront();
                         check = true;
+                    }
+
+                    if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                    {
+                        contactItem.Unread = false; 
+                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        Console.WriteLine("you seen");
+                    }
+                };
+
+                panelChat.Click += delegate
+                {
+                    if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                    {
+                        contactItem.Unread = false; 
+                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        Console.WriteLine("you seen");
                     }
                 };
             }
@@ -309,6 +325,7 @@ namespace A_Friend
             if (panelChats.Count > 0)
             {
                 ShowPanelChat(orderOfContactItems.Values.Last());
+                panelChats[orderOfContactItems.Values.Last()].ScrollToBottom();
                 this.currentContactItem = contactItems[orderOfContactItems.Values.Last()];
                 this.currentContactItem.Clicked = true;
             }

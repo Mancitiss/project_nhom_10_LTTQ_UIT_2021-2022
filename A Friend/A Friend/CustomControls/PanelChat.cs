@@ -65,6 +65,7 @@ namespace A_Friend.CustomControls
             Console.WriteLine(this.id);
             textboxWriting.dynamicMode = true;
             textboxWriting.SetMaximumTextLenght(2021);
+            panel_Chat.Click += panelTopRight_Click;
         }
 
         private void panel_Chat_MouseWheel(object sender, EventArgs e)
@@ -228,6 +229,7 @@ namespace A_Friend.CustomControls
             //chatItem.ShowDetail = true;
             //CurrentChatItem = chatItem;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            chatItem.Click += panelTopRight_Click;
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
         }
@@ -270,6 +272,7 @@ namespace A_Friend.CustomControls
             chatItem.Dock = DockStyle.Top;
             chatItem.BackColor = panel_Chat.BackColor;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            chatItem.Click += panelTopRight_Click;
             //if (chatItems.Count == 0)
             //{
             //    chatItem.ShowDetail = true;
@@ -390,7 +393,7 @@ namespace A_Friend.CustomControls
         {
             if (panel_Chat.Controls.Count == 0)
                 return true;
-            ChatItem message = panel_Chat.Controls[panel_Chat.Controls.Count - 1] as ChatItem;
+            ChatItem message = chatItems.Last();
             if (message.IsMyMessage())
                 return true;
             return false;
@@ -450,6 +453,7 @@ namespace A_Friend.CustomControls
         private void textboxWriting__TextChanged(object sender, EventArgs e)
         {
             textboxWriting.Multiline = true;
+            this.OnClick(e);
         }
 
         public void ScrollToBottom()
@@ -471,6 +475,11 @@ namespace A_Friend.CustomControls
                     (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
                 }
             }
+        }
+
+        private void panelTopRight_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
         }
     }
 }

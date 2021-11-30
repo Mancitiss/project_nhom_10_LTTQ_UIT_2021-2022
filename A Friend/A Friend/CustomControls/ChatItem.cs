@@ -112,19 +112,6 @@ namespace A_Friend.CustomControls
             {
                 BackgroundColor = Color.FromArgb(100, 100, 165);
             }
-
-            //this.MouseEnter += delegate { ShowButtons(); };
-            //foreach (Control control in this.Controls)
-            //{
-            //    control.MouseEnter += delegate { ShowButtons(); };
-            //}
-
-            //foreach (Control control in panelTop.Controls)
-            //{
-            //    control.MouseEnter += delegate { ShowButtons(); };
-            //}
-
-            //labelAuthor.MouseEnter += delegate { ShowButtons(); };
         }
 
         public double ID
@@ -333,6 +320,11 @@ namespace A_Friend.CustomControls
             {
                 HideButtons();
             }
+        }
+
+        private void labelBody_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
         }
     }
 }

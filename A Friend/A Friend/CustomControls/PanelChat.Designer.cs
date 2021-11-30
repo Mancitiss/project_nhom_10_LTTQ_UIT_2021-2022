@@ -59,6 +59,7 @@ namespace A_Friend.CustomControls
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Size = new System.Drawing.Size(912, 60);
             this.panelTopRight.TabIndex = 1;
+            this.panelTopRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
             this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
             // 
@@ -72,6 +73,7 @@ namespace A_Friend.CustomControls
             this.labelFriendName.Size = new System.Drawing.Size(80, 18);
             this.labelFriendName.TabIndex = 6;
             this.labelFriendName.Text = "Username";
+            this.labelFriendName.Click += new System.EventHandler(this.panelTopRight_Click);
             // 
             // label3
             // 
@@ -96,6 +98,7 @@ namespace A_Friend.CustomControls
             this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.friendPicture.TabIndex = 1;
             this.friendPicture.TabStop = false;
+            this.friendPicture.Click += new System.EventHandler(this.panelTopRight_Click);
             // 
             // buttonDelete
             // 
@@ -147,6 +150,7 @@ namespace A_Friend.CustomControls
             this.panelBottomRight.Name = "panelBottomRight";
             this.panelBottomRight.Size = new System.Drawing.Size(912, 60);
             this.panelBottomRight.TabIndex = 3;
+            this.panelBottomRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelBottomRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomRight_Paint);
             this.panelBottomRight.Resize += new System.EventHandler(this.panelBottomRight_Resize);
             // 
@@ -173,6 +177,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting.UnderlinedStyle = false;
             this.textboxWriting._TextChanged += new System.EventHandler(this.textboxWriting__TextChanged);
             this.textboxWriting.SizeChanged += new System.EventHandler(this.textboxWriting_SizeChanged);
+            this.textboxWriting.Click += new System.EventHandler(this.panelTopRight_Click);
             this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
             // 
             // buttonSend

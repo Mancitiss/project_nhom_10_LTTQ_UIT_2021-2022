@@ -378,7 +378,7 @@ namespace A_Friend
                             {
                                 if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
                                 {
-                                    Program.mainform.contactItems[panelid].Unread = true;
+                                    Program.mainform.contactItems[panelid].Unread = false;
                                 } 
                                 else
                                 {
