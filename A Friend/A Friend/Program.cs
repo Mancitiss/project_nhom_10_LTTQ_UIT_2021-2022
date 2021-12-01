@@ -18,14 +18,14 @@ namespace A_Friend
         {
             try
             {
-                /*
+                
                 bool newv = false;
                 try
                 {
                     string data;
                     using (WebClient wc = new WebClient())
                     {
-                        data = wc.DownloadString("http://mancitiss.ddns.net:8000");
+                        data = wc.DownloadString("http://mancitiss.ddns.net:8000/index.htm");
                     }
                     string[] newestversion = data.Split('.');
                     int[] newestversionint = new int[newestversion.Count()];
@@ -42,6 +42,11 @@ namespace A_Friend
                             newv = true;
                             break;
                         }
+                        else if (newestversionint[i] == thisversion[i])
+                        {
+                            continue;
+                        }
+                        else break;
                     }
                 }
                 catch (Exception e)
@@ -50,9 +55,9 @@ namespace A_Friend
                 }
                 if (newv)
                 {
-                    string url = "http://mancitiss.ddns.net:8000/A%20Friend/AFriendSetup.exe";
+                    string url = "http://mancitiss.ddns.net:8000/A%20Friend/AFriend.exe";
                     string path = Path.GetTempPath();
-                    string fileName = Path.GetRandomFileName();
+                    string fileName = "AFriend";
                     string tmpFile = Path.Combine(path, fileName);
                     string tempFile = Path.ChangeExtension(tmpFile, ".exe");
                     using (var client = new WebClient())
@@ -61,7 +66,7 @@ namespace A_Friend
                         Process.Start(tempFile, "/SP- /silent /noicons \" / dir = expand:{ autopf}\\A Friend\"");
                     }
                 }
-                else*/
+                else
                 {
                     Console.WriteLine("A Friend, version {0}.{1}.{2}.{3}", thisversion[0], thisversion[1], thisversion[2], thisversion[3]);
                     Application.EnableVisualStyles();
