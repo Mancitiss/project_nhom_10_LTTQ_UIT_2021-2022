@@ -669,11 +669,11 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        }
+                        } // delete message
                         else if (instruction == "2004") // offline (quit)
                         {
                             shutdown(item);
-                        }
+                        } // quit
                         else if (instruction == "0609") // lookup sb's info using id
                         {
                             if (Socket_receive(s, 38, out data))
@@ -695,7 +695,7 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        }
+                        } // iplookup
                         else if (instruction == "0610") // lookup sb's info using username
                         {
                             if (receive_data_automatically(s, out data))
@@ -718,8 +718,8 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        }
-                        else if (instruction == "0601")
+                        } //nameloopkpup
+                        else if (instruction == "0601") // set avatar
                         {
                             string img_string;
                             if (receive_ASCII_data_automatically(s, out img_string))
@@ -731,8 +731,8 @@ namespace AFriendServer
                                     command.ExecuteNonQuery();
                                 }
                             }
-                        }
-                        else if (instruction == "4269")
+                        } // set avatar
+                        else if (instruction == "4269") // change pass
                         {
                             string opw;
                             if (receive_data_automatically(s, out opw))
@@ -770,8 +770,8 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        }
-                        else if (instruction == "1012")
+                        } // change pass
+                        else if (instruction == "1012") // user has seen a message
                         {
                             string newname;
                             if (receive_data_automatically(s, out newname))
@@ -786,7 +786,7 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        }
+                        } // user has seen a message
                         else
                         {
                             shutdown(item);
