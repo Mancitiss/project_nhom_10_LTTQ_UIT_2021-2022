@@ -30,6 +30,9 @@ namespace A_Friend.CustomControls
 
         public delegate void LoadMessageItem(List<MessageObject> messageObjects);
         public LoadMessageItem LoadMessageDelegate;
+
+        internal delegate void RemoveMessageInvoker(long messagenumber);
+        internal RemoveMessageInvoker RemoveMessage_Invoke;
         /*
         public delegate void ButtonSend_Click(object sender, EventArgs e);
         public ButtonSend_Click ButtonSend_Click_Delegate;
@@ -40,6 +43,7 @@ namespace A_Friend.CustomControls
             InitializeComponent();
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
+            RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             this.CreateControl();
@@ -178,12 +182,20 @@ namespace A_Friend.CustomControls
             }
         }
 
-        public void RemoveMessage(double messagenumber)
+        internal void RemoveMessage_Passively(long messagenumber)
+        {
+            chatItems.Remove(messages[messagenumber]);
+            panel_Chat.Controls.Remove(messages[messagenumber]);
+            messages.Remove(messagenumber);
+        }
+
+        public void RemoveMessage(long messagenumber)
         {
             chatItems.Remove(messages[messagenumber]);
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
             // code to remove message
+            AFriendClient.client.Send(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
         //public void AddMessage(string message, bool stacktoleft)

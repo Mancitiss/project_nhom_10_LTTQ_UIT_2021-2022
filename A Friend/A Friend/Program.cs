@@ -18,7 +18,7 @@ namespace A_Friend
         {
             try
             {
-                
+                /*
                 bool newv = false;
                 try
                 {
@@ -66,7 +66,7 @@ namespace A_Friend
                         Process.Start(tempFile, "/SP- /silent /noicons \" / dir = expand:{ autopf}\\A Friend\"");
                     }
                 }
-                else
+                else*/
                 {
                     Console.WriteLine("A Friend, version {0}.{1}.{2}.{3}", thisversion[0], thisversion[1], thisversion[2], thisversion[3]);
                     Application.EnableVisualStyles();

@@ -419,6 +419,15 @@ namespace AFriendServer
             }
         }
 
+        private static string data_with_byte(string data)
+        {
+            if (!string.IsNullOrEmpty(data))
+            {
+                string databyte = Encoding.Unicode.GetByteCount(data).ToString();
+                return databyte.Length.ToString().PadLeft(2, '0') + databyte + data;
+            }
+            return "";
+        }
 
         private static void Receive_message(object si)
         {
@@ -541,7 +550,7 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        }
+                        } // load message
                         else if (instruction == "1901") // message handlings
                         {
                             Socket_receive(s, 4, out data);
@@ -549,7 +558,7 @@ namespace AFriendServer
                             Socket_receive(s, bytesize, out data);
                             Int32.TryParse(data, out int temp);
                             byte_expected[item.Key] = temp;
-                        }
+                        } // handle message
                         else if (instruction == "1234")
                         {
                             string receiver_id;
@@ -574,7 +583,8 @@ namespace AFriendServer
                                         if (boolstr == "0")
                                         {
                                             command.Parameters.AddWithValue("@bool", 0);
-                                        } else
+                                        }
+                                        else
                                         {
                                             command.Parameters.AddWithValue("@bool", 1);
                                         }
@@ -584,8 +594,8 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        }
-                        else if (instruction == "0708")
+                        } // me seen
+                        else if (instruction == "0708") // load seen
                         {
                             string receiver_id;
                             if (Socket_receive(s, 38, out receiver_id))
@@ -620,6 +630,43 @@ namespace AFriendServer
                                 else
                                 {
                                     s.Send(Encoding.Unicode.GetBytes("0708" + receiver_id + "0"));
+                                }
+                            }
+                        } // load seen
+                        else if (instruction == "2002") // delete message
+                        {
+                            string receiver_id;
+                            if (Socket_receive(s, 38, out receiver_id))
+                            {
+                                string id1, id2;
+                                if (item.Key.CompareTo(receiver_id) <= 0)
+                                {
+                                    id1 = item.Key;
+                                    id2 = receiver_id;
+                                }
+                                else
+                                {
+                                    id1 = receiver_id;
+                                    id2 = item.Key;
+                                }
+                                string messagenumberstring;
+                                if (receive_data_automatically(s, out messagenumberstring))
+                                {
+                                    long messagenumber;
+                                    if (long.TryParse(messagenumberstring, out messagenumber))
+                                    {
+                                        using (SqlCommand command = new SqlCommand("delete top (1) from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql))
+                                        {
+                                            command.Parameters.AddWithValue("@id1", id1);
+                                            command.Parameters.AddWithValue("@id2", id2);
+                                            command.Parameters.AddWithValue("messagenumber", messagenumber);
+                                            command.ExecuteNonQuery(); 
+                                        }
+                                    }
+                                    if (dictionary.ContainsKey(receiver_id))
+                                    {
+                                        dictionary[receiver_id].Send(Encoding.Unicode.GetBytes("2002"+item.Key+data_with_byte(messagenumber.ToString())));
+                                    }
                                 }
                             }
                         }

@@ -478,6 +478,21 @@ namespace A_Friend
                             }
                         }
                     }
+                    else if (instruction == "2002")
+                    {
+                        string panelid;
+                        if (Socket_receive(38, out panelid))
+                        {
+                            string messagenumber_int;
+                            if (receive_data_automatically(out messagenumber_int))
+                            {
+                                if (UIForm.panelChats.ContainsKey(panelid))
+                                {
+                                    UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].RemoveMessage_Invoke, new object[] { messagenumber_int });
+                                }
+                            }
+                        }
+                    }
                     else if (instruction == "0601")
                     {
                         string img_string = "";
