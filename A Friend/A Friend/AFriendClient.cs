@@ -368,7 +368,7 @@ namespace A_Friend
                 {
                     instruction = data;
                     Console.WriteLine(data);
-                    if (instruction == "0708")
+                    if (instruction == "0708") // me seen
                     {
                         string panelid;
                         if (Socket_receive(38, out panelid))
@@ -390,8 +390,8 @@ namespace A_Friend
                                 }
                             }
                         }
-                    }
-                    else if (instruction == "6475")
+                    } // me seen 
+                    else if (instruction == "6475") // load messages
                     {
                         string panelid;
                         if (Socket_receive(38, out panelid))
@@ -407,7 +407,7 @@ namespace A_Friend
                                 self.Send(Encoding.Unicode.GetBytes("0708" + panelid));
                             }
                         }
-                    }
+                    } // load messages
                     else if (instruction == "2211") // 2211 = this id is online
                     {
                         Console.WriteLine("This person is online");
@@ -417,7 +417,7 @@ namespace A_Friend
                             Console.WriteLine(online_id);
                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
                         }
-                    }
+                    } // this id is online
                     else if (instruction == "0404") //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
                     {
                         Console.WriteLine("This person is not online");
@@ -427,8 +427,8 @@ namespace A_Friend
                             Console.WriteLine(offline_id);
                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
                         }
-                    }
-                    else if (instruction == "1901")
+                    } // this id is offline
+                    else if (instruction == "1901") // message received
                     { // 1901 = message received
                         if (Socket_receive(4, out data))
                         {
@@ -439,8 +439,8 @@ namespace A_Friend
                                 if (Socket_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
                             }
                         }
-                    }
-                    else if (instruction == "1609")
+                    } // message received
+                    else if (instruction == "1609") // add contact
                     {
 
                         string data_found;
@@ -477,8 +477,8 @@ namespace A_Friend
                                 System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
                             }
                         }
-                    }
-                    else if (instruction == "2002")
+                    } // add contact
+                    else if (instruction == "2002") // message deleted
                     {
                         string panelid;
                         if (Socket_receive(38, out panelid))
@@ -492,8 +492,8 @@ namespace A_Friend
                                 }
                             }
                         }
-                    }
-                    else if (instruction == "0601")
+                    } // message deleted
+                    else if (instruction == "0601") // avatar received, not loaded
                     {
                         string img_string = "";
                         if (receive_ASCII_data_automatically(out img_string))
@@ -501,67 +501,62 @@ namespace A_Friend
                             user.avatar = StringToImage(img_string);
                             Console.WriteLine("Image received");
                         }
-                    }
-                    else if (instruction == "2609")
+                    } // avatar received, not loaded
+                    else if (instruction == "2609") // add contact failed
                     {
                         Console.WriteLine("No such account exists");
                         UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
                         first_message = null;
                         first_message_sender = String.Empty;
-                    }
-                    else if (instruction == "0200")
+                    } // add contact failed
+                    else if (instruction == "0200") // logged in successfully
                     { // 0200 = logged in successfully
                         user = new Account();
                         if (Socket_receive(38, out data)) user.id = data;
                         receive_data_automatically(out user.name);
                         user.state = 1;
-                    }
+                    } // successfully logged in
                     else if (instruction == "-200") // -200 = logged in failed
                     {
                         Console.WriteLine("Thong tin dang nhap bi sai");
 
-                    }
+                    } // logged in failed
                     else if (instruction == "1011") // 1011 = New account created successfully
                     {
-                        Console.WriteLine("Tao tai khoan thanh cong");
-                    }
+                        Console.WriteLine("New account created");
+                    } // New account created successfully
                     else if (instruction == "1111") // 1111 = Username exists
                     {
-                        Console.WriteLine("Ten tai khoan da ton tai");
-                    }
+                        Console.WriteLine("This username is already in use");
+                    } // username is already in use
                     else if (instruction == "2004") // 2004 = loggin from another device
                     {
                         Console.WriteLine("You are logged in from another device, you will be logged out");
                         user.state = 0;
-                    }
-                    else if (instruction == "4269")
+                    } // logged in from another device, will log out
+                    else if (instruction == "4269") // password changed successfully
                     {
                         Console.WriteLine("Password changed successfully!");
                         UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!", Color.FromArgb(143, 228, 185) });
-                    }
-                    else if (instruction == "9624")
+                    } // successfully changed password
+                    else if (instruction == "9624") // old password is incorrect
                     {
                         Console.WriteLine("Old Password is not correct!!");
                         UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!", Color.FromArgb(213, 54, 41) });
 
-                    }
-                    else if (instruction == "2411")
+                    } // password is incorrect
+                    else if (instruction == "2411") // sort contact list
                     {
                         UIForm.Invoke(UIForm.sort_contact_item_delegate);
-                    }
-                    else if (instruction == "1012")
+                    } // sort contact list
+                    else if (instruction == "1012") // name changed successfully
                     {
                         Console.WriteLine("Name changed!");
                         change_name();
                         UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
                         //MessageBox.Show("What a beautiful name!");
                         //if name not change then it is your internet connection problem
-                    }
-                    //else if(instruction == "0601")
-                    //{
-                    //    Console.WriteLine("Name changed!");
-                    //    StringToImage();
-                    //}
+                    } // successfully changed your name to a different one
                 }
             }
             catch (Exception e)
