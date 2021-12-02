@@ -478,13 +478,16 @@ namespace A_Friend.CustomControls
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("You will no longer see messages from this person until you add this person to your contacting list again, are you sure to continue?", "Warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("You are about to delete your conversation with this person, this action cannot be undone, are you sure you want to DELETE ALL YOUR MESSAGES WITH THIS PERSON?", "Warning", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
-                if (dialogResult == DialogResult.Yes)
             {
-                if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
+                dialogResult = MessageBox.Show("This action will DELETE ALL YOUR MESSAGES with THIS PERSON! Think twice! Are you serious?", "Warning", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
                 {
-                    (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
+                    if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
+                    {
+                        (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
+                    }
                 }
             }
         }
