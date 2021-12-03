@@ -225,7 +225,7 @@ namespace AFriendServer
                                         {
                                             try
                                             {
-                                                Console.WriteLine("new work created");
+                                                //Console.WriteLine("new work created");
                                                 Thread work = new Thread(new ParameterizedThreadStart(Receive_message));
                                                 work.IsBackground = true;
                                                 work.Start(item);
@@ -466,7 +466,7 @@ namespace AFriendServer
                                 }
                                 if (receive_data_automatically(s, out data))
                                 {
-                                    Console.WriteLine(data);
+                                    //Console.WriteLine(data);
                                     Int64 num;
                                     if (Int64.TryParse(data, out num))
                                     {
@@ -482,7 +482,7 @@ namespace AFriendServer
                                                     num = (Int64)reader["count"];
                                                 }
                                             }
-                                            Console.WriteLine(num);
+                                            //Console.WriteLine(num);
                                             int i = 0;
                                             List<MessageObject> messageObjects = new List<MessageObject>();
                                             while (num > 0 && i < 50)
@@ -715,7 +715,7 @@ namespace AFriendServer
                                         string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
                                         string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                         s.Send(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                                        Console.WriteLine("Info sent");
+                                        //Console.WriteLine("Info sent");
                                     }
                                     else
                                     {
@@ -856,13 +856,13 @@ namespace AFriendServer
             {
                 command.Parameters.AddWithValue("@id1", id1);
                 command.Parameters.AddWithValue("@id2", id2);
-                Console.WriteLine(command.ExecuteNonQuery());
+                command.ExecuteNonQuery();
             }
             using (SqlCommand command = new SqlCommand("delete from seen where id1=@id1 and id2=@id2", sql))
             {
                 command.Parameters.AddWithValue("@id1", id1);
                 command.Parameters.AddWithValue("@id2", id2);
-                Console.WriteLine(command.ExecuteNonQuery());
+                command.ExecuteNonQuery();
             }
         }
 
