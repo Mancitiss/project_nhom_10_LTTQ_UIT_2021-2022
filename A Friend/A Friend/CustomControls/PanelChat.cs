@@ -486,6 +486,7 @@ namespace A_Friend.CustomControls
                 {
                     if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
                     {
+                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("5859" + this.ID));
                         (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
                     }
                 }

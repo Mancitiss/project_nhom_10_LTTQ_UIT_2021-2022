@@ -165,6 +165,11 @@ namespace AFriendServer
                     catch (Exception e)
                     {
                         Console.WriteLine(e.ToString());
+                        string se = e.ToString();
+                        if (se.Contains("open and available Connection"))
+                        {
+                            sql.Open();
+                        }
                     }
                     //save to database end
                 }
@@ -787,6 +792,33 @@ namespace AFriendServer
                                 }
                             }
                         } // user has changed their name
+                        else if (instruction == "5859") // delete conversation
+                        {
+                            string receiver_id;
+                            if (Socket_receive(s, 38, out receiver_id))
+                            {
+                                string id1, id2;
+                                if (item.Key.CompareTo(receiver_id) <= 0)
+                                {
+                                    id1 = item.Key;
+                                    id2 = receiver_id;
+                                }
+                                else
+                                {
+                                    id1 = receiver_id;
+                                    id2 = item.Key;
+                                }
+                                using (SqlCommand command = new SqlCommand("delete top (1) from friend where id1=@id1 and id2=@id2", sql))
+                                {
+                                    command.Parameters.AddWithValue("@id1", id1);
+                                    command.Parameters.AddWithValue("@id2", id2);
+                                    command.ExecuteNonQuery();
+                                }
+                                Thread thread = new Thread(() => Delete_conversation_thread(id1, id2));
+                                thread.IsBackground = true;
+                                thread.Start();
+                            }
+                        }
                         else
                         {
                             shutdown(item);
@@ -815,6 +847,22 @@ namespace AFriendServer
             finally
             {
                 is_locked[item.Key] = false;
+            }
+        }
+
+        private static void Delete_conversation_thread(string id1, string id2)
+        {
+            using (SqlCommand command = new SqlCommand("delete from message where id1=@id1 and id2=@id2", sql))
+            {
+                command.Parameters.AddWithValue("@id1", id1);
+                command.Parameters.AddWithValue("@id2", id2);
+                Console.WriteLine(command.ExecuteNonQuery());
+            }
+            using (SqlCommand command = new SqlCommand("delete from seen where id1=@id1 and id2=@id2", sql))
+            {
+                command.Parameters.AddWithValue("@id1", id1);
+                command.Parameters.AddWithValue("@id2", id2);
+                Console.WriteLine(command.ExecuteNonQuery());
             }
         }
 
