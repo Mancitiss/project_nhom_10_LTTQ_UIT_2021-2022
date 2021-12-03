@@ -771,7 +771,7 @@ namespace AFriendServer
                                 }
                             }
                         } // change pass
-                        else if (instruction == "1012") // user has seen a message
+                        else if (instruction == "1012") // user has changed their name
                         {
                             string newname;
                             if (receive_data_automatically(s, out newname))
@@ -786,7 +786,7 @@ namespace AFriendServer
                                     }
                                 }
                             }
-                        } // user has seen a message
+                        } // user has changed their name
                         else
                         {
                             shutdown(item);
