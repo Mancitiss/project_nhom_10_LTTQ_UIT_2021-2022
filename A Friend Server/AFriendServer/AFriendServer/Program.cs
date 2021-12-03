@@ -1004,7 +1004,16 @@ namespace AFriendServer
                                         {
                                             is_locked[id] = false;
                                         }
-                                        dictionary.Add(id, s);
+                                        try
+                                        {
+                                            dictionary.Add(id, s);
+                                        } catch (Exception e)
+                                        {
+                                            dictionary[id].Send(Encoding.Unicode.GetBytes("2004"));
+                                            dictionary[id].Shutdown(SocketShutdown.Both);
+                                            dictionary[id].Close();
+                                            dictionary[id] = s;
+                                        }
                                         Console.WriteLine("got id");
 
                                         Int64 id_int = (Int64)reader["id"];
