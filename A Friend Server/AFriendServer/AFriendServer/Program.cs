@@ -434,6 +434,16 @@ namespace AFriendServer
             return "";
         }
 
+        private static string data_with_ASCII_byte(string data)
+        {
+            if (!string.IsNullOrEmpty(data))
+            {
+                string databyte = Encoding.ASCII.GetByteCount(data).ToString();
+                return databyte.Length.ToString().PadLeft(2, '0') + databyte + data;
+            }
+            return "";
+        }
+
         private static void Receive_message(object si)
         {
             KeyValuePair<string, Socket> item = (KeyValuePair<string, Socket>)si;
@@ -724,6 +734,26 @@ namespace AFriendServer
                                 }
                             }
                         } //nameloopkpup
+                        else if (instruction == "1060") // load friend's avatars
+                        {
+                            string requested_id;
+                            if (Socket_receive(s, 38, out requested_id))
+                            {
+                                SqlCommand command = new SqlCommand("select avatar from account where id=@id", sql);
+                                command.Parameters.AddWithValue("@id", requested_id);
+                                using (SqlDataReader reader = command.ExecuteReader())
+                                {
+                                    if (reader.Read())
+                                    {
+                                        if (reader[0].GetType() != typeof(DBNull))
+                                        {
+                                            s.Send(Combine(Encoding.Unicode.GetBytes("1060" + requested_id), Encoding.ASCII.GetBytes(data_with_ASCII_byte(reader[0].ToString()))));
+                                            Console.WriteLine("Friend avatar sent!");
+                                        }
+                                    }
+                                }
+                            }
+                        } // load friend's avatars
                         else if (instruction == "0601") // set avatar
                         {
                             string img_string;
@@ -818,7 +848,7 @@ namespace AFriendServer
                                 thread.IsBackground = true;
                                 thread.Start();
                             }
-                        }
+                        } // delete conversation
                         else
                         {
                             shutdown(item);

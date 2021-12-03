@@ -470,6 +470,8 @@ namespace A_Friend
                                 /*
                                 UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
                                 Console.WriteLine("Message Received");*/
+
+                                client.Send(Encoding.Unicode.GetBytes("1060" + found[0]));
                             }
                             else
                             {
@@ -493,6 +495,23 @@ namespace A_Friend
                             }
                         }
                     } // message deleted
+                    else if (instruction == "1060") // load friend's avatars 
+                    {
+                        string panelid;
+                        if (Socket_receive(38, out panelid))
+                        {
+                            string friend_avatar;
+                            if (receive_ASCII_data_automatically(out friend_avatar))
+                            {
+                                // friend_avatar is now a base64 image
+                                // should check if user exists first and give them their avatar after
+                                Console.WriteLine("Friend avatar received");
+
+
+                                // finish
+                            }
+                        }
+                    } // load friend's avatars
                     else if (instruction == "0601") // avatar received, not loaded
                     {
                         
