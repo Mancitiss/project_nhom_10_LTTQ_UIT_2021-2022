@@ -24,7 +24,7 @@ namespace A_Friend
         private static int byte_expected = 0;
 
         internal static string temp_name;
-        internal static string img_string;
+        internal static string img_string = null;
 
         public static Socket client;
         public static Account user;

@@ -43,9 +43,9 @@ namespace A_Friend
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
-            if(AFriendClient.img_string.ToString()!="")
+            if(!string.IsNullOrEmpty(AFriendClient.img_string))
             {
-                circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
+                circlePictureBox1.Image = StringToImage(AFriendClient.img_string);
             }      
             this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
