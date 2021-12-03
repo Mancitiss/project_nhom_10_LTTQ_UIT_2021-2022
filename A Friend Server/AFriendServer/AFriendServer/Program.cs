@@ -95,6 +95,18 @@ namespace AFriendServer
             }
         }
 
+        private static void exception_handler(KeyValuePair<string, Socket> item, string se)
+        {
+            if (se.Contains("open and available Connection"))
+            {
+                sql.Open();
+            }
+            else if (se.Contains("was forcibly closed"))
+            {
+                shutdown(item);
+            }
+        }
+
         private static void process_message(object obj)
         {
 
@@ -165,11 +177,7 @@ namespace AFriendServer
                     catch (Exception e)
                     {
                         Console.WriteLine(e.ToString());
-                        string se = e.ToString();
-                        if (se.Contains("open and available Connection"))
-                        {
-                            sql.Open();
-                        }
+                        exception_handler(item, e.ToString());
                     }
                     //save to database end
                 }
@@ -182,11 +190,18 @@ namespace AFriendServer
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                exception_handler(item, e.ToString());
             }
             finally
             {
-                is_processing[item.Key] = false;
-                is_locked[item.Key] = false;
+                try
+                {
+                    is_processing[item.Key] = false;
+                    is_locked[item.Key] = false;
+                } catch (Exception e)
+                {
+                    // do nothing
+                }
             }
         }
 
@@ -269,6 +284,7 @@ namespace AFriendServer
                         catch (Exception e)
                         {
                             Console.WriteLine(e.ToString());
+                            exception_handler(item, e.ToString());
                         } 
                     }
                 }
@@ -873,10 +889,17 @@ namespace AFriendServer
             {
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("Work quitted");
+                exception_handler(item, e.ToString());
             }
             finally
             {
-                is_locked[item.Key] = false;
+                try
+                {
+                    is_locked[item.Key] = false;
+                } catch (Exception e)
+                {
+                    // do nothing
+                }
             }
         }
 
@@ -1080,6 +1103,7 @@ namespace AFriendServer
                                     catch (Exception e)
                                     {
                                         Console.WriteLine(e.ToString());
+                                        exception_handler(new KeyValuePair<string, Socket>(id, s), e.ToString());
                                     }
                                     /*
                                     while (thread.ThreadState == ThreadState.Running)
