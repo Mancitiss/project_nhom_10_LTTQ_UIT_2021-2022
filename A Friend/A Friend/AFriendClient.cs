@@ -493,7 +493,6 @@ namespace A_Friend
                             }
                         }
                     } // message deleted
-
                     else if (instruction == "0601") // avatar received, not loaded
                     {
                         
