@@ -22,11 +22,12 @@ namespace A_Friend
         public FormSettings()
         {
             InitializeComponent();
-            this.circlePictureBox1.Image = AFriendClient.user.avatar;
+            //this.circlePictureBox1.Image = AFriendClient.user.avatar;
+            /*
             if (AFriendClient.user.avatar != null)
             {
                 this.circlePictureBox1.Image = AFriendClient.user.avatar; // can fix dong nay
-            }
+            }*/
             //labelUsername.Location = new Point((this.Width - labelUsername.Width) / 2 - 5, labelUsername.Top);
             //customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
             labelWarning.Text = "";

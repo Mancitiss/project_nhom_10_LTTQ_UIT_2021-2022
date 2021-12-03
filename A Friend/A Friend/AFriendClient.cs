@@ -517,7 +517,7 @@ namespace A_Friend
                         
                         if (receive_ASCII_data_automatically(out img_string))
                         {
-                            user.avatar = StringToImage(img_string);
+                            //user.avatar = StringToImage(img_string);
                             Console.WriteLine("Image received");
                         }
                     } // avatar received, not loaded
