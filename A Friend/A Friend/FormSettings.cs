@@ -42,6 +42,10 @@ namespace A_Friend
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
+            if(AFriendClient.img_string.ToString()!="")
+            {
+                circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
+            }      
             this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
             panelUsername.Hide();
@@ -132,10 +136,10 @@ namespace A_Friend
                 ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    circlePictureBox1.Crop(Image.FromFile(ofd.FileName));
                     string imageAsString = ImageToString(ofd.FileName);
                     AFriendClient.client.Send(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
-                    AFriendClient.temp_image = imageAsString.Trim();
+                    AFriendClient.img_string = imageAsString.Trim();
+                    circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
                     /*
                     Console.WriteLine(imageAsString);
                     Console.WriteLine(Encoding.ASCII.GetByteCount(imageAsString));
