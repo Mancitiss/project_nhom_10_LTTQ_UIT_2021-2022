@@ -23,13 +23,26 @@ namespace A_Friend
 
         private static int byte_expected = 0;
 
-        internal static string temp_name;
+        internal static string temp_name = null;
         internal static string img_string = null;
 
         public static Socket client;
         public static Account user;
 
         private static FormApplication UIForm;
+
+        private static void logout()
+        {
+            first_message = null;
+            first_message_sender = null;
+            byte_expected = 0;
+            temp_name = null;
+            img_string = null;
+            user = null;
+            client.Send(Encoding.Unicode.GetBytes("2004"));
+            client.Shutdown(SocketShutdown.Both);
+            client.Close();
+        }
 
         internal static void change_name()
         {
@@ -145,11 +158,7 @@ namespace A_Friend
                         Console.WriteLine(e.ToString());
                     }
                 }
-                user = null;
-                client.Send(Encoding.Unicode.GetBytes("2004"));
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-
+                logout();
             }
             catch (Exception e)
             {
