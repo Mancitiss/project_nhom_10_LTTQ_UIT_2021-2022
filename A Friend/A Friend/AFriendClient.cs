@@ -11,9 +11,9 @@ using System.Windows.Forms;
 using Jil;
 using System.IO;
 
-namespace A_Friend
+namespace A_Friend 
 {
-    class AFriendClient
+    class AFriendClient : Form
     {
         private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
         private static IPAddress ipAddr = IPAddress.Any;
@@ -24,7 +24,7 @@ namespace A_Friend
         private static int byte_expected = 0;
 
         internal static string temp_name;
-        internal static string temp_image;
+        internal static string img_string;
 
         public static Socket client;
         public static Account user;
@@ -493,9 +493,10 @@ namespace A_Friend
                             }
                         }
                     } // message deleted
+
                     else if (instruction == "0601") // avatar received, not loaded
                     {
-                        string img_string = "";
+                        
                         if (receive_ASCII_data_automatically(out img_string))
                         {
                             user.avatar = StringToImage(img_string);
