@@ -128,6 +128,44 @@ namespace A_Friend
             Image image = Image.FromStream(new MemoryStream(array));
             return image;
         }
+        static public class TopMostMessageBox
+        {
+            static public DialogResult Show(string message)
+            {
+                return Show(message, string.Empty, MessageBoxButtons.OK);
+            }
+
+            static public DialogResult Show(string message, string title)
+            {
+                return Show(message, title, MessageBoxButtons.OK);
+            }
+
+            static public DialogResult Show(string message, string title,
+                MessageBoxButtons buttons)
+            {
+                // Create a host form that is a TopMost window which will be the 
+                // parent of the MessageBox.
+                Form topmostForm = new Form();
+                // We do not want anyone to see this window so position it off the 
+                // visible screen and make it as small as possible
+                topmostForm.Size = new System.Drawing.Size(1, 1);
+                topmostForm.StartPosition = FormStartPosition.Manual;
+                System.Drawing.Rectangle rect = SystemInformation.VirtualScreen;
+                topmostForm.Location = new System.Drawing.Point(rect.Bottom + 10,
+                    rect.Right + 10);
+                topmostForm.Show();
+                // Make this form the active form and make it TopMost
+                topmostForm.Focus();
+                topmostForm.BringToFront();
+                topmostForm.TopMost = true;
+                // Finally show the MessageBox with the form just created as its owner
+                DialogResult result = MessageBox.Show(topmostForm, message);
+                topmostForm.Dispose(); // clean it up all the way
+
+                return result;
+            }
+        }
+
         private void customButtonAvatar_Click(object sender, EventArgs e)
         {
             labelWarning.Text = "";
@@ -138,9 +176,17 @@ namespace A_Friend
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     string imageAsString = ImageToString(ofd.FileName);
-                    AFriendClient.client.Send(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
-                    AFriendClient.img_string = imageAsString.Trim();
-                    circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
+                    int length = imageAsString.Length;
+                    if (length < 2800000)
+                    {
+                        AFriendClient.client.Send(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
+                        AFriendClient.img_string = imageAsString.Trim();
+                        circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
+                    }
+                    else
+                    {
+                        TopMostMessageBox.Show("Làm ơn chọn ảnh có kích thước nhỏ hơn 2MB");
+                    }
                     /*
                     Console.WriteLine(imageAsString);
                     Console.WriteLine(Encoding.ASCII.GetByteCount(imageAsString));
