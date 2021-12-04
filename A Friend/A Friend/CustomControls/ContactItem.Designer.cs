@@ -77,7 +77,7 @@
             this.friendPicture.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             this.friendPicture.BorderSize = 0;
             this.friendPicture.GradientAngle = 50F;
-            this.friendPicture.Image = global::A_Friend.Properties.Resources._417_4175735_system_administrator_svg_png_icon_free_download_man_icon;
+            this.friendPicture.Image = global::A_Friend.Properties.Resources.newUser;
             this.friendPicture.Location = new System.Drawing.Point(20, 10);
             this.friendPicture.Name = "friendPicture";
             this.friendPicture.Size = new System.Drawing.Size(45, 45);

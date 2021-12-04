@@ -311,7 +311,7 @@ namespace A_Friend
             this.circlePictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             this.circlePictureBox1.BorderSize = 2;
             this.circlePictureBox1.GradientAngle = 50F;
-            this.circlePictureBox1.Image = global::A_Friend.Properties.Resources._417_4175735_system_administrator_svg_png_icon_free_download_man_icon;
+            this.circlePictureBox1.Image = global::A_Friend.Properties.Resources.newUser;
             this.circlePictureBox1.Location = new System.Drawing.Point(50, 16);
             this.circlePictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.circlePictureBox1.Name = "circlePictureBox1";
