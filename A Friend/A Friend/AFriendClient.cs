@@ -515,7 +515,12 @@ namespace A_Friend
                                 // friend_avatar is now a base64 image
                                 // should check if user exists first and give them their avatar after
                                 Console.WriteLine("Friend avatar received");
-
+                                if (!string.IsNullOrEmpty(friend_avatar))
+                                {
+                                    byte[] array = Convert.FromBase64String(friend_avatar);
+                                    Image image = Image.FromStream(new MemoryStream(array));
+                                    UIForm.Invoke(UIForm.set_avatar_delegate, new object[] { panelid, image });
+                                }
 
                                 // finish
                             }

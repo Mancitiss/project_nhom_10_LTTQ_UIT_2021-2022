@@ -72,6 +72,14 @@ namespace A_Friend.CustomControls
             panel_Chat.Click += panelTopRight_Click;
         }
 
+        public Image Avatar
+        {
+            set
+            {
+                friendPicture.Crop(value);
+            }
+        }
+
         private void panel_Chat_MouseWheel(object sender, EventArgs e)
         {
             if (panel_Chat.VerticalScroll.Value == 0 && !locking)

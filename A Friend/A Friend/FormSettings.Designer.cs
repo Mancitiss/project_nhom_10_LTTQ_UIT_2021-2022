@@ -306,16 +306,17 @@ namespace A_Friend
             // 
             this.circlePictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.circlePictureBox1.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
-            this.circlePictureBox1.BorderColor = System.Drawing.Color.DimGray;
-            this.circlePictureBox1.BorderColor2 = System.Drawing.Color.DimGray;
+            this.circlePictureBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
+            this.circlePictureBox1.BorderColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
             this.circlePictureBox1.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             this.circlePictureBox1.BorderSize = 2;
             this.circlePictureBox1.GradientAngle = 50F;
+            this.circlePictureBox1.Image = global::A_Friend.Properties.Resources._417_4175735_system_administrator_svg_png_icon_free_download_man_icon;
             this.circlePictureBox1.Location = new System.Drawing.Point(50, 16);
             this.circlePictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.circlePictureBox1.Name = "circlePictureBox1";
             this.circlePictureBox1.Size = new System.Drawing.Size(200, 200);
-            this.circlePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.circlePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.circlePictureBox1.TabIndex = 1;
             this.circlePictureBox1.TabStop = false;
             // 

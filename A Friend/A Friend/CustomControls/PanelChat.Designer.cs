@@ -92,10 +92,11 @@ namespace A_Friend.CustomControls
             this.friendPicture.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             this.friendPicture.BorderSize = 0;
             this.friendPicture.GradientAngle = 50F;
+            this.friendPicture.Image = global::A_Friend.Properties.Resources._417_4175735_system_administrator_svg_png_icon_free_download_man_icon;
             this.friendPicture.Location = new System.Drawing.Point(18, 7);
             this.friendPicture.Name = "friendPicture";
             this.friendPicture.Size = new System.Drawing.Size(45, 45);
-            this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.friendPicture.TabIndex = 1;
             this.friendPicture.TabStop = false;
             this.friendPicture.Click += new System.EventHandler(this.panelTopRight_Click);

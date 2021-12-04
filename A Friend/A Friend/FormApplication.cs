@@ -14,6 +14,8 @@ namespace A_Friend
     {
         public delegate void SortContactItemsdelegate();
         public SortContactItemsdelegate sort_contact_item_delegate;
+        public delegate void SetAvatarDelegate(string id, Image img);
+        public SetAvatarDelegate set_avatar_delegate;
 
         public A_Friend.CustomControls.PanelChat currentpanelchat;
 
@@ -58,6 +60,7 @@ namespace A_Friend
             addContactItemDelegate = new AddContactItem(AddContact);
             turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
             sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
+            set_avatar_delegate = new SetAvatarDelegate(SetAvatar);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
         }
 
@@ -789,6 +792,15 @@ namespace A_Friend
             }
 
             //code to remove or block contact
+        }
+
+        public void SetAvatar(string id, Image img)
+        {
+            if (panelChats.ContainsKey(id))
+            {
+                panelChats[id].Avatar = img;
+                contactItems[id].Avatar = img;
+            }
         }
     }
 }

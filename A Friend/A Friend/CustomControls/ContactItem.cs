@@ -40,6 +40,14 @@ namespace A_Friend.CustomControls
             State = account.state;
         }
 
+        public Image Avatar
+        {
+            set
+            {
+                friendPicture.Crop(value);
+            }
+        }
+
         public bool Clicked
         {
             get
@@ -276,6 +284,18 @@ namespace A_Friend.CustomControls
         {
             mouseOn = false;
             this.Invalidate();
+        }
+
+        private void labelName_TextChanged(object sender, EventArgs e)
+        {
+            var size = TextRenderer.MeasureText(labelName.Text, labelName.Font);
+            labelName.Height = size.Height;
+        }
+
+        private void labelLastMessage_TextChanged(object sender, EventArgs e)
+        {
+            var size = TextRenderer.MeasureText(labelLastMessage.Text, labelLastMessage.Font);
+            labelLastMessage.Height = size.Height;
         }
     }
 }

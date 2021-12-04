@@ -46,6 +46,7 @@
             this.labelLastMessage.Size = new System.Drawing.Size(197, 16);
             this.labelLastMessage.TabIndex = 2;
             this.labelLastMessage.Text = "You: last text here";
+            this.labelLastMessage.TextChanged += new System.EventHandler(this.labelLastMessage_TextChanged);
             this.labelLastMessage.Click += new System.EventHandler(this.labelLastMessage_Click);
             this.labelLastMessage.MouseEnter += new System.EventHandler(this.ContactItem_MouseEnter);
             this.labelLastMessage.MouseLeave += new System.EventHandler(this.ContactItem_Leave);
@@ -61,6 +62,7 @@
             this.labelName.Size = new System.Drawing.Size(197, 18);
             this.labelName.TabIndex = 3;
             this.labelName.Text = "Friend Name";
+            this.labelName.TextChanged += new System.EventHandler(this.labelName_TextChanged);
             this.labelName.Click += new System.EventHandler(this.labelName_Click);
             this.labelName.MouseEnter += new System.EventHandler(this.ContactItem_MouseEnter);
             this.labelName.MouseLeave += new System.EventHandler(this.ContactItem_Leave);
