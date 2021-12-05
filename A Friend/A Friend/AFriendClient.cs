@@ -15,7 +15,7 @@ namespace A_Friend
 {
     class AFriendClient : Form
     {
-        private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+        //private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
         private static IPAddress ipAddr = IPAddress.Any;
         private static string instruction;
         private static MessageObject first_message = null;
@@ -31,7 +31,7 @@ namespace A_Friend
 
         private static FormApplication UIForm;
 
-        private static void logout()
+        private static void Logout()
         {
             first_message = null;
             first_message_sender = null;
@@ -44,7 +44,7 @@ namespace A_Friend
             client.Close();
         }
 
-        internal static void change_name()
+        internal static void Change_name()
         {
             if (!string.IsNullOrEmpty(temp_name))
             {
@@ -53,7 +53,7 @@ namespace A_Friend
             temp_name = null;
         }
 
-        public static void ExecuteClient(object obj)
+        public static void ExecuteClient()
         {
             UIForm = Program.mainform;
             try
@@ -91,8 +91,7 @@ namespace A_Friend
                                     }
                                     else
                                     {
-                                        string data_string;
-                                        if (Socket_receive(byte_expected, out data_string))// all data received, send to UI
+                                        if (Socket_receive(byte_expected, out string data_string))// all data received, send to UI
                                         {
                                             byte_expected = 0;
                                             Console.WriteLine("Data Received");
@@ -117,7 +116,7 @@ namespace A_Friend
                                                     Console.WriteLine("Ask for info");
                                                     client.Send(Encoding.Unicode.GetBytes("0609" + sender));
                                                 }
-                                            } 
+                                            }
                                             else if (user.id == msgobj.id1) // if me = user1 add user2
                                             {
                                                 if (Program.mainform.Is_this_person_added(msgobj.id2))
@@ -141,7 +140,7 @@ namespace A_Friend
                                         {
                                             byte_expected = 0;
                                             Console.WriteLine("Data Corrupted");
-                                        } 
+                                        }
                                     }
                                 }
                             }
@@ -158,7 +157,7 @@ namespace A_Friend
                         Console.WriteLine(e.ToString());
                     }
                 }
-                logout();
+                Logout();
             }
             catch (Exception e)
             {
@@ -248,8 +247,7 @@ namespace A_Friend
         {
             if (Socket_receive(4, out data))
             {
-                int bytesize;
-                if (Int32.TryParse(data, out bytesize))
+                if (Int32.TryParse(data, out int bytesize))
                 {
                     bytesize = bytesize * 2;
                     if (Socket_receive(bytesize, out data))
@@ -272,8 +270,7 @@ namespace A_Friend
         {
             if (Socket_receive_ASCII(2, out data))
             {
-                int bytesize;
-                if (Int32.TryParse(data, out bytesize))
+                if (Int32.TryParse(data, out int bytesize))
                 {
                     if (Socket_receive_ASCII(bytesize, out data))
                     {
@@ -372,23 +369,20 @@ namespace A_Friend
         {
             try
             {
-                string data;
-                if (Socket_receive(8, out data))
+                if (Socket_receive(8, out string data))
                 {
                     instruction = data;
                     Console.WriteLine(data);
                     if (instruction == "0708") // me seen
                     {
-                        string panelid;
-                        if (Socket_receive(38, out panelid))
+                        if (Socket_receive(38, out string panelid))
                         {
-                            string boolstr;
-                            if (Socket_receive(2, out boolstr))
+                            if (Socket_receive(2, out string boolstr))
                             {
                                 if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
                                 {
                                     Program.mainform.contactItems[panelid].Unread = false;
-                                } 
+                                }
                                 else if (boolstr == "0" && !Program.mainform.panelChats[panelid].IsLastMessageFromYou())
                                 {
                                     Program.mainform.contactItems[panelid].Unread = true;
@@ -402,12 +396,10 @@ namespace A_Friend
                     } // me seen 
                     else if (instruction == "6475") // load messages
                     {
-                        string panelid;
-                        if (Socket_receive(38, out panelid))
+                        if (Socket_receive(38, out string panelid))
                         {
                             Console.WriteLine(panelid);
-                            string objectdatastring;
-                            if (receive_data_automatically(out objectdatastring))
+                            if (receive_data_automatically(out string objectdatastring))
                             {
                                 Console.WriteLine("Old messages have come");
                                 List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
@@ -420,8 +412,7 @@ namespace A_Friend
                     else if (instruction == "2211") // 2211 = this id is online
                     {
                         Console.WriteLine("This person is online");
-                        string online_id;
-                        if (Socket_receive(38, out online_id))
+                        if (Socket_receive(38, out string online_id))
                         {
                             Console.WriteLine(online_id);
                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
@@ -430,8 +421,7 @@ namespace A_Friend
                     else if (instruction == "0404") //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
                     {
                         Console.WriteLine("This person is not online");
-                        string offline_id;
-                        if (Socket_receive(38, out offline_id))
+                        if (Socket_receive(38, out string offline_id))
                         {
                             Console.WriteLine(offline_id);
                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
@@ -441,8 +431,7 @@ namespace A_Friend
                     { // 1901 = message received
                         if (Socket_receive(4, out data))
                         {
-                            int bytesize;
-                            if (Int32.TryParse(data, out bytesize))
+                            if (Int32.TryParse(data, out int bytesize))
                             {
                                 bytesize = bytesize * 2;
                                 if (Socket_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
@@ -452,8 +441,7 @@ namespace A_Friend
                     else if (instruction == "1609") // add contact
                     {
 
-                        string data_found;
-                        if (receive_data_automatically(out data_found))
+                        if (receive_data_automatically(out string data_found))
                         {
                             List<string> found = data_found.Split(' ').ToList<string>();
                             Console.WriteLine(string.Join(" ", found));
@@ -463,9 +451,8 @@ namespace A_Friend
                                 name += found[i] + ' ';
                             }
                             name = name.Trim();
-                            Byte state;
                             Console.WriteLine("I even reached here");
-                            if (Byte.TryParse(found[found.Count - 1], out state))
+                            if (Byte.TryParse(found[found.Count - 1], out byte state))
                             {
                                 UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
                                 UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
@@ -491,11 +478,9 @@ namespace A_Friend
                     } // add contact
                     else if (instruction == "2002") // message deleted
                     {
-                        string panelid;
-                        if (Socket_receive(38, out panelid))
+                        if (Socket_receive(38, out string panelid))
                         {
-                            string messagenumber_int;
-                            if (receive_data_automatically(out messagenumber_int))
+                            if (receive_data_automatically(out string messagenumber_int))
                             {
                                 if (UIForm.panelChats.ContainsKey(panelid))
                                 {
@@ -506,11 +491,9 @@ namespace A_Friend
                     } // message deleted
                     else if (instruction == "1060") // load friend's avatars 
                     {
-                        string panelid;
-                        if (Socket_receive(38, out panelid))
+                        if (Socket_receive(38, out string panelid))
                         {
-                            string friend_avatar;
-                            if (receive_ASCII_data_automatically(out friend_avatar))
+                            if (receive_ASCII_data_automatically(out string friend_avatar))
                             {
                                 // friend_avatar is now a base64 image
                                 // should check if user exists first and give them their avatar after
@@ -528,7 +511,7 @@ namespace A_Friend
                     } // load friend's avatars
                     else if (instruction == "0601") // avatar received, not loaded
                     {
-                        
+
                         if (receive_ASCII_data_automatically(out img_string))
                         {
                             //user.avatar = StringToImage(img_string);
@@ -585,7 +568,7 @@ namespace A_Friend
                     else if (instruction == "1012") // name changed successfully
                     {
                         Console.WriteLine("Name changed!");
-                        change_name();
+                        Change_name();
                         UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
                         //MessageBox.Show("What a beautiful name!");
                         //if name not change then it is your internet connection problem

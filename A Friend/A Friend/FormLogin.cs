@@ -193,7 +193,7 @@ namespace A_Friend
             frm.Show();
             this.Hide();
             Program.mainform = frm;
-            Thread thread = new Thread(new ParameterizedThreadStart(AFriendClient.ExecuteClient));
+            Thread thread = new Thread(AFriendClient.ExecuteClient);
             thread.IsBackground = true;
             thread.Start();
         }

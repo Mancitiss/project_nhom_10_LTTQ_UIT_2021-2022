@@ -92,7 +92,7 @@ namespace A_Friend
                 ChangeLabel("Please enter your password!", Color.FromArgb(213, 54, 41));
             else
             {
-                if (!checkBytes())
+                if (!CheckBytes())
                 {
                     ChangeLabel("Username or Password has over the limit of characters", Color.FromArgb(213, 54, 41));
                 }
@@ -209,7 +209,7 @@ namespace A_Friend
             labelWarning.Text = "";
         }
 
-        private bool checkBytes()
+        private bool CheckBytes()
         {
             if (Encoding.Unicode.GetByteCount(textBoxNewPassword.Texts) < 128)
                 return true;
