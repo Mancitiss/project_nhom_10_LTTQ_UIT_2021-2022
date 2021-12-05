@@ -536,7 +536,7 @@ namespace A_Friend
                                 }
                             } // message deleted
                             break;
-                        case "2004": // 2004 = loggin from another device
+                        case "2004": // 2004 = log in from another device
                             {
                                 Console.WriteLine("You are logged in from another device, you will be logged out");
                                 user.state = 0;
