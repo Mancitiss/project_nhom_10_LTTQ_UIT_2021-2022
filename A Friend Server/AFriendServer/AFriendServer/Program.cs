@@ -473,7 +473,7 @@ namespace AFriendServer
                     if (data != null && data != "")
                     {
                         string instruction = data;
-                        switch (instruction) // load messages
+                        switch (instruction) 
                         {
                             case "6475":
                                 {
@@ -852,6 +852,26 @@ namespace AFriendServer
                                     break;
                                 } // change pass
 
+                            case "1508":
+                                {
+                                    using (SqlCommand command = new SqlCommand("update top (1) account set private=1 where id=@id", sql))
+                                    {
+                                        command.Parameters.AddWithValue("@id", item.Key);
+                                        command.ExecuteNonQuery();
+                                    }
+                                    break;
+                                } // set private = true
+
+                            case "0508":
+                                {
+                                    using (SqlCommand command = new SqlCommand("update top (1) account set private=0 where id=@id", sql))
+                                    {
+                                        command.Parameters.AddWithValue("@id", item.Key);
+                                        command.ExecuteNonQuery();
+                                    }
+                                    break;
+                                } // set private = false;
+
                             case "1012":
                                 {
                                     string newname;
@@ -1012,7 +1032,7 @@ namespace AFriendServer
                     try
                     {
                         Console.WriteLine("Before avatar");
-                        string commandtext = "select top 1 id, name, pw, avatar from account where username=@username";
+                        string commandtext = "select top 1 id, name, pw, avatar, private from account where username=@username";
                         SqlCommand command = new SqlCommand(commandtext, sql);
                         command.Parameters.AddWithValue("@username", list_str[0]);
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -1040,7 +1060,7 @@ namespace AFriendServer
                                     string namebyte = Encoding.Unicode.GetByteCount(name).ToString();
 
                                     s.Send(Encoding.Unicode.GetBytes("0200"
-                                        + id + namebyte.Length.ToString().PadLeft(2, '0') + namebyte + name));
+                                        + id + namebyte.Length.ToString().PadLeft(2, '0') + namebyte + name + reader["private"].ToString()));
                                     Console.WriteLine("Before state");
                                     //state was here
                                     Console.WriteLine("Before dictionaries");

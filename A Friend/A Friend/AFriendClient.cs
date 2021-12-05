@@ -386,7 +386,18 @@ namespace A_Friend
                                 user = new Account();
                                 if (Socket_receive(38, out data)) user.id = data;
                                 receive_data_automatically(out user.name);
+                                if (Socket_receive(10, out string priv))
+                                {
+                                    Console.WriteLine(priv);
+                                    user.priv = bool.Parse(priv);
+                                }
+                                Console.WriteLine(user.priv);
                                 user.state = 1;
+                                // set initial private option (on or off) from here
+
+                                // or not, if you don't have to
+
+                                //
                             } // successfully logged in
                             break;
                         case "0404": //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
