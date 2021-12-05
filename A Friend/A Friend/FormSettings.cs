@@ -18,7 +18,7 @@ namespace A_Friend
         public delegate void ChangeSettingsWarning(string text, Color color);
         public ChangeSettingsWarning changeSettingsWarning;
 
-  
+
         public FormSettings()
         {
             InitializeComponent();
@@ -43,10 +43,10 @@ namespace A_Friend
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
-            if(!string.IsNullOrEmpty(AFriendClient.img_string))
+            if (!string.IsNullOrEmpty(AFriendClient.img_string))
             {
                 circlePictureBox1.Image = StringToImage(AFriendClient.img_string);
-            }      
+            }
             this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
             panelUsername.Hide();
@@ -69,11 +69,18 @@ namespace A_Friend
                 ChangeLabel("Please enter new name!", Color.FromArgb(213, 54, 41));
             else
             {
-                AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
-                AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
-                panelUsername.Hide();
-                customTextBoxUsername.Texts = "";
-                //this.Close();
+                if (!checkBytesN())
+                {
+                    ChangeLabel("Username has over the limit of characters", Color.FromArgb(213, 54, 41));
+                }
+                else
+                {
+                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
+                    AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
+                    panelUsername.Hide();
+                    customTextBoxUsername.Texts = "";
+                    //this.Close();
+                }
             }
         }
 
@@ -92,20 +99,27 @@ namespace A_Friend
                 ChangeLabel("Please enter your password!", Color.FromArgb(213, 54, 41));
             else
             {
-                if (!CheckBytes())
+                if (!checkBytesP())
                 {
-                    ChangeLabel("Username or Password has over the limit of characters", Color.FromArgb(213, 54, 41));
+                    ChangeLabel("Password has over the limit of characters", Color.FromArgb(213, 54, 41));
                 }
                 else
                 {
-                    if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
+                    if (!textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
                     {
-                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
+                        ChangeLabel("Those passwords doesn't match", Color.FromArgb(213, 54, 41));
                     }
-                    panelPassword.Hide();
-                    textBoxNewPassword.Texts = "";
-                    textBoxCurrentPassword.Texts = "";
-                    textBoxConfirmPassword.Texts = "";
+                    else
+                    {
+                        if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
+                        {
+                            AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
+                        }
+                        panelPassword.Hide();
+                        textBoxNewPassword.Texts = "";
+                        textBoxCurrentPassword.Texts = "";
+                        textBoxConfirmPassword.Texts = "";
+                    }
                 }
             }
         }
@@ -209,9 +223,16 @@ namespace A_Friend
             labelWarning.Text = "";
         }
 
-        private bool CheckBytes()
+        private bool checkBytesP()
         {
             if (Encoding.Unicode.GetByteCount(textBoxNewPassword.Texts) < 128)
+                return true;
+            return false;
+        }
+
+        private bool checkBytesN()
+        {
+            if (Encoding.Unicode.GetByteCount(customTextBoxUsername.Texts) < 64)
                 return true;
             return false;
         }

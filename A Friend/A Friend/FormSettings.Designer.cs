@@ -31,19 +31,19 @@ namespace A_Friend
         {
             this.labelUsername = new System.Windows.Forms.Label();
             this.panelPassword = new System.Windows.Forms.Panel();
-            this.textBoxConfirmPassword = new A_Friend.CustomControls.CustomTextBox();
-            this.buttonSavePassword = new A_Friend.CustomControls.CustomButton();
-            this.textBoxCurrentPassword = new A_Friend.CustomControls.CustomTextBox();
-            this.textBoxNewPassword = new A_Friend.CustomControls.CustomTextBox();
             this.panelUsername = new System.Windows.Forms.Panel();
-            this.customTextBoxUsername = new A_Friend.CustomControls.CustomTextBox();
-            this.buttonSaveUsername = new A_Friend.CustomControls.CustomButton();
             this.labelWarning = new System.Windows.Forms.Label();
             this.customButtonUsername = new A_Friend.CustomControls.CustomButton();
             this.customButtonAvatar = new A_Friend.CustomControls.CustomButton();
             this.customButtonExit = new A_Friend.CustomControls.CustomButton();
             this.customButtonPassword = new A_Friend.CustomControls.CustomButton();
             this.circlePictureBox1 = new A_Friend.CustomControls.CirclePictureBox();
+            this.textBoxConfirmPassword = new A_Friend.CustomControls.CustomTextBox();
+            this.buttonSavePassword = new A_Friend.CustomControls.CustomButton();
+            this.textBoxCurrentPassword = new A_Friend.CustomControls.CustomTextBox();
+            this.textBoxNewPassword = new A_Friend.CustomControls.CustomTextBox();
+            this.customTextBoxUsername = new A_Friend.CustomControls.CustomTextBox();
+            this.buttonSaveUsername = new A_Friend.CustomControls.CustomButton();
             this.panelPassword.SuspendLayout();
             this.panelUsername.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.circlePictureBox1)).BeginInit();
@@ -74,91 +74,6 @@ namespace A_Friend
             this.panelPassword.Size = new System.Drawing.Size(300, 195);
             this.panelPassword.TabIndex = 10;
             // 
-            // textBoxConfirmPassword
-            // 
-            this.textBoxConfirmPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.textBoxConfirmPassword.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.textBoxConfirmPassword.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
-            this.textBoxConfirmPassword.BorderRadius = 20;
-            this.textBoxConfirmPassword.BorderSize = 2;
-            this.textBoxConfirmPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.textBoxConfirmPassword.Location = new System.Drawing.Point(25, 101);
-            this.textBoxConfirmPassword.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.textBoxConfirmPassword.Multiline = false;
-            this.textBoxConfirmPassword.Name = "textBoxConfirmPassword";
-            this.textBoxConfirmPassword.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
-            this.textBoxConfirmPassword.PasswordChar = true;
-            this.textBoxConfirmPassword.PlaceholderColor = System.Drawing.Color.DarkGray;
-            this.textBoxConfirmPassword.PlaceholderText = "Confirm Password";
-            this.textBoxConfirmPassword.Size = new System.Drawing.Size(250, 38);
-            this.textBoxConfirmPassword.TabIndex = 7;
-            this.textBoxConfirmPassword.Texts = "";
-            this.textBoxConfirmPassword.UnderlinedStyle = false;
-            this.textBoxConfirmPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
-            // 
-            // buttonSavePassword
-            // 
-            this.buttonSavePassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
-            this.buttonSavePassword.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.buttonSavePassword.BorderRadius = 20;
-            this.buttonSavePassword.BorderSize = 0;
-            this.buttonSavePassword.FlatAppearance.BorderSize = 0;
-            this.buttonSavePassword.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSavePassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.buttonSavePassword.ForeColor = System.Drawing.Color.White;
-            this.buttonSavePassword.Location = new System.Drawing.Point(25, 146);
-            this.buttonSavePassword.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonSavePassword.Name = "buttonSavePassword";
-            this.buttonSavePassword.Size = new System.Drawing.Size(250, 41);
-            this.buttonSavePassword.TabIndex = 8;
-            this.buttonSavePassword.Text = "Save password";
-            this.buttonSavePassword.UseVisualStyleBackColor = false;
-            this.buttonSavePassword.Click += new System.EventHandler(this.buttonSavePassword_Click);
-            // 
-            // textBoxCurrentPassword
-            // 
-            this.textBoxCurrentPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.textBoxCurrentPassword.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.textBoxCurrentPassword.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
-            this.textBoxCurrentPassword.BorderRadius = 20;
-            this.textBoxCurrentPassword.BorderSize = 2;
-            this.textBoxCurrentPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.textBoxCurrentPassword.Location = new System.Drawing.Point(25, 5);
-            this.textBoxCurrentPassword.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.textBoxCurrentPassword.Multiline = false;
-            this.textBoxCurrentPassword.Name = "textBoxCurrentPassword";
-            this.textBoxCurrentPassword.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
-            this.textBoxCurrentPassword.PasswordChar = true;
-            this.textBoxCurrentPassword.PlaceholderColor = System.Drawing.Color.DarkGray;
-            this.textBoxCurrentPassword.PlaceholderText = "Current Password";
-            this.textBoxCurrentPassword.Size = new System.Drawing.Size(250, 38);
-            this.textBoxCurrentPassword.TabIndex = 5;
-            this.textBoxCurrentPassword.Texts = "";
-            this.textBoxCurrentPassword.UnderlinedStyle = false;
-            this.textBoxCurrentPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
-            // 
-            // textBoxNewPassword
-            // 
-            this.textBoxNewPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.textBoxNewPassword.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.textBoxNewPassword.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
-            this.textBoxNewPassword.BorderRadius = 20;
-            this.textBoxNewPassword.BorderSize = 2;
-            this.textBoxNewPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.textBoxNewPassword.Location = new System.Drawing.Point(25, 53);
-            this.textBoxNewPassword.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.textBoxNewPassword.Multiline = false;
-            this.textBoxNewPassword.Name = "textBoxNewPassword";
-            this.textBoxNewPassword.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
-            this.textBoxNewPassword.PasswordChar = true;
-            this.textBoxNewPassword.PlaceholderColor = System.Drawing.Color.DarkGray;
-            this.textBoxNewPassword.PlaceholderText = "New Password";
-            this.textBoxNewPassword.Size = new System.Drawing.Size(250, 38);
-            this.textBoxNewPassword.TabIndex = 6;
-            this.textBoxNewPassword.Texts = "";
-            this.textBoxNewPassword.UnderlinedStyle = false;
-            this.textBoxNewPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
-            // 
             // panelUsername
             // 
             this.panelUsername.Controls.Add(this.customTextBoxUsername);
@@ -168,47 +83,6 @@ namespace A_Friend
             this.panelUsername.Name = "panelUsername";
             this.panelUsername.Size = new System.Drawing.Size(325, 100);
             this.panelUsername.TabIndex = 13;
-            // 
-            // customTextBoxUsername
-            // 
-            this.customTextBoxUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.customTextBoxUsername.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.customTextBoxUsername.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
-            this.customTextBoxUsername.BorderRadius = 20;
-            this.customTextBoxUsername.BorderSize = 2;
-            this.customTextBoxUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.customTextBoxUsername.Location = new System.Drawing.Point(25, 5);
-            this.customTextBoxUsername.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.customTextBoxUsername.Multiline = false;
-            this.customTextBoxUsername.Name = "customTextBoxUsername";
-            this.customTextBoxUsername.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
-            this.customTextBoxUsername.PasswordChar = false;
-            this.customTextBoxUsername.PlaceholderColor = System.Drawing.Color.DarkGray;
-            this.customTextBoxUsername.PlaceholderText = "New Name";
-            this.customTextBoxUsername.Size = new System.Drawing.Size(250, 38);
-            this.customTextBoxUsername.TabIndex = 3;
-            this.customTextBoxUsername.Texts = "";
-            this.customTextBoxUsername.UnderlinedStyle = false;
-            this.customTextBoxUsername.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
-            // 
-            // buttonSaveUsername
-            // 
-            this.buttonSaveUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
-            this.buttonSaveUsername.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.buttonSaveUsername.BorderRadius = 20;
-            this.buttonSaveUsername.BorderSize = 0;
-            this.buttonSaveUsername.FlatAppearance.BorderSize = 0;
-            this.buttonSaveUsername.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSaveUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.buttonSaveUsername.ForeColor = System.Drawing.Color.White;
-            this.buttonSaveUsername.Location = new System.Drawing.Point(25, 50);
-            this.buttonSaveUsername.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonSaveUsername.Name = "buttonSaveUsername";
-            this.buttonSaveUsername.Size = new System.Drawing.Size(250, 41);
-            this.buttonSaveUsername.TabIndex = 4;
-            this.buttonSaveUsername.Text = "Save name";
-            this.buttonSaveUsername.UseVisualStyleBackColor = false;
-            this.buttonSaveUsername.Click += new System.EventHandler(this.buttonSaveUsername_Click);
             // 
             // labelWarning
             // 
@@ -320,9 +194,135 @@ namespace A_Friend
             this.circlePictureBox1.TabIndex = 1;
             this.circlePictureBox1.TabStop = false;
             // 
+            // textBoxConfirmPassword
+            // 
+            this.textBoxConfirmPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.textBoxConfirmPassword.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.textBoxConfirmPassword.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
+            this.textBoxConfirmPassword.BorderRadius = 20;
+            this.textBoxConfirmPassword.BorderSize = 2;
+            this.textBoxConfirmPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.textBoxConfirmPassword.Location = new System.Drawing.Point(25, 101);
+            this.textBoxConfirmPassword.Margin = new System.Windows.Forms.Padding(5);
+            this.textBoxConfirmPassword.Multiline = false;
+            this.textBoxConfirmPassword.Name = "textBoxConfirmPassword";
+            this.textBoxConfirmPassword.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.textBoxConfirmPassword.PasswordChar = true;
+            this.textBoxConfirmPassword.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.textBoxConfirmPassword.PlaceholderText = "Confirm Password";
+            this.textBoxConfirmPassword.Size = new System.Drawing.Size(250, 41);
+            this.textBoxConfirmPassword.TabIndex = 7;
+            this.textBoxConfirmPassword.Texts = "";
+            this.textBoxConfirmPassword.UnderlinedStyle = false;
+            this.textBoxConfirmPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
+            // 
+            // buttonSavePassword
+            // 
+            this.buttonSavePassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
+            this.buttonSavePassword.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.buttonSavePassword.BorderRadius = 20;
+            this.buttonSavePassword.BorderSize = 0;
+            this.buttonSavePassword.FlatAppearance.BorderSize = 0;
+            this.buttonSavePassword.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonSavePassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.buttonSavePassword.ForeColor = System.Drawing.Color.White;
+            this.buttonSavePassword.Location = new System.Drawing.Point(25, 146);
+            this.buttonSavePassword.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonSavePassword.Name = "buttonSavePassword";
+            this.buttonSavePassword.Size = new System.Drawing.Size(250, 41);
+            this.buttonSavePassword.TabIndex = 8;
+            this.buttonSavePassword.Text = "Save password";
+            this.buttonSavePassword.UseVisualStyleBackColor = false;
+            this.buttonSavePassword.Click += new System.EventHandler(this.buttonSavePassword_Click);
+            // 
+            // textBoxCurrentPassword
+            // 
+            this.textBoxCurrentPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.textBoxCurrentPassword.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.textBoxCurrentPassword.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
+            this.textBoxCurrentPassword.BorderRadius = 20;
+            this.textBoxCurrentPassword.BorderSize = 2;
+            this.textBoxCurrentPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.textBoxCurrentPassword.Location = new System.Drawing.Point(25, 5);
+            this.textBoxCurrentPassword.Margin = new System.Windows.Forms.Padding(5);
+            this.textBoxCurrentPassword.Multiline = false;
+            this.textBoxCurrentPassword.Name = "textBoxCurrentPassword";
+            this.textBoxCurrentPassword.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.textBoxCurrentPassword.PasswordChar = true;
+            this.textBoxCurrentPassword.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.textBoxCurrentPassword.PlaceholderText = "Current Password";
+            this.textBoxCurrentPassword.Size = new System.Drawing.Size(250, 41);
+            this.textBoxCurrentPassword.TabIndex = 5;
+            this.textBoxCurrentPassword.Texts = "";
+            this.textBoxCurrentPassword.UnderlinedStyle = false;
+            this.textBoxCurrentPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
+            // 
+            // textBoxNewPassword
+            // 
+            this.textBoxNewPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.textBoxNewPassword.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.textBoxNewPassword.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(143)))), ((int)(((byte)(228)))), ((int)(((byte)(185)))));
+            this.textBoxNewPassword.BorderRadius = 20;
+            this.textBoxNewPassword.BorderSize = 2;
+            this.textBoxNewPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.textBoxNewPassword.Location = new System.Drawing.Point(25, 53);
+            this.textBoxNewPassword.Margin = new System.Windows.Forms.Padding(5);
+            this.textBoxNewPassword.Multiline = false;
+            this.textBoxNewPassword.Name = "textBoxNewPassword";
+            this.textBoxNewPassword.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.textBoxNewPassword.PasswordChar = true;
+            this.textBoxNewPassword.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.textBoxNewPassword.PlaceholderText = "New Password";
+            this.textBoxNewPassword.Size = new System.Drawing.Size(250, 41);
+            this.textBoxNewPassword.TabIndex = 6;
+            this.textBoxNewPassword.Texts = "";
+            this.textBoxNewPassword.UnderlinedStyle = false;
+            this.textBoxNewPassword.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
+            // 
+            // customTextBoxUsername
+            // 
+            this.customTextBoxUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.customTextBoxUsername.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.customTextBoxUsername.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
+            this.customTextBoxUsername.BorderRadius = 20;
+            this.customTextBoxUsername.BorderSize = 2;
+            this.customTextBoxUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.customTextBoxUsername.Location = new System.Drawing.Point(25, 5);
+            this.customTextBoxUsername.Margin = new System.Windows.Forms.Padding(5);
+            this.customTextBoxUsername.Multiline = false;
+            this.customTextBoxUsername.Name = "customTextBoxUsername";
+            this.customTextBoxUsername.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.customTextBoxUsername.PasswordChar = false;
+            this.customTextBoxUsername.PlaceholderColor = System.Drawing.Color.DarkGray;
+            this.customTextBoxUsername.PlaceholderText = "New Name";
+            this.customTextBoxUsername.Size = new System.Drawing.Size(250, 41);
+            this.customTextBoxUsername.TabIndex = 3;
+            this.customTextBoxUsername.Texts = "";
+            this.customTextBoxUsername.UnderlinedStyle = false;
+            this.customTextBoxUsername.Enter += new System.EventHandler(this.textBoxCurrentPassword_Enter);
+            // 
+            // buttonSaveUsername
+            // 
+            this.buttonSaveUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(75)))), ((int)(((byte)(133)))));
+            this.buttonSaveUsername.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.buttonSaveUsername.BorderRadius = 20;
+            this.buttonSaveUsername.BorderSize = 0;
+            this.buttonSaveUsername.FlatAppearance.BorderSize = 0;
+            this.buttonSaveUsername.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonSaveUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.buttonSaveUsername.ForeColor = System.Drawing.Color.White;
+            this.buttonSaveUsername.Location = new System.Drawing.Point(25, 50);
+            this.buttonSaveUsername.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonSaveUsername.Name = "buttonSaveUsername";
+            this.buttonSaveUsername.Size = new System.Drawing.Size(250, 41);
+            this.buttonSaveUsername.TabIndex = 4;
+            this.buttonSaveUsername.Text = "Save name";
+            this.buttonSaveUsername.UseVisualStyleBackColor = false;
+            this.buttonSaveUsername.Click += new System.EventHandler(this.buttonSaveUsername_Click);
+            // 
             // FormSettings
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(300, 588);
