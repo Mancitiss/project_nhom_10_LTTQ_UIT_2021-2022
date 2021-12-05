@@ -373,206 +373,229 @@ namespace A_Friend
                 {
                     instruction = data;
                     Console.WriteLine(data);
-                    if (instruction == "0708") // me seen
+                    switch (instruction)
                     {
-                        if (Socket_receive(38, out string panelid))
-                        {
-                            if (Socket_receive(2, out string boolstr))
+                        case "0708": // me seen
                             {
-                                if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
+                                if (Socket_receive(38, out string panelid))
                                 {
-                                    Program.mainform.contactItems[panelid].Unread = false;
+                                    if (Socket_receive(2, out string boolstr))
+                                    {
+                                        if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
+                                        {
+                                            Program.mainform.contactItems[panelid].Unread = false;
+                                        }
+                                        else if (boolstr == "0" && !Program.mainform.panelChats[panelid].IsLastMessageFromYou())
+                                        {
+                                            Program.mainform.contactItems[panelid].Unread = true;
+                                        }
+                                        else
+                                        {
+                                            Program.mainform.contactItems[panelid].Unread = false;
+                                        }
+                                    }
                                 }
-                                else if (boolstr == "0" && !Program.mainform.panelChats[panelid].IsLastMessageFromYou())
+                            } // me seen 
+                            break;
+                        case "6475":
+                            // load messages
+                            {
+                                if (Socket_receive(38, out string panelid))
                                 {
-                                    Program.mainform.contactItems[panelid].Unread = true;
+                                    Console.WriteLine(panelid);
+                                    if (receive_data_automatically(out string objectdatastring))
+                                    {
+                                        Console.WriteLine("Old messages have come");
+                                        List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
+                                        UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
+                                        Console.WriteLine("Message Loaded");
+                                        self.Send(Encoding.Unicode.GetBytes("0708" + panelid));
+                                    }
                                 }
-                                else
+                            } // load messages
+                            break;
+                        case "2211": // 2211 = this id is online
+                            {
+                                Console.WriteLine("This person is online");
+                                if (Socket_receive(38, out string online_id))
                                 {
-                                    Program.mainform.contactItems[panelid].Unread = false;
+                                    Console.WriteLine(online_id);
+                                    UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
                                 }
-                            }
-                        }
-                    } // me seen 
-                    else if (instruction == "6475") // load messages
-                    {
-                        if (Socket_receive(38, out string panelid))
-                        {
-                            Console.WriteLine(panelid);
-                            if (receive_data_automatically(out string objectdatastring))
+                            } 
+                            break; // this id is online
+                        case "0404": //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
                             {
-                                Console.WriteLine("Old messages have come");
-                                List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
-                                UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
-                                Console.WriteLine("Message Loaded");
-                                self.Send(Encoding.Unicode.GetBytes("0708" + panelid));
-                            }
-                        }
-                    } // load messages
-                    else if (instruction == "2211") // 2211 = this id is online
-                    {
-                        Console.WriteLine("This person is online");
-                        if (Socket_receive(38, out string online_id))
-                        {
-                            Console.WriteLine(online_id);
-                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
-                        }
-                    } // this id is online
-                    else if (instruction == "0404") //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
-                    {
-                        Console.WriteLine("This person is not online");
-                        if (Socket_receive(38, out string offline_id))
-                        {
-                            Console.WriteLine(offline_id);
-                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
-                        }
-                    } // this id is offline
-                    else if (instruction == "1901") // message received
-                    { // 1901 = message received
-                        if (Socket_receive(4, out data))
-                        {
-                            if (Int32.TryParse(data, out int bytesize))
-                            {
-                                bytesize = bytesize * 2;
-                                if (Socket_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
-                            }
-                        }
-                    } // message received
-                    else if (instruction == "1609") // add contact
-                    {
-
-                        if (receive_data_automatically(out string data_found))
-                        {
-                            List<string> found = data_found.Split(' ').ToList<string>();
-                            Console.WriteLine(string.Join(" ", found));
-                            string name = "";
-                            for (int i = 2; i < found.Count - 1; i++)
-                            {
-                                name += found[i] + ' ';
-                            }
-                            name = name.Trim();
-                            Console.WriteLine("I even reached here");
-                            if (Byte.TryParse(found[found.Count - 1], out byte state))
-                            {
-                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
-                                UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
-                                Console.WriteLine("New Contact Added");
-                                if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
+                                Console.WriteLine("This person is not online");
+                                if (Socket_receive(38, out string offline_id))
                                 {
-                                    UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
-                                    first_message_sender = String.Empty;
-                                    first_message = null;
+                                    Console.WriteLine(offline_id);
+                                    UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
                                 }
-                                /*
-                                UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
-                                Console.WriteLine("Message Received");*/
-
-                                client.Send(Encoding.Unicode.GetBytes("1060" + found[0]));
-                            }
-                            else
-                            {
-                                Console.WriteLine("Data Corrupted");
-                                System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
-                            }
-                        }
-                    } // add contact
-                    else if (instruction == "2002") // message deleted
-                    {
-                        if (Socket_receive(38, out string panelid))
-                        {
-                            if (receive_data_automatically(out string messagenumber_int))
-                            {
-                                if (UIForm.panelChats.ContainsKey(panelid))
+                            } // this id is offline
+                            break;
+                        case "1901": // message received
+                            { // 1901 = message received
+                                if (Socket_receive(4, out data))
                                 {
-                                    UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].RemoveMessage_Invoke, new object[] { messagenumber_int });
+                                    if (Int32.TryParse(data, out int bytesize))
+                                    {
+                                        bytesize = bytesize * 2;
+                                        if (Socket_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
+                                    }
                                 }
-                            }
-                        }
-                    } // message deleted
-                    else if (instruction == "1060") // load friend's avatars 
-                    {
-                        if (Socket_receive(38, out string panelid))
-                        {
-                            if (receive_ASCII_data_automatically(out string friend_avatar))
+                            } // message received
+                            break;
+                        case "1609": // add contact
                             {
-                                // friend_avatar is now a base64 image
-                                // should check if user exists first and give them their avatar after
-                                Console.WriteLine("Friend avatar received");
-                                if (!string.IsNullOrEmpty(friend_avatar))
+
+                                if (receive_data_automatically(out string data_found))
                                 {
-                                    byte[] array = Convert.FromBase64String(friend_avatar);
-                                    Image image = Image.FromStream(new MemoryStream(array));
-                                    UIForm.Invoke(UIForm.set_avatar_delegate, new object[] { panelid, image });
+                                    List<string> found = data_found.Split(' ').ToList<string>();
+                                    Console.WriteLine(string.Join(" ", found));
+                                    string name = "";
+                                    for (int i = 2; i < found.Count - 1; i++)
+                                    {
+                                        name += found[i] + ' ';
+                                    }
+                                    name = name.Trim();
+                                    Console.WriteLine("I even reached here");
+                                    if (Byte.TryParse(found[found.Count - 1], out byte state))
+                                    {
+                                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
+                                        UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
+                                        Console.WriteLine("New Contact Added");
+                                        if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
+                                        {
+                                            UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
+                                            first_message_sender = String.Empty;
+                                            first_message = null;
+                                        }
+                                        /*
+                                        UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
+                                        Console.WriteLine("Message Received");*/
+
+                                        client.Send(Encoding.Unicode.GetBytes("1060" + found[0]));
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Data Corrupted");
+                                        System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
+                                    }
                                 }
+                            } // add contact
+                            break;
+                        case "2002": // message deleted
+                            {
+                                if (Socket_receive(38, out string panelid))
+                                {
+                                    if (receive_data_automatically(out string messagenumber_int))
+                                    {
+                                        if (UIForm.panelChats.ContainsKey(panelid))
+                                        {
+                                            UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].RemoveMessage_Invoke, new object[] { messagenumber_int });
+                                        }
+                                    }
+                                }
+                            } // message deleted
+                            break;
+                        case "1060": // load friend's avatars 
+                            {
+                                if (Socket_receive(38, out string panelid))
+                                {
+                                    if (receive_ASCII_data_automatically(out string friend_avatar))
+                                    {
+                                        // friend_avatar is now a base64 image
+                                        // should check if user exists first and give them their avatar after
+                                        Console.WriteLine("Friend avatar received");
+                                        if (!string.IsNullOrEmpty(friend_avatar))
+                                        {
+                                            byte[] array = Convert.FromBase64String(friend_avatar);
+                                            Image image = Image.FromStream(new MemoryStream(array));
+                                            UIForm.Invoke(UIForm.set_avatar_delegate, new object[] { panelid, image });
+                                        }
 
-                                // finish
-                            }
-                        }
-                    } // load friend's avatars
-                    else if (instruction == "0601") // avatar received, not loaded
-                    {
+                                        // finish
+                                    }
+                                }
+                            } // load friend's avatars
+                            break;
+                        case "0601": // avatar received, not loaded
+                            {
 
-                        if (receive_ASCII_data_automatically(out img_string))
-                        {
-                            //user.avatar = StringToImage(img_string);
-                            Console.WriteLine("Image received");
-                        }
-                    } // avatar received, not loaded
-                    else if (instruction == "2609") // add contact failed
-                    {
-                        Console.WriteLine("No such account exists");
-                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
-                        first_message = null;
-                        first_message_sender = String.Empty;
-                    } // add contact failed
-                    else if (instruction == "0200") // logged in successfully
-                    { // 0200 = logged in successfully
-                        user = new Account();
-                        if (Socket_receive(38, out data)) user.id = data;
-                        receive_data_automatically(out user.name);
-                        user.state = 1;
-                    } // successfully logged in
-                    else if (instruction == "-200") // -200 = logged in failed
-                    {
-                        Console.WriteLine("Thong tin dang nhap bi sai");
+                                if (receive_ASCII_data_automatically(out img_string))
+                                {
+                                    //user.avatar = StringToImage(img_string);
+                                    Console.WriteLine("Image received");
+                                }
+                            } // avatar received, not loaded
+                            break;
+                        case "2609": // add contact failed
+                            {
+                                Console.WriteLine("No such account exists");
+                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
+                                first_message = null;
+                                first_message_sender = String.Empty;
+                            } // add contact failed
+                            break;
+                        case "0200": // logged in successfully
+                            { // 0200 = logged in successfully
+                                user = new Account();
+                                if (Socket_receive(38, out data)) user.id = data;
+                                receive_data_automatically(out user.name);
+                                user.state = 1;
+                            } // successfully logged in
+                            break;
+                        case "-200": // -200 = logged in failed
+                            {
+                                Console.WriteLine("Thong tin dang nhap bi sai");
 
-                    } // logged in failed
-                    else if (instruction == "1011") // 1011 = New account created successfully
-                    {
-                        Console.WriteLine("New account created");
-                    } // New account created successfully
-                    else if (instruction == "1111") // 1111 = Username exists
-                    {
-                        Console.WriteLine("This username is already in use");
-                    } // username is already in use
-                    else if (instruction == "2004") // 2004 = loggin from another device
-                    {
-                        Console.WriteLine("You are logged in from another device, you will be logged out");
-                        user.state = 0;
-                    } // logged in from another device, will log out
-                    else if (instruction == "4269") // password changed successfully
-                    {
-                        Console.WriteLine("Password changed successfully!");
-                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!", Color.FromArgb(143, 228, 185) });
-                    } // successfully changed password
-                    else if (instruction == "9624") // old password is incorrect
-                    {
-                        Console.WriteLine("Old Password is not correct!!");
-                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!", Color.FromArgb(213, 54, 41) });
+                            } // logged in failed
+                            break;
+                        case "1011": // 1011 = New account created successfully
+                            {
+                                Console.WriteLine("New account created");
+                            } // New account created successfully
+                            break;
+                        case "1111": // 1111 = Username exists
+                            {
+                                Console.WriteLine("This username is already in use");
+                            } // username is already in use
+                            break;
+                        case "2004": // 2004 = loggin from another device
+                            {
+                                Console.WriteLine("You are logged in from another device, you will be logged out");
+                                user.state = 0;
+                            } // logged in from another device, will log out
+                            break;
+                        case "4269": // password changed successfully
+                            {
+                                Console.WriteLine("Password changed successfully!");
+                                UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!", Color.FromArgb(143, 228, 185) });
+                            } // successfully changed password
+                            break;
+                        case "9624": // old password is incorrect
+                            {
+                                Console.WriteLine("Old Password is not correct!!");
+                                UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!", Color.FromArgb(213, 54, 41) });
 
-                    } // password is incorrect
-                    else if (instruction == "2411") // sort contact list
-                    {
-                        UIForm.Invoke(UIForm.sort_contact_item_delegate);
-                    } // sort contact list
-                    else if (instruction == "1012") // name changed successfully
-                    {
-                        Console.WriteLine("Name changed!");
-                        Change_name();
-                        UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
-                        //MessageBox.Show("What a beautiful name!");
-                        //if name not change then it is your internet connection problem
-                    } // successfully changed your name to a different one
+                            } // password is incorrect
+                            break;
+                        case "2411": // sort contact list
+                            {
+                                UIForm.Invoke(UIForm.sort_contact_item_delegate);
+                            } // sort contact list
+                            break;
+                        case "1012": // name changed successfully
+                            {
+                                Console.WriteLine("Name changed!");
+                                Change_name();
+                                UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
+                                //MessageBox.Show("What a beautiful name!");
+                                //if name not change then it is your internet connection problem
+                            } // successfully changed your name to a different one
+                            break;
+                    }
                 }
             }
             catch (Exception e)
