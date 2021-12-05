@@ -375,7 +375,6 @@ namespace A_Friend
                     Console.WriteLine(data);
                     switch (instruction)
                     {
-
                         case "-200": // -200 = logged in failed
                             {
                                 Console.WriteLine("Thong tin dang nhap bi sai");
