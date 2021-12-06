@@ -295,5 +295,8 @@
   <ItemGroup>
     <None Include="Resources\newUser.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Old_if_else_code_client_instruction.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
