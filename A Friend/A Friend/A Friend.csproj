@@ -119,6 +119,9 @@
     <Compile Include="CustomControls\PanelChat.Designer.cs">
       <DependentUpon>PanelChat.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\ToggleButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="FormAddContact.cs">
       <SubType>Form</SubType>
     </Compile>
