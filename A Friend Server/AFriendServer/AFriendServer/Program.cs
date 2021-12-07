@@ -85,8 +85,20 @@ namespace AFriendServer
         private static void shutdown(KeyValuePair<string, TcpClient> item) 
         {
             Console.WriteLine("{0} has quit", item.Key);
-            streams[item.Key].Close();
-            dictionary[item.Key].Close();
+            try
+            {
+                streams[item.Key].Close();
+            } catch (Exception e)
+            {
+
+            }
+            try
+            {
+                dictionary[item.Key].Close();
+            } catch (Exception e)
+            {
+
+            }
             string str_id = item.Key;
             dictionary.Remove(item.Key);
             byte_expected.Remove(item.Key);
@@ -221,9 +233,9 @@ namespace AFriendServer
                 {
                     foreach (var item in dictionary)
                     {
-                        if (is_locked[item.Key]) continue;
                         try
                         {
+                            if (is_locked[item.Key]) continue;
                             //Console.WriteLine(item.Key + " is online");
                             if (item.Value.Connected)
                             {
