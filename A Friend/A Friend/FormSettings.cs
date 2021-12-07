@@ -54,14 +54,14 @@ namespace A_Friend
             this.Text = " ";
         }
 
+       
         private void customButtonUsername_Click(object sender, EventArgs e)
         {
             labelWarning.Text = "";
             panelPassword.Hide();
             panelUsername.Show();
         }
-
-        private void buttonSaveUsername_Click(object sender, EventArgs e)
+        private void buttonSaveUsername_Click_1(object sender, EventArgs e)
         {
             labelWarning.Text = "";
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
@@ -83,15 +83,15 @@ namespace A_Friend
                 }
             }
         }
-
-        private void customButtonPassword_Click(object sender, EventArgs e)
+       
+        private void customButtonPassword_Click_1(object sender, EventArgs e)
         {
             labelWarning.Text = "";
             panelUsername.Hide();
             panelPassword.Show();
         }
-
-        private void buttonSavePassword_Click(object sender, EventArgs e)
+       
+        private void buttonSavePassword_Click_1(object sender, EventArgs e)
         {
             labelWarning.Text = "";
             if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
@@ -180,7 +180,8 @@ namespace A_Friend
             }
         }
 
-        private void customButtonAvatar_Click(object sender, EventArgs e)
+
+        private void customButtonAvatar_Click_1(object sender, EventArgs e)
         {
             labelWarning.Text = "";
             Thread thread = new Thread((ThreadStart)(() =>
@@ -211,18 +212,16 @@ namespace A_Friend
             thread.Start();
             thread.Join();
         }
-
-        private void customButtonExit_Click(object sender, EventArgs e)
+        private void customButtonExit_Click_1(object sender, EventArgs e)
         {
             labelWarning.Text = "";
             this.Close();
         }
-
+        
         private void textBoxCurrentPassword_Enter(object sender, EventArgs e)
         {
             labelWarning.Text = "";
         }
-
         private bool checkBytesP()
         {
             if (Encoding.Unicode.GetByteCount(textBoxNewPassword.Texts) < 128)
@@ -236,5 +235,7 @@ namespace A_Friend
                 return true;
             return false;
         }
+
+       
     }
 }
