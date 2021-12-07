@@ -266,7 +266,7 @@ namespace A_Friend
                     if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
                     {
                         contactItem.Unread = false; 
-                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
                         Console.WriteLine("you seen");
                     }
                 };
@@ -276,7 +276,7 @@ namespace A_Friend
                     if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
                     {
                         contactItem.Unread = false; 
-                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
                         Console.WriteLine("you seen");
                     }
                 };

@@ -10,13 +10,16 @@ using System.Drawing;
 using System.Windows.Forms;
 using Jil;
 using System.IO;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
 
 namespace A_Friend 
 {
     class AFriendClient : Form
     {
         //private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-        private static IPAddress ipAddr = IPAddress.Any;
+        //private static IPAddress ipAddr = IPAddress.Any;
         private static string instruction;
         private static MessageObject first_message = null;
         private static string first_message_sender = null;
@@ -26,7 +29,8 @@ namespace A_Friend
         internal static string temp_name = null;
         internal static string img_string = null;
 
-        public static Socket client;
+        public static TcpClient client;
+        internal static SslStream stream;
         public static Account user;
 
         private static FormApplication UIForm;
@@ -38,9 +42,10 @@ namespace A_Friend
             byte_expected = 0;
             temp_name = null;
             img_string = null;
-            user = null;
-            client.Send(Encoding.Unicode.GetBytes("2004"));
-            client.Shutdown(SocketShutdown.Both);
+            user = new Account();
+            user.state = 0;
+            stream.Write(Encoding.Unicode.GetBytes("2004"));
+            stream.Close();
             client.Close();
         }
 
@@ -52,6 +57,7 @@ namespace A_Friend
             }
             temp_name = null;
         }
+
 
         public static void ExecuteClient()
         {
@@ -67,15 +73,14 @@ namespace A_Friend
                         //Console.WriteLine(item.Key + " is online");
                         if (client.Connected)
                         {
-                            if (client.Poll(1, SelectMode.SelectRead))
+                            if (client.Available > 0 || stream.CanRead)
                             {
                                 if (!client.Connected)
                                 {
                                     // Something bad has happened, shut down
                                     try
                                     {
-                                        client.Shutdown(SocketShutdown.Both);
-                                        client.Close();
+                                        Logout();
                                     }
                                     catch (Exception e)
                                     {
@@ -91,7 +96,7 @@ namespace A_Friend
                                     }
                                     else
                                     {
-                                        if (Socket_receive(byte_expected, out string data_string))// all data received, send to UI
+                                        if (Stream_receive(byte_expected, out string data_string))// all data received, send to UI
                                         {
                                             byte_expected = 0;
                                             Console.WriteLine("Data Received");
@@ -114,7 +119,7 @@ namespace A_Friend
                                                     first_message_sender = sender;
                                                     first_message = msgobj;
                                                     Console.WriteLine("Ask for info");
-                                                    client.Send(Encoding.Unicode.GetBytes("0609" + sender));
+                                                    stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
                                                 }
                                             }
                                             else if (user.id == msgobj.id1) // if me = user1 add user2
@@ -132,7 +137,7 @@ namespace A_Friend
                                                     first_message_sender = sender;
                                                     first_message = msgobj;
                                                     Console.WriteLine("Ask for info");
-                                                    client.Send(Encoding.Unicode.GetBytes("0609" + sender));
+                                                    stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
                                                 }
                                             }
                                         }
@@ -147,9 +152,7 @@ namespace A_Friend
                         }
                         else
                         {
-                            client.Shutdown(SocketShutdown.Both);
-                            client.Close();
-                            user.state = 0;
+                            Logout();
                         }
                     }
                     catch (Exception e)
@@ -165,18 +168,54 @@ namespace A_Friend
             }
         }
 
+        public static bool ValidateServerCertificate(
+              object sender,
+              X509Certificate certificate,
+              X509Chain chain,
+              SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
+
+            // Do not allow this client to communicate with unauthenticated servers.
+            return false;
+        }
+
         public static bool Logged_in(string tk, string mk)
         {
-            client = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            client = new TcpClient("mancitiss.duckdns.org", 11111);
+            stream = new SslStream(
+                client.GetStream(),
+                false,
+                new RemoteCertificateValidationCallback(ValidateServerCertificate),
+                null
+                );
             try
             {
-                client.Connect("mancitiss.ddns.net", 11111);
-                client.Send(Encoding.Unicode.GetBytes("0010" + tk + " " + mk)); //0010 = log in
+                stream.AuthenticateAsClient("mancitiss.duckdns.org");
+            }
+            catch (AuthenticationException e)
+            {
+                Console.WriteLine("Exception: {0}", e.Message);
+                if (e.InnerException != null)
+                {
+                    Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
+                }
+                Console.WriteLine("Authentication failed - closing the connection.");
+                stream.Close();
+                client.Close();
+                return false;
+            }
+            try
+            {
+                stream.Write(Encoding.Unicode.GetBytes("0010" + data_with_byte(tk) + data_with_byte(mk))); //0010 = log in
                 Receive_from_id(client);
                 if (user == null)
                 {
-                    client.Send(Encoding.Unicode.GetBytes("2004")); // 2004 = stop client
-                    client.Shutdown(SocketShutdown.Both);
+                    stream.Write(Encoding.Unicode.GetBytes("2004")); // 2004 = stop client
+                    stream.Close();
                     client.Close();
                     return false;
                 }
@@ -190,7 +229,7 @@ namespace A_Friend
             }
         }
 
-        public static void Send_to_id(Socket self, string id, string myid, string str)
+        public static void Send_to_id(SslStream self, string id, string myid, string str)
         {
             // do something
             if (myid.Length != 19 || id.Length != 19)
@@ -203,7 +242,8 @@ namespace A_Friend
             string data_string = Encoding.Unicode.GetByteCount(sent_message).ToString();
             try
             {
-                self.Send(Encoding.Unicode.GetBytes("1901"+data_string.Length.ToString().PadLeft(2, '0')+data_string+sent_message));
+                self.Write(Encoding.Unicode.GetBytes("1901"+data_string.Length.ToString().PadLeft(2, '0')+data_string+sent_message));
+                self.Flush();
             }
             catch (Exception e)
             {
@@ -245,16 +285,16 @@ namespace A_Friend
 
         private static bool receive_data_automatically(out string data)
         {
-            if (Socket_receive(4, out data))
+            if (Stream_receive(4, out data))
             {
                 if (Int32.TryParse(data, out int bytesize))
                 {
                     bytesize = bytesize * 2;
-                    if (Socket_receive(bytesize, out data))
+                    if (Stream_receive(bytesize, out data))
                     {
                         if (Int32.TryParse(data, out bytesize))
                         {
-                            if (Socket_receive(bytesize, out data))
+                            if (Stream_receive(bytesize, out data))
                             {
                                 return true;
                             }
@@ -268,15 +308,15 @@ namespace A_Friend
 
         private static bool receive_ASCII_data_automatically(out string data)
         {
-            if (Socket_receive_ASCII(2, out data))
+            if (Stream_receive_ASCII(2, out data))
             {
                 if (Int32.TryParse(data, out int bytesize))
                 {
-                    if (Socket_receive_ASCII(bytesize, out data))
+                    if (Stream_receive_ASCII(bytesize, out data))
                     {
                         if (Int32.TryParse(data, out bytesize))
                         {
-                            if (Socket_receive_ASCII(bytesize, out data))
+                            if (Stream_receive_ASCII(bytesize, out data))
                             {
                                 return true;
                             }
@@ -288,7 +328,7 @@ namespace A_Friend
             return false;
         }
 
-        private static bool Socket_receive(int byte_expected, out string data_string) 
+        private static bool Stream_receive(int byte_expected, out string data_string) 
         {
             int total_byte_received = 0;
             byte[] data = new byte[byte_expected];
@@ -296,7 +336,7 @@ namespace A_Friend
             Console.WriteLine("Expected: {0}", byte_expected);
             do
             {
-                received_byte = client.Receive(data, total_byte_received, byte_expected, SocketFlags.None);
+                received_byte = stream.Read(data, total_byte_received, byte_expected);
                 if (received_byte > 0)
                 {
                     total_byte_received += received_byte;
@@ -316,7 +356,7 @@ namespace A_Friend
             }
         }
 
-        private static bool Socket_receive_ASCII(int byte_expected, out string data_string)
+        private static bool Stream_receive_ASCII(int byte_expected, out string data_string)
         {
             int total_byte_received = 0;
             byte[] data = new byte[byte_expected];
@@ -324,7 +364,7 @@ namespace A_Friend
             Console.WriteLine("Expected: {0}", byte_expected);
             do
             {
-                received_byte = client.Receive(data, total_byte_received, byte_expected, SocketFlags.None);
+                received_byte = stream.Read(data, total_byte_received, byte_expected);
                 if (received_byte > 0)
                 {
                     total_byte_received += received_byte;
@@ -365,11 +405,11 @@ namespace A_Friend
             return image;
         }
 
-        private static void Receive_from_id(Socket self)
+        private static void Receive_from_id(TcpClient self)
         {
             try
             {
-                if (Socket_receive(8, out string data))
+                if (Stream_receive(8, out string data))
                 {
                     instruction = data;
                     Console.WriteLine(data);
@@ -384,9 +424,9 @@ namespace A_Friend
                         case "0200": // logged in successfully
                             { // 0200 = logged in successfully
                                 user = new Account();
-                                if (Socket_receive(38, out data)) user.id = data;
+                                if (Stream_receive(38, out data)) user.id = data;
                                 receive_data_automatically(out user.name);
-                                if (Socket_receive(10, out string priv))
+                                if (Stream_receive(10, out string priv))
                                 {
                                     Console.WriteLine(priv);
                                     user.priv = bool.Parse(priv);
@@ -403,7 +443,7 @@ namespace A_Friend
                         case "0404": //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
                             {
                                 Console.WriteLine("This person is not online");
-                                if (Socket_receive(38, out string offline_id))
+                                if (Stream_receive(38, out string offline_id))
                                 {
                                     Console.WriteLine(offline_id);
                                     UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
@@ -422,9 +462,9 @@ namespace A_Friend
                             break;
                         case "0708": // me seen
                             {
-                                if (Socket_receive(38, out string panelid))
+                                if (Stream_receive(38, out string panelid))
                                 {
-                                    if (Socket_receive(2, out string boolstr))
+                                    if (Stream_receive(2, out string boolstr))
                                     {
                                         if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
                                         {
@@ -458,7 +498,7 @@ namespace A_Friend
                             break;
                         case "1060": // load friend's avatars 
                             {
-                                if (Socket_receive(38, out string panelid))
+                                if (Stream_receive(38, out string panelid))
                                 {
                                     if (receive_ASCII_data_automatically(out string friend_avatar))
                                     {
@@ -511,7 +551,7 @@ namespace A_Friend
                                         UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
                                         Console.WriteLine("Message Received");*/
 
-                                        client.Send(Encoding.Unicode.GetBytes("1060" + found[0]));
+                                        stream.Write(Encoding.Unicode.GetBytes("1060" + found[0]));
                                     }
                                     else
                                     {
@@ -523,19 +563,19 @@ namespace A_Friend
                             break;
                         case "1901": // message received
                             { // 1901 = message received
-                                if (Socket_receive(4, out data))
+                                if (Stream_receive(4, out data))
                                 {
                                     if (Int32.TryParse(data, out int bytesize))
                                     {
                                         bytesize = bytesize * 2;
-                                        if (Socket_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
+                                        if (Stream_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
                                     }
                                 }
                             } // message received
                             break;
                         case "2002": // message deleted
                             {
-                                if (Socket_receive(38, out string panelid))
+                                if (Stream_receive(38, out string panelid))
                                 {
                                     if (receive_data_automatically(out string messagenumber_int))
                                     {
@@ -556,7 +596,7 @@ namespace A_Friend
                         case "2211": // 2211 = this id is online
                             {
                                 Console.WriteLine("This person is online");
-                                if (Socket_receive(38, out string online_id))
+                                if (Stream_receive(38, out string online_id))
                                 {
                                     Console.WriteLine(online_id);
                                     UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
@@ -585,7 +625,7 @@ namespace A_Friend
                         case "6475":
                             // load messages
                             {
-                                if (Socket_receive(38, out string panelid))
+                                if (Stream_receive(38, out string panelid))
                                 {
                                     Console.WriteLine(panelid);
                                     if (receive_data_automatically(out string objectdatastring))
@@ -594,7 +634,7 @@ namespace A_Friend
                                         List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
                                         UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
                                         Console.WriteLine("Message Loaded");
-                                        self.Send(Encoding.Unicode.GetBytes("0708" + panelid));
+                                        stream.Write(Encoding.Unicode.GetBytes("0708" + panelid));
                                     }
                                 }
                             } // load messages
@@ -621,9 +661,33 @@ namespace A_Friend
             {
                 bool success = false;
 
-                client = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                client.Connect("mancitiss.ddns.net", 11111);
-                client.Send(Encoding.Unicode.GetBytes("0011" + tk + " " + mk)); //0011 = sign up
+                client = new TcpClient("mancitiss.duckdns.org", 11111);
+                stream = new SslStream(
+                    client.GetStream(),
+                    false,
+                    new RemoteCertificateValidationCallback(ValidateServerCertificate),
+                    null
+                    );
+                try
+                {
+                    Console.WriteLine("Try authenticate");
+                    stream.AuthenticateAsClient("mancitiss.duckdns.org");
+                }
+                catch (AuthenticationException e)
+                {
+                    Console.WriteLine("Exception: {0}", e.Message);
+                    if (e.InnerException != null)
+                    {
+                        Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
+                    }
+                    Console.WriteLine("Authentication failed - closing the connection.");
+                    stream.Close();
+                    client.Close();
+                    return false;
+                }
+                Console.WriteLine("Success");
+                stream.Write(Encoding.Unicode.GetBytes("0011" + data_with_byte(tk) + " " + data_with_byte(mk))); //0011 = sign up
+                
                 Receive_from_id(client);
                 if (instruction == "1011")
                 {
@@ -634,8 +698,8 @@ namespace A_Friend
 
                 }
                 Console.WriteLine(instruction);
-                client.Send(Encoding.Unicode.GetBytes("2004"));
-                client.Shutdown(SocketShutdown.Both);
+                stream.Write(Encoding.Unicode.GetBytes("2004"));
+                stream.Close();
                 client.Close();
                 return success;
             }

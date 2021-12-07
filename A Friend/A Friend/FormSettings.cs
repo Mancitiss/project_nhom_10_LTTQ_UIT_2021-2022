@@ -75,7 +75,7 @@ namespace A_Friend
                 }
                 else
                 {
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
+                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
                     AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
                     panelUsername.Hide();
                     customTextBoxUsername.Texts = "";
@@ -113,7 +113,7 @@ namespace A_Friend
                     {
                         if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
                         {
-                            AFriendClient.client.Send(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
+                            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
                         }
                         panelPassword.Hide();
                         textBoxNewPassword.Texts = "";
@@ -193,7 +193,7 @@ namespace A_Friend
                     int length = imageAsString.Length;
                     if (length < 2800000)
                     {
-                        AFriendClient.client.Send(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
+                        AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
                         AFriendClient.img_string = imageAsString.Trim();
                         circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
                     }

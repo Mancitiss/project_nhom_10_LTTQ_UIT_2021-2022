@@ -91,7 +91,7 @@ namespace A_Friend.CustomControls
                     string datasend = num.ToString();
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -110,7 +110,7 @@ namespace A_Friend.CustomControls
                     string datasend = num.ToString();
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -203,7 +203,7 @@ namespace A_Friend.CustomControls
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
             // code to remove message
-            AFriendClient.client.Send(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
+            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
         //public void AddMessage(string message, bool stacktoleft)
@@ -312,7 +312,7 @@ namespace A_Friend.CustomControls
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                    AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                     //AddMessage(textboxWriting.Texts, false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
@@ -333,7 +333,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
-                AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                 //AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
@@ -373,7 +373,7 @@ namespace A_Friend.CustomControls
             AddMessageToTop("Chào bạn", true);
             panel_Chat.ResumeLayout();
             */
-            AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
+            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
         }
 
         public void LoadMessage(List<MessageObject> messageObjects)
@@ -494,7 +494,7 @@ namespace A_Friend.CustomControls
                 {
                     if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
                     {
-                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("5859" + this.ID));
+                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("5859" + this.ID));
                         (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
                     }
                 }

@@ -261,6 +261,7 @@ namespace A_Friend
             timerDisconnect.Stop();
             if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
             {
+                AFriendClient.stream.Close();
                 AFriendClient.client.Close();
                 labelWarning.Text = "Cannot connect to the server";
             }

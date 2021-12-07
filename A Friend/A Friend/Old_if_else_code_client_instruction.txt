@@ -1,9 +1,9 @@
 ﻿/*
                     if (instruction == "0708") // me seen
                     {
-                        if (Socket_receive(38, out string panelid))
+                        if (Stream_receive(38, out string panelid))
                         {
-                            if (Socket_receive(2, out string boolstr))
+                            if (Stream_receive(2, out string boolstr))
                             {
                                 if (boolstr == "0" && Program.mainform.panelChats[panelid].IsLastMessageFromYou())
                                 {
@@ -23,7 +23,7 @@
                     else if (instruction == "6475")
                         // load messages
                     {
-                        if (Socket_receive(38, out string panelid))
+                        if (Stream_receive(38, out string panelid))
                         {
                             Console.WriteLine(panelid);
                             if (receive_data_automatically(out string objectdatastring))
@@ -39,7 +39,7 @@
                     else if (instruction == "2211") // 2211 = this id is online
                     {
                         Console.WriteLine("This person is online");
-                        if (Socket_receive(38, out string online_id))
+                        if (Stream_receive(38, out string online_id))
                         {
                             Console.WriteLine(online_id);
                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
@@ -48,7 +48,7 @@
                     else if (instruction == "0404") //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
                     {
                         Console.WriteLine("This person is not online");
-                        if (Socket_receive(38, out string offline_id))
+                        if (Stream_receive(38, out string offline_id))
                         {
                             Console.WriteLine(offline_id);
                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
@@ -56,12 +56,12 @@
                     } // this id is offline
                     else if (instruction == "1901") // message received
                     { // 1901 = message received
-                        if (Socket_receive(4, out data))
+                        if (Stream_receive(4, out data))
                         {
                             if (Int32.TryParse(data, out int bytesize))
                             {
                                 bytesize = bytesize * 2;
-                                if (Socket_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
+                                if (Stream_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
                             }
                         }
                     } // message received
@@ -94,7 +94,7 @@
                                 //UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
                                 //Console.WriteLine("Message Received");
 
-                                client.Send(Encoding.Unicode.GetBytes("1060" + found[0]));
+                                stream.Write(Encoding.Unicode.GetBytes("1060" + found[0]));
                             }
                             else
                             {
@@ -105,7 +105,7 @@
                     } // add contact
                     else if (instruction == "2002") // message deleted
                     {
-                        if (Socket_receive(38, out string panelid))
+                        if (Stream_receive(38, out string panelid))
                         {
                             if (receive_data_automatically(out string messagenumber_int))
                             {
@@ -118,7 +118,7 @@
                     } // message deleted
                     else if (instruction == "1060") // load friend's avatars 
                     {
-                        if (Socket_receive(38, out string panelid))
+                        if (Stream_receive(38, out string panelid))
                         {
                             if (receive_ASCII_data_automatically(out string friend_avatar))
                             {
@@ -155,7 +155,7 @@
                     else if (instruction == "0200") // logged in successfully
                     { // 0200 = logged in successfully
                         user = new Account();
-                        if (Socket_receive(38, out data)) user.id = data;
+                        if (Stream_receive(38, out data)) user.id = data;
                         receive_data_automatically(out user.name);
                         user.state = 1;
                     } // successfully logged in
