@@ -35,6 +35,7 @@ namespace A_Friend
 
         private static FormApplication UIForm;
 
+
         private static void Logout()
         {
             first_message = null;
@@ -44,7 +45,6 @@ namespace A_Friend
             img_string = null;
             user = new Account();
             user.state = 0;
-            stream.Write(Encoding.Unicode.GetBytes("2004"));
             stream.Close();
             client.Close();
         }
@@ -73,7 +73,7 @@ namespace A_Friend
                         //Console.WriteLine(item.Key + " is online");
                         if (client.Connected)
                         {
-                            if (client.Available > 0 || stream.CanRead)
+                            if (client.Client.Poll(1, SelectMode.SelectRead) || byte_expected != 0)
                             {
                                 if (!client.Connected)
                                 {
@@ -352,6 +352,7 @@ namespace A_Friend
             } else // data corrupted
             {
                 data_string = "";
+                
                 return false;
             }
         }

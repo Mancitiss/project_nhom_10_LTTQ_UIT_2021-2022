@@ -82,29 +82,60 @@ namespace AFriendServer
             }
         }
 
+        private static void clear(string id)
+        {
+            Console.WriteLine("{0} has quit", id);
+            try
+            {
+                streams[id].Dispose();
+            }
+            catch (Exception e)
+            {
+
+            }
+            try
+            {
+                dictionary[id].Dispose();
+            }
+            catch (Exception e)
+            {
+
+            }
+            string str_id = id;
+            streams.Remove(id);
+            dictionary.Remove(id);
+            byte_expected.Remove(id);
+            is_processing.Remove(id);
+            is_locked.Remove(id);
+            loaded.Remove(id);
+            //bytes.Remove(id);
+            /*
+            while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
+            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
+            {
+                cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
+                cmd.ExecuteNonQuery();
+            }*/
+        }
+
         private static void shutdown(KeyValuePair<string, TcpClient> item) 
         {
             Console.WriteLine("{0} has quit", item.Key);
             try
             {
-                streams[item.Key].Close();
+                streams[item.Key].Dispose();
             } catch (Exception e)
             {
 
             }
             try
             {
-                dictionary[item.Key].Close();
+                dictionary[item.Key].Dispose();
             } catch (Exception e)
             {
 
             }
             string str_id = item.Key;
-            dictionary.Remove(item.Key);
-            byte_expected.Remove(item.Key);
-            is_processing.Remove(item.Key);
-            is_locked.Remove(item.Key);
-            loaded.Remove(item.Key);
             //bytes.Remove(item.Key);
             while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
             using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
@@ -112,6 +143,7 @@ namespace AFriendServer
                 cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
                 cmd.ExecuteNonQuery();
             }
+            //clear(item.Key);
         }
 
         private static void exception_handler(KeyValuePair<string, TcpClient> item, string se)
@@ -188,6 +220,7 @@ namespace AFriendServer
                                         {
                                             s.Write(Encoding.Unicode.GetBytes("2211"+receiver_id));
                                         }
+                                        Console.WriteLine("Sent");
                                         //send to socket end
                                     }
                                 }
@@ -239,8 +272,8 @@ namespace AFriendServer
                             //Console.WriteLine(item.Key + " is online");
                             if (item.Value.Connected)
                             {
-                                Console.WriteLine(item.Value.Available);
-                                if (item.Value.Available > 0 || streams[item.Key].CanRead)
+                                //Console.WriteLine(item.Value.Available);
+                                if (item.Value.Client.Poll(1, SelectMode.SelectRead) || byte_expected[item.Key]!=0)
                                 {
                                     //bytes[item.Key] += item.Value.Available;
                                     if (!item.Value.Connected) // Something bad has happened, shut down
@@ -300,13 +333,26 @@ namespace AFriendServer
                             }
                             else
                             {
-                                shutdown(item);
+                                clear(item.Key);
                             }
                         }
                         catch (Exception e)
                         {
+                            /*
                             Console.WriteLine(e.ToString());
-                            exception_handler(item, e.ToString());
+                            try 
+                            {
+                                exception_handler(item, e.ToString());
+                            }
+                            catch
+                            {
+
+                            }
+                            finally
+                            {
+                                clear(item.Key);
+                            }
+                            */
                         } 
                     }
                 }
@@ -369,7 +415,7 @@ namespace AFriendServer
                     {
                         Console.WriteLine(e.ToString());
                     }
-
+                    client = null;
                 }
             }
             catch (Exception e)
@@ -506,6 +552,7 @@ namespace AFriendServer
 
         private static void Receive_message(object si)
         {
+            Console.WriteLine("Work Started");
             KeyValuePair<string, TcpClient> item = (KeyValuePair<string, TcpClient>)si;
             SslStream s = streams[item.Key];
             try
@@ -513,7 +560,7 @@ namespace AFriendServer
                 string data;
                 if (SslStream_receive(s, 8, out data))
                 {
-                    //Console.WriteLine("Work: " + data);
+                    Console.WriteLine("Work: " + data);
                     if (data != null && data != "")
                     {
                         string instruction = data;
@@ -1139,32 +1186,49 @@ namespace AFriendServer
                                         Console.WriteLine("Before dictionaries");
                                         try
                                         {
+                                            if (streams.ContainsKey(id))
+                                            {
+                                                try
+                                                {
+                                                    streams[id].Write(Encoding.Unicode.GetBytes("2004"));
+                                                }
+                                                catch
+                                                {
+
+                                                }
+                                                try
+                                                {
+                                                    streams[id].Dispose();
+                                                    streams[id] = sslStream;
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    streams.Remove(id);
+                                                    streams.Add(id, sslStream);
+                                                }
+                                            } else
+                                            {
+                                                streams.Add(id, sslStream);
+                                            }
                                             if (dictionary.ContainsKey(id))
                                             {
-                                                streams[id].Write(Encoding.Unicode.GetBytes("2004"));
-                                                streams[id].Close();
-                                                dictionary[id].Close();
-                                                streams.Remove(id);
-                                                dictionary.Remove(id);
+                                                Console.WriteLine("another one");
+                                                try
+                                                {
+                                                    dictionary[id].Dispose();
+                                                    dictionary[id] = c;
+                                                }catch (Exception ex)
+                                                {
+                                                    dictionary.Remove(id);
+                                                    dictionary.Add(id, c);
+                                                }
+                                                
+                                            } else
+                                            {
+                                                dictionary.Add(id, c);
                                             }
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Console.WriteLine(e.ToString());
-                                        }
-
-                                        try
-                                        {
+                                        
                                             //add the entry in the dictionary
-                                            /*
-                                            try
-                                            {
-                                                //bytes.Add(id, 0);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                //bytes[id] = 0;
-                                            }*/
                                             try
                                             {
                                                 loaded.Add(id, 0);
@@ -1196,18 +1260,6 @@ namespace AFriendServer
                                             catch (Exception e)
                                             {
                                                 is_locked[id] = false;
-                                            }
-                                            try
-                                            {
-                                                dictionary.Add(id, c);
-                                                streams.Add(id, sslStream);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                streams[id].Close();
-                                                dictionary[id].Close();
-                                                streams[id] = sslStream;
-                                                dictionary[id] = c;
                                             }
                                             Console.WriteLine("got id");
 
@@ -1241,29 +1293,26 @@ namespace AFriendServer
                                                 sslStream.Write(Encoding.Unicode.GetBytes("2411"));
                                                 loaded.Remove(id);
                                             }
-                                        }
-                                        catch (Exception e)
+                                        
+                                            if (reader["avatar"].GetType() != typeof(DBNull))
+                                            {
+                                                Console.WriteLine("Before get avatar");
+                                                string tmp = reader["avatar"].ToString();
+                                                string tmpbyte = Encoding.ASCII.GetByteCount(tmp).ToString();
+                                                sslStream.Write(Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(tmpbyte.Length.ToString().PadLeft(2, '0') + tmpbyte + tmp)));
+                                            }
+                                            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
+                                            {
+                                                cmd.Parameters.AddWithValue("@id", str_id);
+                                                cmd.ExecuteNonQuery();
+                                            }
+                                        } catch (Exception e)
                                         {
                                             Console.WriteLine(e.ToString());
-                                            exception_handler(new KeyValuePair<string, TcpClient>(id, dictionary[id]), e.ToString());
+                                            clear(str_id);
                                         }
-                                        /*
-                                        while (thread.ThreadState == ThreadState.Running)
-                                        {
-                                            Console.WriteLine("Im still running");
-                                        }*/
-                                        if (reader["avatar"].GetType() != typeof(DBNull))
-                                        {
-                                            Console.WriteLine("Before get avatar");
-                                            string tmp = reader["avatar"].ToString();
-                                            string tmpbyte = Encoding.ASCII.GetByteCount(tmp).ToString();
-                                            sslStream.Write(Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(tmpbyte.Length.ToString().PadLeft(2, '0') + tmpbyte + tmp)));
-                                        }
-                                        using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
-                                        {
-                                            cmd.Parameters.AddWithValue("@id", str_id);
-                                            cmd.ExecuteNonQuery();
-                                        }
+                                        c = null;
+                                        sslStream = null;
                                     }
                                     else
                                     {
