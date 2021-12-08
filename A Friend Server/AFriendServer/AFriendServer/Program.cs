@@ -128,14 +128,14 @@ namespace AFriendServer
             Console.WriteLine("{0} has quit", item.Key);
             try
             {
-                streams[item.Key].Dispose();
+                streams[item.Key].Close();
             } catch (Exception e)
             {
 
             }
             try
             {
-                dictionary[item.Key].Dispose();
+                dictionary[item.Key].Close();
             } catch (Exception e)
             {
 
@@ -279,7 +279,7 @@ namespace AFriendServer
                             if (item.Value.Connected)
                             {
                                 //Console.WriteLine(item.Value.Available);
-                                if (item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/)
+                                if (item.Value.Available > 0) /*item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/
                                 {
                                     //bytes[item.Key] += item.Value.Available;
                                     if (!item.Value.Connected) // Something bad has happened, shut down
