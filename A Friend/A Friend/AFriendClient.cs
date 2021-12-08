@@ -435,7 +435,11 @@ namespace A_Friend
                                 Console.WriteLine(user.priv);
                                 user.state = 1;
                                 // set initial private option (on or off) from here
-
+                                if (UIForm != null)
+                                { 
+                                    //UIForm.Invoke(UIForm.change_private_mode_delegate, new object[] { user.priv });
+                                    UIForm.formSettings.Invoke(UIForm.formSettings.changeIncognitoMode, new object[] { user.priv });
+                                }
                                 // or not, if you don't have to
 
                                 //
@@ -592,6 +596,7 @@ namespace A_Friend
                             {
                                 Console.WriteLine("You are logged in from another device, you will be logged out");
                                 user.state = 0;
+                                UIForm.Invoke(UIForm.show_login_delegate);
                             } // logged in from another device, will log out
                             break;
                         case "2211": // 2211 = this id is online

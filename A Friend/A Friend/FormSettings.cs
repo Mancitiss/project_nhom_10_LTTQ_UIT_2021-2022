@@ -17,6 +17,8 @@ namespace A_Friend
     {
         public delegate void ChangeSettingsWarning(string text, Color color);
         public ChangeSettingsWarning changeSettingsWarning;
+        public delegate void ChangeIncognitoModeDelegate(bool value);
+        public ChangeIncognitoModeDelegate changeIncognitoMode;
 
 
         public FormSettings()
@@ -32,6 +34,7 @@ namespace A_Friend
             //customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
             labelWarning.Text = "";
             changeSettingsWarning = new ChangeSettingsWarning(ChangeLabel);
+            changeIncognitoMode = new ChangeIncognitoModeDelegate(ChangeIncognitoMode);
         }
 
         public void ChangeLabel(string text, Color color)
@@ -48,6 +51,7 @@ namespace A_Friend
                 circlePictureBox1.Image = StringToImage(AFriendClient.img_string);
             }
             this.labelUsername.Text = AFriendClient.user.name;
+            ChangeIncognitoMode(AFriendClient.user.priv);
             panelPassword.Hide();
             panelUsername.Hide();
             this.ControlBox = false;
@@ -200,7 +204,9 @@ namespace A_Friend
                     }
                     else
                     {
-                        TopMostMessageBox.Show("Làm ơn chọn ảnh có kích thước nhỏ hơn 2MB");
+                        //ChangeLabel("Please choose an image that is less than 2Mb", Color.Red);
+                        //this.Invoke(this.changeSettingsWarning, new object[] { "Please choose an image that is less than 2Mb", Color.Red });
+                        TopMostMessageBox.Show("Please choose an image that is less than 2Mb"); 
                     }
                     /*
                     Console.WriteLine(imageAsString);
@@ -236,6 +242,14 @@ namespace A_Friend
             return false;
         }
 
-       
+        public void ChangeIncognitoMode(bool value)
+        {
+            toggleButton1.Checked = value;
+        }
+
+        private void toggleButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            //Code to change private mode
+        }
     }
 }
