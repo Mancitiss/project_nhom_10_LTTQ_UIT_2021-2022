@@ -17,21 +17,16 @@ using System.Security.Authentication;
 
 namespace AFriendServer
 {
-    internal partial class Program
+    internal class Program
     {
         static string s = "";
         static X509Certificate serverCertificate = new X509Certificate(Environment.GetEnvironmentVariable("certpath", EnvironmentVariableTarget.User), Environment.GetEnvironmentVariable("certpass", EnvironmentVariableTarget.User));
 
-        static Dictionary<string, TcpClient> dictionary = new Dictionary<string, TcpClient>();
-        static Dictionary<string, SslStream> streams = new Dictionary<string, SslStream>();
-        //static Dictionary<string, Int64> bytes = new Dictionary<string, long>();
+        static Dictionary<string, Client> sessions = new Dictionary<string, Client>();
+
         static SqlConnection sql;
         static Random rand;
-
-        //static Dictionary<string, int> byte_expected = new Dictionary<string, int>();
-        //static Dictionary<string, bool> is_processing = new Dictionary<string, bool>();
-        static Dictionary<string, bool> is_locked = new Dictionary<string, bool>();
-        static Dictionary<string, int> loaded = new Dictionary<string, int>();
+        
 
         static Thread main_thread, loop;
         static ManualResetEvent mainstop = new ManualResetEvent(true);
@@ -87,60 +82,25 @@ namespace AFriendServer
             }
         }
 
-        private static void clear(string id)
+        private static void shutdown(string id) 
         {
             Console.WriteLine("{0} has quit", id);
             try
             {
-                streams[id].Dispose();
-            }
-            catch (Exception e)
+                sessions[id].stream.Dispose();
+            } catch (Exception e)
             {
 
             }
             try
             {
-                dictionary[id].Dispose();
-            }
-            catch (Exception e)
+                sessions[id].client.Dispose();
+            } catch (Exception e)
             {
 
             }
+            sessions.Remove(id);
             string str_id = id;
-            streams.Remove(id);
-            dictionary.Remove(id);
-            //byte_expected.Remove(id);
-            //is_processing.Remove(id);
-            is_locked.Remove(id);
-            loaded.Remove(id);
-            //bytes.Remove(id);
-            /*
-            while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
-            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
-            {
-                cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
-                cmd.ExecuteNonQuery();
-            }*/
-        }
-
-        private static void shutdown(KeyValuePair<string, TcpClient> item) 
-        {
-            Console.WriteLine("{0} has quit", item.Key);
-            try
-            {
-                streams[item.Key].Close();
-            } catch (Exception e)
-            {
-
-            }
-            try
-            {
-                dictionary[item.Key].Close();
-            } catch (Exception e)
-            {
-
-            }
-            string str_id = item.Key;
             //bytes.Remove(item.Key);
             while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
             using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
@@ -151,7 +111,7 @@ namespace AFriendServer
             //clear(item.Key);
         }
 
-        private static void exception_handler(KeyValuePair<string, TcpClient> item, string se)
+        private static void exception_handler(KeyValuePair<string, Client> item, string se)
         {
             if (se.Contains("open and available Connection"))
             {
@@ -159,110 +119,9 @@ namespace AFriendServer
             }
             else if (se.Contains("was forcibly closed"))
             {
-                shutdown(item);
+                shutdown(item.Key);
             }
         }
-
-        /*
-        private static void process_message(object obj)
-        {
-
-            KeyValuePair<string, TcpClient> item = (KeyValuePair<string, TcpClient>)obj;
-            SslStream s = streams[item.Key];
-            try
-            {
-                string data_string;
-                if (SslStream_receive(s, byte_expected[item.Key], out data_string))// all data received, save to database, send to socket
-                {
-                    byte_expected[item.Key] = 0;
-                    string receiver_id = data_string.Substring(0, 19);
-                    data_string = data_string.Remove(0, 19);
-                    //save to database start
-                    string id1, id2;
-                    if (item.Key.CompareTo(receiver_id) <= 0)
-                    {
-                        id1 = item.Key;
-                        id2 = receiver_id;
-                    } else
-                    {
-                        id1 = receiver_id;
-                        id2 = item.Key;
-                    }
-                    string sqlmessage = data_string;
-                    try
-                    {
-                        bool success = false;
-                        DateTime now = DateTime.Now;
-                        using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message)", sql))
-                        {
-                            command.Parameters.AddWithValue("@id1", id1);
-                            command.Parameters.AddWithValue("@id2", id2);
-                            command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
-                            command.Parameters.AddWithValue("@datetimenow", now);
-                            command.Parameters.AddWithValue("@sender", item.Key == id2);
-                            command.Parameters.AddWithValue("@message", sqlmessage);
-                            if (command.ExecuteNonQuery() >= 1) success = true;
-                        }
-                        if (success)
-                        {
-                            using (SqlCommand another_command = new SqlCommand("select top 1 * from message where id1 = @id1 and id2 = @id2 and timesent = @timesent and sender = @sender", sql))
-                            {
-                                another_command.Parameters.AddWithValue("@id1", id1);
-                                another_command.Parameters.AddWithValue("@id2", id2);
-                                another_command.Parameters.AddWithValue("@timesent", now);
-                                another_command.Parameters.AddWithValue("sender", item.Key == id2);
-                                using (SqlDataReader reader = another_command.ExecuteReader())
-                                {
-                                    if (reader.Read())
-                                    {
-                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
-                                        //data_string = data_string.Insert(0, item.Key);
-                                        //send to socket start
-                                        if (item.Key != receiver_id) Send_to_id(item.Key, msgobj);
-                                        if (!Send_to_id(receiver_id, msgobj))
-                                        {
-                                            s.Write(Encoding.Unicode.GetBytes("0404"+receiver_id));
-                                        } else
-                                        {
-                                            s.Write(Encoding.Unicode.GetBytes("2211"+receiver_id));
-                                        }
-                                        Console.WriteLine("Sent");
-                                        //send to socket end
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.ToString());
-                        exception_handler(item, e.ToString());
-                    }
-                    //save to database end
-                }
-                else // data corrupted
-                {
-                    byte_expected[item.Key] = 0;
-                    Console.WriteLine("Data Corrupted");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                exception_handler(item, e.ToString());
-            }
-            finally
-            {
-                try
-                {
-                    is_processing[item.Key] = false;
-                    is_locked[item.Key] = false;
-                } catch (Exception e)
-                {
-                    // do nothing
-                }
-            }
-        }*/
 
         private static void Client_Loop(object obj)
         {
@@ -270,23 +129,23 @@ namespace AFriendServer
             {
                 try
                 {
-                    foreach (var item in dictionary)
+                    foreach (var item in sessions)
                     {
                         try
                         {
-                            if (is_locked[item.Key]) continue;
+                            if (sessions[item.Key].is_locked) continue;
                             //Console.WriteLine(item.Key + " is online");
-                            if (item.Value.Connected)
+                            if (item.Value.client.Connected)
                             {
                                 //Console.WriteLine(item.Value.Available);
-                                if (item.Value.Available > 0) /*item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/
+                                if (item.Value.client.Available > 0) /*item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/
                                 {
                                     //bytes[item.Key] += item.Value.Available;
-                                    if (!item.Value.Connected) // Something bad has happened, shut down
+                                    if (!item.Value.client.Connected) // Something bad has happened, shut down
                                     {
                                         try
                                         {
-                                            shutdown(item);
+                                            shutdown(item.Key);
                                         }
                                         catch (Exception e)
                                         {
@@ -295,52 +154,24 @@ namespace AFriendServer
                                     }
                                     else // There is data waiting to be read"
                                     {
-                                        //if (is_locked[item.Key]) continue;
-                                        is_locked[item.Key] = true;
+                                        sessions[item.Key].is_locked = true;
                                         if (true /*byte_expected[item.Key] == 0*/)
                                         {
                                             try
                                             {
-                                                //Console.WriteLine("new work created");
-                                                Thread work = new Thread(new ParameterizedThreadStart(Receive_message));
-                                                work.IsBackground = true;
-                                                work.Start(item);
+
+                                                ThreadPool.QueueUserWorkItem(Receive_message, item.Key);
                                             }
                                             catch (Exception e)
                                             {
                                                 Console.WriteLine(e.ToString());
                                             }
-                                            /*
-                                            finally
-                                            {
-                                                //is_locked[item.Key] = false;
-                                            }*/
-                                        }
-                                        /*
-                                        else if (!is_processing[item.Key])
-                                        {
-                                            try
-                                            {
-                                                is_processing[item.Key] = true;
-                                                Thread process = new Thread(new ParameterizedThreadStart(process_message));
-                                                process.IsBackground = true;
-                                                process.Start(item);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                Console.WriteLine(e.ToString());
-                                            }
-                                            finally
-                                            {
-                                                //is_locked[item.Key] = false;
-                                            }
-                                        }*/
                                     }
                                 }
                             }
                             else
                             {
-                                clear(item.Key);
+                                shutdown(item.Key);
                             }
                         }
                         catch (Exception e)
@@ -372,41 +203,13 @@ namespace AFriendServer
 
         private static void ExecuteServer()
         {
-            // Establish the local endpoint
-            // for the socket. Dns.GetHostName
-            // returns the name of the host
-            // running the application.
-
-            //Old Socket code below
-
-            /*
-            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddr = IPAddress.Any;
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
-
-            // Creation TCP/IP Socket using
-            // Socket Class Constructor
-            Socket listener = new Socket(ipAddr.AddressFamily,
-                         SocketType.Stream, ProtocolType.Tcp);
-            
-
-            */ // Old Socket code above
-
-
-            // new TcpClient code below
-
             TcpListener listener = new TcpListener(IPAddress.Any, 11111);
             listener.Start();
 
             Console.WriteLine("Server at: {0}", IPAddress.Any);
-            // new TcpClient code above
 
             try
             {
-                /*
-                listener.Bind(localEndPoint);
-                listener.Listen(1000);
-                */
 
                 while (true)
                 {
@@ -416,7 +219,7 @@ namespace AFriendServer
                     Console.WriteLine("Accepted Client");
                     try
                     {
-                        Receive_from_socket_not_logged_in(client);
+                        ThreadPool.QueueUserWorkItem(Receive_from_socket_not_logged_in, client);
                     }
                     catch (Exception e)
                     {
@@ -560,8 +363,8 @@ namespace AFriendServer
         private static void Receive_message(object si)
         {
             Console.WriteLine("Work Started");
-            KeyValuePair<string, TcpClient> item = (KeyValuePair<string, TcpClient>)si;
-            SslStream s = streams[item.Key];
+            string id = si as string;
+            SslStream s = sessions[id].stream;
             try
             {
                 string data;
@@ -580,15 +383,15 @@ namespace AFriendServer
                                     {
                                         Console.WriteLine(receiver_id);
                                         string id1, id2;
-                                        if (item.Key.CompareTo(receiver_id) <= 0)
+                                        if (id.CompareTo(receiver_id) <= 0)
                                         {
-                                            id1 = item.Key;
+                                            id1 = id;
                                             id2 = receiver_id;
                                         }
                                         else
                                         {
                                             id1 = receiver_id;
-                                            id2 = item.Key;
+                                            id2 = id;
                                         }
                                         if (receive_data_automatically(s, out data))
                                         {
@@ -633,21 +436,16 @@ namespace AFriendServer
                                                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                                     s.Write(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                                     //Console.WriteLine("Old messages sent");
-                                                    if (loaded.ContainsKey(item.Key))
+                                                    if (sessions.ContainsKey(id))
                                                     {
-                                                        if (loaded[item.Key] <= 0)
+                                                        if (sessions[id].loaded > 1)
                                                         {
-                                                            loaded.Remove(item.Key);
+                                                            sessions[id].loaded -= 1;
                                                         }
-                                                        else if (loaded[item.Key] > 1)
-                                                        {
-                                                            loaded[item.Key] -= 1;
-                                                        }
-                                                        else if (loaded[item.Key] == 1)
+                                                        else if (sessions[id].loaded == 1)
                                                         {
                                                             s.Write(Encoding.Unicode.GetBytes("2411"));
-                                                            loaded[item.Key] -= 1;
-                                                            loaded.Remove(item.Key);
+                                                            sessions[id].loaded -= 1;
                                                         }
                                                     }
                                                 }
@@ -697,15 +495,15 @@ namespace AFriendServer
                                         data_string = data_string.Remove(0, 19);
                                         //save to database start
                                         string id1, id2;
-                                        if (item.Key.CompareTo(receiver_id) <= 0)
+                                        if (id.CompareTo(receiver_id) <= 0)
                                         {
-                                            id1 = item.Key;
+                                            id1 = id;
                                             id2 = receiver_id;
                                         }
                                         else
                                         {
                                             id1 = receiver_id;
-                                            id2 = item.Key;
+                                            id2 = id;
                                         }
                                         string sqlmessage = data_string;
                                         try
@@ -718,7 +516,7 @@ namespace AFriendServer
                                                 command.Parameters.AddWithValue("@id2", id2);
                                                 command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
                                                 command.Parameters.AddWithValue("@datetimenow", now);
-                                                command.Parameters.AddWithValue("@sender", item.Key == id2);
+                                                command.Parameters.AddWithValue("@sender", id == id2);
                                                 command.Parameters.AddWithValue("@message", sqlmessage);
                                                 if (command.ExecuteNonQuery() >= 1) success = true;
                                             }
@@ -729,15 +527,15 @@ namespace AFriendServer
                                                     another_command.Parameters.AddWithValue("@id1", id1);
                                                     another_command.Parameters.AddWithValue("@id2", id2);
                                                     another_command.Parameters.AddWithValue("@timesent", now);
-                                                    another_command.Parameters.AddWithValue("sender", item.Key == id2);
+                                                    another_command.Parameters.AddWithValue("sender", id == id2);
                                                     using (SqlDataReader reader = another_command.ExecuteReader())
                                                     {
                                                         if (reader.Read())
                                                         {
                                                             MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
-                                                            //data_string = data_string.Insert(0, item.Key);
+                                                            //data_string = data_string.Insert(0, id);
                                                             //send to socket start
-                                                            if (item.Key != receiver_id) Send_to_id(item.Key, msgobj);
+                                                            if (id != receiver_id) Send_to_id(id, msgobj);
                                                             if (!Send_to_id(receiver_id, msgobj))
                                                             {
                                                                 s.Write(Encoding.Unicode.GetBytes("0404" + receiver_id));
@@ -753,10 +551,10 @@ namespace AFriendServer
                                                 }
                                             }
                                         }
-                                        catch (Exception e)
+                                        catch (Exception e) 
                                         {
                                             Console.WriteLine(e.ToString());
-                                            exception_handler(item, e.ToString());
+                                            exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
                                         }
                                         //save to database end
                                     }
@@ -765,7 +563,7 @@ namespace AFriendServer
                                         Console.WriteLine("Data Corrupted");
                                     }
                                     /*
-                                    byte_expected[item.Key] = temp;*/
+                                    byte_expected[id] = temp;*/
                                     //Console.WriteLine("After Message:" + item.Value.Available);
                                     break;
                                 } // handle message
@@ -776,15 +574,15 @@ namespace AFriendServer
                                     if (SslStream_receive(s, 38, out receiver_id))
                                     {
                                         string id1, id2;
-                                        if (item.Key.CompareTo(receiver_id) <= 0)
+                                        if (id.CompareTo(receiver_id) <= 0)
                                         {
-                                            id1 = item.Key;
+                                            id1 = id;
                                             id2 = receiver_id;
                                         }
                                         else
                                         {
                                             id1 = receiver_id;
-                                            id2 = item.Key;
+                                            id2 = id;
                                         }
                                         string boolstr;
                                         if (SslStream_receive(s, 2, out boolstr))
@@ -815,15 +613,15 @@ namespace AFriendServer
                                     if (SslStream_receive(s, 38, out receiver_id))
                                     {
                                         string id1, id2;
-                                        if (item.Key.CompareTo(receiver_id) <= 0)
+                                        if (id.CompareTo(receiver_id) <= 0)
                                         {
-                                            id1 = item.Key;
+                                            id1 = id;
                                             id2 = receiver_id;
                                         }
                                         else
                                         {
                                             id1 = receiver_id;
-                                            id2 = item.Key;
+                                            id2 = id;
                                         }
                                         string commandtext = "select top 1 seen from seen where id1=@id1 and id2=@id2";
                                         SqlCommand command = new SqlCommand(commandtext, sql);
@@ -856,15 +654,15 @@ namespace AFriendServer
                                     if (SslStream_receive(s, 38, out receiver_id))
                                     {
                                         string id1, id2;
-                                        if (item.Key.CompareTo(receiver_id) <= 0)
+                                        if (id.CompareTo(receiver_id) <= 0)
                                         {
-                                            id1 = item.Key;
+                                            id1 = id;
                                             id2 = receiver_id;
                                         }
                                         else
                                         {
                                             id1 = receiver_id;
-                                            id2 = item.Key;
+                                            id2 = id;
                                         }
                                         string messagenumberstring;
                                         if (receive_data_automatically(s, out messagenumberstring))
@@ -880,9 +678,9 @@ namespace AFriendServer
                                                     command.ExecuteNonQuery();
                                                 }
                                             }
-                                            if (dictionary.ContainsKey(receiver_id))
+                                            if (sessions.ContainsKey(receiver_id))
                                             {
-                                                streams[receiver_id].Write(Encoding.Unicode.GetBytes("2002" + item.Key + data_with_byte(messagenumber.ToString())));
+                                                sessions[receiver_id].stream.Write(Encoding.Unicode.GetBytes("2002" + id + data_with_byte(messagenumber.ToString())));
                                             }
                                         }
                                     }
@@ -891,7 +689,7 @@ namespace AFriendServer
                                 } // delete message
 
                             case "2004":
-                                shutdown(item);
+                                shutdown(id);
                                 break;
                             case "0609":
                                 {
@@ -975,7 +773,7 @@ namespace AFriendServer
                                         using (SqlCommand command = new SqlCommand("update top (1) account set avatar=@avatar where id=@id", sql))
                                         {
                                             command.Parameters.AddWithValue("@avatar", img_string);
-                                            command.Parameters.AddWithValue("@id", Int64.Parse(item.Key));
+                                            command.Parameters.AddWithValue("@id", Int64.Parse(id));
                                             command.ExecuteNonQuery();
                                         }
                                     }
@@ -993,9 +791,9 @@ namespace AFriendServer
                                         {
                                             SqlCommand command = new SqlCommand("Select top 1 pw from account where id=@id", sql);
                                             Int64 longkey;
-                                            if (Int64.TryParse(item.Key, out longkey))
+                                            if (Int64.TryParse(id, out longkey))
                                             {
-                                                command.Parameters.AddWithValue("@id", Int64.Parse(item.Key));
+                                                command.Parameters.AddWithValue("@id", Int64.Parse(id));
                                                 using (SqlDataReader reader = command.ExecuteReader())
                                                 {
                                                     if (reader.Read())
@@ -1005,7 +803,7 @@ namespace AFriendServer
                                                             using (SqlCommand changepass = new SqlCommand("update top (1) account set pw = @pw where id = @id", sql))
                                                             {
                                                                 changepass.Parameters.AddWithValue("@pw", Crypter.Blowfish.Crypt(pw));
-                                                                changepass.Parameters.AddWithValue("@id", item.Key);
+                                                                changepass.Parameters.AddWithValue("@id", id);
                                                                 if (changepass.ExecuteNonQuery() == 1)
                                                                 {
                                                                     s.Write(Encoding.Unicode.GetBytes("4269"));
@@ -1029,7 +827,7 @@ namespace AFriendServer
                                 {
                                     using (SqlCommand command = new SqlCommand("update top (1) account set private=1 where id=@id", sql))
                                     {
-                                        command.Parameters.AddWithValue("@id", item.Key);
+                                        command.Parameters.AddWithValue("@id", id);
                                         command.ExecuteNonQuery();
                                     }
                                     break;
@@ -1039,7 +837,7 @@ namespace AFriendServer
                                 {
                                     using (SqlCommand command = new SqlCommand("update top (1) account set private=0 where id=@id", sql))
                                     {
-                                        command.Parameters.AddWithValue("@id", item.Key);
+                                        command.Parameters.AddWithValue("@id", id);
                                         command.ExecuteNonQuery();
                                     }
                                     break;
@@ -1053,10 +851,10 @@ namespace AFriendServer
                                         using (SqlCommand changename = new SqlCommand("update top (1) account set name = @name where id = @id", sql))
                                         {
                                             changename.Parameters.AddWithValue("@name", newname);
-                                            changename.Parameters.AddWithValue("@id", item.Key);
+                                            changename.Parameters.AddWithValue("@id", id);
                                             if (changename.ExecuteNonQuery() == 1)
                                             {
-                                                streams[item.Key].Write(Encoding.Unicode.GetBytes("1012"));
+                                                sessions[id].stream.Write(Encoding.Unicode.GetBytes("1012"));
                                             }
                                         }
                                     }
@@ -1070,15 +868,15 @@ namespace AFriendServer
                                     if (SslStream_receive(s, 38, out receiver_id))
                                     {
                                         string id1, id2;
-                                        if (item.Key.CompareTo(receiver_id) <= 0)
+                                        if (id.CompareTo(receiver_id) <= 0)
                                         {
-                                            id1 = item.Key;
+                                            id1 = id;
                                             id2 = receiver_id;
                                         }
                                         else
                                         {
                                             id1 = receiver_id;
-                                            id2 = item.Key;
+                                            id2 = id;
                                         }
                                         using (SqlCommand command = new SqlCommand("delete top (1) from friend where id1=@id1 and id2=@id2", sql))
                                         {
@@ -1095,22 +893,22 @@ namespace AFriendServer
                                 } // delete conversation
 
                             default:
-                                shutdown(item);
+                                shutdown(id);
                                 Console.WriteLine("Received strange signal, socket closed");
                                 break;
                         }
                     }
                     else
                     {
-                        shutdown(item);
+                        shutdown(id);
                         Console.WriteLine("Received strange signal, socket closed (2)");
                     }
-                    streams[item.Key] = s;
+                    //sessions[id].stream = s;
                     Console.WriteLine("Work finished");
                 }
                 else
                 {
-                    shutdown(item);
+                    shutdown(id);
                     Console.WriteLine("Received strange signal, socket closed (3)");
                 }
 
@@ -1119,16 +917,16 @@ namespace AFriendServer
             {
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("Work quitted");
-                exception_handler(item, e.ToString());
+                exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
             }
             finally
             {
                 try
                 {
-                    is_locked[item.Key] = false;
+                    sessions[id].is_locked = false;
                 } catch (Exception e)
                 {
-                    // do nothing
+                    Console.WriteLine(e.ToString());
                 }
             }
         }
@@ -1153,14 +951,14 @@ namespace AFriendServer
         {
             // do something
             bool success = false;
-            if (dictionary.ContainsKey(id))
+            if (sessions.ContainsKey(id))
             {
                 try
                 {
                     string data = JSON.Serialize<MessageObject>(msgobj);
                     string data_string = Encoding.Unicode.GetByteCount(data).ToString();
-                    streams[id].Write(Encoding.Unicode.GetBytes("1901" + data_string.Length.ToString().PadLeft(2, '0') + data_string + data));
-                    streams[id].Flush();
+                    sessions[id].stream.Write(Encoding.Unicode.GetBytes("1901" + data_string.Length.ToString().PadLeft(2, '0') + data_string + data));
+                    //sessions[id].stream.Flush();
                     success = true;
                 }
                 catch (Exception e)
@@ -1184,10 +982,10 @@ namespace AFriendServer
             return rv;
         }
 
-        private static void Receive_from_socket_not_logged_in(TcpClient c)
+        private static async void Receive_from_socket_not_logged_in(object si)
         {
             // new client code below
-
+            TcpClient c = si as TcpClient;
             // A client has connected. Create the
             // SslStream using the client's network stream.
             SslStream sslStream = new SslStream(c.GetStream(), false);
@@ -1207,16 +1005,6 @@ namespace AFriendServer
 
                 SslStream_receive(sslStream, 8, out string data);
                 Console.WriteLine("not logged in:"+data);
-                // new client code above
-                /*
-                // do something
-                byte[] bytes = new byte[s.ReceiveBufferSize];
-
-                //read the identifier from client
-                int numByte = s.Receive(bytes);
-
-                string data = Encoding.Unicode.GetString(bytes,
-                                           0, numByte);*/
                 if (data != null && data != "")
                 {
                     string instruction = data;
@@ -1267,83 +1055,16 @@ namespace AFriendServer
                                         Console.WriteLine("Before dictionaries");
                                         try
                                         {
-                                            try
+                                            if (sessions.ContainsKey(id))
                                             {
-                                                is_locked.Add(id, true);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                is_locked[id] = true;
-                                            }
-
-                                            if (streams.ContainsKey(id))
-                                            {
-                                                try
-                                                {
-                                                    streams[id].Write(Encoding.Unicode.GetBytes("2004"));
-                                                }
-                                                catch
-                                                {
-
-                                                }
-                                                try
-                                                {
-                                                    streams[id].Dispose();
-                                                    streams[id] = sslStream;
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    streams.Remove(id);
-                                                    streams.Add(id, sslStream);
-                                                }
-                                            } else
-                                            {
-                                                streams.Add(id, sslStream);
-                                            }
-                                            if (dictionary.ContainsKey(id))
-                                            {
-                                                Console.WriteLine("another one");
-                                                try
-                                                {
-                                                    dictionary[id].Dispose();
-                                                    dictionary[id] = c;
-                                                }catch (Exception ex)
-                                                {
-                                                    dictionary.Remove(id);
-                                                    dictionary.Add(id, c);
-                                                }
+                                                sessions[id].is_locked = true;
+                                                sessions[id].stream.Write(Encoding.Unicode.GetBytes("2004"));
+                                                shutdown(id);
                                                 
-                                            } else
-                                            {
-                                                dictionary.Add(id, c);
                                             }
-                                        
-                                            //add the entry in the dictionary
-                                            try
-                                            {
-                                                loaded.Add(id, 0);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                loaded[id] = 0;
-                                            }
-                                            /*
-                                            try
-                                            {
-                                                byte_expected.Add(id, 0);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                byte_expected[id] = 0;
-                                            }
-                                            try
-                                            {
-                                                is_processing.Add(id, false);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                is_processing[id] = false;
-                                            }*/
+                                            Client client = new Client();
+                                            client.loaded = 0;
+                                            
                                             Console.WriteLine("got id");
 
                                             Int64 id_int = (Int64)reader["id"];
@@ -1353,7 +1074,7 @@ namespace AFriendServer
                                             {
                                                 while (friendreader.Read())
                                                 {
-                                                    loaded[id] += 1;
+                                                    client.loaded += 1;
                                                     Int64 friendid = (Int64)friendreader["id1"];
                                                     if (id_int == friendid) friendid = (Int64)friendreader["id2"];
 
@@ -1371,10 +1092,9 @@ namespace AFriendServer
                                                     }
                                                 }
                                             }
-                                            if (loaded[id] == 0)
+                                            if (client.loaded == 0)
                                             {
                                                 sslStream.Write(Encoding.Unicode.GetBytes("2411"));
-                                                loaded.Remove(id);
                                             }
                                         
                                             if (reader["avatar"].GetType() != typeof(DBNull))
@@ -1389,31 +1109,75 @@ namespace AFriendServer
                                                 cmd.Parameters.AddWithValue("@id", str_id);
                                                 cmd.ExecuteNonQuery();
                                             }
+                                            while (sessions.ContainsKey(id)) await Task.Delay(1000);
+                                            client.client = c;
+                                            client.stream = sslStream;
+                                            client.is_locked = false;
+                                            sessions.Add(id, client);
                                         } catch (Exception e)
                                         {
                                             Console.WriteLine(e.ToString());
-                                            clear(str_id);
-                                        }
+                                            shutdown(str_id);
+                                        }/*
                                         finally
                                         {
                                             is_locked[id] = false;
-                                        }
+                                        }*/
                                         c = null;
                                         sslStream = null;
                                     }
                                     else
                                     {
-                                        sslStream.Write(Encoding.Unicode.GetBytes("-200"));
-                                        sslStream.Close();
-                                        c.Close();
+                                        try
+                                        {
+                                            try
+                                            {
+                                                sslStream.Write(Encoding.Unicode.GetBytes("-200"));
+                                            }
+                                            catch
+                                            {
+
+                                            }
+                                            try
+                                            {
+                                                sslStream.Dispose();
+                                            }
+                                            catch
+                                            {
+
+                                            }
+                                            c.Dispose();
+                                        } catch (Exception e)
+                                        {
+                                            Console.WriteLine();
+                                        }
                                     }
 
                                 }
                                 else
                                 {
-                                    sslStream.Write(Encoding.Unicode.GetBytes("-200"));
-                                    sslStream.Close();
-                                    c.Close();
+                                    try
+                                    {
+                                        try
+                                        {
+                                            sslStream.Write(Encoding.Unicode.GetBytes("-200"));
+                                        } catch
+                                        {
+
+                                        }
+                                        try
+                                        {
+                                            sslStream.Dispose();
+                                        }
+                                        catch
+                                        {
+
+                                        }
+                                        c.Dispose();
+                                    } catch (Exception e)
+                                    {
+                                        Console.WriteLine(e.ToString());
+                                    }
                                 }
                             }
                         }
@@ -1468,11 +1232,41 @@ namespace AFriendServer
                         }
                         finally
                         {
-                            sslStream.Close();
-                            c.Close();
+                            try
+                            {
+                                try
+                                {
+                                    sslStream.Dispose();
+                                }
+                                catch
+                                {
+
+                                }
+                                c.Dispose();
+                            } catch (Exception e)
+                            {
+                                Console.WriteLine();
+                            }
                         }
                     }
+                    else
+                    {
+                        try
+                        {
+                            try
+                            {
+                                sslStream.Dispose();
+                            }
+                            catch
+                            {
 
+                            }
+                            c.Dispose();
+                        } catch
+                        {
+
+                        }
+                    }
                 }
             } 
             catch (AuthenticationException e)
@@ -1483,9 +1277,19 @@ namespace AFriendServer
                     Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
                 }
                 Console.WriteLine("Authentication failed - closing the connection.");
-                sslStream.Close();
-                c.Close();
+                try
+                {
+                    sslStream.Dispose();
+                    c.Dispose();
+                } catch
+                {
+
+                }
                 return;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
