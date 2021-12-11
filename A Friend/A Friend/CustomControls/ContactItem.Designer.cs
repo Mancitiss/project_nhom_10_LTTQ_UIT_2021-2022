@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ContactItem));
             this.labelLastMessage = new System.Windows.Forms.Label();
             this.labelName = new System.Windows.Forms.Label();
             this.friendPicture = new A_Friend.CustomControls.CirclePictureBox();
@@ -42,10 +43,12 @@
             this.labelLastMessage.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelLastMessage.ForeColor = System.Drawing.Color.DimGray;
             this.labelLastMessage.Location = new System.Drawing.Point(75, 36);
+            this.labelLastMessage.MaximumSize = new System.Drawing.Size(197, 20);
             this.labelLastMessage.Name = "labelLastMessage";
             this.labelLastMessage.Size = new System.Drawing.Size(197, 16);
             this.labelLastMessage.TabIndex = 2;
             this.labelLastMessage.Text = "You: last text here";
+            this.labelLastMessage.TextChanged += new System.EventHandler(this.labelLastMessage_TextChanged);
             this.labelLastMessage.Click += new System.EventHandler(this.labelLastMessage_Click);
             this.labelLastMessage.MouseEnter += new System.EventHandler(this.ContactItem_MouseEnter);
             this.labelLastMessage.MouseLeave += new System.EventHandler(this.ContactItem_Leave);
@@ -57,10 +60,12 @@
             this.labelName.BackColor = System.Drawing.Color.Transparent;
             this.labelName.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelName.Location = new System.Drawing.Point(75, 13);
+            this.labelName.MaximumSize = new System.Drawing.Size(197, 20);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(197, 18);
             this.labelName.TabIndex = 3;
             this.labelName.Text = "Friend Name";
+            this.labelName.TextChanged += new System.EventHandler(this.labelName_TextChanged);
             this.labelName.Click += new System.EventHandler(this.labelName_Click);
             this.labelName.MouseEnter += new System.EventHandler(this.ContactItem_MouseEnter);
             this.labelName.MouseLeave += new System.EventHandler(this.ContactItem_Leave);
@@ -75,7 +80,7 @@
             this.friendPicture.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             this.friendPicture.BorderSize = 0;
             this.friendPicture.GradientAngle = 50F;
-            this.friendPicture.Image = global::A_Friend.Properties.Resources._417_4175735_system_administrator_svg_png_icon_free_download_man_icon;
+            this.friendPicture.Image = ((System.Drawing.Image)(resources.GetObject("friendPicture.Image")));
             this.friendPicture.Location = new System.Drawing.Point(20, 10);
             this.friendPicture.Name = "friendPicture";
             this.friendPicture.Size = new System.Drawing.Size(45, 45);

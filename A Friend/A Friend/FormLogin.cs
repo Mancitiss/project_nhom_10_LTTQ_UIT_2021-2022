@@ -193,7 +193,7 @@ namespace A_Friend
             frm.Show();
             this.Hide();
             Program.mainform = frm;
-            Thread thread = new Thread(new ParameterizedThreadStart(AFriendClient.ExecuteClient));
+            Thread thread = new Thread(AFriendClient.ExecuteClient);
             thread.IsBackground = true;
             thread.Start();
         }
@@ -202,6 +202,7 @@ namespace A_Friend
             timerDisconnect.Stop();
             if (labelWarning.Text == "" || labelWarning.Text == "Something is missing!")
             {
+                AFriendClient.stream.Close();
                 AFriendClient.client.Close();
                 labelWarning.Text = "Cannot connect to the server";
             }

@@ -13,7 +13,9 @@ namespace A_Friend
         public string name;
         public string id;
         public byte state;
-        public Image avatar;
+        public bool priv = false;
+        //public Image avatar;
+        //public string img_string;
 
         public Account() 
         {

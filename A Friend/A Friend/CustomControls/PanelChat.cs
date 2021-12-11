@@ -30,6 +30,9 @@ namespace A_Friend.CustomControls
 
         public delegate void LoadMessageItem(List<MessageObject> messageObjects);
         public LoadMessageItem LoadMessageDelegate;
+
+        internal delegate void RemoveMessageInvoker(long messagenumber);
+        internal RemoveMessageInvoker RemoveMessage_Invoke;
         /*
         public delegate void ButtonSend_Click(object sender, EventArgs e);
         public ButtonSend_Click ButtonSend_Click_Delegate;
@@ -40,6 +43,7 @@ namespace A_Friend.CustomControls
             InitializeComponent();
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
+            RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             this.CreateControl();
@@ -68,6 +72,14 @@ namespace A_Friend.CustomControls
             panel_Chat.Click += panelTopRight_Click;
         }
 
+        public Image Avatar
+        {
+            set
+            {
+                friendPicture.Crop(value);
+            }
+        }
+
         private void panel_Chat_MouseWheel(object sender, EventArgs e)
         {
             if (panel_Chat.VerticalScroll.Value == 0 && !locking)
@@ -79,7 +91,7 @@ namespace A_Friend.CustomControls
                     string datasend = num.ToString();
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -98,7 +110,7 @@ namespace A_Friend.CustomControls
                     string datasend = num.ToString();
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
-                    AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -178,12 +190,20 @@ namespace A_Friend.CustomControls
             }
         }
 
-        public void RemoveMessage(double messagenumber)
+        internal void RemoveMessage_Passively(long messagenumber)
+        {
+            chatItems.Remove(messages[messagenumber]);
+            panel_Chat.Controls.Remove(messages[messagenumber]);
+            messages.Remove(messagenumber);
+        }
+
+        public void RemoveMessage(long messagenumber)
         {
             chatItems.Remove(messages[messagenumber]);
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
             // code to remove message
+            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
         //public void AddMessage(string message, bool stacktoleft)
@@ -292,7 +312,7 @@ namespace A_Friend.CustomControls
             {
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                    AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                     //AddMessage(textboxWriting.Texts, false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
@@ -313,7 +333,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts) && !locking)
             {
-                AFriendClient.Send_to_id(AFriendClient.client, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
+                AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                 //AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
@@ -353,7 +373,7 @@ namespace A_Friend.CustomControls
             AddMessageToTop("Chào bạn", true);
             panel_Chat.ResumeLayout();
             */
-            AFriendClient.client.Send(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
+            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
         }
 
         public void LoadMessage(List<MessageObject> messageObjects)
@@ -466,13 +486,17 @@ namespace A_Friend.CustomControls
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("You will no longer see messages from this person until you add this person to your contacting list again, are you sure to continue?", "Warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("You are about to delete your conversation with this person, this action cannot be undone, are you sure you want to DELETE ALL YOUR MESSAGES WITH THIS PERSON?", "Warning", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
-                if (dialogResult == DialogResult.Yes)
             {
-                if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
+                dialogResult = MessageBox.Show("This action will DELETE ALL YOUR MESSAGES with THIS PERSON! Think twice! Are you serious?", "Warning", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
                 {
-                    (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
+                    if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
+                    {
+                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("5859" + this.ID));
+                        (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
+                    }
                 }
             }
         }

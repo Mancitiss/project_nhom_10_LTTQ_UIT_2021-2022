@@ -39,7 +39,7 @@ namespace A_Friend
             {
                 string data = txtNewUser.Texts;
                 string databyte = Encoding.Unicode.GetByteCount(data).ToString();
-                AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
+                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
             }
             //this.Hide();
         }
@@ -55,7 +55,7 @@ namespace A_Friend
             {
                 string data = txtNewUser.Texts;
                 string databyte = Encoding.Unicode.GetByteCount(data).ToString();
-                AFriendClient.client.Send(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
+                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
             }
         }
 

@@ -14,6 +14,12 @@ namespace A_Friend
     {
         public delegate void SortContactItemsdelegate();
         public SortContactItemsdelegate sort_contact_item_delegate;
+        public delegate void SetAvatarDelegate(string id, Image img);
+        public SetAvatarDelegate set_avatar_delegate;
+        public delegate void ShowLoginDelegate();
+        public ShowLoginDelegate show_login_delegate;
+        //public delegate void ChangePrivateModeDelegate(bool priv);
+        //public ChangePrivateModeDelegate change_private_mode_delegate;
 
         public A_Friend.CustomControls.PanelChat currentpanelchat;
 
@@ -44,6 +50,7 @@ namespace A_Friend
         private bool check = true;
         private string searchText = "";
         private bool loaded = false;
+        private bool priv = false;
 
         public FormApplication()
         {
@@ -58,6 +65,9 @@ namespace A_Friend
             addContactItemDelegate = new AddContactItem(AddContact);
             turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
             sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
+            set_avatar_delegate = new SetAvatarDelegate(SetAvatar);
+            show_login_delegate = new ShowLoginDelegate(ShowLogin);
+            //change_private_mode_delegate = new ChangePrivateModeDelegate(ChangePrivateMode);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
         }
 
@@ -75,30 +85,6 @@ namespace A_Friend
         {
             this.SuspendLayout();
 
-            //AddContact(new Account("DaiLoi", "Lê Đoàn Đại Lợi", "1111", 1));
-            //AddContact(new Account("DangKhoa", "Võ Văn Đăng Khoa", "2222", 2));
-            //AddContact(new Account("PhuongQuyen", "Lê Thị Phương Quyên", "3333", 1));
-            //AddContact(new Account("ThanhTu", "Thanh Tu", "4444", 1));
-            //AddContact(new Account("AnhPhong", "Anh Phong", "5555", 0));
-            //AddContact(new Account("LoiDai", "Le Loi", "9999", 0));
-            //AddContact(new Account("KhoaDang", "Vo Khoa", "32143", 1));
-            //AddContact(new Account("TuThanh", "Vo Tu", "11rew11", 2));
-            //AddContact(new Account("QuyenPhuong", "Le Quyen", "1eqwr111", 1));
-            //AddContact(new Account("PhongAnh", "Nguyen Phong", "132414111", 0));          
-          
-            //if (panelChats.Count > 0)
-            //    ShowPanelChat(panelChats.Keys.Last());
-            //else
-            //{
-            //    panelRight.Controls.Clear();
-            //    customTextBoxSearch.Visible = false;
-            //    formGetStarted.Dock = DockStyle.Fill;
-            //    formGetStarted.TopLevel = false;
-            //    formGetStarted.FormBorderStyle = FormBorderStyle.None;
-            //    panelGetStarted.Controls.Add(formGetStarted);
-            //    panelGetStarted.BringToFront();
-            //    formGetStarted.Visible = true;
-            //}
             notifyIconApp.BalloonTipTitle = "Notify";
             notifyIconApp.BalloonTipText = "Apps running in the background";
             notifyIconApp.Text = "AppChat";
@@ -263,7 +249,7 @@ namespace A_Friend
                     if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
                     {
                         contactItem.Unread = false; 
-                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
                         Console.WriteLine("you seen");
                     }
                 };
@@ -273,7 +259,7 @@ namespace A_Friend
                     if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
                     {
                         contactItem.Unread = false; 
-                        AFriendClient.client.Send(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
                         Console.WriteLine("you seen");
                     }
                 };
@@ -448,6 +434,8 @@ namespace A_Friend
 
         private void LogoutButton_Click_1(object sender, EventArgs e)
         {
+            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2004"));
+
             this.Hide();
             FormLogin lg = new FormLogin();
             lg.Show();
@@ -789,6 +777,28 @@ namespace A_Friend
             }
 
             //code to remove or block contact
+        }
+
+        public void SetAvatar(string id, Image img)
+        {
+            if (panelChats.ContainsKey(id))
+            {
+                panelChats[id].Avatar = img;
+                contactItems[id].Avatar = img;
+            }
+        }
+
+        public void ShowLogin()
+        {
+            this.Hide();
+            FormLogin lg = new FormLogin();
+            lg.Show();
+            Program.mainform = null;
+        }
+
+        public void ChangePrivateMode(bool priv)
+        {
+            this.priv = priv;
         }
     }
 }

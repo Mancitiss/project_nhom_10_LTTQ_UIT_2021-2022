@@ -114,7 +114,7 @@ namespace A_Friend.CustomControls
             }
         }
 
-        public double ID
+        public long ID
         {
             get
             {
