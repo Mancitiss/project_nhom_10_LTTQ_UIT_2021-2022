@@ -5,3 +5,7 @@ Thành viên nhóm: Lê Đoàn Đại Lợi, Võ Văn Đăng Khoa, Võ Vương T
 Người hướng dẫn: null  
 Tiến độ: 90%  
 KHÔNG COMMIT VÀO MAIN
+
+========================================================================================================================
+THIS IS A UNI PROJECT
+CURRENTLY HAVE NO LICENSE
