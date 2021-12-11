@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,9 @@ namespace A_Friend
         private Rectangle rect;
         private int startAngle = 0;
         private int curveAngle = 120;
+
+        private Stopwatch sw = new Stopwatch();
+        private bool stop = false;
         public FormLoading()
         {
             InitializeComponent();
@@ -40,9 +44,14 @@ namespace A_Friend
             }
         }
 
-        private void FormLoading_Load(object sender, EventArgs e)
+        private async void FormLoading_Load(object sender, EventArgs e)
         {
             timer.Start();
+            sw.Start();
+            /*
+            Task t = Spin_Async(sender, e);
+            await t;
+            */
         }
 
         private void FormLoading_Resize(object sender, EventArgs e)
@@ -59,6 +68,17 @@ namespace A_Friend
             e.Graphics.DrawArc(curvePen, rect, startAngle, curveAngle);
         }
 
+
+        private async Task Spin_Async(object sender, EventArgs e)
+        {
+            while (!this.stop) 
+            {
+                await Task.Delay(200);
+                startAngle = (startAngle + 36) % 360;
+                this.Invalidate(); 
+            }
+        }
+
         private void timer_Tick(object sender, EventArgs e)
         {
             startAngle = (startAngle + 5) % 360;
@@ -72,7 +92,12 @@ namespace A_Friend
 
         public void StopSpinning()
         {
+            this.stop = true;
+
             timer.Stop();
+
+            sw.Stop();
+            Console.WriteLine("Timer: " + sw.ElapsedMilliseconds);
         }
     }
 }

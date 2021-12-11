@@ -438,7 +438,8 @@ namespace A_Friend
                                 if (UIForm != null)
                                 { 
                                     //UIForm.Invoke(UIForm.change_private_mode_delegate, new object[] { user.priv });
-                                    UIForm.formSettings.Invoke(UIForm.formSettings.changeIncognitoMode, new object[] { user.priv });
+                                    if (UIForm.formSettings != null)
+                                        UIForm.formSettings.Invoke(UIForm.formSettings.changeIncognitoMode, new object[] { user.priv });
                                 }
                                 // or not, if you don't have to
 

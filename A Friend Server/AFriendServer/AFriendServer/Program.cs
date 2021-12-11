@@ -166,6 +166,7 @@ namespace AFriendServer
                                             {
                                                 Console.WriteLine(e.ToString());
                                             }
+                                        }
                                     }
                                 }
                             }
