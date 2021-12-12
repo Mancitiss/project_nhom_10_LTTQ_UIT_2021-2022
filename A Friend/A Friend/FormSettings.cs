@@ -35,6 +35,7 @@ namespace A_Friend
             labelWarning.Text = "";
             changeSettingsWarning = new ChangeSettingsWarning(ChangeLabel);
             changeIncognitoMode = new ChangeIncognitoModeDelegate(ChangeIncognitoMode);
+            ChangeIncognitoMode(AFriendClient.user.priv);
         }
 
         public void ChangeLabel(string text, Color color)
@@ -51,7 +52,6 @@ namespace A_Friend
                 circlePictureBox1.Image = StringToImage(AFriendClient.img_string);
             }
             this.labelUsername.Text = AFriendClient.user.name;
-            ChangeIncognitoMode(AFriendClient.user.priv);
             panelPassword.Hide();
             panelUsername.Hide();
             this.ControlBox = false;
