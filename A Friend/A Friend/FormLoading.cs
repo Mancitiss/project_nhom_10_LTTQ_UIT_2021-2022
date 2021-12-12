@@ -19,11 +19,20 @@ namespace A_Friend
         private int startAngle = 0;
         private int curveAngle = 120;
 
+        internal delegate void show_progress_delegate(int percent);
+        internal show_progress_delegate Show_progress_delegate;
+
+        private void Show_progress(int percent)
+        { 
+            this.labelTittle.Text = percent.ToString() + "%";
+        }
+
         private Stopwatch sw = new Stopwatch();
         private bool stop = false;
         public FormLoading()
         {
             InitializeComponent();
+            Show_progress_delegate = new show_progress_delegate(Show_progress);
             this.DoubleBuffered = true;
             curvePen = new Pen(Color.Black, 10);
             curvePen.StartCap = System.Drawing.Drawing2D.LineCap.Round;

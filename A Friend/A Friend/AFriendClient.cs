@@ -459,7 +459,7 @@ namespace A_Friend
                         case "0601": // avatar received, not loaded
                             {
                                 //await Task.Delay(100);
-                                UIForm.formLoading.labelTittle.Text = "0%";
+                                UIForm.formLoading.Invoke(UIForm.formLoading.Show_progress_delegate, new object[] { 0 });
                                 if (receive_ASCII_data_automatically(out img_string))
                                 {
                                     //user.avatar = StringToImage(img_string);
@@ -614,7 +614,7 @@ namespace A_Friend
                             break; // this id is online
                         case "2411": // sort contact list
                             {
-                                UIForm.formLoading.labelTittle.Text = "100%";
+                                UIForm.formLoading.Invoke(UIForm.formLoading.Show_progress_delegate, new object[] { 100 });
                                 UIForm.Invoke(UIForm.sort_contact_item_delegate);
                             } // sort contact list
                             break;
