@@ -284,7 +284,7 @@ namespace A_Friend.CustomControls
                 Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
                 return;
             }
-
+            //await Task.Delay(5);
             this.loadedmessagenumber = message.messagenumber;
             Console.WriteLine(this.loadedmessagenumber);
             panel_Chat.SuspendLayout();

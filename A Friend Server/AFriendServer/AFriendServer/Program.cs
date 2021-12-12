@@ -721,7 +721,7 @@ namespace AFriendServer
                                 {
                                     if (receive_data_automatically(s, out data))
                                     {
-                                        string commandtext = "select top 1 id, username, name, state from account where username=@username";
+                                        string commandtext = "select top 1 id, username, name, state from account where username=@username and private=0";
                                         SqlCommand command = new SqlCommand(commandtext, sql);
                                         command.Parameters.AddWithValue("@username", data);
                                         using (SqlDataReader reader = command.ExecuteReader())
@@ -1050,7 +1050,7 @@ namespace AFriendServer
                                         string namebyte = Encoding.Unicode.GetByteCount(name).ToString();
 
                                         sslStream.Write(Encoding.Unicode.GetBytes("0200"
-                                            + id + namebyte.Length.ToString().PadLeft(2, '0') + namebyte + name + reader["private"].ToString()));
+                                            + id + namebyte.Length.ToString().PadLeft(2, '0') + namebyte + name + reader["private"].ToString().PadRight(5, ' ')));
                                         Console.WriteLine("Before state");
                                         //state was here
                                         Console.WriteLine("Before dictionaries");

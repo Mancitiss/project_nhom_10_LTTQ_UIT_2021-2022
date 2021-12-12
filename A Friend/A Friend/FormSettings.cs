@@ -250,6 +250,13 @@ namespace A_Friend
         private void toggleButton1_CheckedChanged(object sender, EventArgs e)
         {
             //Code to change private mode
+            if (toggleButton1.Checked)
+            {
+                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1508"));
+            } else
+            {
+                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("0508"));
+            }
         }
     }
 }

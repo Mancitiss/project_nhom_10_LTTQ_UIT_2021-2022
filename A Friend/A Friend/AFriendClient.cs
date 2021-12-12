@@ -59,7 +59,7 @@ namespace A_Friend
         }
 
 
-        public static void ExecuteClient()
+        public static /*async*/ void ExecuteClient()
         {
             UIForm = Program.mainform;
             try
@@ -92,7 +92,7 @@ namespace A_Friend
                                     // There is data waiting to be read"
                                     if (byte_expected == 0)
                                     {
-                                        Receive_from_id(client);
+                                        /*await*/ Receive_from_id(client);
                                     }
                                     else
                                     {
@@ -406,7 +406,7 @@ namespace A_Friend
             return image;
         }
 
-        private static void Receive_from_id(TcpClient self)
+        private static /*async*/ void Receive_from_id(TcpClient self)
         {
             try
             {
@@ -458,7 +458,7 @@ namespace A_Friend
                             break;
                         case "0601": // avatar received, not loaded
                             {
-
+                                //await Task.Delay(100);
                                 if (receive_ASCII_data_automatically(out img_string))
                                 {
                                     //user.avatar = StringToImage(img_string);
@@ -504,6 +504,7 @@ namespace A_Friend
                             break;
                         case "1060": // load friend's avatars 
                             {
+                                //await Task.Delay(100);
                                 if (Stream_receive(38, out string panelid))
                                 {
                                     if (receive_ASCII_data_automatically(out string friend_avatar))
@@ -634,6 +635,7 @@ namespace A_Friend
                             {
                                 if (Stream_receive(38, out string panelid))
                                 {
+                                    //await Task.Delay(100);
                                     Console.WriteLine(panelid);
                                     if (receive_data_automatically(out string objectdatastring))
                                     {
