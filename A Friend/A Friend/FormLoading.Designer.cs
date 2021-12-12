@@ -58,7 +58,7 @@
             this.Controls.Add(this.labelTittle);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormLoading";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormLoading";
@@ -72,7 +72,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label labelTittle;
+        internal System.Windows.Forms.Label labelTittle;
         private System.Windows.Forms.Timer timer;
     }
 }

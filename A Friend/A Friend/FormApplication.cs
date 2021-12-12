@@ -40,11 +40,11 @@ namespace A_Friend
         private Panel panelRight2 = new Panel();
         private Panel panelContact2 = new Panel();
         private Panel panelGetStarted = new Panel();
-        private Panel panelLoading = new Panel();
+        internal Panel panelLoading = new Panel();
         private PictureBox pictureBoxNotFound = new PictureBox();
         private FormContactRemoved formContactRemoved = new FormContactRemoved();
         private FormGetStarted formGetStarted = new FormGetStarted();
-        private FormLoading formLoading = new FormLoading();    
+        internal FormLoading formLoading = new FormLoading();    
         public FormSettings formSettings = new FormSettings();
         public FormAddContact formAddContact = new FormAddContact();
         private bool check = true;
