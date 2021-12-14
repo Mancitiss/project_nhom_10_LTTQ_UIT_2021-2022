@@ -14,8 +14,9 @@ namespace A_Friend
         public DateTime timesent; 
         public bool sender; 
         public string message;
+        public byte type;
 
-        public MessageObject(string id1, string id2, long messagenumber, DateTime timesent, bool sender, string message)
+        public MessageObject(string id1, string id2, long messagenumber, DateTime timesent, bool sender, string message, byte type)
         {
             this.id1 = id1;
             this.id2 = id2;
@@ -23,6 +24,7 @@ namespace A_Friend
             this.timesent = timesent;
             this.sender = sender;
             this.message = message;
+            this.type = type;
         }
 
         public MessageObject() { } 

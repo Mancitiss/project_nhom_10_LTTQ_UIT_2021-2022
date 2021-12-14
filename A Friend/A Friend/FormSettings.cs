@@ -206,7 +206,7 @@ namespace A_Friend
                     {
                         //ChangeLabel("Please choose an image that is less than 2Mb", Color.Red);
                         //this.Invoke(this.changeSettingsWarning, new object[] { "Please choose an image that is less than 2Mb", Color.Red });
-                        TopMostMessageBox.Show("Please choose an image that is less than 2Mb"); 
+                        TopMostMessageBox.Show("Please choose an image that is less than 2MB"); 
                     }
                     /*
                     Console.WriteLine(imageAsString);

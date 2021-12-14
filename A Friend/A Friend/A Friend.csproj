@@ -101,9 +101,7 @@
     <Compile Include="CustomControls\CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CustomControls\CustomTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="CustomControls\CustomTextBox.cs" />
     <Compile Include="CustomControls\CustomTextBox.Designer.cs">
       <DependentUpon>CustomTextBox.cs</DependentUpon>
     </Compile>

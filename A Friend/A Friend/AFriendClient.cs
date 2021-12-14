@@ -21,10 +21,12 @@ namespace A_Friend
         //private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
         //private static IPAddress ipAddr = IPAddress.Any;
         private static string instruction;
-        private static MessageObject first_message = null;
-        private static string first_message_sender = null;
 
-        private static int byte_expected = 0;
+        //private static MessageObject first_message = null;
+        //private static string first_message_sender = null;
+
+        private static Dictionary<string, List<MessageObject>> first = new Dictionary<string, List<MessageObject>>();
+
 
         internal static string temp_name = null;
         internal static string img_string = null;
@@ -38,9 +40,8 @@ namespace A_Friend
 
         private static void Logout()
         {
-            first_message = null;
-            first_message_sender = null;
-            byte_expected = 0;
+            //first_message = null;
+            //first_message_sender = null;
             temp_name = null;
             img_string = null;
             user = new Account();
@@ -73,7 +74,7 @@ namespace A_Friend
                         //Console.WriteLine(item.Key + " is online");
                         if (client.Connected)
                         {
-                            if (client.Client.Poll(1, SelectMode.SelectRead) || byte_expected != 0)
+                            if (client.Client.Available > 0)
                             {
                                 if (!client.Connected)
                                 {
@@ -90,63 +91,7 @@ namespace A_Friend
                                 else
                                 {
                                     // There is data waiting to be read"
-                                    if (byte_expected == 0)
-                                    {
-                                        /*await*/ Receive_from_id(client);
-                                    }
-                                    else
-                                    {
-                                        if (Stream_receive(byte_expected, out string data_string))// all data received, send to UI
-                                        {
-                                            byte_expected = 0;
-                                            Console.WriteLine("Data Received");
-                                            MessageObject msgobj = JSON.Deserialize<MessageObject>(data_string);
-                                            string sender = msgobj.id1;
-                                            if (msgobj.sender) sender = msgobj.id2;
-                                            //Console.WriteLine("{0}: {1}", sender, msgobj.message);
-                                            if (user.id == msgobj.id2) //if me = user2 add user1
-                                            {
-                                                if (Program.mainform.Is_this_person_added(msgobj.id1))
-                                                {
-                                                    UIForm.panelChats[msgobj.id1].Invoke(UIForm.panelChats[msgobj.id1].AddMessageDelegate, new object[] { msgobj });
-                                                    Console.WriteLine("data added");
-                                                    Console.WriteLine(msgobj.message);
-                                                    if (!msgobj.sender)
-                                                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id1, (byte)1 });
-                                                }
-                                                else
-                                                {
-                                                    first_message_sender = sender;
-                                                    first_message = msgobj;
-                                                    Console.WriteLine("Ask for info");
-                                                    stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
-                                                }
-                                            }
-                                            else if (user.id == msgobj.id1) // if me = user1 add user2
-                                            {
-                                                if (Program.mainform.Is_this_person_added(msgobj.id2))
-                                                {
-                                                    UIForm.panelChats[msgobj.id2].Invoke(UIForm.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
-                                                    Console.WriteLine("data added");
-                                                    Console.WriteLine(msgobj.message);
-                                                    if (msgobj.sender)
-                                                        UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id2, (byte)1 });
-                                                }
-                                                else
-                                                {
-                                                    first_message_sender = sender;
-                                                    first_message = msgobj;
-                                                    Console.WriteLine("Ask for info");
-                                                    stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
-                                                }
-                                            }
-                                        }
-                                        else // data corrupted
-                                        {
-                                            byte_expected = 0;
-                                            Console.WriteLine("Data Corrupted");
-                                        }
-                                    }
+                                    Receive_from_id(client);
                                 }
                             }
                         }
@@ -549,12 +494,22 @@ namespace A_Friend
                                         UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
                                         UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
                                         Console.WriteLine("New Contact Added");
+                                        if (first.ContainsKey(found[0]))
+                                        {
+                                            foreach(var msgobj in first[found[0]])
+                                            {
+                                                UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { msgobj });
+                                            }
+                                            first.Remove(found[0]);
+                                        }
+                                        /*
                                         if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
                                         {
                                             UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
                                             first_message_sender = String.Empty;
                                             first_message = null;
                                         }
+                                        */
                                         /*
                                         UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
                                         Console.WriteLine("Message Received");*/
@@ -576,7 +531,69 @@ namespace A_Friend
                                     if (Int32.TryParse(data, out int bytesize))
                                     {
                                         bytesize = bytesize * 2;
-                                        if (Stream_receive(bytesize, out data)) byte_expected = Int32.Parse(data);
+                                        if (Stream_receive(bytesize, out data)) 
+                                        {
+                                            if (Stream_receive(Int32.Parse(data), out string data_string))// all data received, send to UI
+                                            {
+                                                Console.WriteLine("Data Received");
+                                                MessageObject msgobj = JSON.Deserialize<MessageObject>(data_string);
+                                                string sender = msgobj.id1;
+                                                if (msgobj.sender) sender = msgobj.id2;
+                                                //Console.WriteLine("{0}: {1}", sender, msgobj.message);
+                                                if (user.id == msgobj.id2) //if me = user2 add user1
+                                                {
+                                                    if (Program.mainform.Is_this_person_added(msgobj.id1))
+                                                    {
+                                                        UIForm.panelChats[msgobj.id1].Invoke(UIForm.panelChats[msgobj.id1].AddMessageDelegate, new object[] { msgobj });
+                                                        Console.WriteLine("data added");
+                                                        Console.WriteLine(msgobj.message);
+                                                        if (!msgobj.sender)
+                                                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id1, (byte)1 });
+                                                    }
+                                                    else
+                                                    {
+                                                        if (first.ContainsKey(sender))
+                                                        {
+                                                            first[sender].Add(msgobj);
+                                                        } 
+                                                        else
+                                                        {
+                                                            first.Add(sender, new List<MessageObject>() { msgobj });
+                                                        }
+                                                        Console.WriteLine("Ask for info");
+                                                        stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
+                                                    }
+                                                }
+                                                else if (user.id == msgobj.id1) // if me = user1 add user2
+                                                {
+                                                    if (Program.mainform.Is_this_person_added(msgobj.id2))
+                                                    {
+                                                        UIForm.panelChats[msgobj.id2].Invoke(UIForm.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
+                                                        Console.WriteLine("data added");
+                                                        Console.WriteLine(msgobj.message);
+                                                        if (msgobj.sender)
+                                                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id2, (byte)1 });
+                                                    }
+                                                    else
+                                                    {
+                                                        if (first.ContainsKey(sender))
+                                                        {
+                                                            first[sender].Add(msgobj);
+                                                        }
+                                                        else
+                                                        {
+                                                            first.Add(sender, new List<MessageObject>() { msgobj });
+                                                        }
+                                                        Console.WriteLine("Ask for info");
+                                                        stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
+                                                    }
+                                                }
+                                            }
+                                            else // data corrupted
+                                            {
+                                                Console.WriteLine("Data Corrupted");
+                                            }
+                                        }
                                     }
                                 }
                             } // message received
@@ -622,8 +639,8 @@ namespace A_Friend
                             {
                                 Console.WriteLine("No such account exists");
                                 UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
-                                first_message = null;
-                                first_message_sender = String.Empty;
+                                //first_message = null;
+                                //first_message_sender = String.Empty;
                             } // add contact failed
                             break;
                         case "4269": // password changed successfully

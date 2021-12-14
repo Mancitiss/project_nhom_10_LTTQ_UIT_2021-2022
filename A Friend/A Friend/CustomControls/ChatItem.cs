@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Threading;
-
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace A_Friend.CustomControls
 {
@@ -89,14 +90,67 @@ namespace A_Friend.CustomControls
         //    };
         //}
 
+        public string ImageToString(string path)
+        {
+            if (path == null)
+                throw new ArgumentNullException("path");
+            Image im = Image.FromFile(path);
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
+        }
+        public Image StringToImage(string imageString)
+        {
+
+            if (imageString == null)
+                throw new ArgumentNullException("imageString");
+            byte[] array = Convert.FromBase64String(imageString);
+            Image image = Image.FromStream(new MemoryStream(array));
+            return image;
+        }
+
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
+        }
+
+        internal Image image;
+
         public ChatItem(MessageObject messageObject)
         {
             InitializeComponent();
 
-            this.DoubleBuffered = true;
+            DoubleBuffered = true;
 
             this.messageObject = messageObject;
-            labelBody.Text = messageObject.message;
+            if (this.messageObject.type == 0)
+                labelBody.Text = messageObject.message;
+            else if (this.messageObject.type == 1)
+            {
+                image = StringToImage(this.messageObject.message);
+                labelBody.Image = ResizeImage(image, labelBody.MaximumSize.Width, image.Height);
+            }
             buttonCopy.Enabled = false;
             buttonRemove.Enabled = false;
             buttonCopy.Visible = false;

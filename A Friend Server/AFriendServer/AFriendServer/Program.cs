@@ -426,7 +426,7 @@ namespace AFriendServer
                                                             if (reader.Read())
                                                             {
                                                                 //Console.WriteLine((DateTime)reader["timesent"]);
-                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
+                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
                                                                 messageObjects.Add(msgobj);
                                                             }
                                                         }
@@ -465,7 +465,7 @@ namespace AFriendServer
                                                         {
                                                             if (reader.Read())
                                                             {
-                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
+                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
                                                                 messageObjects.Add(msgobj);
                                                             }
                                                         }
@@ -511,7 +511,7 @@ namespace AFriendServer
                                         {
                                             bool success = false;
                                             DateTime now = DateTime.Now;
-                                            using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message)", sql))
+                                            using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message, 0)", sql))
                                             {
                                                 command.Parameters.AddWithValue("@id1", id1);
                                                 command.Parameters.AddWithValue("@id2", id2);
@@ -533,7 +533,7 @@ namespace AFriendServer
                                                     {
                                                         if (reader.Read())
                                                         {
-                                                            MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString());
+                                                            MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
                                                             //data_string = data_string.Insert(0, id);
                                                             //send to socket start
                                                             if (id != receiver_id) Send_to_id(id, msgobj);
