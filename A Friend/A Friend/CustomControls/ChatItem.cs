@@ -141,15 +141,18 @@ namespace A_Friend.CustomControls
         {
             InitializeComponent();
 
+            this.messageObject = messageObject;
             DoubleBuffered = true;
 
-            this.messageObject = messageObject;
             if (this.messageObject.type == 0)
                 labelBody.Text = messageObject.message;
             else if (this.messageObject.type == 1)
             {
                 image = StringToImage(this.messageObject.message);
-                labelBody.Image = ResizeImage(image, labelBody.MaximumSize.Width, image.Height);
+                this.Controls.Remove(labelBody);
+                this.AutoSize = false;
+                this.Size = new Size(this.Width - 200 -2*this.Left, image.Height);
+                this.image = ResizeImage(image, this.Width - 200 - 2 * this.Left, image.Height);
             }
             buttonCopy.Enabled = false;
             buttonRemove.Enabled = false;
@@ -269,11 +272,12 @@ namespace A_Friend.CustomControls
 
         public void ResizeBubbles()
         {
-            SuspendLayout();
-            int maxwidth = this.Width - 200;
-            labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
+
             //panelBody.MaximumSize = new Size(maxwidth, int.MaxValue);
 
+            int maxwidth = this.Width - 200;
+            labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
+            SuspendLayout();
             var size = TextRenderer.MeasureText("qwertyuiopasdfghjklzxcbnm1234567890", labelBody.Font);
             if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= size.Height)
             {
@@ -291,8 +295,8 @@ namespace A_Friend.CustomControls
                 this.Height = 5 + panelTop.Height;
             }
             panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
-
             ResumeLayout();
+        
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)

@@ -546,7 +546,7 @@ namespace A_Friend
                                                     {
                                                         UIForm.panelChats[msgobj.id1].Invoke(UIForm.panelChats[msgobj.id1].AddMessageDelegate, new object[] { msgobj });
                                                         Console.WriteLine("data added");
-                                                        Console.WriteLine(msgobj.message);
+                                                        //Console.WriteLine(msgobj.message);
                                                         if (!msgobj.sender)
                                                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id1, (byte)1 });
                                                     }
@@ -570,7 +570,7 @@ namespace A_Friend
                                                     {
                                                         UIForm.panelChats[msgobj.id2].Invoke(UIForm.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
                                                         Console.WriteLine("data added");
-                                                        Console.WriteLine(msgobj.message);
+                                                        //Console.WriteLine(msgobj.message);
                                                         if (msgobj.sender)
                                                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id2, (byte)1 });
                                                     }
@@ -660,7 +660,15 @@ namespace A_Friend
                                     {
                                         Console.WriteLine("Old messages have come");
                                         List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
-                                        UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
+                                        try
+                                        {
+                                            UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
+                                        }catch(Exception asd)
+                                        {
+                                            Console.WriteLine(asd.ToString());
+                                            if (asd.InnerException != null)
+                                                Console.WriteLine(asd.InnerException.ToString());
+                                        }
                                         Console.WriteLine("Message Loaded");
                                         stream.Write(Encoding.Unicode.GetBytes("0708" + panelid));
                                     }

@@ -569,6 +569,81 @@ namespace AFriendServer
                                     break;
                                 } // handle message
 
+                            case "1902": // handle image message
+                                {
+                                    if (SslStream_receive(s, 38, out string receiver_id))
+                                    {
+                                        if (receive_ASCII_data_automatically(s, out string data_string))
+                                        {
+                                            //save to database start
+                                            string id1, id2;
+                                            if (id.CompareTo(receiver_id) <= 0)
+                                            {
+                                                id1 = id;
+                                                id2 = receiver_id;
+                                            }
+                                            else
+                                            {
+                                                id1 = receiver_id;
+                                                id2 = id;
+                                            }
+                                            string sqlmessage = data_string;
+                                            try
+                                            {
+                                                bool success = false;
+                                                DateTime now = DateTime.Now;
+                                                using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message, 1)", sql))
+                                                {
+                                                    command.Parameters.AddWithValue("@id1", id1);
+                                                    command.Parameters.AddWithValue("@id2", id2);
+                                                    command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
+                                                    command.Parameters.AddWithValue("@datetimenow", now);
+                                                    command.Parameters.AddWithValue("@sender", id == id2);
+                                                    command.Parameters.AddWithValue("@message", sqlmessage);
+                                                    if (command.ExecuteNonQuery() >= 1) success = true;
+                                                }
+                                                if (success)
+                                                {
+                                                    using (SqlCommand another_command = new SqlCommand("select top 1 * from message where id1 = @id1 and id2 = @id2 and timesent = @timesent and sender = @sender", sql))
+                                                    {
+                                                        another_command.Parameters.AddWithValue("@id1", id1);
+                                                        another_command.Parameters.AddWithValue("@id2", id2);
+                                                        another_command.Parameters.AddWithValue("@timesent", now);
+                                                        another_command.Parameters.AddWithValue("sender", id == id2);
+                                                        using (SqlDataReader reader = another_command.ExecuteReader())
+                                                        {
+                                                            if (reader.Read())
+                                                            {
+                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                //data_string = data_string.Insert(0, id);
+                                                                //send to socket start
+                                                                if (id != receiver_id) Send_to_id(id, msgobj);
+                                                                if (!Send_to_id(receiver_id, msgobj))
+                                                                {
+                                                                    s.Write(Encoding.Unicode.GetBytes("0404" + receiver_id));
+                                                                }
+                                                                else
+                                                                {
+                                                                    s.Write(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                }
+                                                                Console.WriteLine("Sent");
+                                                                //send to socket end
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine(e.ToString());
+                                                exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
+                                            }
+                                            //save to database end
+                                        }
+                                    }
+                                    break;
+                                } // handle image message
+
                             case "1234":
                                 {
                                     string receiver_id;
@@ -918,13 +993,20 @@ namespace AFriendServer
             {
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("Work quitted");
-                exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
+                try
+                {
+                    exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
+                } catch (Exception xe)
+                {
+                    Console.WriteLine(xe.ToString());
+                }
             }
             finally
             {
                 try
                 {
-                    sessions[id].is_locked = false;
+                    if (sessions.ContainsKey(id))
+                        sessions[id].is_locked = false;
                 } catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
@@ -1058,9 +1140,19 @@ namespace AFriendServer
                                         {
                                             if (sessions.ContainsKey(id))
                                             {
-                                                sessions[id].is_locked = true;
-                                                sessions[id].stream.Write(Encoding.Unicode.GetBytes("2004"));
-                                                shutdown(id);
+                                                try
+                                                {
+                                                    sessions[id].is_locked = true;
+                                                    sessions[id].stream.Write(Encoding.Unicode.GetBytes("2004"));
+                                                }
+                                                catch (Exception iknow)
+                                                {
+
+                                                }
+                                                finally
+                                                {
+                                                    shutdown(id);
+                                                }
                                                 
                                             }
                                             Client client = new Client();

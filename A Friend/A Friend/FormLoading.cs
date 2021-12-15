@@ -53,7 +53,7 @@ namespace A_Friend
             }
         }
 
-        private async void FormLoading_Load(object sender, EventArgs e)
+        private /*async*/ void FormLoading_Load(object sender, EventArgs e)
         {
             timer.Start();
             sw.Start();

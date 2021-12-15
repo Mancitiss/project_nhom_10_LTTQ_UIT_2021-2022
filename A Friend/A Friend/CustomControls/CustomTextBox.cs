@@ -9,19 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 //using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 
 namespace A_Friend.CustomControls
 {
     [DefaultEvent("_TextChanged")]
-
-    public class ClipboardEventArgs : EventArgs
-    {
-        public Image ClipboardImage { get; set; }
-        public ClipboardEventArgs(Image clipboardImage)
-        {
-            ClipboardImage = clipboardImage;
-        }
-    }
 
     public partial class CustomTextBox : UserControl
     {
@@ -41,26 +33,6 @@ namespace A_Friend.CustomControls
         public CustomTextBox()
         {
             InitializeComponent();
-        }
-
-        public event EventHandler<ClipboardEventArgs> Pasted;
-
-        private const int WM_PASTE = 0x0302;
-        protected override void WndProc(ref System.Windows.Forms.Message m)
-        {
-            if (m.Msg == WM_PASTE)
-            {
-                var evt = Pasted;
-                if (evt != null && Clipboard.ContainsImage())
-                {
-                    evt(this, new ClipboardEventArgs(Clipboard.GetImage()));
-
-                    // don't let the base control handle the event again
-                    return;
-                }
-            }
-
-            base.WndProc(ref m);
         }
 
         public event EventHandler _TextChanged;
