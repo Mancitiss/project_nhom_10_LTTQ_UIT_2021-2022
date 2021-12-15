@@ -17,78 +17,7 @@ namespace A_Friend.CustomControls
     public partial class ChatItem : UserControl
     {
         private bool showDetail = true;
-        //public Message message;
         public MessageObject messageObject;
-        //public ChatItem(Message message)
-        //{
-        //    InitializeComponent();
-
-        //    this.DoubleBuffered = true;
-
-        //    this.message = message;
-        //    labelBody.Text = message.text;
-        //    buttonCopy.Enabled = false;
-        //    buttonRemove.Enabled = false;
-        //    buttonCopy.Visible = false;
-        //    buttonRemove.Visible = false;
-
-        //    if (string.IsNullOrEmpty(message.author))
-        //    {
-        //        panelBody.Dock = DockStyle.Right;
-        //        panelButton.Dock = DockStyle.Right;
-        //        labelAuthor.Dock = DockStyle.Right;
-        //    }
-        //    else
-        //    {
-        //        BackgroundColor = Color.FromArgb(100, 100, 165);
-        //    }
-
-        //    if (message.time > DateTime.Today)
-        //    {
-        //        if (string.IsNullOrEmpty(message.author))
-        //        {
-        //            labelAuthor.Text = $"{message.time.ToShortTimeString()}";
-        //        }
-        //        else
-        //        {
-        //            labelAuthor.Text = $"{message.author}, {message.time.ToShortTimeString()}";
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (string.IsNullOrEmpty(message.author))
-        //        {
-        //            labelAuthor.Text = $"{message.time.ToShortDateString()}";
-        //        }
-        //        else
-        //        {
-        //            labelAuthor.Text = $"{message.author}, {message.time.ToLongDateString()}";
-        //        }
-        //    }
-
-        //    this.MouseEnter += delegate { ShowButtons(); };
-        //    foreach (Control control in this.Controls)
-        //    {
-        //        control.MouseEnter += delegate { ShowButtons(); };
-        //    }
-
-        //    foreach (Control control in panelTop.Controls)
-        //    {
-        //        control.MouseEnter += delegate { ShowButtons(); };
-        //    }
-
-        //    labelAuthor.MouseEnter += delegate { ShowButtons(); };
-
-        //    labelBody.Click += delegate
-        //    {
-        //        ShowDetail = !showDetail;
-        //        if (this.Parent.Parent is PanelChat)
-        //        {
-        //            if (this != (this.Parent.Parent as PanelChat).CurrentChatItem)
-        //                (this.Parent.Parent as PanelChat).CurrentChatItem = this;
-        //        }
-        //    };
-        //}
 
         public string ImageToString(string path)
         {
@@ -100,6 +29,7 @@ namespace A_Friend.CustomControls
             byte[] array = ms.ToArray();
             return Convert.ToBase64String(array);
         }
+
         public Image StringToImage(string imageString)
         {
 
@@ -142,20 +72,25 @@ namespace A_Friend.CustomControls
             InitializeComponent();
 
             this.messageObject = messageObject;
-            labelBody.Font = ApplicationFont.GetFont(labelBody.Font.Size);
             labelAuthor.Font = ApplicationFont.GetFont(labelAuthor.Font.Size);
             DoubleBuffered = true;
 
             if (this.messageObject.type == 0)
+            {
                 labelBody.Text = messageObject.message;
+                labelBody.Font = ApplicationFont.GetFont(labelBody.Font.Size);
+            }
             else if (this.messageObject.type == 1)
             {
                 image = StringToImage(this.messageObject.message);
-                this.Controls.Remove(labelBody);
-                this.AutoSize = false;
-                this.Size = new Size(this.Width - 200 -2*this.Left, image.Height);
-                this.image = ResizeImage(image, this.Width - 200 - 2 * this.Left, image.Height);
+                panelBody.Controls.Remove(labelBody);
+                labelBody.Dispose();
+                panelBody.Click += delegate
+                {
+                    //code to open image in photo viewer
+                };
             }
+
             buttonCopy.Enabled = false;
             buttonRemove.Enabled = false;
             buttonCopy.Visible = false;
@@ -169,9 +104,11 @@ namespace A_Friend.CustomControls
             }
             else
             {
-                //BackgroundColor = Color.FromArgb(100, 100, 165);
                 BackgroundColor = Color.FromArgb(215, 244, 241);
-                labelBody.ForeColor = SystemColors.ControlText;
+                if (this.messageObject.type == 0)
+                {
+                    labelBody.ForeColor = SystemColors.ControlText;
+                }
             }
         }
 
@@ -206,7 +143,6 @@ namespace A_Friend.CustomControls
                 if (messageObject.timesent.ToLocalTime() < DateTime.Today)
                 {
                     labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToString("dd/MM/yyyy") + " - " + messageObject.timesent.ToLocalTime().ToShortTimeString()}";
-                    //labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
                 }
                 else
                 {
@@ -240,7 +176,10 @@ namespace A_Friend.CustomControls
 
             set
             {
-                labelBody.BackColor = value;
+                if (messageObject.type == 0)
+                {
+                    labelBody.BackColor = value;
+                }
                 panelBody.BackColor = value;
             }
         }
@@ -276,31 +215,48 @@ namespace A_Friend.CustomControls
 
         public void ResizeBubbles()
         {
-
-            //panelBody.MaximumSize = new Size(maxwidth, int.MaxValue);
-
-            int maxwidth = this.Width - 200;
-            labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
-            SuspendLayout();
-            var size = TextRenderer.MeasureText("qwertyuiopasdfghjklzxcbnm1234567890", labelBody.Font);
-            if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= size.Height)
+            //panelBody.MaximumSize = new SizeMaxValue);
+            if (messageObject != null && messageObject.type == 0)
             {
+                int maxwidth = this.Width - 200;
+                labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
+                SuspendLayout();
+                var size = TextRenderer.MeasureText("qwertyuiopasdfghjklzxcbnm1234567890", labelBody.Font);
+                if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= size.Height)
+                {
+                    panelBody.Width = labelBody.Width + 2 * labelBody.Left;
+                }
                 panelBody.Width = labelBody.Width + 2 * labelBody.Left;
-            }
-            panelBody.Width = labelBody.Width + 2 * labelBody.Left;
-            panelTop.Height = labelBody.Height + 2 * labelBody.Top;
+                panelTop.Height = labelBody.Height + 2 * labelBody.Top;
 
-            if (showDetail)
+                if (showDetail)
+                {
+                    this.Height = 5 + panelTop.Height + panelBottom.Height;
+                }
+                else
+                {
+                    this.Height = 5 + panelTop.Height;
+                }
+                panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
+                ResumeLayout();
+            }
+            else if (messageObject != null && messageObject.type == 1)
             {
+                int maxwitdh = this.Width - 200;
+                if (image.Width > maxwitdh)
+                { 
+                var img = ResizeImage(image, maxwitdh, maxwitdh * image.Height / image.Width);
+                panelBody.BackgroundImage = img;
+                }
+                else if (panelBody.BackgroundImage != image)
+                {
+                    panelBody.BackgroundImage = image;
+                }
+                panelTop.Height = panelBody.BackgroundImage.Height;
+                panelBody.Width = panelBody.BackgroundImage.Width;
                 this.Height = 5 + panelTop.Height + panelBottom.Height;
+                panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
             }
-            else
-            {
-                this.Height = 5 + panelTop.Height;
-            }
-            panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
-            ResumeLayout();
-        
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
