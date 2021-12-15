@@ -140,7 +140,8 @@ namespace A_Friend.CustomControls
         public ChatItem(MessageObject messageObject)
         {
             InitializeComponent();
-
+            labelBody.Font = ApplicationFont.GetFont(labelBody.Font.Size);
+            labelAuthor.Font = ApplicationFont.GetFont(labelAuthor.Font.Size);
             DoubleBuffered = true;
 
             this.messageObject = messageObject;

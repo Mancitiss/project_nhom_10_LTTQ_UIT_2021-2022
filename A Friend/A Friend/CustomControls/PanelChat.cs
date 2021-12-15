@@ -54,6 +54,10 @@ namespace A_Friend.CustomControls
         public PanelChat(Account account)
         {
             InitializeComponent();
+            labelFriendName.Font = ApplicationFont.GetFont(labelFriendName.Font.Size);
+            labelState.Font = ApplicationFont.GetFont(labelState.Font.Size);
+            textboxWriting.Font = ApplicationFont.GetFont(textboxWriting.Font.Size);
+
             this.account = account;
             this.DoubleBuffered = true;
             this.Name = "panelChat_" + account.id;

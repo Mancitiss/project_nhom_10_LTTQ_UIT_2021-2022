@@ -18,8 +18,11 @@ namespace A_Friend
         public FormAddContact()
         {
             InitializeComponent();
+            labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
+            txtNewUser.Font = ApplicationFont.GetFont(txtNewUser.Font.Size);
             labelWarning.ForeColor = Color.FromArgb(143, 228, 185);
             labelWarning.Text = "Enter your friend's username";
+            ChangeWarning(labelWarning.Text, labelWarning.ForeColor);
             txtNewUser.RemovePlaceHolder();
             changeWarningLabelDelegate = new ChangeWarningLabel(ChangeWarning);
         }

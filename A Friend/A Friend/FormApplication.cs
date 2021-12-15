@@ -69,6 +69,7 @@ namespace A_Friend
             show_login_delegate = new ShowLoginDelegate(ShowLogin);
             //change_private_mode_delegate = new ChangePrivateModeDelegate(ChangePrivateMode);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
+            customTextBoxSearch.Font = ApplicationFont.GetFont(customTextBoxSearch.Font.Size);
         }
 
         private void FormApplication_ResizeBegin(Object sender, EventArgs e)

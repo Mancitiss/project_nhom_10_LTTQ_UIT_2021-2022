@@ -42,7 +42,7 @@ namespace A_Friend
             this.labelWarning.ForeColor = System.Drawing.Color.Red;
             this.labelWarning.Location = new System.Drawing.Point(0, 52);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(295, 23);
+            this.labelWarning.Size = new System.Drawing.Size(295, 25);
             this.labelWarning.TabIndex = 5;
             this.labelWarning.Text = "This username does not exist";
             this.labelWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

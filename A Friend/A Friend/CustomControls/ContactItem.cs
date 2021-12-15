@@ -32,6 +32,9 @@ namespace A_Friend.CustomControls
         public ContactItem(Account account)
         {
             InitializeComponent();
+            labelName.Font = ApplicationFont.GetFont(labelName.Font.Size);
+            labelLastMessage.Font = ApplicationFont.GetFont(labelLastMessage.Font.Size);
+
             this.account = account;
             this.DoubleBuffered = true;
             this.Name = "contacItem_" + account.id;
