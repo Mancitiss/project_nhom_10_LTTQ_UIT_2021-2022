@@ -87,7 +87,8 @@ namespace A_Friend.CustomControls
                 labelBody.Dispose();
                 panelBody.Click += delegate
                 {
-                    //code to open image in photo viewer
+                    //code to open image in photo viewer 
+                    //use variable "image"
                 };
             }
 
