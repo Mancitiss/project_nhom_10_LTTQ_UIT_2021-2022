@@ -265,7 +265,7 @@ namespace A_Friend
             this.panelRight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelRight.BackColor = System.Drawing.Color.White;
+            this.panelRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.panelRight.Location = new System.Drawing.Point(300, 0);
             this.panelRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelRight.Name = "panelRight";
@@ -284,7 +284,7 @@ namespace A_Friend
             this.MinimumSize = new System.Drawing.Size(900, 500);
             this.Name = "FormApplication";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "FormApplication";
+            this.Text = "AFriend Chat Application";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormApplication_FormClosing);
             this.Load += new System.EventHandler(this.FormApplication_Load);
             this.panelLeft.ResumeLayout(false);

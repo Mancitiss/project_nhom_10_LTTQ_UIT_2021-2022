@@ -41,6 +41,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.timerChat = new System.Windows.Forms.Timer(this.components);
+            this.labelState = new System.Windows.Forms.Label();
             this.panelTopRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.panelBottomRight.SuspendLayout();
@@ -49,6 +50,7 @@ namespace A_Friend.CustomControls
             // panelTopRight
             // 
             this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(140)))), ((int)(((byte)(130)))));
+            this.panelTopRight.Controls.Add(this.labelState);
             this.panelTopRight.Controls.Add(this.labelFriendName);
             this.panelTopRight.Controls.Add(this.label3);
             this.panelTopRight.Controls.Add(this.friendPicture);
@@ -207,6 +209,17 @@ namespace A_Friend.CustomControls
             this.timerChat.Interval = 7000;
             this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
             // 
+            // labelState
+            // 
+            this.labelState.AutoSize = true;
+            this.labelState.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelState.ForeColor = System.Drawing.Color.Gainsboro;
+            this.labelState.Location = new System.Drawing.Point(73, 32);
+            this.labelState.Name = "labelState";
+            this.labelState.Size = new System.Drawing.Size(49, 18);
+            this.labelState.TabIndex = 7;
+            this.labelState.Text = "offline";
+            // 
             // PanelChat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -240,5 +253,6 @@ namespace A_Friend.CustomControls
         private CustomTextBox textboxWriting;
         private CustomButton buttonSend;
         private System.Windows.Forms.Timer timerChat;
+        private System.Windows.Forms.Label labelState;
     }
 }

@@ -114,7 +114,7 @@ namespace A_Friend
             panelGetStarted.Anchor = panelRight.Anchor;
             panelGetStarted.Location = new Point(0, 0);
             panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top + 2);
-            panelGetStarted.Padding = new Padding(1);
+            panelGetStarted.Padding = new Padding(1,0,0,0);
             panelGetStarted.Resize += delegate { 
                 if (panelGetStarted.Width != this.Width)
                 {
@@ -670,8 +670,9 @@ namespace A_Friend
         private void PanelGetStartedSlideToRight()
         {
             panelGetStarted.Location = panelRight.Location;
-            panelGetStarted.Size = new Size(panelRight.Width, this.Height);
+            panelGetStarted.Size = new Size(panelRight.Width, panelLeft.Height);
             formGetStarted.TopColor = panelTopLeft.BackColor;
+            formGetStarted.BottomColor = panelBottomLeft.BackColor;
             var graphic = panelGetStarted.CreateGraphics(); 
             using (Pen pen = new Pen (Color.Gray, 1))
             {

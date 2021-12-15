@@ -158,16 +158,22 @@ namespace A_Friend.CustomControls
                     if (state == 0)
                     {
                         stateColor = Color.Gainsboro;
+                        labelState.Text = "offline";
+                        labelState.ForeColor = stateColor;
                         panelTopRight.Invalidate();
                     }
                     else if (state == 1)
                     {
                         stateColor = Color.SpringGreen;
+                        labelState.Text = "online";
+                        labelState.ForeColor = stateColor;
                         panelTopRight.Invalidate();
                     }
                     else
                     {
                         stateColor = Color.Red;
+                        labelState.Text = "away";
+                        labelState.ForeColor = stateColor;
                         panelTopRight.Invalidate();
                     }
                     this.Invalidate();
