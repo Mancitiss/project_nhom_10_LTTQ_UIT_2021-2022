@@ -49,7 +49,7 @@ namespace A_Friend
         {
             if (!string.IsNullOrEmpty(AFriendClient.img_string))
             {
-                circlePictureBox1.Image = StringToImage(AFriendClient.img_string);
+                circlePictureBox1.Crop(StringToImage(AFriendClient.img_string));
             }
             this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
@@ -200,7 +200,7 @@ namespace A_Friend
                     {
                         AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
                         AFriendClient.img_string = imageAsString.Trim();
-                        circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
+                        circlePictureBox1.Crop(StringToImage(AFriendClient.img_string.ToString()));
                     }
                     else
                     {

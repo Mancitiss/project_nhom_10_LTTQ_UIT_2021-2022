@@ -25,6 +25,7 @@ namespace A_Friend
         private void Show_progress(int percent)
         { 
             this.labelTittle.Text = percent.ToString() + "%";
+            labelTittle.Location = new Point((int)(this.Width / 2 - labelTittle.Width / 2), rect.Bottom + 10);
         }
 
         private Stopwatch sw = new Stopwatch();

@@ -51,8 +51,8 @@ namespace A_Friend
             // 
             this.txtNewUser.BackColor = System.Drawing.SystemColors.Window;
             this.txtNewUser.BorderColor = System.Drawing.Color.DarkGray;
-            this.txtNewUser.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
-            this.txtNewUser.BorderRadius = 30;
+            this.txtNewUser.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(166)))), ((int)(((byte)(215)))));
+            this.txtNewUser.BorderRadius = 20;
             this.txtNewUser.BorderSize = 3;
             this.txtNewUser.Location = new System.Drawing.Point(17, 6);
             this.txtNewUser.Margin = new System.Windows.Forms.Padding(8);
@@ -62,7 +62,7 @@ namespace A_Friend
             this.txtNewUser.PasswordChar = false;
             this.txtNewUser.PlaceholderColor = System.Drawing.Color.DarkGray;
             this.txtNewUser.PlaceholderText = "";
-            this.txtNewUser.Size = new System.Drawing.Size(263, 45);
+            this.txtNewUser.Size = new System.Drawing.Size(263, 38);
             this.txtNewUser.TabIndex = 0;
             this.txtNewUser.Texts = "";
             this.txtNewUser.UnderlinedStyle = false;
@@ -73,13 +73,13 @@ namespace A_Friend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Window;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.ClientSize = new System.Drawing.Size(297, 78);
             this.Controls.Add(this.labelWarning);
             this.Controls.Add(this.txtNewUser);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FormAddContact";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormAddContact";

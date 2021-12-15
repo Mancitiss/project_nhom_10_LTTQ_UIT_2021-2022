@@ -164,7 +164,9 @@ namespace A_Friend.CustomControls
             }
             else
             {
-                BackgroundColor = Color.FromArgb(100, 100, 165);
+                //BackgroundColor = Color.FromArgb(100, 100, 165);
+                BackgroundColor = Color.FromArgb(215, 244, 241);
+                labelBody.ForeColor = SystemColors.ControlText;
             }
         }
 

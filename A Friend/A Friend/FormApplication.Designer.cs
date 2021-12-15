@@ -96,7 +96,7 @@ namespace A_Friend
             // 
             // panelAdd
             // 
-            this.panelAdd.BackColor = System.Drawing.Color.White;
+            this.panelAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.panelAdd.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelAdd.Location = new System.Drawing.Point(0, 574);
             this.panelAdd.Margin = new System.Windows.Forms.Padding(0);
@@ -110,11 +110,11 @@ namespace A_Friend
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelContact.AutoScroll = true;
-            this.panelContact.BackColor = System.Drawing.SystemColors.Window;
+            this.panelContact.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.panelContact.Location = new System.Drawing.Point(0, 60);
             this.panelContact.Margin = new System.Windows.Forms.Padding(0);
             this.panelContact.Name = "panelContact";
-            this.panelContact.Padding = new System.Windows.Forms.Padding(1);
+            this.panelContact.Padding = new System.Windows.Forms.Padding(1, 10, 1, 1);
             this.panelContact.Size = new System.Drawing.Size(300, 592);
             this.panelContact.TabIndex = 2;
             this.panelContact.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panelContact_ControlAdded);
@@ -122,7 +122,7 @@ namespace A_Friend
             // 
             // panelBottomLeft
             // 
-            this.panelBottomLeft.BackColor = System.Drawing.SystemColors.Window;
+            this.panelBottomLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.panelBottomLeft.Controls.Add(this.ButtonAdd);
             this.panelBottomLeft.Controls.Add(this.SettingButton);
             this.panelBottomLeft.Controls.Add(this.LogoutButton);
@@ -136,11 +136,11 @@ namespace A_Friend
             // 
             // ButtonAdd
             // 
-            this.ButtonAdd.BackColor = System.Drawing.Color.Transparent;
+            this.ButtonAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.ButtonAdd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ButtonAdd.BackgroundImage")));
             this.ButtonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ButtonAdd.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.ButtonAdd.BorderRadius = 20;
+            this.ButtonAdd.BorderRadius = 15;
             this.ButtonAdd.BorderSize = 0;
             this.ButtonAdd.FlatAppearance.BorderSize = 0;
             this.ButtonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -154,11 +154,11 @@ namespace A_Friend
             // 
             // SettingButton
             // 
-            this.SettingButton.BackColor = System.Drawing.SystemColors.Window;
+            this.SettingButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.SettingButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SettingButton.BackgroundImage")));
             this.SettingButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.SettingButton.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.SettingButton.BorderRadius = 20;
+            this.SettingButton.BorderRadius = 15;
             this.SettingButton.BorderSize = 0;
             this.SettingButton.FlatAppearance.BorderSize = 0;
             this.SettingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -172,11 +172,11 @@ namespace A_Friend
             // 
             // LogoutButton
             // 
-            this.LogoutButton.BackColor = System.Drawing.SystemColors.Window;
+            this.LogoutButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.LogoutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("LogoutButton.BackgroundImage")));
             this.LogoutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.LogoutButton.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.LogoutButton.BorderRadius = 20;
+            this.LogoutButton.BorderRadius = 15;
             this.LogoutButton.BorderSize = 0;
             this.LogoutButton.FlatAppearance.BorderSize = 0;
             this.LogoutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -190,7 +190,7 @@ namespace A_Friend
             // 
             // panelTopLeft
             // 
-            this.panelTopLeft.BackColor = System.Drawing.Color.White;
+            this.panelTopLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(141)))), ((int)(((byte)(138)))));
             this.panelTopLeft.Controls.Add(this.customTextBoxSearch);
             this.panelTopLeft.Location = new System.Drawing.Point(0, 0);
             this.panelTopLeft.Margin = new System.Windows.Forms.Padding(0);

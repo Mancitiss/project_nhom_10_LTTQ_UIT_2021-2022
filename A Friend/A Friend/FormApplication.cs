@@ -648,6 +648,12 @@ namespace A_Friend
 
         private void FormApplication_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (!loaded)
+            {
+                System.Environment.Exit(1);
+                notifyIconApp.Icon = null;
+            }
+
             if (WindowState == FormWindowState.Normal)
             {
                 e.Cancel = true;
