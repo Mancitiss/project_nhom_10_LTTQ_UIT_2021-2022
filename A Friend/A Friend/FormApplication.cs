@@ -69,6 +69,7 @@ namespace A_Friend
             show_login_delegate = new ShowLoginDelegate(ShowLogin);
             //change_private_mode_delegate = new ChangePrivateModeDelegate(ChangePrivateMode);
             //addMessageItemDelegate = new AddMessageItem(AddMessage);
+            customTextBoxSearch.Font = ApplicationFont.GetFont(customTextBoxSearch.Font.Size);
         }
 
         private void FormApplication_ResizeBegin(Object sender, EventArgs e)
@@ -114,7 +115,7 @@ namespace A_Friend
             panelGetStarted.Anchor = panelRight.Anchor;
             panelGetStarted.Location = new Point(0, 0);
             panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top + 2);
-            panelGetStarted.Padding = new Padding(1);
+            panelGetStarted.Padding = new Padding(1,0,0,0);
             panelGetStarted.Resize += delegate { 
                 if (panelGetStarted.Width != this.Width)
                 {
@@ -648,6 +649,12 @@ namespace A_Friend
 
         private void FormApplication_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (!loaded)
+            {
+                System.Environment.Exit(1);
+                notifyIconApp.Icon = null;
+            }
+
             if (WindowState == FormWindowState.Normal)
             {
                 e.Cancel = true;
@@ -664,8 +671,9 @@ namespace A_Friend
         private void PanelGetStartedSlideToRight()
         {
             panelGetStarted.Location = panelRight.Location;
-            panelGetStarted.Size = new Size(panelRight.Width, this.Height);
+            panelGetStarted.Size = new Size(panelRight.Width, panelLeft.Height);
             formGetStarted.TopColor = panelTopLeft.BackColor;
+            formGetStarted.BottomColor = panelBottomLeft.BackColor;
             var graphic = panelGetStarted.CreateGraphics(); 
             using (Pen pen = new Pen (Color.Gray, 1))
             {

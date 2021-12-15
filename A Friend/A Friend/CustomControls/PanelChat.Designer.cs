@@ -41,6 +41,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.timerChat = new System.Windows.Forms.Timer(this.components);
+            this.labelState = new System.Windows.Forms.Label();
             this.panelTopRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.panelBottomRight.SuspendLayout();
@@ -48,7 +49,8 @@ namespace A_Friend.CustomControls
             // 
             // panelTopRight
             // 
-            this.panelTopRight.BackColor = System.Drawing.Color.White;
+            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(140)))), ((int)(((byte)(130)))));
+            this.panelTopRight.Controls.Add(this.labelState);
             this.panelTopRight.Controls.Add(this.labelFriendName);
             this.panelTopRight.Controls.Add(this.label3);
             this.panelTopRight.Controls.Add(this.friendPicture);
@@ -104,11 +106,11 @@ namespace A_Friend.CustomControls
             // buttonDelete
             // 
             this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonDelete.BackColor = System.Drawing.Color.Transparent;
+            this.buttonDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.buttonDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDelete.BackgroundImage")));
             this.buttonDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonDelete.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.buttonDelete.BorderRadius = 10;
+            this.buttonDelete.BorderRadius = 15;
             this.buttonDelete.BorderSize = 0;
             this.buttonDelete.FlatAppearance.BorderSize = 0;
             this.buttonDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -126,7 +128,7 @@ namespace A_Friend.CustomControls
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_Chat.AutoScroll = true;
-            this.panel_Chat.BackColor = System.Drawing.Color.White;
+            this.panel_Chat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.panel_Chat.Location = new System.Drawing.Point(0, 60);
             this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
             this.panel_Chat.Name = "panel_Chat";
@@ -143,7 +145,7 @@ namespace A_Friend.CustomControls
             // 
             this.panelBottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBottomRight.BackColor = System.Drawing.SystemColors.Window;
+            this.panelBottomRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.panelBottomRight.Controls.Add(this.textboxWriting);
             this.panelBottomRight.Controls.Add(this.buttonSend);
             this.panelBottomRight.Location = new System.Drawing.Point(0, 652);
@@ -161,7 +163,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting.BackColor = System.Drawing.SystemColors.Window;
             this.textboxWriting.BorderColor = System.Drawing.SystemColors.Control;
             this.textboxWriting.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
-            this.textboxWriting.BorderRadius = 30;
+            this.textboxWriting.BorderRadius = 20;
             this.textboxWriting.BorderSize = 3;
             this.textboxWriting.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textboxWriting.Location = new System.Drawing.Point(24, 6);
@@ -184,11 +186,11 @@ namespace A_Friend.CustomControls
             // buttonSend
             // 
             this.buttonSend.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonSend.BackColor = System.Drawing.Color.Transparent;
+            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
             this.buttonSend.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonSend.BackgroundImage")));
             this.buttonSend.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonSend.BorderColor = System.Drawing.Color.Empty;
-            this.buttonSend.BorderRadius = 10;
+            this.buttonSend.BorderRadius = 15;
             this.buttonSend.BorderSize = 0;
             this.buttonSend.FlatAppearance.BorderSize = 0;
             this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -206,6 +208,17 @@ namespace A_Friend.CustomControls
             // 
             this.timerChat.Interval = 7000;
             this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
+            // 
+            // labelState
+            // 
+            this.labelState.AutoSize = true;
+            this.labelState.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelState.ForeColor = System.Drawing.Color.Gainsboro;
+            this.labelState.Location = new System.Drawing.Point(73, 32);
+            this.labelState.Name = "labelState";
+            this.labelState.Size = new System.Drawing.Size(49, 18);
+            this.labelState.TabIndex = 7;
+            this.labelState.Text = "offline";
             // 
             // PanelChat
             // 
@@ -240,5 +253,6 @@ namespace A_Friend.CustomControls
         private CustomTextBox textboxWriting;
         private CustomButton buttonSend;
         private System.Windows.Forms.Timer timerChat;
+        private System.Windows.Forms.Label labelState;
     }
 }

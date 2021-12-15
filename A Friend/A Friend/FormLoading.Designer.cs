@@ -40,9 +40,9 @@
             this.labelTittle.Location = new System.Drawing.Point(241, 409);
             this.labelTittle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTittle.Name = "labelTittle";
-            this.labelTittle.Size = new System.Drawing.Size(111, 25);
+            this.labelTittle.Size = new System.Drawing.Size(408, 25);
             this.labelTittle.TabIndex = 0;
-            this.labelTittle.Text = "Please wait";
+            this.labelTittle.Text = "Loading problem :(  Please restart application!";
             // 
             // timer
             // 

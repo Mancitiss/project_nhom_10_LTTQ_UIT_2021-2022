@@ -34,6 +34,14 @@ namespace A_Friend
         public FormLogin()
         {
             InitializeComponent();
+            textBoxUserName.Font = ApplicationFont.GetFont(textBoxUserName.Font.Size);
+            textBoxPassword.Font = ApplicationFont.GetFont(textBoxPassword.Font.Size);
+            labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
+            buttonExit.Font = ApplicationFont.GetFont(buttonExit.Font.Size);
+            buttonSignUp.Font = ApplicationFont.GetFont(buttonSignUp.Font.Size);
+            buttonLogIn.Font = ApplicationFont.GetFont(buttonLogIn.Font.Size);
+            labelTittle.Font = ApplicationFont.GetFont(labelTittle.Font.Size);
+
             labelWarning.Text = "";
             this.MouseDown += (sender, e) => Form1_MouseDown(sender, e);
             Console.WriteLine("test");

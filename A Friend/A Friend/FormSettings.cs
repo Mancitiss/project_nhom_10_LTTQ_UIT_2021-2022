@@ -10,6 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Jil;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace A_Friend
 {
@@ -24,6 +26,21 @@ namespace A_Friend
         public FormSettings()
         {
             InitializeComponent();
+
+            tabControl1.Font = ApplicationFont.GetFont(tabControl1.Font.Size);
+            labelUsername.Font = ApplicationFont.GetFont(labelUsername.Font.Size);
+            customButtonPassword.Font = ApplicationFont.GetFont(customButtonPassword.Font.Size);
+            customButtonUsername.Font = ApplicationFont.GetFont(customButtonUsername.Font.Size);
+            customTextBoxUsername.Font = ApplicationFont.GetFont(customTextBoxUsername.Font.Size);
+            customButtonPassword.Font = ApplicationFont.GetFont(customButtonPassword.Font.Size);
+            textBoxCurrentPassword.Font = ApplicationFont.GetFont(textBoxCurrentPassword.Font.Size);
+            textBoxNewPassword.Font = ApplicationFont.GetFont(textBoxNewPassword  .Font.Size);
+            textBoxConfirmPassword.Font = ApplicationFont.GetFont(textBoxConfirmPassword.Font.Size);
+            buttonSavePassword.Font = ApplicationFont.GetFont(buttonSavePassword.Font.Size);
+            buttonSaveUsername.Font = ApplicationFont.GetFont(buttonSaveUsername.Font.Size);
+            customButtonExit.Font = ApplicationFont.GetFont(customButtonExit.Font.Size);
+            labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
+            label1.Font = ApplicationFont.GetFont(label1.Font.Size);
             //this.circlePictureBox1.Image = AFriendClient.user.avatar;
             /*
             if (AFriendClient.user.avatar != null)
@@ -49,7 +66,7 @@ namespace A_Friend
         {
             if (!string.IsNullOrEmpty(AFriendClient.img_string))
             {
-                circlePictureBox1.Image = StringToImage(AFriendClient.img_string);
+                circlePictureBox1.Crop(StringToImage(AFriendClient.img_string));
             }
             this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
@@ -137,6 +154,16 @@ namespace A_Friend
             byte[] array = ms.ToArray();
             return Convert.ToBase64String(array);
         }
+
+        public string ImageToString(Bitmap img)
+        {
+            Image im = (Image)img;
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
+        }
+
         public Image StringToImage(string imageString)
         {
 
@@ -183,7 +210,36 @@ namespace A_Friend
                 return result;
             }
         }
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
 
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
+        }
+
+        public static byte[] ImageToByteArray(System.Drawing.Image img)
+        {
+            ImageConverter converter = new ImageConverter();
+            return (byte[])converter.ConvertTo(img, typeof(byte[]));
+        }
 
         private void customButtonAvatar_Click_1(object sender, EventArgs e)
         {
@@ -194,19 +250,32 @@ namespace A_Friend
                 ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    string imageAsString = ImageToString(ofd.FileName);
-                    int length = imageAsString.Length;
-                    if (length < 2800000)
+                    //string imageAsString = ImageToString(ofd.FileName);
+                    try
                     {
-                        AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
-                        AFriendClient.img_string = imageAsString.Trim();
-                        circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
+                        Image img = new Bitmap(ofd.FileName);
+                        int width = circlePictureBox1.Width * 2;
+                        img = (Image)ResizeImage(img, width, width * img.Height / img.Width);
+                        string imageAsString = Convert.ToBase64String(ImageToByteArray(img));
+                        int length = imageAsString.Length;
+                        if (length < 2800000)
+                        {
+                            AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
+                            AFriendClient.img_string = imageAsString.Trim();
+                            circlePictureBox1.Crop(StringToImage(AFriendClient.img_string.ToString()));
+                        }
+                        else
+                        {
+                            //ChangeLabel("Please choose an image that is less than 2Mb", Color.Red);
+                            //this.Invoke(this.changeSettingsWarning, new object[] { "Please choose an image that is less than 2Mb", Color.Red });
+                            //TopMostMessageBox.Show("Please choose an image that is less than 2MB");
+                            TopMostMessageBox.Show("Can't use this image, please choose another one");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        //ChangeLabel("Please choose an image that is less than 2Mb", Color.Red);
-                        //this.Invoke(this.changeSettingsWarning, new object[] { "Please choose an image that is less than 2Mb", Color.Red });
-                        TopMostMessageBox.Show("Please choose an image that is less than 2MB"); 
+                        Console.WriteLine(ex);
+                        TopMostMessageBox.Show("Can't use this image, please choose another one");
                     }
                     /*
                     Console.WriteLine(imageAsString);

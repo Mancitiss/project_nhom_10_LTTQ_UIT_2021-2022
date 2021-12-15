@@ -142,6 +142,8 @@ namespace A_Friend.CustomControls
             InitializeComponent();
 
             this.messageObject = messageObject;
+            labelBody.Font = ApplicationFont.GetFont(labelBody.Font.Size);
+            labelAuthor.Font = ApplicationFont.GetFont(labelAuthor.Font.Size);
             DoubleBuffered = true;
 
             if (this.messageObject.type == 0)
@@ -167,7 +169,9 @@ namespace A_Friend.CustomControls
             }
             else
             {
-                BackgroundColor = Color.FromArgb(100, 100, 165);
+                //BackgroundColor = Color.FromArgb(100, 100, 165);
+                BackgroundColor = Color.FromArgb(215, 244, 241);
+                labelBody.ForeColor = SystemColors.ControlText;
             }
         }
 

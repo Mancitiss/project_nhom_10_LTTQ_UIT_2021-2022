@@ -79,6 +79,7 @@
     <Compile Include="AFriendClient.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ApplicationFont.cs" />
     <Compile Include="clsResize.cs" />
     <Compile Include="CustomControls\ChatItem.cs">
       <SubType>UserControl</SubType>
@@ -245,6 +246,7 @@
     <None Include="Resources\copy-regular.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Roboto-Regular.ttf" />
     <None Include="Resources\trash-alt-regular.png" />
   </ItemGroup>
   <ItemGroup>
