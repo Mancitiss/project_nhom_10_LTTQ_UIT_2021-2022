@@ -65,6 +65,35 @@ namespace A_Friend.CustomControls
             return destImage;
         }
 
+        private static void open_image(Image image)
+        {
+            string tempFile = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
+            (new Bitmap(image)).Save(tempFile, ImageFormat.Png);
+            var process = System.Diagnostics.Process.Start(tempFile);
+            //ThreadPool.QueueUserWorkItem((state) => wait_for_close(ref process, tempFile));
+        }
+
+        /*
+        private static void wait_for_close(ref System.Diagnostics.Process p, String path)
+        {
+            try
+            {
+                try
+                {
+                    p.WaitForExit();
+                }catch(Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    //object reference lost
+                }
+                System.IO.File.Delete(path);
+            }catch(Exception Iknow)
+            {
+                Console.WriteLine(Iknow.ToString());
+            }
+        }
+        */
+
         internal Image image;
 
         public ChatItem(MessageObject messageObject)
@@ -88,9 +117,7 @@ namespace A_Friend.CustomControls
                 panelBody.DoubleClick += delegate
                 {
                     //code to open image in photo viewer 
-                    string tempFile = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
-                    (new Bitmap(image)).Save(tempFile, ImageFormat.Png);
-                    System.Diagnostics.Process.Start(tempFile);
+                    ThreadPool.QueueUserWorkItem((state) => open_image(this.image));
                 };
             }
 
