@@ -136,7 +136,7 @@ namespace A_Friend
             // 
             // ButtonAdd
             // 
-            this.ButtonAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
+            this.ButtonAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.ButtonAdd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ButtonAdd.BackgroundImage")));
             this.ButtonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ButtonAdd.BorderColor = System.Drawing.Color.PaleVioletRed;
@@ -154,7 +154,7 @@ namespace A_Friend
             // 
             // SettingButton
             // 
-            this.SettingButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
+            this.SettingButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.SettingButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SettingButton.BackgroundImage")));
             this.SettingButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.SettingButton.BorderColor = System.Drawing.Color.PaleVioletRed;
@@ -172,7 +172,7 @@ namespace A_Friend
             // 
             // LogoutButton
             // 
-            this.LogoutButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
+            this.LogoutButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.LogoutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("LogoutButton.BackgroundImage")));
             this.LogoutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.LogoutButton.BorderColor = System.Drawing.Color.PaleVioletRed;

@@ -32,6 +32,7 @@ namespace A_Friend.CustomControls
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanelChat));
             this.panelTopRight = new System.Windows.Forms.Panel();
+            this.labelState = new System.Windows.Forms.Label();
             this.labelFriendName = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.friendPicture = new A_Friend.CustomControls.CirclePictureBox();
@@ -41,7 +42,6 @@ namespace A_Friend.CustomControls
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.timerChat = new System.Windows.Forms.Timer(this.components);
-            this.labelState = new System.Windows.Forms.Label();
             this.panelTopRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.panelBottomRight.SuspendLayout();
@@ -64,6 +64,17 @@ namespace A_Friend.CustomControls
             this.panelTopRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
             this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
+            // 
+            // labelState
+            // 
+            this.labelState.AutoSize = true;
+            this.labelState.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelState.ForeColor = System.Drawing.Color.Gainsboro;
+            this.labelState.Location = new System.Drawing.Point(73, 32);
+            this.labelState.Name = "labelState";
+            this.labelState.Size = new System.Drawing.Size(49, 18);
+            this.labelState.TabIndex = 7;
+            this.labelState.Text = "offline";
             // 
             // labelFriendName
             // 
@@ -186,7 +197,7 @@ namespace A_Friend.CustomControls
             // buttonSend
             // 
             this.buttonSend.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
+            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
             this.buttonSend.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonSend.BackgroundImage")));
             this.buttonSend.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonSend.BorderColor = System.Drawing.Color.Empty;
@@ -208,17 +219,6 @@ namespace A_Friend.CustomControls
             // 
             this.timerChat.Interval = 7000;
             this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
-            // 
-            // labelState
-            // 
-            this.labelState.AutoSize = true;
-            this.labelState.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelState.ForeColor = System.Drawing.Color.Gainsboro;
-            this.labelState.Location = new System.Drawing.Point(73, 32);
-            this.labelState.Name = "labelState";
-            this.labelState.Size = new System.Drawing.Size(49, 18);
-            this.labelState.TabIndex = 7;
-            this.labelState.Text = "offline";
             // 
             // PanelChat
             // 

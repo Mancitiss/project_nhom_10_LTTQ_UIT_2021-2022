@@ -26,6 +26,10 @@ namespace A_Friend
         { 
             this.labelTittle.Text = percent.ToString() + "%";
             labelTittle.Location = new Point((int)(this.Width / 2 - labelTittle.Width / 2), rect.Bottom + 10);
+            if (labelTittle.Visible == false)
+            {
+                labelTittle.Visible = true;
+            }
         }
 
         private Stopwatch sw = new Stopwatch();
@@ -44,6 +48,7 @@ namespace A_Friend
             rect.Height = 100;
             rect.Location = new Point((int)(this.Width / 2- rect.Width / 2), (int)(this.Height / 2 - rect.Height / 2));
             labelTittle.Location = new Point((int)(this.Width / 2 - labelTittle.Width / 2), rect.Bottom + 10);
+            labelTittle.Visible = false;
         }
 
         public int StartAngel
@@ -98,6 +103,7 @@ namespace A_Friend
         public void StartSpinning()
         {
             timer.Start();
+            timer1.Start();
         }
 
         public void StopSpinning()
@@ -108,6 +114,15 @@ namespace A_Friend
 
             sw.Stop();
             Console.WriteLine("Timer: " + sw.ElapsedMilliseconds);
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (labelTittle.Visible == false)
+            {
+                labelTittle.Visible = true;
+            }
+            timer1.Stop();
         }
     }
 }

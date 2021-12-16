@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.labelTittle = new System.Windows.Forms.Label();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // labelTittle
@@ -48,6 +49,11 @@
             // 
             this.timer.Interval = 1;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 250;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // FormLoading
             // 
@@ -74,5 +80,6 @@
 
         internal System.Windows.Forms.Label labelTittle;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Timer timer1;
     }
 }
