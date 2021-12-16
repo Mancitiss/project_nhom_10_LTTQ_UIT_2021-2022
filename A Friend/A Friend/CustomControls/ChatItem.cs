@@ -85,11 +85,11 @@ namespace A_Friend.CustomControls
                 image = StringToImage(this.messageObject.message);
                 panelBody.Controls.Remove(labelBody);
                 labelBody.Dispose();
-                panelBody.Click += delegate
+                panelBody.DoubleClick += delegate
                 {
                     //code to open image in photo viewer 
-                    string tempFile = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".bmp";
-                    (new Bitmap(image)).Save(tempFile, ImageFormat.Bmp);
+                    string tempFile = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
+                    (new Bitmap(image)).Save(tempFile, ImageFormat.Png);
                     System.Diagnostics.Process.Start(tempFile);
                 };
             }

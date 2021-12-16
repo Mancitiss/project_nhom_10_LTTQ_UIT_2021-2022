@@ -277,6 +277,7 @@ namespace A_Friend
             this.circlePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.circlePictureBox1.TabIndex = 25;
             this.circlePictureBox1.TabStop = false;
+            this.circlePictureBox1.DoubleClick += new System.EventHandler(this.customButtonAvatar_Click_1);
             // 
             // customButtonPassword
             // 
