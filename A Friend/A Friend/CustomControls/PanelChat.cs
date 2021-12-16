@@ -350,24 +350,26 @@ namespace A_Friend.CustomControls
             }
             else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control) 
             {
-                Thread temp = new Thread(() => { do_shit(e); });
+                Thread temp = new Thread(() => { do_shit(sender, e); });
                 temp.IsBackground = true;
                 temp.SetApartmentState(ApartmentState.STA);
                 temp.Start();
                 e.Handled = true;
-                e.SuppressKeyPress = true;
+                //e.SuppressKeyPress = true;
             }
         }
 
-        private void do_shit(KeyEventArgs e)
+        private void do_shit(object sender, KeyEventArgs e)
         {
             Console.WriteLine("Doing");
+            /*
             if (Clipboard.ContainsText())
             {
                 Console.WriteLine("Text detected");
                 this.textboxWriting.Texts += Clipboard.GetText();
+                //textboxWriting.
             }
-            else if (Clipboard.ContainsImage())
+            else */if (Clipboard.ContainsImage())
             {
                 Console.WriteLine("Image detected");
                 Image img = Clipboard.GetImage();
