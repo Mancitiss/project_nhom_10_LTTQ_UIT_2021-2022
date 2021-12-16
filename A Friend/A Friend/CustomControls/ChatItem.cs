@@ -88,7 +88,9 @@ namespace A_Friend.CustomControls
                 panelBody.Click += delegate
                 {
                     //code to open image in photo viewer 
-                    //use variable "image"
+                    string tempFile = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".bmp";
+                    (new Bitmap(image)).Save(tempFile, ImageFormat.Bmp);
+                    System.Diagnostics.Process.Start(tempFile);
                 };
             }
 
@@ -264,7 +266,14 @@ namespace A_Friend.CustomControls
         {
             Thread t = new Thread((ThreadStart)(() =>
             {
-                Clipboard.SetText(labelBody.Text);
+                if (messageObject.type == 0)
+                { 
+                    Clipboard.SetText(labelBody.Text);
+                }
+                else if (messageObject.type == 1)
+                {
+                    Clipboard.SetImage(image);
+                }
             }));
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
