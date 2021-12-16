@@ -133,11 +133,16 @@ namespace AFriendServer
                     {
                         try
                         {
-                            
-                            Console.WriteLine(item.Key + " is online");
+                            if (sessions[item.Key].is_locked) continue;
+                            //Console.WriteLine(item.Key + " is online");
                             if (item.Value.client.Connected)
                             {
-                                if (sessions[item.Key].is_locked) continue;
+                                if (item.Value.loopnum >= 197)
+                                {
+                                    item.Value.loopnum = 0;
+                                    item.Value.stream.Write(new byte[8] {0,0,0,0,0,0,0,0});
+                                }
+                                else item.Value.loopnum += 1;
                                 //Console.WriteLine(item.Value.Available);
                                 if (item.Value.client.Available > 0) /*item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/
                                 {
@@ -176,23 +181,10 @@ namespace AFriendServer
                                 shutdown(item.Key);
                             }
                         }
-                        catch (Exception e)
+                        catch (Exception clientquit)
                         {
-                            /*
-                            Console.WriteLine(e.ToString());
-                            try 
-                            {
-                                exception_handler(item, e.ToString());
-                            }
-                            catch
-                            {
-
-                            }
-                            finally
-                            {
-                                clear(item.Key);
-                            }
-                            */
+                            //Console.WriteLine(clientquit.ToString());
+                            shutdown(item.Key);
                         } 
                     }
                 }
@@ -1158,6 +1150,7 @@ namespace AFriendServer
                                             }
                                             Client client = new Client();
                                             client.loaded = 0;
+                                            client.loopnum = 0;
                                             
                                             Console.WriteLine("got id");
 
