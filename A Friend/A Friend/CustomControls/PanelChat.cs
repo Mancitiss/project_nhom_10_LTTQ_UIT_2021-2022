@@ -366,6 +366,7 @@ namespace A_Friend.CustomControls
             {
                 Console.WriteLine("Text detected");
                 this.textboxWriting.Texts += Clipboard.GetText();
+                //textboxWriting.
             }
             else if (Clipboard.ContainsImage())
             {

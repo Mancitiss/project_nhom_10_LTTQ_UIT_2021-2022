@@ -42,57 +42,42 @@ namespace A_Friend.CustomControls
 
         public static Bitmap ResizeImage(Image image, int width, int height)
         {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
+            if (width > 0 && height > 0)
             {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                var destRect = new Rectangle(0, 0, width, height);
+                var destImage = new Bitmap(width, height);
 
-                using (var wrapMode = new ImageAttributes())
+                destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+                using (var graphics = Graphics.FromImage(destImage))
                 {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
+                    graphics.CompositingMode = CompositingMode.SourceCopy;
+                    graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    graphics.SmoothingMode = SmoothingMode.HighQuality;
+                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-            return destImage;
+                    using (var wrapMode = new ImageAttributes())
+                    {
+                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                        graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                    }
+                }
+
+                return destImage;
+            }
+            else return (Bitmap)image;
         }
 
         private static void open_image(Image image)
         {
             string tempFile = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
             (new Bitmap(image)).Save(tempFile, ImageFormat.Png);
-            var process = System.Diagnostics.Process.Start(tempFile);
-            //ThreadPool.QueueUserWorkItem((state) => wait_for_close(ref process, tempFile));
+            System.Diagnostics.Process.Start(tempFile);
         }
 
-        /*
-        private static void wait_for_close(ref System.Diagnostics.Process p, String path)
-        {
-            try
-            {
-                try
-                {
-                    p.WaitForExit();
-                }catch(Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                    //object reference lost
-                }
-                System.IO.File.Delete(path);
-            }catch(Exception Iknow)
-            {
-                Console.WriteLine(Iknow.ToString());
-            }
-        }
-        */
+        
+        
 
         internal Image image;
 
