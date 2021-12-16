@@ -16,7 +16,7 @@ using System.Security.Authentication;
 
 namespace A_Friend 
 {
-    class AFriendClient : Form
+    class AFriendClient
     {
         //private static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
         //private static IPAddress ipAddr = IPAddress.Any;

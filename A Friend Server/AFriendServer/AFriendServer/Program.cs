@@ -133,10 +133,11 @@ namespace AFriendServer
                     {
                         try
                         {
-                            if (sessions[item.Key].is_locked) continue;
-                            //Console.WriteLine(item.Key + " is online");
+                            
+                            Console.WriteLine(item.Key + " is online");
                             if (item.Value.client.Connected)
                             {
+                                if (sessions[item.Key].is_locked) continue;
                                 //Console.WriteLine(item.Value.Available);
                                 if (item.Value.client.Available > 0) /*item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/
                                 {
