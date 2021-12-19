@@ -722,7 +722,7 @@ namespace A_Friend
                     return false;
                 }
                 Console.WriteLine("Success");
-                stream.Write(Encoding.Unicode.GetBytes("0011" + data_with_byte(tk) + " " + data_with_byte(mk))); //0011 = sign up
+                stream.Write(Encoding.Unicode.GetBytes("0011" + data_with_byte(tk) + data_with_byte(mk))); //0011 = sign up
                 
                 Receive_from_id(client);
                 if (instruction == "1011")
