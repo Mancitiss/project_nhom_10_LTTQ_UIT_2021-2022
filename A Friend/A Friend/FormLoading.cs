@@ -102,9 +102,9 @@ namespace A_Friend
             startAngle = (startAngle + 5) % 360;
             if (percent > 90F && percent < 99F)
                 percent += 0.05F;
-            else if (percent > 80F)
+            else if (percent > 80F && percent <= 90F)
                 percent += 0.1F;
-            else
+            else if (percent <= 80F)
                 percent += 0.5F;
             Show_progress((int)(percent));
             this.Invalidate();
