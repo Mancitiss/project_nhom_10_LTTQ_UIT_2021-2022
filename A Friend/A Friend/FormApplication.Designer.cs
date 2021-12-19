@@ -270,7 +270,7 @@ namespace A_Friend
             this.panelRight.Location = new System.Drawing.Point(300, 0);
             this.panelRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(915, 712);
+            this.panelRight.Size = new System.Drawing.Size(915, 713);
             this.panelRight.TabIndex = 3;
             // 
             // FormApplication
