@@ -34,6 +34,7 @@ namespace A_Friend
                     {
                         newestversionint[i] = int.Parse(newestversion[i]);
                     }
+                    Console.WriteLine("This version: {0}.{1}.{2}.{3}", thisversion[0], thisversion[1], thisversion[2], thisversion[3]);
                     Console.WriteLine("Newest version found: {0}.{1}.{2}.{3}", newestversionint[0], newestversionint[1], newestversionint[2], newestversionint[3]);
                     for (int i = 0; i < newestversionint.Count(); i++)
                     {
