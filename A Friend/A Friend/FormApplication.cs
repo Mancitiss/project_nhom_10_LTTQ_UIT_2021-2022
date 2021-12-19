@@ -548,7 +548,15 @@ namespace A_Friend
         }
         private void closeMessengerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Environment.Exit(1);
+            try
+            {
+                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2004"));
+            }
+            catch (Exception done)
+            {
+
+            }
+            System.Environment.Exit(0);
             notifyIconApp.Icon = null;
         }
 
@@ -556,7 +564,14 @@ namespace A_Friend
         {
             if (!loaded)
             {
-                System.Environment.Exit(1);
+                try
+                {
+                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2004"));
+                } catch (Exception done)
+                {
+
+                }
+                System.Environment.Exit(0);
                 notifyIconApp.Icon = null;
             }
 
