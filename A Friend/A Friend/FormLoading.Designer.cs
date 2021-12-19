@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.labelTittle = new System.Windows.Forms.Label();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // labelTittle
@@ -40,14 +41,19 @@
             this.labelTittle.Location = new System.Drawing.Point(241, 409);
             this.labelTittle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTittle.Name = "labelTittle";
-            this.labelTittle.Size = new System.Drawing.Size(111, 25);
+            this.labelTittle.Size = new System.Drawing.Size(408, 25);
             this.labelTittle.TabIndex = 0;
-            this.labelTittle.Text = "Please wait";
+            this.labelTittle.Text = "Loading problem :(  Please restart application!";
             // 
             // timer
             // 
             this.timer.Interval = 1;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 250;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // FormLoading
             // 
@@ -58,7 +64,7 @@
             this.Controls.Add(this.labelTittle);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormLoading";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormLoading";
@@ -72,7 +78,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Label labelTittle;
+        internal System.Windows.Forms.Label labelTittle;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Timer timer1;
     }
 }

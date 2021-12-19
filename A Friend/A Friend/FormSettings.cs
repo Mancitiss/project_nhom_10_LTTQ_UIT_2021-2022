@@ -10,6 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Jil;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace A_Friend
 {
@@ -24,34 +26,40 @@ namespace A_Friend
         public FormSettings()
         {
             InitializeComponent();
-            //this.circlePictureBox1.Image = AFriendClient.user.avatar;
-            /*
-            if (AFriendClient.user.avatar != null)
-            {
-                this.circlePictureBox1.Image = AFriendClient.user.avatar; // can fix dong nay
-            }*/
-            //labelUsername.Location = new Point((this.Width - labelUsername.Width) / 2 - 5, labelUsername.Top);
-            //customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
+
+            tabControl1.Font = ApplicationFont.GetFont(tabControl1.Font.Size);
+            labelUsername.Font = ApplicationFont.GetFont(labelUsername.Font.Size);
+            customButtonPassword.Font = ApplicationFont.GetFont(customButtonPassword.Font.Size);
+            customButtonUsername.Font = ApplicationFont.GetFont(customButtonUsername.Font.Size);
+            customTextBoxUsername.Font = ApplicationFont.GetFont(customTextBoxUsername.Font.Size);
+            customButtonPassword.Font = ApplicationFont.GetFont(customButtonPassword.Font.Size);
+            textBoxCurrentPassword.Font = ApplicationFont.GetFont(textBoxCurrentPassword.Font.Size);
+            textBoxNewPassword.Font = ApplicationFont.GetFont(textBoxNewPassword  .Font.Size);
+            textBoxConfirmPassword.Font = ApplicationFont.GetFont(textBoxConfirmPassword.Font.Size);
+            buttonSavePassword.Font = ApplicationFont.GetFont(buttonSavePassword.Font.Size);
+            buttonSaveUsername.Font = ApplicationFont.GetFont(buttonSaveUsername.Font.Size);
+            customButtonExit.Font = ApplicationFont.GetFont(customButtonExit.Font.Size);
+            labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
+            label1.Font = ApplicationFont.GetFont(label1.Font.Size);
             labelWarning.Text = "";
             changeSettingsWarning = new ChangeSettingsWarning(ChangeLabel);
             changeIncognitoMode = new ChangeIncognitoModeDelegate(ChangeIncognitoMode);
+            ChangeIncognitoMode(AFriendClient.user.priv);
         }
 
         public void ChangeLabel(string text, Color color)
         {
             labelWarning.Text = text;
             labelWarning.ForeColor = color;
-            //labelWarning.Location = new Point((this.Width - labelWarning.Width) / 2 - 5, labelWarning.Top);
         }
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(AFriendClient.img_string))
             {
-                circlePictureBox1.Image = StringToImage(AFriendClient.img_string);
+                circlePictureBox1.Crop(StringToImage(AFriendClient.img_string));
             }
             this.labelUsername.Text = AFriendClient.user.name;
-            ChangeIncognitoMode(AFriendClient.user.priv);
             panelPassword.Hide();
             panelUsername.Hide();
             this.ControlBox = false;
@@ -69,7 +77,6 @@ namespace A_Friend
         {
             labelWarning.Text = "";
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
-                //MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter new name!", Color.FromArgb(213, 54, 41));
             else
             {
@@ -83,7 +90,6 @@ namespace A_Friend
                     AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
                     panelUsername.Hide();
                     customTextBoxUsername.Texts = "";
-                    //this.Close();
                 }
             }
         }
@@ -99,7 +105,6 @@ namespace A_Friend
         {
             labelWarning.Text = "";
             if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
-                //MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter your password!", Color.FromArgb(213, 54, 41));
             else
             {
@@ -137,6 +142,16 @@ namespace A_Friend
             byte[] array = ms.ToArray();
             return Convert.ToBase64String(array);
         }
+
+        public string ImageToString(Bitmap img)
+        {
+            Image im = (Image)img;
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
+        }
+
         public Image StringToImage(string imageString)
         {
 
@@ -183,7 +198,36 @@ namespace A_Friend
                 return result;
             }
         }
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
 
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
+        }
+
+        public static byte[] ImageToByteArray(System.Drawing.Image img)
+        {
+            ImageConverter converter = new ImageConverter();
+            return (byte[])converter.ConvertTo(img, typeof(byte[]));
+        }
 
         private void customButtonAvatar_Click_1(object sender, EventArgs e)
         {
@@ -194,24 +238,30 @@ namespace A_Friend
                 ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    string imageAsString = ImageToString(ofd.FileName);
-                    int length = imageAsString.Length;
-                    if (length < 2800000)
+                    //string imageAsString = ImageToString(ofd.FileName);
+                    try
                     {
-                        AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
-                        AFriendClient.img_string = imageAsString.Trim();
-                        circlePictureBox1.Image = StringToImage(AFriendClient.img_string.ToString());
+                        Image img = new Bitmap(ofd.FileName);
+                        int width = circlePictureBox1.Width * 2;
+                        img = (Image)ResizeImage(img, width, width * img.Height / img.Width);
+                        string imageAsString = Convert.ToBase64String(ImageToByteArray(img));
+                        int length = imageAsString.Length;
+                        if (length < 2800000)
+                        {
+                            AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
+                            AFriendClient.img_string = imageAsString.Trim();
+                            circlePictureBox1.Crop(StringToImage(AFriendClient.img_string.ToString()));
+                        }
+                        else
+                        {
+                            TopMostMessageBox.Show("Can't use this image, please choose another one");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        //ChangeLabel("Please choose an image that is less than 2Mb", Color.Red);
-                        //this.Invoke(this.changeSettingsWarning, new object[] { "Please choose an image that is less than 2Mb", Color.Red });
-                        TopMostMessageBox.Show("Please choose an image that is less than 2Mb"); 
+                        Console.WriteLine(ex);
+                        TopMostMessageBox.Show("Can't use this image, please choose another one");
                     }
-                    /*
-                    Console.WriteLine(imageAsString);
-                    Console.WriteLine(Encoding.ASCII.GetByteCount(imageAsString));
-                    */
                 }
             }));
             thread.SetApartmentState(ApartmentState.STA);
@@ -250,6 +300,13 @@ namespace A_Friend
         private void toggleButton1_CheckedChanged(object sender, EventArgs e)
         {
             //Code to change private mode
+            if (toggleButton1.Checked)
+            {
+                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1508"));
+            } else
+            {
+                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("0508"));
+            }
         }
     }
 }

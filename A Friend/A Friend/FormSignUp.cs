@@ -14,7 +14,6 @@ namespace A_Friend
 {
     public partial class FormSignUp : Form
     {
-        //clsResize _form_resize;
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
         [DllImportAttribute("user32.dll")]
@@ -48,6 +47,13 @@ namespace A_Friend
         public FormSignUp()
         {
             InitializeComponent();
+            textBoxUserName.Font = ApplicationFont.GetFont(textBoxUserName.Font.Size);
+            textBoxPassword.Font = ApplicationFont.GetFont(textBoxPassword.Font.Size);
+            textBoxConfirmPassword.Font = ApplicationFont.GetFont(textBoxConfirmPassword.Font.Size);
+            labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
+            buttonCancel.Font = ApplicationFont.GetFont(buttonCancel.Font.Size);
+            buttonSignUp.Font = ApplicationFont.GetFont(buttonSignUp.Font.Size);
+            labelTittle.Font = ApplicationFont.GetFont(labelTittle.Font.Size);
             labelWarning.Text = "";
             this.MouseDown += (sender, e) => Form1_MouseDown(sender, e);
         }

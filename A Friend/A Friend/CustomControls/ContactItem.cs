@@ -32,6 +32,9 @@ namespace A_Friend.CustomControls
         public ContactItem(Account account)
         {
             InitializeComponent();
+            labelName.Font = ApplicationFont.GetFont(labelName.Font.Size);
+            labelLastMessage.Font = ApplicationFont.GetFont(labelLastMessage.Font.Size);
+
             this.account = account;
             this.DoubleBuffered = true;
             this.Name = "contacItem_" + account.id;
@@ -102,14 +105,6 @@ namespace A_Friend.CustomControls
             set
             {
                 labelName.Text = value;
-                //if (value.Length <= 18)
-                //{
-                //    labelName.Text = value;
-                //}
-                //else
-                //{
-                //    labelName.Text = value.Substring(0, 15) + "...";
-                //}
             }
         }
         public string LastMessage
@@ -117,14 +112,6 @@ namespace A_Friend.CustomControls
             set
             {
                 labelLastMessage.Text = value.Trim().Replace('\n', '-');
-                //if (value.Trim().Length <= 23)
-                //{
-                //    labelLastMessage.Text = value.Trim().Replace('\n', '-');
-                //}
-                //else
-                //{
-                //    labelLastMessage.Text = value.Trim().Replace('\n', '-').Substring(0,20) + "...";
-                //}
             }
         }
 
@@ -194,7 +181,9 @@ namespace A_Friend.CustomControls
             {
                 var rect = new Rectangle(10, 2, this.Width - 20, this.Height - 4);
                 using (var path = GetFigurePath(rect, borderSize))
-                using (var brush = new SolidBrush(Color.FromArgb(30, Color.Gray)))
+                //using (var brush = new SolidBrush(Color.FromArgb(30, Color.Gray)))
+                using (var brush = new SolidBrush(Color.FromArgb(95, 255, 202, 152)))
+                //using (var brush = new SolidBrush(Color.FromArgb(228, 128, 113)))
                 {
                     e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                     e.Graphics.FillPath(brush, path);
@@ -204,7 +193,8 @@ namespace A_Friend.CustomControls
             {
                 var rect = new Rectangle(10, 2, this.Width - 20, this.Height - 4);
                 using (var path = GetFigurePath(rect, borderSize))
-                using (var brush = new SolidBrush(Color.FromArgb(20, Color.Gray)))
+                //using (var brush = new SolidBrush(Color.FromArgb(20, Color.Gray)))
+                using (var brush = new SolidBrush(Color.FromArgb(50, 255, 202, 152)))
                 {
                     e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                     e.Graphics.FillPath(brush, path);

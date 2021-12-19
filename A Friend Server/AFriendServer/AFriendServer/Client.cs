@@ -14,6 +14,7 @@ namespace AFriendServer
         internal SslStream stream;
         internal bool is_locked;
         internal int loaded;
+        internal int loopnum;
 
         internal Client() { }
 

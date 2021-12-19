@@ -30,13 +30,23 @@ namespace A_Friend
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
+        
+        public bool lockLogin = false;
 
         public FormLogin()
         {
             InitializeComponent();
+            textBoxUserName.Font = ApplicationFont.GetFont(textBoxUserName.Font.Size);
+            textBoxPassword.Font = ApplicationFont.GetFont(textBoxPassword.Font.Size);
+            labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
+            buttonExit.Font = ApplicationFont.GetFont(buttonExit.Font.Size);
+            buttonSignUp.Font = ApplicationFont.GetFont(buttonSignUp.Font.Size);
+            buttonLogIn.Font = ApplicationFont.GetFont(buttonLogIn.Font.Size);
+            labelTittle.Font = ApplicationFont.GetFont(labelTittle.Font.Size);
+
             labelWarning.Text = "";
             this.MouseDown += (sender, e) => Form1_MouseDown(sender, e);
-            Console.WriteLine("test");
+            //Console.WriteLine("test");
         }
 
         private void ResetTexts()
@@ -59,7 +69,6 @@ namespace A_Friend
 
         private void buttonExit_Click(object sender, EventArgs e)
         {
-            //Application.Exit();
             Environment.Exit(0);
         }
 
@@ -136,7 +145,9 @@ namespace A_Friend
 
         private bool CorrectPassword()
         {
-            return AFriendClient.Logged_in(textBoxUserName.Texts, textBoxPassword.Texts);
+            bool res = AFriendClient.Logged_in(textBoxUserName.Texts, textBoxPassword.Texts);
+            AFriendClient.loginResult = true;
+            return res;
         }
 
         private bool EmptyTextBoxes()
