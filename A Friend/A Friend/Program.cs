@@ -13,20 +13,20 @@ namespace A_Friend
     class Program
     {
         public static FormApplication mainform;
-        internal static int[] thisversion = {1, 0, 0, 1};
+        internal static int[] thisversion = {1, 9, 7, 2};
 
         static void Main(string[] args)
         {
             try
             {
-                /*
+                
                 bool newv = false;
                 try
                 {
                     string data;
                     using (WebClient wc = new WebClient())
                     {
-                        data = wc.DownloadString("http://mancitiss.ddns.net:8000/index.htm");
+                        data = wc.DownloadString("https://mancitiss.duckdns.org/index.htm");
                     }
                     string[] newestversion = data.Split('.');
                     int[] newestversionint = new int[newestversion.Count()];
@@ -56,7 +56,7 @@ namespace A_Friend
                 }
                 if (newv)
                 {
-                    string url = "http://mancitiss.ddns.net:8000/A%20Friend/AFriend.exe";
+                    string url = "https://mancitiss.duckdns.org/A%20Friend/AFriend.exe";
                     string path = Path.GetTempPath();
                     string fileName = "AFriend";
                     string tmpFile = Path.Combine(path, fileName);
@@ -67,7 +67,7 @@ namespace A_Friend
                         Process.Start(tempFile, "/SP- /silent /noicons \" / dir = expand:{ autopf}\\A Friend\"");
                     }
                 }
-                else*/
+                else
                 {
                     Console.WriteLine("A Friend, version {0}.{1}.{2}.{3}", thisversion[0], thisversion[1], thisversion[2], thisversion[3]);
                     Application.EnableVisualStyles();
