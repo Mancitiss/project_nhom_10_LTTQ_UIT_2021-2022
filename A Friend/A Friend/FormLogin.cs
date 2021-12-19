@@ -30,6 +30,8 @@ namespace A_Friend
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
+        
+        public bool lockLogin = false;
 
         public FormLogin()
         {
@@ -144,7 +146,9 @@ namespace A_Friend
 
         private bool CorrectPassword()
         {
-            return AFriendClient.Logged_in(textBoxUserName.Texts, textBoxPassword.Texts);
+            bool res = AFriendClient.Logged_in(textBoxUserName.Texts, textBoxPassword.Texts);
+            AFriendClient.loginResult = true;
+            return res;
         }
 
         private bool EmptyTextBoxes()

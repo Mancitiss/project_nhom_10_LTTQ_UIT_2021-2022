@@ -355,7 +355,7 @@ namespace A_Friend
             this.customButtonUsername.Name = "customButtonUsername";
             this.customButtonUsername.Size = new System.Drawing.Size(200, 30);
             this.customButtonUsername.TabIndex = 30;
-            this.customButtonUsername.Text = "Change username?";
+            this.customButtonUsername.Text = "Change display name?";
             this.customButtonUsername.UseVisualStyleBackColor = false;
             this.customButtonUsername.Click += new System.EventHandler(this.customButtonUsername_Click);
             // 

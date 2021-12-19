@@ -429,15 +429,6 @@ namespace A_Friend.CustomControls
 
         public void LoadMessage()
         {
-            /*
-            panel_Chat.SuspendLayout();
-            AddMessageToTop("Tạm biệt", false);
-            AddMessageToTop("Không, Chào Tạm biệt", true);
-            AddMessageToTop("Bạn Khỏe không", false);
-            AddMessageToTop("Chào", false);
-            AddMessageToTop("Chào bạn", true);
-            panel_Chat.ResumeLayout();
-            */
             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
         }
 
@@ -446,7 +437,6 @@ namespace A_Friend.CustomControls
             panel_Chat.SuspendLayout();
             foreach(MessageObject messageObject in messageObjects)
             {
-                Console.WriteLine("messageObject {0} is ready", messageObject.messagenumber);
                 AddMessageToTop(messageObject);
             }
             panel_Chat.ResumeLayout();
@@ -465,8 +455,17 @@ namespace A_Friend.CustomControls
         public string GetLastMessage()
         {
             if (chatItems.Count == 0)
-                return "";
-            return chatItems[chatItems.Count - 1].messageObject.message;
+                return "New conversation!";
+            var messageObject = chatItems[chatItems.Count - 1].messageObject;
+            if (messageObject.type == 0)
+            {
+                return messageObject.message;
+            }
+            else if (messageObject.type == 1)
+            {
+                return "<Photo>";
+            }
+            return "";
         }
         public string GetFirstMessage()
         {

@@ -36,6 +36,7 @@ namespace A_Friend
         public static Account user;
 
         private static FormApplication UIForm;
+        public static bool loginResult = true;
 
 
         private static void Logout()
@@ -165,6 +166,10 @@ namespace A_Friend
                     return false;
                 }
                 FormApplication.currentID = user.id;
+                if (!loginResult)
+                {
+                    return false;
+                }
                 return true;
             }
             catch (Exception e)
@@ -364,7 +369,7 @@ namespace A_Friend
                         case "-200": // -200 = logged in failed
                             {
                                 Console.WriteLine("Thong tin dang nhap bi sai");
-
+                                loginResult = false;
                             } // logged in failed
                             break;
                         case "0200": // logged in successfully
