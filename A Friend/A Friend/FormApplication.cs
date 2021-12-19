@@ -18,8 +18,6 @@ namespace A_Friend
         public SetAvatarDelegate set_avatar_delegate;
         public delegate void ShowLoginDelegate();
         public ShowLoginDelegate show_login_delegate;
-        //public delegate void ChangePrivateModeDelegate(bool priv);
-        //public ChangePrivateModeDelegate change_private_mode_delegate;
 
         public A_Friend.CustomControls.PanelChat currentpanelchat;
 
@@ -67,8 +65,6 @@ namespace A_Friend
             sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
             set_avatar_delegate = new SetAvatarDelegate(SetAvatar);
             show_login_delegate = new ShowLoginDelegate(ShowLogin);
-            //change_private_mode_delegate = new ChangePrivateModeDelegate(ChangePrivateMode);
-            //addMessageItemDelegate = new AddMessageItem(AddMessage);
             customTextBoxSearch.Font = ApplicationFont.GetFont(customTextBoxSearch.Font.Size);
         }
 
@@ -108,7 +104,6 @@ namespace A_Friend
             this.panelContact2.BackColor = panelContact.BackColor;
             this.panelContact2.Location = panelContact.Location;
             this.panelContact2.Size = panelContact.Size;
-            this.panelContact2.Paint += panelContact_Paint;
 
             this.Controls.Add(panelGetStarted);
             panelGetStarted.SendToBack();
@@ -205,19 +200,6 @@ namespace A_Friend
                     {
                         BringContactItemToTop(panelChat.ID);
                     }
-
-                    //this stuff to display unread message with different color on ContactItem
-                    //if (loaded)
-                    //{
-                    //    if (!panelChat.IsLastMessageFromYou())
-                    //    {
-                    //        contactItem.Unread = true;
-                    //    }
-                    //    else
-                    //    {
-                    //        contactItem.Unread = false;
-                    //    }
-                    //}
                 };
 
                 panelChat.ControlRemoved += delegate
@@ -251,7 +233,6 @@ namespace A_Friend
                     {
                         contactItem.Unread = false; 
                         AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
-                        Console.WriteLine("you seen");
                     }
                 };
 
@@ -261,7 +242,6 @@ namespace A_Friend
                     {
                         contactItem.Unread = false; 
                         AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
-                        Console.WriteLine("you seen");
                     }
                 };
             }
@@ -428,9 +408,6 @@ namespace A_Friend
                 CustomControls.ContactItem item = contactItems[id];
                 item.State = state;
             }
-
-            Console.WriteLine("state changed");
-
         }
 
         private void LogoutButton_Click_1(object sender, EventArgs e)
@@ -447,7 +424,7 @@ namespace A_Friend
                 {
                     AFriendClient.user.state = 0;
                 }
-            } catch /*(Exception ex)*/
+            } catch           
             {
                 AFriendClient.user = null;
             }
@@ -455,60 +432,15 @@ namespace A_Friend
 
         private void SettingButton_Click(object sender, EventArgs e)
         {
-            //FormSettings frm = new FormSettings();
             formSettings.StartPosition = FormStartPosition.CenterScreen;
             this.Hide();
             formSettings.ShowDialog();
             this.Show();
         }
-        //int tempadd = 0;
+
         public void ButtonAdd_Click_1(object sender, EventArgs e)
         {
             PanelGetStartedSlideToRight();
-            //FormCollection forms = Application.OpenForms;
-            //FormAddContact frm = new FormAddContact();
-            ////panelContact.Height = panelContact.Height - panel2.Height;
-            ////panelContact2.Height = panelContact.Height - panel2.Height;
-            ////panel2.Show();
-            ////frm.TopLevel = false;
-            ////panel2.Controls.Add(frm);
-            ////frm.Show();
-            ////i = Application.OpenForms.Count;
-            //do
-            //{
-            //    if (tempadd >= 2)
-            //    {
-            //        if (tempadd >= 2)
-            //        {
-            //            panelAdd.Hide();
-            //            panelContact.Height = panelContact.Height + panelAdd.Height;
-            //            panelContact2.Height = panelContact.Height + panelAdd.Height;
-            //            tempadd = 0;
-            //            break;
-            //        }
-            //        return;
-            //    }
-            //    panelContact.Height = panelContact.Height - panelAdd.Height;
-            //    panelContact2.Height = panelContact.Height - panelAdd.Height;
-            //    panelAdd.Show();
-            //    frm.TopLevel = false;
-            //    panelAdd.Controls.Add(frm);
-            //    frm.Show();
-            //    tempadd = Application.OpenForms.Count;
-            //    break;
-            //}
-            //while (false);
-            ////PanelGetStartedFill();
-            ////Reload list friends
-            //if (formAddContact == null)
-            //{
-            //    formAddContact = new FormAddContact();
-            //    formAddContact.Dock = DockStyle.Fill;
-            //    formAddContact.TopLevel = false;
-            //    panelAdd.Controls.Add(formAddContact);
-            //    panelAdd.BringToFront();
-            //    formAddContact.Visible = true;
-            //}
 
             if (panelContact.Height == panelBottomLeft.Top - panelTopLeft.Bottom)
             {
@@ -534,27 +466,9 @@ namespace A_Friend
 
         private bool UsernameCheck()
         {
-            //Check username in list friends
             return true;
         }
-        private void customTextBoxSearch_KeyDown(object sender, KeyEventArgs e)
-        {
-            //if (e.KeyCode == Keys.Enter)
-            //{
-            //    if (customTextBoxSearch.Text == "")
-            //    {
-            //        labelWarning.Text = "Please enter a username";
-            //    }
-            //    else
-            //    {
-            //        if (!UsernameCheck())
-            //            labelWarning.Text = "This user does not exist";
-            //        else
-            //            labelUsername.Text = customTextBoxSearch.Texts;
-            //        //Load chat history from database
-            //    }
-            //}
-        }
+
         private void customTextBoxSearch__TextChanged(object sender, EventArgs e)
         {
             if (check)
@@ -582,7 +496,6 @@ namespace A_Friend
                             }
                             panelContact2.Controls.Add(pictureBoxNotFound);
                             pictureBoxNotFound.BringToFront();
-                            Console.WriteLine("not found");
                         }
                         panelContact2.BringToFront();
                         panelContact.Controls.Clear();
@@ -604,10 +517,7 @@ namespace A_Friend
                             }
                             panelContact.Controls.Add(pictureBoxNotFound);
                             pictureBoxNotFound.BringToFront();
-                            Console.WriteLine("not found2");
                         }
-                        //panelContact2.BringToFront();
-                        //panelContact.Controls.Clear();
                         panelContact.BringToFront();
                         panelContact2.Controls.Clear();
                     }
@@ -623,11 +533,6 @@ namespace A_Friend
                     panelContact.BringToFront();
                 }
             }
-        }
-
-        private void panelChat_Click(object sender, EventArgs e)
-        {
-            //panelChat.Focus();
         }
 
         internal bool Is_this_person_added(string id)
@@ -705,15 +610,6 @@ namespace A_Friend
             using (Pen pen = new Pen(Color.Gray, 1))
             {
                 e.Graphics.DrawLine(pen, 0, panelTopLeft.Height - 1, panelTopLeft.Width, panelTopLeft.Height -  1);
-                //e.Graphics.DrawLine(pen, panelTopLeft.Width - 1, 0, panelTopLeft.Width - 1, panelTopLeft.Height);
-            }
-        }
-
-        private void panelContact_Paint(object sender, PaintEventArgs e)
-        {
-            using (Pen pen = new Pen(Color.Gray, 1))
-            {
-                //e.Graphics.DrawLine(pen, panelContact.Width - 1, 0, panelContact.Width - 1, panelContact.Height);
             }
         }
 
@@ -722,7 +618,6 @@ namespace A_Friend
             using (Pen pen = new Pen(Color.Gray, 1))
             {
                 e.Graphics.DrawLine(pen, 0, 1, panelBottomLeft.Width - 0, 1);
-                //e.Graphics.DrawLine(pen, panelBottomLeft.Width - 1, 0, panelBottomLeft.Width - 1, panelBottomLeft.Height);
             }
         }
 
@@ -783,8 +678,6 @@ namespace A_Friend
                     break;
                 }
             }
-
-            //code to remove or block contact
         }
 
         public void SetAvatar(string id, Image img)

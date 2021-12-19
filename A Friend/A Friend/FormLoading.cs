@@ -100,10 +100,10 @@ namespace A_Friend
         private void timer_Tick(object sender, EventArgs e)
         {
             startAngle = (startAngle + 5) % 360;
-            if (percent > 80F)
-                percent += 0.1F;
-            else if (percent > 90F && percent < 99F)
+            if (percent > 90F && percent < 99F)
                 percent += 0.05F;
+            else if (percent > 80F)
+                percent += 0.1F;
             else
                 percent += 0.5F;
             Show_progress((int)(percent));
@@ -123,7 +123,7 @@ namespace A_Friend
             timer.Stop();
 
             sw.Stop();
-            Console.WriteLine("Timer: " + sw.ElapsedMilliseconds);
+            //Console.WriteLine("Timer: " + sw.ElapsedMilliseconds);
         }
 
         private void timer1_Tick(object sender, EventArgs e)

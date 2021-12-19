@@ -34,7 +34,7 @@ namespace A_Friend
                     {
                         newestversionint[i] = int.Parse(newestversion[i]);
                     }
-                    Console.WriteLine("Newest version found: {0}.{1}.{2}.{3}", newestversionint[0], newestversionint[1], newestversionint[2], newestversionint[3]);
+                    //Console.WriteLine("Newest version found: {0}.{1}.{2}.{3}", newestversionint[0], newestversionint[1], newestversionint[2], newestversionint[3]);
                     for (int i = 0; i < newestversionint.Count(); i++)
                     {
                         if (i >= 4) break;
@@ -69,11 +69,9 @@ namespace A_Friend
                 }
                 else
                 {
-                    Console.WriteLine("A Friend, version {0}.{1}.{2}.{3}", thisversion[0], thisversion[1], thisversion[2], thisversion[3]);
+                    //Console.WriteLine("A Friend, version {0}.{1}.{2}.{3}", thisversion[0], thisversion[1], thisversion[2], thisversion[3]);
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    //Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-                    //Application.ThreadException += myHandler;
                     Application.Run(new FormLogin());
                 }
             } catch (Exception e)
@@ -81,12 +79,5 @@ namespace A_Friend
                 Console.WriteLine(e.ToString());
             }
         }
-
-        /*
-        static void myHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
-        {
-            //do something
-        }
-        */
     }
 }

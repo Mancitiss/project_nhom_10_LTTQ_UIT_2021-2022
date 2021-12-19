@@ -230,7 +230,6 @@ namespace A_Friend.CustomControls
 
         public void ResizeBubbles()
         {
-            //panelBody.MaximumSize = new SizeMaxValue);
             if (messageObject != null && messageObject.type == 0)
             {
                 int maxwidth = this.Width - 200;

@@ -29,6 +29,7 @@ namespace A_Friend
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
             this.labelUsername = new System.Windows.Forms.Label();
             this.panelPassword = new System.Windows.Forms.Panel();
@@ -51,6 +52,7 @@ namespace A_Friend
             this.panel1 = new System.Windows.Forms.Panel();
             this.toggleButton1 = new A_Friend.CustomControls.ToggleButton();
             this.label1 = new System.Windows.Forms.Label();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panelPassword.SuspendLayout();
             this.panelUsername.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -336,6 +338,7 @@ namespace A_Friend
             this.customButtonAvatar.Name = "customButtonAvatar";
             this.customButtonAvatar.Size = new System.Drawing.Size(30, 30);
             this.customButtonAvatar.TabIndex = 29;
+            this.toolTip.SetToolTip(this.customButtonAvatar, "Choose an avatar");
             this.customButtonAvatar.UseVisualStyleBackColor = false;
             this.customButtonAvatar.Click += new System.EventHandler(this.customButtonAvatar_Click_1);
             // 
@@ -455,5 +458,6 @@ namespace A_Friend
         private System.Windows.Forms.Panel panel1;
         private CustomControls.ToggleButton toggleButton1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

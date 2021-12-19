@@ -46,7 +46,7 @@ namespace A_Friend
 
             labelWarning.Text = "";
             this.MouseDown += (sender, e) => Form1_MouseDown(sender, e);
-            Console.WriteLine("test");
+            //Console.WriteLine("test");
         }
 
         private void ResetTexts()
@@ -69,7 +69,6 @@ namespace A_Friend
 
         private void buttonExit_Click(object sender, EventArgs e)
         {
-            //Application.Exit();
             Environment.Exit(0);
         }
 
