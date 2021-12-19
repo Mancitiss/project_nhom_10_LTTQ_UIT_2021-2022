@@ -41,14 +41,6 @@ namespace A_Friend
             customButtonExit.Font = ApplicationFont.GetFont(customButtonExit.Font.Size);
             labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
             label1.Font = ApplicationFont.GetFont(label1.Font.Size);
-            //this.circlePictureBox1.Image = AFriendClient.user.avatar;
-            /*
-            if (AFriendClient.user.avatar != null)
-            {
-                this.circlePictureBox1.Image = AFriendClient.user.avatar; // can fix dong nay
-            }*/
-            //labelUsername.Location = new Point((this.Width - labelUsername.Width) / 2 - 5, labelUsername.Top);
-            //customButtonUsername.Location = new Point(labelUsername.Left - 20, customButtonUsername.Top);
             labelWarning.Text = "";
             changeSettingsWarning = new ChangeSettingsWarning(ChangeLabel);
             changeIncognitoMode = new ChangeIncognitoModeDelegate(ChangeIncognitoMode);
@@ -59,7 +51,6 @@ namespace A_Friend
         {
             labelWarning.Text = text;
             labelWarning.ForeColor = color;
-            //labelWarning.Location = new Point((this.Width - labelWarning.Width) / 2 - 5, labelWarning.Top);
         }
 
         private void FormSettings_Load(object sender, EventArgs e)
@@ -86,7 +77,6 @@ namespace A_Friend
         {
             labelWarning.Text = "";
             if (String.IsNullOrEmpty(customTextBoxUsername.Texts.Trim()))
-                //MessageBox.Show("Please enter new username!", "Username", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter new name!", Color.FromArgb(213, 54, 41));
             else
             {
@@ -100,7 +90,6 @@ namespace A_Friend
                     AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
                     panelUsername.Hide();
                     customTextBoxUsername.Texts = "";
-                    //this.Close();
                 }
             }
         }
@@ -116,7 +105,6 @@ namespace A_Friend
         {
             labelWarning.Text = "";
             if (string.IsNullOrEmpty(textBoxCurrentPassword.Texts) || string.IsNullOrEmpty(textBoxConfirmPassword.Texts) || string.IsNullOrEmpty(textBoxNewPassword.Texts))
-                //MessageBox.Show("Please enter your password!", "Password", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ChangeLabel("Please enter your password!", Color.FromArgb(213, 54, 41));
             else
             {
@@ -266,9 +254,6 @@ namespace A_Friend
                         }
                         else
                         {
-                            //ChangeLabel("Please choose an image that is less than 2Mb", Color.Red);
-                            //this.Invoke(this.changeSettingsWarning, new object[] { "Please choose an image that is less than 2Mb", Color.Red });
-                            //TopMostMessageBox.Show("Please choose an image that is less than 2MB");
                             TopMostMessageBox.Show("Can't use this image, please choose another one");
                         }
                     }
@@ -277,10 +262,6 @@ namespace A_Friend
                         Console.WriteLine(ex);
                         TopMostMessageBox.Show("Can't use this image, please choose another one");
                     }
-                    /*
-                    Console.WriteLine(imageAsString);
-                    Console.WriteLine(Encoding.ASCII.GetByteCount(imageAsString));
-                    */
                 }
             }));
             thread.SetApartmentState(ApartmentState.STA);

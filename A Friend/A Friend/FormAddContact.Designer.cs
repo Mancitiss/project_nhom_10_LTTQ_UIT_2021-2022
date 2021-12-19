@@ -51,7 +51,7 @@ namespace A_Friend
             // 
             this.txtNewUser.BackColor = System.Drawing.SystemColors.Window;
             this.txtNewUser.BorderColor = System.Drawing.Color.DarkGray;
-            this.txtNewUser.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(166)))), ((int)(((byte)(215)))));
+            this.txtNewUser.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
             this.txtNewUser.BorderRadius = 20;
             this.txtNewUser.BorderSize = 3;
             this.txtNewUser.Location = new System.Drawing.Point(17, 6);

@@ -12,21 +12,17 @@ namespace A_Friend.CustomControls
 {
     public class CirclePictureBox : PictureBox
     {
-        //Fields
         private int borderSize = 2;
         private Color borderColor = Color.RoyalBlue;
         private Color borderColor2 = Color.HotPink;
         private DashStyle borderLineStyle = DashStyle.Solid;
         private DashCap borderCapStyle = DashCap.Flat;
         private float gradientAngle = 50F;
-        //Constructor
         public CirclePictureBox()
         {
             this.Size = new Size(100, 100);
             this.SizeMode = PictureBoxSizeMode.StretchImage;
         }
-        //Properties
-        [Category("RJ Code Advance")]
         public int BorderSize
         {
             get { return borderSize; }
@@ -36,7 +32,6 @@ namespace A_Friend.CustomControls
                 this.Invalidate();
             }
         }
-        [Category("RJ Code Advance")]
         public Color BorderColor
         {
             get { return borderColor; }
@@ -46,7 +41,6 @@ namespace A_Friend.CustomControls
                 this.Invalidate();
             }
         }
-        [Category("RJ Code Advance")]
         public Color BorderColor2
         {
             get { return borderColor2; }
@@ -56,7 +50,6 @@ namespace A_Friend.CustomControls
                 this.Invalidate();
             }
         }
-        [Category("RJ Code Advance")]
         public DashStyle BorderLineStyle
         {
             get { return borderLineStyle; }
@@ -66,7 +59,6 @@ namespace A_Friend.CustomControls
                 this.Invalidate();
             }
         }
-        [Category("RJ Code Advance")]
         public DashCap BorderCapStyle
         {
             get { return borderCapStyle; }
@@ -76,7 +68,6 @@ namespace A_Friend.CustomControls
                 this.Invalidate();
             }
         }
-        [Category("RJ Code Advance")]
         public float GradientAngle
         {
             get { return gradientAngle; }
@@ -86,7 +77,6 @@ namespace A_Friend.CustomControls
                 this.Invalidate();
             }
         }
-        //Overridden methods
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -109,9 +99,7 @@ namespace A_Friend.CustomControls
                 penBorder.DashStyle = borderLineStyle;
                 penBorder.DashCap = borderCapStyle;
                 pathRegion.AddEllipse(rectContourSmooth);
-                //Set rounded region 
                 this.Region = new Region(pathRegion);
-                //Drawing
                 graph.DrawEllipse(penSmooth, rectContourSmooth);//Draw contour smoothing
                 if (borderSize > 0) //Draw border
                     graph.DrawEllipse(penBorder, rectBorder);

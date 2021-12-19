@@ -35,10 +35,6 @@ namespace A_Friend.CustomControls
 
         internal delegate void RemoveMessageInvoker(long messagenumber);
         internal RemoveMessageInvoker RemoveMessage_Invoke;
-        /*
-        public delegate void ButtonSend_Click(object sender, EventArgs e);
-        public ButtonSend_Click ButtonSend_Click_Delegate;
-        */
 
         public PanelChat()
         {
@@ -46,7 +42,6 @@ namespace A_Friend.CustomControls
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
             RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
-            //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             this.CreateControl();
             textboxWriting.dynamicMode = true;
@@ -69,10 +64,9 @@ namespace A_Friend.CustomControls
             State = account.state;
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
-            //ButtonSend_Click_Delegate = new ButtonSend_Click(buttonSend_Click);
             this.CreateControl();
-            Console.WriteLine("Handler created");
-            Console.WriteLine(this.id);
+            //Console.WriteLine("Handler created");
+            //Console.WriteLine(this.id);
             textboxWriting.dynamicMode = true;
             textboxWriting.SetMaximumTextLenght(2021);
             panel_Chat.Click += panelTopRight_Click;
@@ -98,7 +92,6 @@ namespace A_Friend.CustomControls
         {
             if (panel_Chat.VerticalScroll.Value == 0 && !locking)
             {
-                //LoadMessage();
                 Int64 num = this.loadedmessagenumber - 1;
                 if (num > 1)
                 {
@@ -117,7 +110,6 @@ namespace A_Friend.CustomControls
         {
             if (panel_Chat.VerticalScroll.Value == 0 && !locking)
             {
-                //LoadMessage();
                 Int64 num = this.loadedmessagenumber - 1;
                 if (num > 1)
                 {
@@ -226,29 +218,6 @@ namespace A_Friend.CustomControls
             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
-        //public void AddMessage(string message, bool stacktoleft)
-        //{
-        //    panel_Chat.SuspendLayout();
-        //    ChatItem chatItem;
-        //    Random random = new Random();
-        //    if (stacktoleft)
-        //        chatItem = new CustomControls.ChatItem(new MessageObject(this.account.id,FormApplication.currentID, random.Next(-1000000000, 0), DateTime.Now, false, message));
-        //    else
-        //        chatItem = new CustomControls.ChatItem(new MessageObject(FormApplication.currentID, this.account.id,random.Next(-1000000000, 0), DateTime.Now, false, message));
-        //    chatItem.Dock = DockStyle.Top;
-        //    chatItem.BackColor = panel_Chat.BackColor;
-        //    chatItems.Add(chatItem);
-        //    panel_Chat.Controls.Add(chatItem);
-        //    chatItem.UpdateDateTime();
-        //    chatItem.BringToFront();
-        //    //chatItem.ShowDetail = true;
-        //    //CurrentChatItem = chatItem;
-        //    chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-        //    panel_Chat.ResumeLayout();
-        //    panel_Chat.ScrollControlIntoView(chatItem);
-        //}
-
-
         public void AddMessage(MessageObject message)
         {
             if (messages.ContainsKey(message.messagenumber))
@@ -266,36 +235,11 @@ namespace A_Friend.CustomControls
             messages.Add(message.messagenumber, chatItem);
             chatItem.UpdateDateTime();
             chatItem.BringToFront();
-            //chatItem.ShowDetail = true;
-            //CurrentChatItem = chatItem;
             chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             chatItem.Click += panelTopRight_Click;
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
         }
-
-        //private void AddMessageToTop(string message, bool stacktoleft)
-        //{
-        //    panel_Chat.SuspendLayout();
-        //    ChatItem chatItem;
-        //    Random random = new Random();
-        //    if (stacktoleft)
-        //        chatItem = new CustomControls.ChatItem(new MessageObject(this.account.id,FormApplication.currentID, random.Next(-1000000000, 0), DateTime.Now, false, message));
-        //    else
-        //        chatItem = new CustomControls.ChatItem(new MessageObject(FormApplication.currentID, this.account.id,random.Next(-1000000000, 0), DateTime.Now, false, message));
-        //    chatItem.Dock = DockStyle.Top;
-        //    chatItem.BackColor = panel_Chat.BackColor;
-        //    chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-        //    //if (chatItems.Count == 0)
-        //    //{
-        //    //    chatItem.ShowDetail = true;
-        //    //    CurrentChatItem = chatItem;
-        //    //}
-        //    chatItems.Insert(0, chatItem);
-        //    panel_Chat.Controls.Add(chatItem);
-        //    chatItem.UpdateDateTime();
-        //    panel_Chat.ResumeLayout();
-        //}
 
         private void AddMessageToTop(MessageObject message)
         {
@@ -315,11 +259,6 @@ namespace A_Friend.CustomControls
                 chatItem.BackColor = panel_Chat.BackColor;
                 chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
                 chatItem.Click += panelTopRight_Click;
-                //if (chatItems.Count == 0)
-                //{
-                //    chatItem.ShowDetail = true;
-                //    CurrentChatItem = chatItem;
-                //}
                 chatItems.Insert(0, chatItem);
                 panel_Chat.Controls.Add(chatItem);
                 chatItem.UpdateDateTime();
@@ -340,11 +279,9 @@ namespace A_Friend.CustomControls
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
                 {
                     AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                    //AddMessage(textboxWriting.Texts, false);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
-                    Console.WriteLine("Wrote");
-                    //blockSending();
+                    //Console.WriteLine("Wrote");
                     textboxWriting.Multiline = false;
                 }
             }
@@ -361,7 +298,7 @@ namespace A_Friend.CustomControls
 
         private void do_shit(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("Doing");
+            //Console.WriteLine("Doing");
             /*
             if (Clipboard.ContainsText())
             {
@@ -371,38 +308,28 @@ namespace A_Friend.CustomControls
             }
             else */if (Clipboard.ContainsImage())
             {
-                Console.WriteLine("Image detected");
+                //Console.WriteLine("Image detected");
                 Image img = Clipboard.GetImage();
                 if (img != null)
                 {
                     string img_string = ImageToString(img);
                     AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + FormApplication.currentID), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string))));
-                    Console.WriteLine("Nude sent");
+                    //Console.WriteLine("Nude sent");
                 }
             }
-            else
-            {
-                Console.WriteLine("IDK");
-            }
+            //else
+            //{
+            //    //Console.WriteLine("IDK");
+            //}
         }
-
-        /*
-        private void blockSending()
-        {
-            locking = true;
-            timerChat.Start();
-        }
-        */
 
         public void buttonSend_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textboxWriting.Texts) /*&& !locking*/)
             {
                 AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                //AddMessage(textboxWriting.Texts, false);
                 textboxWriting.Texts = "";
                 textboxWriting.RemovePlaceHolder();
-                //blockSending();
                 textboxWriting.Multiline = false;
             }
         }

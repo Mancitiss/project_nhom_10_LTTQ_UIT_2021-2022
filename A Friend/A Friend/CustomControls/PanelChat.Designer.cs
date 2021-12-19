@@ -42,6 +42,7 @@ namespace A_Friend.CustomControls
             this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.timerChat = new System.Windows.Forms.Timer(this.components);
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panelTopRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.panelBottomRight.SuspendLayout();
@@ -130,6 +131,7 @@ namespace A_Friend.CustomControls
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(40, 40);
             this.buttonDelete.TabIndex = 0;
+            this.toolTip.SetToolTip(this.buttonDelete, "Delete conversation");
             this.buttonDelete.UseVisualStyleBackColor = false;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
@@ -212,6 +214,7 @@ namespace A_Friend.CustomControls
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(40, 40);
             this.buttonSend.TabIndex = 0;
+            this.toolTip.SetToolTip(this.buttonSend, "Send");
             this.buttonSend.UseVisualStyleBackColor = false;
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
@@ -254,5 +257,6 @@ namespace A_Friend.CustomControls
         private CustomButton buttonSend;
         private System.Windows.Forms.Timer timerChat;
         private System.Windows.Forms.Label labelState;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

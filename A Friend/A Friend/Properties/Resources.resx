@@ -127,41 +127,11 @@
   <data name="no_result_found" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\no_result_found.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="plus-circle_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plus-circle_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="353430_checkbox_pen_edit_pencil_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\353430_checkbox_pen_edit_pencil_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Cogs1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Cogs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Cogs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Cogs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="211634_camera_icon (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\211634_camera_icon (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sign-out-option" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sign-out-option.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="camera-outline" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\camera-outline.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="417-4175735_system-administrator-svg-png-icon-free-download-man-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Add" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="copy-regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\copy-regular.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="plus_add_insert_icon_1779051" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plus_add_insert_icon_1779051.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="paper-plane-regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\paper-plane-regular.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="newUser" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\newUser.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

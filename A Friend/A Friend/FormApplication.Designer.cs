@@ -35,15 +35,15 @@ namespace A_Friend
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApplication));
             this.toolTip_DeleteC = new System.Windows.Forms.ToolTip(this.components);
+            this.ButtonAdd = new A_Friend.CustomControls.CustomButton();
+            this.SettingButton = new A_Friend.CustomControls.CustomButton();
+            this.LogoutButton = new A_Friend.CustomControls.CustomButton();
             this.toolTip_Send = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.panelAdd = new System.Windows.Forms.Panel();
             this.panelContact = new System.Windows.Forms.Panel();
             this.panelBottomLeft = new System.Windows.Forms.Panel();
-            this.ButtonAdd = new A_Friend.CustomControls.CustomButton();
-            this.SettingButton = new A_Friend.CustomControls.CustomButton();
-            this.LogoutButton = new A_Friend.CustomControls.CustomButton();
             this.panelTopLeft = new System.Windows.Forms.Panel();
             this.customTextBoxSearch = new A_Friend.CustomControls.CustomTextBox();
             this.labelWarning = new System.Windows.Forms.Label();
@@ -63,6 +63,63 @@ namespace A_Friend
             this.toolTip_DeleteC.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.toolTip_DeleteC.InitialDelay = 1000;
             this.toolTip_DeleteC.ReshowDelay = 100;
+            // 
+            // ButtonAdd
+            // 
+            this.ButtonAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.ButtonAdd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ButtonAdd.BackgroundImage")));
+            this.ButtonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.ButtonAdd.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.ButtonAdd.BorderRadius = 15;
+            this.ButtonAdd.BorderSize = 0;
+            this.ButtonAdd.FlatAppearance.BorderSize = 0;
+            this.ButtonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ButtonAdd.ForeColor = System.Drawing.Color.White;
+            this.ButtonAdd.Location = new System.Drawing.Point(110, 10);
+            this.ButtonAdd.Name = "ButtonAdd";
+            this.ButtonAdd.Size = new System.Drawing.Size(40, 40);
+            this.ButtonAdd.TabIndex = 0;
+            this.toolTip_DeleteC.SetToolTip(this.ButtonAdd, "Add a contact");
+            this.ButtonAdd.UseVisualStyleBackColor = false;
+            this.ButtonAdd.Click += new System.EventHandler(this.ButtonAdd_Click_1);
+            // 
+            // SettingButton
+            // 
+            this.SettingButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.SettingButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SettingButton.BackgroundImage")));
+            this.SettingButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.SettingButton.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.SettingButton.BorderRadius = 15;
+            this.SettingButton.BorderSize = 0;
+            this.SettingButton.FlatAppearance.BorderSize = 0;
+            this.SettingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SettingButton.ForeColor = System.Drawing.Color.White;
+            this.SettingButton.Location = new System.Drawing.Point(60, 10);
+            this.SettingButton.Name = "SettingButton";
+            this.SettingButton.Size = new System.Drawing.Size(40, 40);
+            this.SettingButton.TabIndex = 1;
+            this.toolTip_DeleteC.SetToolTip(this.SettingButton, "Settings");
+            this.SettingButton.UseVisualStyleBackColor = false;
+            this.SettingButton.Click += new System.EventHandler(this.SettingButton_Click);
+            // 
+            // LogoutButton
+            // 
+            this.LogoutButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.LogoutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("LogoutButton.BackgroundImage")));
+            this.LogoutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.LogoutButton.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.LogoutButton.BorderRadius = 15;
+            this.LogoutButton.BorderSize = 0;
+            this.LogoutButton.FlatAppearance.BorderSize = 0;
+            this.LogoutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.LogoutButton.ForeColor = System.Drawing.Color.White;
+            this.LogoutButton.Location = new System.Drawing.Point(10, 10);
+            this.LogoutButton.Name = "LogoutButton";
+            this.LogoutButton.Size = new System.Drawing.Size(40, 40);
+            this.LogoutButton.TabIndex = 0;
+            this.toolTip_DeleteC.SetToolTip(this.LogoutButton, "Log out");
+            this.LogoutButton.UseVisualStyleBackColor = false;
+            this.LogoutButton.Click += new System.EventHandler(this.LogoutButton_Click_1);
             // 
             // toolTip_Send
             // 
@@ -118,7 +175,6 @@ namespace A_Friend
             this.panelContact.Size = new System.Drawing.Size(300, 592);
             this.panelContact.TabIndex = 2;
             this.panelContact.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panelContact_ControlAdded);
-            this.panelContact.Paint += new System.Windows.Forms.PaintEventHandler(this.panelContact_Paint);
             // 
             // panelBottomLeft
             // 
@@ -133,60 +189,6 @@ namespace A_Friend
             this.panelBottomLeft.Size = new System.Drawing.Size(300, 60);
             this.panelBottomLeft.TabIndex = 1;
             this.panelBottomLeft.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomLeft_Paint);
-            // 
-            // ButtonAdd
-            // 
-            this.ButtonAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
-            this.ButtonAdd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ButtonAdd.BackgroundImage")));
-            this.ButtonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.ButtonAdd.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.ButtonAdd.BorderRadius = 15;
-            this.ButtonAdd.BorderSize = 0;
-            this.ButtonAdd.FlatAppearance.BorderSize = 0;
-            this.ButtonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ButtonAdd.ForeColor = System.Drawing.Color.White;
-            this.ButtonAdd.Location = new System.Drawing.Point(110, 10);
-            this.ButtonAdd.Name = "ButtonAdd";
-            this.ButtonAdd.Size = new System.Drawing.Size(40, 40);
-            this.ButtonAdd.TabIndex = 0;
-            this.ButtonAdd.UseVisualStyleBackColor = false;
-            this.ButtonAdd.Click += new System.EventHandler(this.ButtonAdd_Click_1);
-            // 
-            // SettingButton
-            // 
-            this.SettingButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
-            this.SettingButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SettingButton.BackgroundImage")));
-            this.SettingButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.SettingButton.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.SettingButton.BorderRadius = 15;
-            this.SettingButton.BorderSize = 0;
-            this.SettingButton.FlatAppearance.BorderSize = 0;
-            this.SettingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SettingButton.ForeColor = System.Drawing.Color.White;
-            this.SettingButton.Location = new System.Drawing.Point(60, 10);
-            this.SettingButton.Name = "SettingButton";
-            this.SettingButton.Size = new System.Drawing.Size(40, 40);
-            this.SettingButton.TabIndex = 1;
-            this.SettingButton.UseVisualStyleBackColor = false;
-            this.SettingButton.Click += new System.EventHandler(this.SettingButton_Click);
-            // 
-            // LogoutButton
-            // 
-            this.LogoutButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
-            this.LogoutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("LogoutButton.BackgroundImage")));
-            this.LogoutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.LogoutButton.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.LogoutButton.BorderRadius = 15;
-            this.LogoutButton.BorderSize = 0;
-            this.LogoutButton.FlatAppearance.BorderSize = 0;
-            this.LogoutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.LogoutButton.ForeColor = System.Drawing.Color.White;
-            this.LogoutButton.Location = new System.Drawing.Point(10, 10);
-            this.LogoutButton.Name = "LogoutButton";
-            this.LogoutButton.Size = new System.Drawing.Size(40, 40);
-            this.LogoutButton.TabIndex = 0;
-            this.LogoutButton.UseVisualStyleBackColor = false;
-            this.LogoutButton.Click += new System.EventHandler(this.LogoutButton_Click_1);
             // 
             // panelTopLeft
             // 
@@ -221,7 +223,6 @@ namespace A_Friend
             this.customTextBoxSearch.Texts = "";
             this.customTextBoxSearch.UnderlinedStyle = false;
             this.customTextBoxSearch._TextChanged += new System.EventHandler(this.customTextBoxSearch__TextChanged);
-            this.customTextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.customTextBoxSearch_KeyDown);
             // 
             // labelWarning
             // 
@@ -269,7 +270,7 @@ namespace A_Friend
             this.panelRight.Location = new System.Drawing.Point(300, 0);
             this.panelRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(915, 712);
+            this.panelRight.Size = new System.Drawing.Size(915, 713);
             this.panelRight.TabIndex = 3;
             // 
             // FormApplication
@@ -280,6 +281,7 @@ namespace A_Friend
             this.Controls.Add(this.panelRight);
             this.Controls.Add(this.panelLeft);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MinimumSize = new System.Drawing.Size(900, 500);
             this.Name = "FormApplication";

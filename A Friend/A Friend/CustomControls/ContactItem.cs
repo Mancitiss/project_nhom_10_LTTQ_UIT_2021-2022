@@ -105,14 +105,6 @@ namespace A_Friend.CustomControls
             set
             {
                 labelName.Text = value;
-                //if (value.Length <= 18)
-                //{
-                //    labelName.Text = value;
-                //}
-                //else
-                //{
-                //    labelName.Text = value.Substring(0, 15) + "...";
-                //}
             }
         }
         public string LastMessage
@@ -120,14 +112,6 @@ namespace A_Friend.CustomControls
             set
             {
                 labelLastMessage.Text = value.Trim().Replace('\n', '-');
-                //if (value.Trim().Length <= 23)
-                //{
-                //    labelLastMessage.Text = value.Trim().Replace('\n', '-');
-                //}
-                //else
-                //{
-                //    labelLastMessage.Text = value.Trim().Replace('\n', '-').Substring(0,20) + "...";
-                //}
             }
         }
 

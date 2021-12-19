@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{80D26216-14D8-4704-8C8D-1611BB8B0633}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>A_Friend</RootNamespace>
     <AssemblyName>A Friend</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -53,6 +53,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Jil, Version=2.17.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Jil.2.17.0\lib\net45\Jil.dll</HintPath>
@@ -80,7 +83,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ApplicationFont.cs" />
-    <Compile Include="clsResize.cs" />
     <Compile Include="CustomControls\ChatItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -147,12 +149,6 @@
     <Compile Include="FormLoading.Designer.cs">
       <DependentUpon>FormLoading.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormRemoveContactWarning.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormRemoveContactWarning.Designer.cs">
-      <DependentUpon>FormRemoveContactWarning.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -212,9 +208,6 @@
     <EmbeddedResource Include="FormLoading.resx">
       <DependentUpon>FormLoading.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormRemoveContactWarning.resx">
-      <DependentUpon>FormRemoveContactWarning.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -240,36 +233,6 @@
     <None Include="Resources\trash-alt-regular.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\paper-plane-regular.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Cogs.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\sign-out-option.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\417-4175735_system-administrator-svg-png-icon-free-download-man-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\plus_add_insert_icon_177905.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\plus_add_insert_icon_1779051.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\plus-circle_6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\211634_camera_icon %281%29.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\353430_checkbox_pen_edit_pencil_icon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
@@ -289,6 +252,7 @@
     <None Include="Resources\newUser.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="logo.ico" />
     <Content Include="Old_if_else_code_client_instruction.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
