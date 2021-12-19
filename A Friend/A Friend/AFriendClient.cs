@@ -181,7 +181,6 @@ namespace A_Friend
 
         public static void Send_to_id(SslStream self, string id, string myid, string str)
         {
-            // do something
             if (myid.Length != 19 || id.Length != 19)
             {
                 //if (myid.Length != 19) Console.WriteLine("Wrong user ID");

@@ -137,15 +137,20 @@ namespace AFriendServer
                             //Console.WriteLine(item.Key + " is online");
                             if (item.Value.client.Connected)
                             {
-                                if (item.Value.loopnum >= 197)
+                                /*
+                                if (item.Value.loopnum >= 19700 && item.Value.client.Available == 0 && item.Value.is_locked == false)
                                 {
+                                    sessions[item.Key].is_locked = true;
                                     item.Value.loopnum = 0;
                                     item.Value.stream.Write(new byte[8] {0,0,0,0,0,0,0,0});
+                                    sessions[item.Key].is_locked = false;
                                 }
                                 else item.Value.loopnum += 1;
+                                */
                                 //Console.WriteLine(item.Value.Available);
                                 if (item.Value.client.Available > 0) /*item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/
                                 {
+                                    item.Value.loopnum = 0;
                                     //bytes[item.Key] += item.Value.Available;
                                     if (!item.Value.client.Connected) // Something bad has happened, shut down
                                     {
@@ -619,6 +624,7 @@ namespace AFriendServer
                                                                 {
                                                                     s.Write(Encoding.Unicode.GetBytes("2211" + receiver_id));
                                                                 }
+                                                            
                                                                 Console.WriteLine("Sent");
                                                                 //send to socket end
                                                             }
