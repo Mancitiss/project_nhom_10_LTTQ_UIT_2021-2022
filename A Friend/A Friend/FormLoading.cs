@@ -18,12 +18,15 @@ namespace A_Friend
         private Rectangle rect;
         private int startAngle = 0;
         private int curveAngle = 120;
+        private float percent = -1;
 
         internal delegate void show_progress_delegate(int percent);
         internal show_progress_delegate Show_progress_delegate;
 
         private void Show_progress(int percent)
-        { 
+        {
+            if (this.percent == -1)
+                this.percent = 0;
             this.labelTittle.Text = percent.ToString() + "%";
             labelTittle.Location = new Point((int)(this.Width / 2 - labelTittle.Width / 2), rect.Bottom + 10);
             if (labelTittle.Visible == false)
@@ -97,6 +100,13 @@ namespace A_Friend
         private void timer_Tick(object sender, EventArgs e)
         {
             startAngle = (startAngle + 5) % 360;
+            if (percent > 80F)
+                percent += 0.1F;
+            else if (percent > 90F && percent < 99F)
+                percent += 0.05F;
+            else
+                percent += 0.5F;
+            Show_progress((int)(percent));
             this.Invalidate();
         }
 

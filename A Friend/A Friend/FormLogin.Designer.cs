@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLogin));
             this.labelTittle = new System.Windows.Forms.Label();
             this.labelWarning = new System.Windows.Forms.Label();
             this.timerClosing = new System.Windows.Forms.Timer(this.components);
@@ -191,6 +192,7 @@
             this.Controls.Add(this.buttonLogIn);
             this.Controls.Add(this.buttonExit);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LoginForm";
