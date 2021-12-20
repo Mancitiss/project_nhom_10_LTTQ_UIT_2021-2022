@@ -7,5 +7,4 @@ Tiến độ: 100%
 KHÔNG COMMIT VÀO MAIN
 
 ===========================================================================  
-THIS IS A UNI PROJECT  
-CURRENTLY HAVE NO LICENSE
+
