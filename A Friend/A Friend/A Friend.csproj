@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{80D26216-14D8-4704-8C8D-1611BB8B0633}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>A_Friend</RootNamespace>
     <AssemblyName>A Friend</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>

@@ -117,6 +117,10 @@ namespace AFriendServer
             {
                 sql.Open();
             }
+            else if (se.Contains("Execution Timeout Expired"))
+            {
+                sql.Open();
+            }
             else if (se.Contains("was forcibly closed"))
             {
                 shutdown(item.Key);
@@ -175,6 +179,7 @@ namespace AFriendServer
                                             }
                                             catch (Exception e)
                                             {
+                                                exception_handler(item, e.ToString());
                                                 Console.WriteLine(e.ToString());
                                             }
                                         }
@@ -1207,6 +1212,7 @@ namespace AFriendServer
                                             client.stream = sslStream;
                                             client.is_locked = false;
                                             sessions.Add(id, client);
+                                            Console.WriteLine("Joined");
                                         } catch (Exception e)
                                         {
                                             Console.WriteLine(e.ToString());

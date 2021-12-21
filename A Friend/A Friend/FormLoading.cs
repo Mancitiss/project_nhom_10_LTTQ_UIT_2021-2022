@@ -123,7 +123,7 @@ namespace A_Friend
             timer.Stop();
 
             sw.Stop();
-            //Console.WriteLine("Timer: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("Timer: " + sw.ElapsedMilliseconds);
         }
 
         private void timer1_Tick(object sender, EventArgs e)

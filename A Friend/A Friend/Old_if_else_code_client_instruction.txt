@@ -92,7 +92,7 @@
                                 }
                                 
                                 //UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
-                                //Console.WriteLine("Message Received");
+                                Console.WriteLine("Message Received");
 
                                 stream.Write(Encoding.Unicode.GetBytes("1060" + found[0]));
                             }
