@@ -544,7 +544,7 @@ namespace A_Friend
                                                 MessageObject msgobj = JSON.Deserialize<MessageObject>(data_string);
                                                 string sender = msgobj.id1;
                                                 if (msgobj.sender) sender = msgobj.id2;
-                                                Console.WriteLine("{0}: {1}", sender, msgobj.message);
+                                                //Console.WriteLine("{0}: {1}", sender, msgobj.message);
                                                 if (user.id == msgobj.id2) //if me = user2 add user1
                                                 {
                                                     if (Program.mainform.Is_this_person_added(msgobj.id1))
