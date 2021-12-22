@@ -436,8 +436,16 @@ namespace AFriendServer
                                                             if (reader.Read())
                                                             {
                                                                 //Console.WriteLine((DateTime)reader["timesent"]);
-                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
-                                                                messageObjects.Add(msgobj);
+                                                                if ((byte)reader["type"] == 0)
+                                                                {
+                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                    messageObjects.Add(msgobj);
+                                                                }
+                                                                else if ((byte)reader["type"] == 1 && File.Exists(img_path + id1 + "_" + id2 + "_" + num + ".png"))
+                                                                {
+                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], ImageToString(img_path + id1 + "_" + id2 + "_" + num + ".png"), (byte)reader["type"]);
+                                                                    messageObjects.Add(msgobj);
+                                                                }
                                                             }
                                                         }
                                                         num = num - 1;
