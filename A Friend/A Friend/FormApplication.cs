@@ -66,6 +66,7 @@ namespace A_Friend
             set_avatar_delegate = new SetAvatarDelegate(SetAvatar);
             show_login_delegate = new ShowLoginDelegate(ShowLogin);
             customTextBoxSearch.Font = ApplicationFont.GetFont(customTextBoxSearch.Font.Size);
+            this.Text += $" {Program.thisversion[0]}.{Program.thisversion[3]}.{Program.thisversion[2]}.{Program.thisversion[3]}";
         }
 
         private void FormApplication_ResizeBegin(Object sender, EventArgs e)
