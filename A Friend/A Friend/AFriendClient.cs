@@ -133,7 +133,7 @@ namespace A_Friend
         public static bool Logged_in(string tk, string mk)
         {
             string server_address = ConfigurationManager.AppSettings.Get("sever_address");
-            client = new TcpClient(server_address, 11111);
+            client = new TcpClient(server_address, Convert.ToInt16(ConfigurationManager.AppSettings.Get("port")));
             stream = new SslStream(
                 client.GetStream(),
                 false,

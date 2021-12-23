@@ -196,6 +196,10 @@ namespace A_Friend
                 panelChat.ControlAdded += delegate
                 {
                     contactItem.LastMessage = panelChat.GetLastMessage();
+                    if (loaded && !panelChat.IsLastMessageFromYou())
+                    {
+                        contactItem.Unread = true;
+                    }
                     if (contactItem.ID != orderOfContactItems.Values.Last())
                     {
                         if (!panelChat.isloadingoldmessages)
