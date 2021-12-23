@@ -198,7 +198,10 @@ namespace A_Friend
                     contactItem.LastMessage = panelChat.GetLastMessage();
                     if (contactItem.ID != orderOfContactItems.Values.Last())
                     {
-                        BringContactItemToTop(panelChat.ID);
+                        if (!panelChat.isloadingoldmessages)
+                        {
+                            BringContactItemToTop(panelChat.ID);
+                        }    
                     }
                 };
 

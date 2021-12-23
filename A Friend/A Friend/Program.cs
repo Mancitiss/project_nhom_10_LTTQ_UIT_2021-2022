@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
+using System.Configuration;
 
 namespace A_Friend
 {
@@ -26,7 +27,7 @@ namespace A_Friend
                     string data;
                     using (WebClient wc = new WebClient())
                     {
-                        data = wc.DownloadString("https://mancitiss.duckdns.org/index.htm");
+                        data = wc.DownloadString(ConfigurationManager.AppSettings.Get("check_new_version_address"));
                     }
                     string[] newestversion = data.Split('.');
                     int[] newestversionint = new int[newestversion.Count()];
@@ -57,7 +58,7 @@ namespace A_Friend
                 }
                 if (newv)
                 {
-                    string url = "https://mancitiss.duckdns.org/A%20Friend/AFriend.exe";
+                    string url = ConfigurationManager.AppSettings.Get("download_new_version_address");
                     string path = Path.GetTempPath();
                     string fileName = "AFriend";
                     string tmpFile = Path.Combine(path, fileName);

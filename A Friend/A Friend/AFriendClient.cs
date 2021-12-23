@@ -13,6 +13,7 @@ using System.IO;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
+using System.Configuration;
 
 namespace A_Friend 
 {
@@ -131,7 +132,8 @@ namespace A_Friend
 
         public static bool Logged_in(string tk, string mk)
         {
-            client = new TcpClient("mancitiss.duckdns.org", 11111);
+            string server_address = ConfigurationManager.AppSettings.Get("sever_address");
+            client = new TcpClient(server_address, 11111);
             stream = new SslStream(
                 client.GetStream(),
                 false,
@@ -140,7 +142,7 @@ namespace A_Friend
                 );
             try
             {
-                stream.AuthenticateAsClient("mancitiss.duckdns.org");
+                stream.AuthenticateAsClient(server_address);
             }
             catch (AuthenticationException e)
             {
