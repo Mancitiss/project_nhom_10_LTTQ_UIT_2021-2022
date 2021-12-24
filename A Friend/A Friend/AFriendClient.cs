@@ -281,30 +281,38 @@ namespace A_Friend
 
         private static bool Stream_receive(int byte_expected, out string data_string) 
         {
-            int total_byte_received = 0;
-            byte[] data = new byte[byte_expected];
-            int received_byte;
-            Console.WriteLine("Expected: {0}", byte_expected);
-            do
+            try
             {
-                received_byte = stream.Read(data, total_byte_received, byte_expected);
-                if (received_byte > 0)
+                int total_byte_received = 0;
+                byte[] data = new byte[byte_expected];
+                int received_byte;
+                Console.WriteLine("Expected: {0}", byte_expected);
+                do
                 {
-                    total_byte_received += received_byte;
-                    byte_expected -= received_byte;
+                    received_byte = stream.Read(data, total_byte_received, byte_expected);
+                    if (received_byte > 0)
+                    {
+                        total_byte_received += received_byte;
+                        byte_expected -= received_byte;
+                    }
+                    else break;
+                } while (byte_expected > 0 && received_byte > 0);
+                Console.WriteLine("Received: {0}", total_byte_received);
+                if (byte_expected == 0) // all data received
+                {
+                    data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
+                    return true;
                 }
-                else break;
-            } while (byte_expected > 0 &&  received_byte > 0);
-            Console.WriteLine("Received: {0}",total_byte_received );
-            if (byte_expected == 0) // all data received
+                else // data corrupted
+                {
+                    data_string = "";
+
+                    return false;
+                }
+            } catch (Exception e)
             {
-                data_string = Encoding.Unicode.GetString(data, 0, total_byte_received);
-                return true;
-            } else // data corrupted
-            {
-                data_string = "";
-                
-                return false;
+                Console.WriteLine(e.ToString());
+                throw e;
             }
         }
 
@@ -498,16 +506,23 @@ namespace A_Friend
                                     Console.WriteLine("I even reached here");
                                     if (Byte.TryParse(found[found.Count - 1], out byte state))
                                     {
-                                        UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
-                                        UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
-                                        Console.WriteLine("New Contact Added");
-                                        if (first.ContainsKey(found[0]))
+                                        try
                                         {
-                                            foreach(var msgobj in first[found[0]])
+                                            UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
+                                            UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
+                                            Console.WriteLine("New Contact Added");
+                                            if (first.ContainsKey(found[0]))
                                             {
-                                                UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { msgobj });
+                                                foreach (var msgobj in first[found[0]])
+                                                {
+                                                    UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { msgobj });
+                                                }
+                                                first.Remove(found[0]);
                                             }
-                                            first.Remove(found[0]);
+                                        }catch (Exception e)
+                                        {
+                                            Console.WriteLine(e.ToString());
+                                            throw e;
                                         }
                                         /*
                                         if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))

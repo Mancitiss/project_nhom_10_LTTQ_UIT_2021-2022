@@ -1186,6 +1186,7 @@ namespace AFriendServer
                                                 {
                                                     sessions[id].is_locked = true;
                                                     sessions[id].stream.Write(Encoding.Unicode.GetBytes("2004"));
+                                                    Console.WriteLine("User logged in from another device");
                                                 }
                                                 catch (Exception iknow)
                                                 {
