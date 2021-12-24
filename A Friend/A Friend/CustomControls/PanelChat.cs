@@ -26,6 +26,7 @@ namespace A_Friend.CustomControls
         Dictionary<double, ChatItem> messages = new Dictionary<double, ChatItem>();
         ChatItem currentChatItem;
         bool currentChatItemShowing;
+        public bool isloadingoldmessages = false;
 
         public delegate void AddMessageItem(MessageObject message);
         public AddMessageItem AddMessageDelegate;
@@ -65,8 +66,8 @@ namespace A_Friend.CustomControls
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
             this.CreateControl();
-            //Console.WriteLine("Handler created");
-            //Console.WriteLine(this.id);
+            Console.WriteLine("Handler created");
+            Console.WriteLine(this.id);
             textboxWriting.dynamicMode = true;
             textboxWriting.SetMaximumTextLenght(2021);
             panel_Chat.Click += panelTopRight_Click;
@@ -281,7 +282,7 @@ namespace A_Friend.CustomControls
                     AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
                     textboxWriting.Texts = "";
                     textboxWriting.RemovePlaceHolder();
-                    //Console.WriteLine("Wrote");
+                    Console.WriteLine("Wrote");
                     textboxWriting.Multiline = false;
                 }
             }
@@ -298,7 +299,7 @@ namespace A_Friend.CustomControls
 
         private void do_shit(object sender, KeyEventArgs e)
         {
-            //Console.WriteLine("Doing");
+            Console.WriteLine("Doing");
             /*
             if (Clipboard.ContainsText())
             {
@@ -308,18 +309,18 @@ namespace A_Friend.CustomControls
             }
             else */if (Clipboard.ContainsImage())
             {
-                //Console.WriteLine("Image detected");
+                Console.WriteLine("Image detected");
                 Image img = Clipboard.GetImage();
                 if (img != null)
                 {
                     string img_string = ImageToString(img);
                     AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + FormApplication.currentID), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string))));
-                    //Console.WriteLine("Nude sent");
+                    Console.WriteLine("Nude sent");
                 }
             }
             //else
             //{
-            //    //Console.WriteLine("IDK");
+            //    Console.WriteLine("IDK");
             //}
         }
 
@@ -361,6 +362,7 @@ namespace A_Friend.CustomControls
 
         public void LoadMessage(List<MessageObject> messageObjects)
         {
+            isloadingoldmessages = true;
             panel_Chat.SuspendLayout();
             foreach(MessageObject messageObject in messageObjects)
             {
@@ -371,6 +373,7 @@ namespace A_Friend.CustomControls
             {
                 panel_Chat.ScrollControlIntoView(panel_Chat.Controls[panel_Chat.Controls.Count - messageObjects.Count - 1]);
             }
+            isloadingoldmessages = false;
         }
 
         private void PanelChat_Load(object sender, EventArgs e)

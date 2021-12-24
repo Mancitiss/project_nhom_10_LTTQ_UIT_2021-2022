@@ -66,6 +66,7 @@ namespace A_Friend
             set_avatar_delegate = new SetAvatarDelegate(SetAvatar);
             show_login_delegate = new ShowLoginDelegate(ShowLogin);
             customTextBoxSearch.Font = ApplicationFont.GetFont(customTextBoxSearch.Font.Size);
+            this.Text += $" {Program.thisversion[0]}.{Program.thisversion[1]}.{Program.thisversion[2]}.{Program.thisversion[3]}";
         }
 
         private void FormApplication_ResizeBegin(Object sender, EventArgs e)
@@ -157,97 +158,111 @@ namespace A_Friend
 
         public void AddContact(Account account)
         {
-            if (!panelChats.ContainsKey(account.id))
+            try
             {
-                panelContact.SuspendLayout();
-                var contactItem = new CustomControls.ContactItem(account);
-                contactItem.Dock = DockStyle.Top;
-                contactItem.BackColor = panelContact.BackColor;
-                contactItem.Unread = true;
-                //contactItem.BringToFront();
-                if (loaded)
+                if (!panelChats.ContainsKey(account.id))
                 {
-                    panelContact.Controls.Add(contactItem);
-                }
-                panelContact.ResumeLayout();
-
-
-                if (orderOfContactItems.Count == 0)
-                {
-                    orderOfContactItems.Add(0, account.id);
-                }
-                else
-                {
-                    orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, account.id);
-                }
-
-                if (loaded)
-                {
-                    panelContact.ScrollControlIntoView(contactItem);
-                }
-                contactItems.Add(account.id, contactItem);
-                CustomControls.PanelChat panelChat = new CustomControls.PanelChat(account);
-                panelChats.Add(account.id, panelChat);
-
-                panelChat.LoadMessage();
-                panelChat.ScrollToBottom();
-                contactItem.LastMessage = panelChat.GetLastMessage();
-
-                panelChat.ControlAdded += delegate
-                {
-                    contactItem.LastMessage = panelChat.GetLastMessage();
-                    if (contactItem.ID != orderOfContactItems.Values.Last())
+                    panelContact.SuspendLayout();
+                    var contactItem = new CustomControls.ContactItem(account);
+                    contactItem.Dock = DockStyle.Top;
+                    contactItem.BackColor = panelContact.BackColor;
+                    contactItem.Unread = true;
+                    //contactItem.BringToFront();
+                    if (loaded)
                     {
-                        BringContactItemToTop(panelChat.ID);
+                        panelContact.Controls.Add(contactItem);
                     }
-                };
+                    panelContact.ResumeLayout();
 
-                panelChat.ControlRemoved += delegate
-                {
+
+                    if (orderOfContactItems.Count == 0)
+                    {
+                        orderOfContactItems.Add(0, account.id);
+                    }
+                    else
+                    {
+                        orderOfContactItems.Add(orderOfContactItems.Keys.Last() + 1, account.id);
+                    }
+
+                    if (loaded)
+                    {
+                        panelContact.ScrollControlIntoView(contactItem);
+                    }
+                    contactItems.Add(account.id, contactItem);
+                    CustomControls.PanelChat panelChat = new CustomControls.PanelChat(account);
+                    panelChats.Add(account.id, panelChat);
+
+                    panelChat.LoadMessage();
+                    panelChat.ScrollToBottom();
                     contactItem.LastMessage = panelChat.GetLastMessage();
-                };
 
-                contactItem.Click += delegate
-                {
-                    ShowPanelChat(account.id);
+                    panelChat.ControlAdded += delegate
+                    {
+                        contactItem.LastMessage = panelChat.GetLastMessage();
+                        if (loaded && !panelChat.IsLastMessageFromYou())
+                        {
+                            contactItem.Unread = true;
+                        }
+                        if (contactItem.ID != orderOfContactItems.Values.Last())
+                        {
+                            if (!panelChat.isloadingoldmessages)
+                            {
+                                BringContactItemToTop(panelChat.ID);
+                            }
+                        }
+                    };
+
+                    panelChat.ControlRemoved += delegate
+                    {
+                        contactItem.LastMessage = panelChat.GetLastMessage();
+                    };
+
+                    contactItem.Click += delegate
+                    {
+                        ShowPanelChat(account.id);
                     //contactItem.Unread = true;
                     panelChat.ScrollToBottom();
 
-                    if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
-                    {
-                        check = false;
-                        customTextBoxSearch.Texts = "";
-                        this.ActiveControl = contactItem;
+                        if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
+                        {
+                            check = false;
+                            customTextBoxSearch.Texts = "";
+                            this.ActiveControl = contactItem;
                         //customTextBoxSearch.SetPlaceHolder();
                         panelContact2.Controls.Clear();
-                        panelContact.Controls.Clear();
-                        foreach(KeyValuePair<int, string> i in orderOfContactItems)
-                        {
-                            panelContact.Controls.Add(contactItems[i.Value]);
+                            panelContact.Controls.Clear();
+                            foreach (KeyValuePair<int, string> i in orderOfContactItems)
+                            {
+                                panelContact.Controls.Add(contactItems[i.Value]);
+                            }
+                            panelContact.BringToFront();
+                            check = true;
                         }
-                        panelContact.BringToFront();
-                        check = true;
-                    }
 
-                    if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                        if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                        {
+                            contactItem.Unread = false;
+                            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        }
+                    };
+
+                    panelChat.Click += delegate
                     {
-                        contactItem.Unread = false; 
-                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
-                    }
-                };
-
-                panelChat.Click += delegate
+                        if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                        {
+                            contactItem.Unread = false;
+                            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                        }
+                    };
+                }
+                else
                 {
-                    if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
-                    {
-                        contactItem.Unread = false; 
-                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
-                    }
-                };
-            }
-            else
+                    formAddContact.ChangeWarning("This user existed in your contacting list!", Color.Red);
+                }
+            } catch(Exception e)
             {
-                formAddContact.ChangeWarning("This user existed in your contacting list!", Color.Red);
+                Console.WriteLine(e);
+                throw e;
             }
         }
 

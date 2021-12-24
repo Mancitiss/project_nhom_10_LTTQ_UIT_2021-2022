@@ -14,12 +14,18 @@ using Jil;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Security.Authentication;
+using System.Drawing;
+using System.Configuration;
+using System.Collections.Specialized;
+using System.Drawing.Imaging;
 
 namespace AFriendServer
 {
     internal class Program
     {
-        static string s = "";
+        static string avatar_path = ConfigurationManager.AppSettings.Get("avatar_path");
+        static string img_path = ConfigurationManager.AppSettings.Get("msg_img_path");
+
         static X509Certificate serverCertificate = new X509Certificate(Environment.GetEnvironmentVariable("certpath", EnvironmentVariableTarget.User), Environment.GetEnvironmentVariable("certpass", EnvironmentVariableTarget.User));
 
         static Dictionary<string, Client> sessions = new Dictionary<string, Client>();
@@ -27,9 +33,9 @@ namespace AFriendServer
         static SqlConnection sql;
         static Random rand;
         
-
+        
         static Thread main_thread, loop;
-        static ManualResetEvent mainstop = new ManualResetEvent(true);
+        //static ManualResetEvent mainstop = new ManualResetEvent(true);
 
         public static Int64 NextInt64(Random rnd)
         {
@@ -44,7 +50,8 @@ namespace AFriendServer
             try
             {
                 Console.WriteLine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-
+                Console.WriteLine("Avatar Path: " + avatar_path);
+                Console.WriteLine("Img Path: " + img_path);
                 rand = new Random();
 
                 using (sql = new SqlConnection(
@@ -117,6 +124,10 @@ namespace AFriendServer
             {
                 sql.Open();
             }
+            else if (se.Contains("Execution Timeout Expired"))
+            {
+                sql.Open();
+            }
             else if (se.Contains("was forcibly closed"))
             {
                 shutdown(item.Key);
@@ -175,6 +186,7 @@ namespace AFriendServer
                                             }
                                             catch (Exception e)
                                             {
+                                                exception_handler(item, e.ToString());
                                                 Console.WriteLine(e.ToString());
                                             }
                                         }
@@ -424,8 +436,16 @@ namespace AFriendServer
                                                             if (reader.Read())
                                                             {
                                                                 //Console.WriteLine((DateTime)reader["timesent"]);
-                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
-                                                                messageObjects.Add(msgobj);
+                                                                if ((byte)reader["type"] == 0)
+                                                                {
+                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                    messageObjects.Add(msgobj);
+                                                                }
+                                                                else if ((byte)reader["type"] == 1 && File.Exists(img_path + id1 + "_" + id2 + "_" + num + ".png"))
+                                                                {
+                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], ImageToString(img_path + id1 + "_" + id2 + "_" + num + ".png"), (byte)reader["type"]);
+                                                                    messageObjects.Add(msgobj);
+                                                                }
                                                             }
                                                         }
                                                         num = num - 1;
@@ -463,8 +483,15 @@ namespace AFriendServer
                                                         {
                                                             if (reader.Read())
                                                             {
-                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
-                                                                messageObjects.Add(msgobj);
+                                                                if ((byte)reader["type"] == 0)
+                                                                {
+                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                    messageObjects.Add(msgobj);
+                                                                } else if ((byte)reader["type"] == 1 && File.Exists(img_path + id1 + "_" + id2 + "_" + num + ".png"))
+                                                                {
+                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], ImageToString(img_path + id1 + "_" + id2 + "_" + num + ".png"), (byte)reader["type"]);
+                                                                    messageObjects.Add(msgobj);
+                                                                }
                                                             }
                                                         }
                                                         num = num - 1;
@@ -585,7 +612,6 @@ namespace AFriendServer
                                                 id1 = receiver_id;
                                                 id2 = id;
                                             }
-                                            string sqlmessage = data_string;
                                             try
                                             {
                                                 bool success = false;
@@ -597,7 +623,7 @@ namespace AFriendServer
                                                     command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
                                                     command.Parameters.AddWithValue("@datetimenow", now);
                                                     command.Parameters.AddWithValue("@sender", id == id2);
-                                                    command.Parameters.AddWithValue("@message", sqlmessage);
+                                                    command.Parameters.AddWithValue("@message", "");
                                                     if (command.ExecuteNonQuery() >= 1) success = true;
                                                 }
                                                 if (success)
@@ -612,20 +638,29 @@ namespace AFriendServer
                                                         {
                                                             if (reader.Read())
                                                             {
-                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
-                                                                //data_string = data_string.Insert(0, id);
-                                                                //send to socket start
-                                                                if (id != receiver_id) Send_to_id(id, msgobj);
-                                                                if (!Send_to_id(receiver_id, msgobj))
+                                                                try
                                                                 {
-                                                                    s.Write(Encoding.Unicode.GetBytes("0404" + receiver_id));
-                                                                }
-                                                                else
+                                                                    string img_message = data_string;
+                                                                    Image temp = StringToImage(data_string);
+                                                                    string tempFile = img_path + id1 + "_" + id2 + "_" + reader["messagenumber"] + ".png";
+                                                                    (new Bitmap(temp)).Save(tempFile, ImageFormat.Png);
+                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], img_message, (byte)reader["type"]);
+                                                                    //data_string = data_string.Insert(0, id);
+                                                                    //send to socket start
+                                                                    if (id != receiver_id) Send_to_id(id, msgobj);
+                                                                    if (!Send_to_id(receiver_id, msgobj))
+                                                                    {
+                                                                        s.Write(Encoding.Unicode.GetBytes("0404" + receiver_id));
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        s.Write(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                    }
+                                                                    Console.WriteLine("Sent");
+                                                                } catch (Exception e)
                                                                 {
-                                                                    s.Write(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                    Console.WriteLine(e.ToString());
                                                                 }
-                                                            
-                                                                Console.WriteLine("Sent");
                                                                 //send to socket end
                                                             }
                                                         }
@@ -822,19 +857,23 @@ namespace AFriendServer
                                     string requested_id;
                                     if (SslStream_receive(s, 38, out requested_id))
                                     {
+                                        /*
                                         SqlCommand command = new SqlCommand("select avatar from account where id=@id", sql);
                                         command.Parameters.AddWithValue("@id", requested_id);
                                         using (SqlDataReader reader = command.ExecuteReader())
+                                        {*/
+                                        string path = avatar_path + requested_id + ".png";
+                                        if (File.Exists(path))
                                         {
-                                            if (reader.Read())
-                                            {
-                                                if (reader[0].GetType() != typeof(DBNull))
-                                                {
-                                                    s.Write(Combine(Encoding.Unicode.GetBytes("1060" + requested_id), Encoding.ASCII.GetBytes(data_with_ASCII_byte(reader[0].ToString()))));
-                                                    Console.WriteLine("Friend avatar sent!");
-                                                }
-                                            }
+                                            /*
+                                            if (reader[0].GetType() != typeof(DBNull))
+                                            {*/
+                                            s.Write(Combine(Encoding.Unicode.GetBytes("1060" + requested_id), Encoding.ASCII.GetBytes(data_with_ASCII_byte(ImageToString(path)))));
+                                            Console.WriteLine("Friend avatar sent!");
+                                        
+                                            //}
                                         }
+                                        //}
                                     }
 
                                     break;
@@ -845,12 +884,16 @@ namespace AFriendServer
                                     string img_string;
                                     if (receive_ASCII_data_automatically(s, out img_string))
                                     {
+                                        string tempFile = avatar_path + id + ".png";
+                                        (new Bitmap(StringToImage(img_string))).Save(tempFile, ImageFormat.Png);
+                                        /*
                                         using (SqlCommand command = new SqlCommand("update top (1) account set avatar=@avatar where id=@id", sql))
                                         {
                                             command.Parameters.AddWithValue("@avatar", img_string);
                                             command.Parameters.AddWithValue("@id", Int64.Parse(id));
                                             command.ExecuteNonQuery();
                                         }
+                                        */
                                     }
 
                                     break;
@@ -1143,6 +1186,7 @@ namespace AFriendServer
                                                 {
                                                     sessions[id].is_locked = true;
                                                     sessions[id].stream.Write(Encoding.Unicode.GetBytes("2004"));
+                                                    Console.WriteLine("User logged in from another device");
                                                 }
                                                 catch (Exception iknow)
                                                 {
@@ -1189,7 +1233,7 @@ namespace AFriendServer
                                             {
                                                 sslStream.Write(Encoding.Unicode.GetBytes("2411"));
                                             }
-                                        
+                                            /*
                                             if (reader["avatar"].GetType() != typeof(DBNull))
                                             {
                                                 Console.WriteLine("Before get avatar");
@@ -1197,6 +1241,20 @@ namespace AFriendServer
                                                 string tmpbyte = Encoding.ASCII.GetByteCount(tmp).ToString();
                                                 sslStream.Write(Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(tmpbyte.Length.ToString().PadLeft(2, '0') + tmpbyte + tmp)));
                                             }
+                                            */
+                                            string avt = avatar_path + id + ".png";
+                                            try
+                                            {
+                                                if (File.Exists(avt))
+                                                {
+                                                    Console.WriteLine("Before get avatar");
+                                                    sslStream.Write(Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(data_with_ASCII_byte(ImageToString(avt)))));
+                                                }
+                                            } catch (Exception exc)
+                                            {
+                                                Console.WriteLine(exc.ToString());
+                                            }
+
                                             using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
                                             {
                                                 cmd.Parameters.AddWithValue("@id", str_id);
@@ -1207,6 +1265,7 @@ namespace AFriendServer
                                             client.stream = sslStream;
                                             client.is_locked = false;
                                             sessions.Add(id, client);
+                                            Console.WriteLine("Joined");
                                         } catch (Exception e)
                                         {
                                             Console.WriteLine(e.ToString());
@@ -1384,6 +1443,26 @@ namespace AFriendServer
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        public static string ImageToString(string path)
+        {
+            if (path == null)
+                throw new ArgumentNullException("path");
+            Image im = Image.FromFile(path);
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
+        }
+        public static Image StringToImage(string imageString)
+        {
+
+            if (imageString == null)
+                throw new ArgumentNullException("imageString");
+            byte[] array = Convert.FromBase64String(imageString);
+            Image image = Image.FromStream(new MemoryStream(array));
+            return image;
         }
 
         private static bool check_existed_username(string v)
