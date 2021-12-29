@@ -130,6 +130,45 @@ namespace A_Friend
             return false;
         }
 
+        internal static void Ping()
+        {
+            try
+            {
+                string server_address = ConfigurationManager.AppSettings.Get("sever_address");
+                using (var client_2 = new TcpClient(server_address, Convert.ToInt16(ConfigurationManager.AppSettings.Get("port"))))
+                {
+                    using (var stream_2 = new SslStream(
+                        client_2.GetStream(),
+                        false,
+                        new RemoteCertificateValidationCallback(ValidateServerCertificate),
+                        null
+                        ))
+                    {
+                        try
+                        {
+                            stream_2.AuthenticateAsClient(server_address);
+                        }
+                        catch (AuthenticationException e)
+                        {
+                            Console.WriteLine("Exception: {0}", e.Message);
+                            if (e.InnerException != null)
+                            {
+                                Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
+                            }
+                            Console.WriteLine("Authentication failed - closing the connection.");
+                            stream_2.Close();
+                            client_2.Close();
+                        }
+                        stream_2.Write(Combine(Encoding.Unicode.GetBytes("0012"), Encoding.ASCII.GetBytes(user.id)));
+                        Console.WriteLine("Pinged");
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
         public static bool Logged_in(string tk, string mk)
         {
             string server_address = ConfigurationManager.AppSettings.Get("sever_address");
@@ -163,6 +202,7 @@ namespace A_Friend
                 if (user == null)
                 {
                     stream.Write(Encoding.Unicode.GetBytes("2004")); // 2004 = stop client
+                    Ping();
                     stream.Close();
                     client.Close();
                     return false;
@@ -194,7 +234,7 @@ namespace A_Friend
             try
             {
                 self.Write(Encoding.Unicode.GetBytes("1901"+data_string.Length.ToString().PadLeft(2, '0')+data_string+sent_message));
-                self.Flush();
+                Ping();
             }
             catch (Exception e)
             {
@@ -204,13 +244,16 @@ namespace A_Friend
 
         internal static byte[] Combine(params byte[][] arrays)
         {
+            Console.WriteLine("Start combining");
             byte[] rv = new byte[arrays.Sum(a => a.Length)];
             int offset = 0;
             foreach (byte[] array in arrays)
             {
                 System.Buffer.BlockCopy(array, 0, rv, offset, array.Length);
+                Console.WriteLine("Finish block copy");
                 offset += array.Length;
             }
+            Console.WriteLine("Finish Combining");
             return rv;
         }
 
@@ -537,6 +580,7 @@ namespace A_Friend
                                         Console.WriteLine("Message Received");*/
 
                                         stream.Write(Encoding.Unicode.GetBytes("1060" + found[0]));
+                                        Ping();
                                     }
                                     else
                                     {
@@ -584,6 +628,7 @@ namespace A_Friend
                                                         }
                                                         Console.WriteLine("Ask for info");
                                                         stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
+                                                        Ping();
                                                     }
                                                 }
                                                 else if (user.id == msgobj.id1) // if me = user1 add user2
@@ -608,6 +653,7 @@ namespace A_Friend
                                                         }
                                                         Console.WriteLine("Ask for info");
                                                         stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
+                                                        Ping();
                                                     }
                                                 }
                                             }
@@ -693,6 +739,7 @@ namespace A_Friend
                                         }
                                         Console.WriteLine("Message Loaded");
                                         stream.Write(Encoding.Unicode.GetBytes("0708" + panelid));
+                                        Ping();
                                     }
                                 }
                             } // load messages
@@ -745,7 +792,7 @@ namespace A_Friend
                 }
                 Console.WriteLine("Success");
                 stream.Write(Encoding.Unicode.GetBytes("0011" + data_with_byte(tk) + data_with_byte(mk))); //0011 = sign up
-                
+
                 Receive_from_id(client);
                 if (instruction == "1011")
                 {
@@ -757,6 +804,7 @@ namespace A_Friend
                 }
                 Console.WriteLine(instruction);
                 stream.Write(Encoding.Unicode.GetBytes("2004"));
+                Ping();
                 stream.Close();
                 client.Close();
                 return success;

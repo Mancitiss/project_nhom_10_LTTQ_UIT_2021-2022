@@ -87,6 +87,7 @@ namespace A_Friend
                 else
                 {
                     AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
+                    AFriendClient.Ping();
                     AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
                     panelUsername.Hide();
                     customTextBoxUsername.Texts = "";
@@ -123,6 +124,7 @@ namespace A_Friend
                         if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
                         {
                             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
+                            AFriendClient.Ping();
                         }
                         panelPassword.Hide();
                         textBoxNewPassword.Texts = "";
@@ -249,6 +251,7 @@ namespace A_Friend
                         if (length < 2800000)
                         {
                             AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
+                            AFriendClient.Ping();
                             AFriendClient.img_string = imageAsString.Trim();
                             circlePictureBox1.Crop(StringToImage(AFriendClient.img_string.ToString()));
                         }
@@ -303,9 +306,11 @@ namespace A_Friend
             if (toggleButton1.Checked)
             {
                 AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1508"));
+                AFriendClient.Ping();
             } else
             {
                 AFriendClient.stream.Write(Encoding.Unicode.GetBytes("0508"));
+                AFriendClient.Ping();
             }
         }
     }

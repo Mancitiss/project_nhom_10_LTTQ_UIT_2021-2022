@@ -100,6 +100,7 @@ namespace A_Friend.CustomControls
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
                     AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                    AFriendClient.Ping(); 
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -118,6 +119,7 @@ namespace A_Friend.CustomControls
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
                     AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                    AFriendClient.Ping();
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -205,9 +207,11 @@ namespace A_Friend.CustomControls
 
         internal void RemoveMessage_Passively(long messagenumber)
         {
+            this.SuspendLayout();
             chatItems.Remove(messages[messagenumber]);
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
+            this.ResumeLayout();
         }
 
         public void RemoveMessage(long messagenumber)
@@ -217,6 +221,7 @@ namespace A_Friend.CustomControls
             messages.Remove(messagenumber);
             // code to remove message
             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
+            AFriendClient.Ping();
         }
 
         public void AddMessage(MessageObject message)
@@ -314,8 +319,13 @@ namespace A_Friend.CustomControls
                 if (img != null)
                 {
                     string img_string = ImageToString(img);
-                    AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + FormApplication.currentID), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string))));
+                    Console.WriteLine("Finished img to string");
+                    var b = AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + FormApplication.currentID), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string)));
+                    Console.WriteLine("before sending nude: {0}", b.Length);
+                    AFriendClient.stream.Write(b);
                     Console.WriteLine("Nude sent");
+                    AFriendClient.Ping();
+                    Console.WriteLine("Finish sending image");
                 }
             }
             //else
@@ -358,6 +368,7 @@ namespace A_Friend.CustomControls
         public void LoadMessage()
         {
             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
+            AFriendClient.Ping();
         }
 
         public void LoadMessage(List<MessageObject> messageObjects)
@@ -489,6 +500,7 @@ namespace A_Friend.CustomControls
                     if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
                     {
                         AFriendClient.stream.Write(Encoding.Unicode.GetBytes("5859" + this.ID));
+                        AFriendClient.Ping();
                         (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
                     }
                 }

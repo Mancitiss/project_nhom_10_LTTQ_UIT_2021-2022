@@ -243,6 +243,7 @@ namespace A_Friend
                         {
                             contactItem.Unread = false;
                             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                            AFriendClient.Ping();
                         }
                     };
 
@@ -252,6 +253,7 @@ namespace A_Friend
                         {
                             contactItem.Unread = false;
                             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                            AFriendClient.Ping();
                         }
                     };
                 }
@@ -428,6 +430,7 @@ namespace A_Friend
         private void LogoutButton_Click_1(object sender, EventArgs e)
         {
             AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2004"));
+            AFriendClient.Ping();
 
             this.Hide();
             FormLogin lg = new FormLogin();
@@ -566,6 +569,7 @@ namespace A_Friend
             try
             {
                 AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2004"));
+                AFriendClient.Ping();
             }
             catch (Exception done)
             {
@@ -582,6 +586,7 @@ namespace A_Friend
                 try
                 {
                     AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2004"));
+                    AFriendClient.Ping();
                 } catch (Exception done)
                 {
 

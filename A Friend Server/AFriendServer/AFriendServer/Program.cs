@@ -70,10 +70,10 @@ namespace AFriendServer
                     {
 
                         sql.Open();
-                        Thread Clientloop = new Thread(new ParameterizedThreadStart(Client_Loop));
-                        Clientloop.IsBackground = true;
-                        Clientloop.Start();
-                        loop = Clientloop;
+                        //Thread Clientloop = new Thread(new ParameterizedThreadStart(Client_Loop));
+                        //Clientloop.IsBackground = true;
+                        //Clientloop.Start();
+                        //loop = Clientloop;
                         ExecuteServer();
                     }
                     catch (Exception e)
@@ -131,84 +131,6 @@ namespace AFriendServer
             else if (se.Contains("was forcibly closed"))
             {
                 shutdown(item.Key);
-            }
-        }
-
-        private static void Client_Loop(object obj)
-        {
-            while (true)
-            {
-                try
-                {
-                    foreach (var item in sessions)
-                    {
-                        try
-                        {
-                            if (sessions[item.Key].is_locked) continue;
-                            //Console.WriteLine(item.Key + " is online");
-                            if (item.Value.client.Connected)
-                            {
-                                /*
-                                if (item.Value.loopnum >= 19700 && item.Value.client.Available == 0 && item.Value.is_locked == false)
-                                {
-                                    sessions[item.Key].is_locked = true;
-                                    item.Value.loopnum = 0;
-                                    item.Value.stream.Write(new byte[8] {0,0,0,0,0,0,0,0});
-                                    sessions[item.Key].is_locked = false;
-                                }
-                                else item.Value.loopnum += 1;
-                                */
-                                //Console.WriteLine(item.Value.Available);
-                                if (item.Value.client.Available > 0) /*item.Value.Client.Poll(1, SelectMode.SelectRead)/* || byte_expected[item.Key]!=0*/
-                                {
-                                    item.Value.loopnum = 0;
-                                    //bytes[item.Key] += item.Value.Available;
-                                    if (!item.Value.client.Connected) // Something bad has happened, shut down
-                                    {
-                                        try
-                                        {
-                                            shutdown(item.Key);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Console.WriteLine(e.ToString());
-                                        }
-                                    }
-                                    else // There is data waiting to be read"
-                                    {
-                                        sessions[item.Key].is_locked = true;
-                                        if (true /*byte_expected[item.Key] == 0*/)
-                                        {
-                                            try
-                                            {
-
-                                                ThreadPool.QueueUserWorkItem(Receive_message, item.Key);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                exception_handler(item, e.ToString());
-                                                Console.WriteLine(e.ToString());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                shutdown(item.Key);
-                            }
-                        }
-                        catch (Exception clientquit)
-                        {
-                            //Console.WriteLine(clientquit.ToString());
-                            shutdown(item.Key);
-                        } 
-                    }
-                }
-                catch (Exception e)
-                {
-                    // do nothing
-                }
             }
         }
 
@@ -1109,7 +1031,6 @@ namespace AFriendServer
 
         private static async void Receive_from_socket_not_logged_in(object si)
         {
-            // new client code below
             TcpClient c = si as TcpClient;
             // A client has connected. Create the
             // SslStream using the client's network stream.
@@ -1126,14 +1047,71 @@ namespace AFriendServer
                 DisplayCertificateInformation(sslStream);
                 DisplayStreamProperties(sslStream);
                 */
-                // Set timeouts for the read and write to 5 seconds.
 
                 SslStream_receive(sslStream, 8, out string data);
                 Console.WriteLine("not logged in:"+data);
                 if (data != null && data != "")
                 {
                     string instruction = data;
+                    if (instruction == "0012") //0012 = work available
+                    {
+                        SslStream_receive_ASCII(sslStream, 19, out data);
+                        sslStream.Dispose();
+                        c.Dispose();
+                        if (sessions.ContainsKey(data))
+                        {
+                            try
+                            {
+                                while (sessions[data].is_locked)
+                                {
+                                    await Task.Delay(1000);
+                                }
+                                //Console.WriteLine(item.Key + " is online");
+                                if (sessions[data].client.Connected)
+                                {
+                                    if (sessions[data].client.Available > 0) 
+                                    {
+                                        //sessions[data].loopnum = 0;
+                                        if (!sessions[data].client.Connected) // Something bad has happened, shut down
+                                        {
+                                            try
+                                            {
+                                                shutdown(data);
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine(e.ToString());
+                                            }
+                                        }
+                                        else // There is data waiting to be read"
+                                        {
+                                            sessions[data].is_locked = true;
+                                            try
+                                            {
 
+                                                ThreadPool.QueueUserWorkItem(Receive_message, data);
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                exception_handler(new KeyValuePair<string, Client>(data, sessions[data]), e.ToString());
+                                                Console.WriteLine(e.ToString());
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    shutdown(data);
+                                }
+                            }
+                            catch (Exception clientquit)
+                            {
+                                //Console.WriteLine(clientquit.ToString());
+                                shutdown(data);
+                            }
+                        }
+                    }
+                    else
                     if (instruction == "0010") // 0010 = log in
                     {
                         receive_data_automatically(sslStream, out data);
@@ -1442,6 +1420,22 @@ namespace AFriendServer
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                try
+                {
+                    sslStream.Dispose();
+                }
+                catch
+                {
+
+                }
+                try
+                {
+                    c.Dispose();
+                }
+                catch
+                {
+
+                }
             }
         }
 
