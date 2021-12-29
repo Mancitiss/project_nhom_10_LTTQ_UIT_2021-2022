@@ -319,13 +319,14 @@ namespace A_Friend.CustomControls
                 if (img != null)
                 {
                     string img_string = ImageToString(img);
-                    Console.WriteLine("Finished img to string");
+                    Console.WriteLine("Finished img to string\n {0}", img_string);
                     var b = AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + FormApplication.currentID), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string)));
+                    //var b = new Byte[200000];
+                    //for (int i = 0; i < 200000; i++) b[i] = 0;
+                    AFriendClient.Ping();
                     Console.WriteLine("before sending nude: {0}", b.Length);
                     AFriendClient.stream.Write(b);
                     Console.WriteLine("Nude sent");
-                    AFriendClient.Ping();
-                    Console.WriteLine("Finish sending image");
                 }
             }
             //else

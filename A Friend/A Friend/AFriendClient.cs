@@ -408,7 +408,7 @@ namespace A_Friend
             return image;
         }
 
-        private static /*async*/ void Receive_from_id(TcpClient self)
+        private static /*async*/ async void Receive_from_id(TcpClient self)
         {
             try
             {
@@ -464,10 +464,12 @@ namespace A_Friend
                                 if (receive_ASCII_data_automatically(out img_string))
                                 {
                                     //user.avatar = StringToImage(img_string);
-                                    Console.WriteLine("Image received");
+                                    Console.WriteLine("My avatar received");
                                 }
-                                if (UIForm.formSettings.IsHandleCreated)
-                                    UIForm.formLoading.Invoke(UIForm.formLoading.Show_progress_delegate, new object[] { 0 });
+                                //int h = 1;
+                                //while (!UIForm.formSettings.IsHandleCreated) { Console.WriteLine(h++); await Task.Delay(1000); }
+                                //UIForm.formLoading.Invoke(UIForm.formLoading.Show_progress_delegate, new object[] { 0 });
+                                Console.WriteLine("My Avatar finished");
                             } // avatar received, not loaded
                             break;
                         case "0708": // me seen
@@ -637,7 +639,7 @@ namespace A_Friend
                                                     {
                                                         UIForm.panelChats[msgobj.id2].Invoke(UIForm.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
                                                         Console.WriteLine("data added");
-                                                        Console.WriteLine(msgobj.message);
+                                                        //Console.WriteLine(msgobj.message);
                                                         if (msgobj.sender)
                                                             UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id2, (byte)1 });
                                                     }

@@ -1008,6 +1008,11 @@ namespace AFriendServer
                     //sessions[id].stream.Flush();
                     success = true;
                 }
+                catch(IOException ioe)
+                {
+                    if (ioe.ToString().Contains("was forcibly closed")) shutdown(id);
+                    else Console.WriteLine(ioe.ToString());
+                }
                 catch (Exception e)
                 {
                     success = false;
@@ -1058,6 +1063,8 @@ namespace AFriendServer
                         SslStream_receive_ASCII(sslStream, 19, out data);
                         sslStream.Dispose();
                         c.Dispose();
+                        int h = 0;
+                        while (h < 20 && !sessions.ContainsKey(data)) await Task.Delay(1000);
                         if (sessions.ContainsKey(data))
                         {
                             try
