@@ -14,6 +14,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using System.Configuration;
+using System.Collections.Concurrent;
 
 namespace A_Friend 
 {
@@ -39,13 +40,66 @@ namespace A_Friend
         private static FormApplication UIForm;
         public static bool loginResult = true;
 
+        private static int workeradded = 0;
+        internal static ConcurrentQueue<byte[]> commands = new ConcurrentQueue<byte[]>();
 
+        internal static void Queue_command(byte[] command)
+        {
+            commands.Enqueue(command);
+            Ping();
+            Add_worker_thread();
+        }
+
+        private static void Add_worker_thread()
+        {
+            Console.WriteLine("worker: {0}", workeradded);
+            if (0 == Interlocked.Exchange(ref workeradded, 1))
+            {
+                try
+                {
+                    ThreadPool.QueueUserWorkItem(Send_commands);
+                } catch (NotSupportedException nse)
+                {
+                    Console.WriteLine(nse.ToString());
+                    try
+                    {
+                        Interlocked.Exchange(ref workeradded, 0);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        private static void Send_commands(object state)
+        {
+            Console.WriteLine("start sending command");
+            try
+            {
+                while (!commands.IsEmpty) 
+                    if (commands.TryDequeue(out byte[] command))
+                    {
+                        Console.WriteLine("Sending command...");
+                        stream.Write(command);
+                        Console.WriteLine("Command sent");
+                        Ping();
+                    }
+                Ping();
+                Interlocked.Exchange(ref workeradded, 0);
+                Console.WriteLine("Worker reset!");
+            }
+            catch (Exception se)
+            {
+                Console.WriteLine(se.ToString());
+                //throw se;
+            }
+        }
         private static void Logout()
         {
             //first_message = null;
             //first_message_sender = null;
             temp_name = null;
             img_string = null;
+            Ping();
             user = new Account();
             user.state = 0;
             stream.Close();
@@ -197,11 +251,11 @@ namespace A_Friend
             }
             try
             {
-                stream.Write(Encoding.Unicode.GetBytes("0010" + data_with_byte(tk) + data_with_byte(mk))); //0010 = log in
+                Queue_command(Encoding.Unicode.GetBytes("0010" + data_with_byte(tk) + data_with_byte(mk))); //0010 = log in
                 Receive_from_id(client);
                 if (user == null)
                 {
-                    stream.Write(Encoding.Unicode.GetBytes("2004")); // 2004 = stop client
+                    Queue_command(Encoding.Unicode.GetBytes("2004")); // 2004 = stop client
                     Ping();
                     stream.Close();
                     client.Close();
@@ -233,8 +287,7 @@ namespace A_Friend
             string data_string = Encoding.Unicode.GetByteCount(sent_message).ToString();
             try
             {
-                self.Write(Encoding.Unicode.GetBytes("1901"+data_string.Length.ToString().PadLeft(2, '0')+data_string+sent_message));
-                Ping();
+                Queue_command(Encoding.Unicode.GetBytes("1901"+data_string.Length.ToString().PadLeft(2, '0')+data_string+sent_message));
             }
             catch (Exception e)
             {
@@ -581,8 +634,7 @@ namespace A_Friend
                                         UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
                                         Console.WriteLine("Message Received");*/
 
-                                        stream.Write(Encoding.Unicode.GetBytes("1060" + found[0]));
-                                        Ping();
+                                        Queue_command(Encoding.Unicode.GetBytes("1060" + found[0]));
                                     }
                                     else
                                     {
@@ -629,8 +681,7 @@ namespace A_Friend
                                                             first.Add(sender, new List<MessageObject>() { msgobj });
                                                         }
                                                         Console.WriteLine("Ask for info");
-                                                        stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
-                                                        Ping();
+                                                        Queue_command(Encoding.Unicode.GetBytes("0609" + sender));
                                                     }
                                                 }
                                                 else if (user.id == msgobj.id1) // if me = user1 add user2
@@ -654,8 +705,7 @@ namespace A_Friend
                                                             first.Add(sender, new List<MessageObject>() { msgobj });
                                                         }
                                                         Console.WriteLine("Ask for info");
-                                                        stream.Write(Encoding.Unicode.GetBytes("0609" + sender));
-                                                        Ping();
+                                                        Queue_command(Encoding.Unicode.GetBytes("0609" + sender));
                                                     }
                                                 }
                                             }
@@ -740,8 +790,7 @@ namespace A_Friend
                                                 Console.WriteLine(asd.InnerException.ToString());
                                         }
                                         Console.WriteLine("Message Loaded");
-                                        stream.Write(Encoding.Unicode.GetBytes("0708" + panelid));
-                                        Ping();
+                                        Queue_command(Encoding.Unicode.GetBytes("0708" + panelid));
                                     }
                                 }
                             } // load messages
@@ -793,7 +842,7 @@ namespace A_Friend
                     return false;
                 }
                 Console.WriteLine("Success");
-                stream.Write(Encoding.Unicode.GetBytes("0011" + data_with_byte(tk) + data_with_byte(mk))); //0011 = sign up
+                Queue_command(Encoding.Unicode.GetBytes("0011" + data_with_byte(tk) + data_with_byte(mk))); //0011 = sign up
 
                 Receive_from_id(client);
                 if (instruction == "1011")
@@ -805,8 +854,7 @@ namespace A_Friend
 
                 }
                 Console.WriteLine(instruction);
-                stream.Write(Encoding.Unicode.GetBytes("2004"));
-                Ping();
+                Queue_command(Encoding.Unicode.GetBytes("2004"));
                 stream.Close();
                 client.Close();
                 return success;

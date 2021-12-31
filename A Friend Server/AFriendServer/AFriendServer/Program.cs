@@ -89,7 +89,7 @@ namespace AFriendServer
             }
         }
 
-        private static void shutdown(string id) 
+        internal static void shutdown(string id) 
         {
             Console.WriteLine("{0} has quit", id);
             try
@@ -375,7 +375,7 @@ namespace AFriendServer
                                                     }
                                                     string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
                                                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                                    s.Write(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                                     //Console.WriteLine("Old messages sent");
                                                     if (sessions.ContainsKey(id))
                                                     {
@@ -385,7 +385,7 @@ namespace AFriendServer
                                                         }
                                                         else if (sessions[id].loaded == 1)
                                                         {
-                                                            s.Write(Encoding.Unicode.GetBytes("2411"));
+                                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("2411"));
                                                             sessions[id].loaded -= 1;
                                                         }
                                                     }
@@ -421,7 +421,7 @@ namespace AFriendServer
                                                     }
                                                     string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
                                                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                                    s.Write(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                                     //Console.WriteLine("Old messages sent");
                                                 }
                                             }
@@ -486,11 +486,11 @@ namespace AFriendServer
                                                             if (id != receiver_id) Send_to_id(id, msgobj);
                                                             if (!Send_to_id(receiver_id, msgobj))
                                                             {
-                                                                s.Write(Encoding.Unicode.GetBytes("0404" + receiver_id));
+                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("0404" + receiver_id));
                                                             }
                                                             else
                                                             {
-                                                                s.Write(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("2211" + receiver_id));
                                                             }
                                                             Console.WriteLine("Sent");
                                                             //send to socket end
@@ -572,11 +572,11 @@ namespace AFriendServer
                                                                     if (id != receiver_id) Send_to_id(id, msgobj);
                                                                     if (!Send_to_id(receiver_id, msgobj))
                                                                     {
-                                                                        s.Write(Encoding.Unicode.GetBytes("0404" + receiver_id));
+                                                                        sessions[id].Queue_command(Encoding.Unicode.GetBytes("0404" + receiver_id));
                                                                     }
                                                                     else
                                                                     {
-                                                                        s.Write(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                        sessions[id].Queue_command(Encoding.Unicode.GetBytes("2211" + receiver_id));
                                                                     }
                                                                     Console.WriteLine("Sent");
                                                                 } catch (Exception e)
@@ -669,11 +669,11 @@ namespace AFriendServer
                                         }
                                         if (result)
                                         {
-                                            s.Write(Encoding.Unicode.GetBytes("0708" + receiver_id + "1"));
+                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("0708" + receiver_id + "1"));
                                         }
                                         else
                                         {
-                                            s.Write(Encoding.Unicode.GetBytes("0708" + receiver_id + "0"));
+                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("0708" + receiver_id + "0"));
                                         }
                                     }
 
@@ -712,7 +712,7 @@ namespace AFriendServer
                                             }
                                             if (sessions.ContainsKey(receiver_id))
                                             {
-                                                sessions[receiver_id].stream.Write(Encoding.Unicode.GetBytes("2002" + id + data_with_byte(messagenumber.ToString())));
+                                                sessions[receiver_id].Queue_command(Encoding.Unicode.GetBytes("2002" + id + data_with_byte(messagenumber.ToString())));
                                             }
                                         }
                                     }
@@ -736,11 +736,11 @@ namespace AFriendServer
                                             {
                                                 string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
                                                 string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                                s.Write(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                             }
                                             else
                                             {
-                                                s.Write(Encoding.Unicode.GetBytes("2609")); // info not found
+                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("2609")); // info not found
                                             }
                                         }
                                     }
@@ -761,12 +761,12 @@ namespace AFriendServer
                                             {
                                                 string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
                                                 string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                                s.Write(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                                 //Console.WriteLine("Info sent");
                                             }
                                             else
                                             {
-                                                s.Write(Encoding.Unicode.GetBytes("2609")); // info not found
+                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("2609")); // info not found
                                             }
                                         }
                                     }
@@ -790,7 +790,7 @@ namespace AFriendServer
                                             /*
                                             if (reader[0].GetType() != typeof(DBNull))
                                             {*/
-                                            s.Write(Combine(Encoding.Unicode.GetBytes("1060" + requested_id), Encoding.ASCII.GetBytes(data_with_ASCII_byte(ImageToString(path)))));
+                                            sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1060" + requested_id), Encoding.ASCII.GetBytes(data_with_ASCII_byte(ImageToString(path)))));
                                             Console.WriteLine("Friend avatar sent!");
                                         
                                             //}
@@ -846,13 +846,13 @@ namespace AFriendServer
                                                                 changepass.Parameters.AddWithValue("@id", id);
                                                                 if (changepass.ExecuteNonQuery() == 1)
                                                                 {
-                                                                    s.Write(Encoding.Unicode.GetBytes("4269"));
+                                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("4269"));
                                                                 }
                                                             }
                                                         }
                                                         else
                                                         {
-                                                            s.Write(Encoding.Unicode.GetBytes("9624"));
+                                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("9624"));
                                                         }
                                                     }
                                                 }
@@ -894,7 +894,7 @@ namespace AFriendServer
                                             changename.Parameters.AddWithValue("@id", id);
                                             if (changename.ExecuteNonQuery() == 1)
                                             {
-                                                sessions[id].stream.Write(Encoding.Unicode.GetBytes("1012"));
+                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("1012"));
                                             }
                                         }
                                     }
@@ -970,7 +970,7 @@ namespace AFriendServer
                 try
                 {
                     if (sessions.ContainsKey(id))
-                        sessions[id].is_locked = false;
+                        Interlocked.Exchange(ref sessions[id].is_locked, 0);
                 } catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
@@ -1004,7 +1004,7 @@ namespace AFriendServer
                 {
                     string data = JSON.Serialize<MessageObject>(msgobj);
                     string data_string = Encoding.Unicode.GetByteCount(data).ToString();
-                    sessions[id].stream.Write(Encoding.Unicode.GetBytes("1901" + data_string.Length.ToString().PadLeft(2, '0') + data_string + data));
+                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("1901" + data_string.Length.ToString().PadLeft(2, '0') + data_string + data));
                     //sessions[id].stream.Flush();
                     success = true;
                 }
@@ -1063,13 +1063,18 @@ namespace AFriendServer
                         SslStream_receive_ASCII(sslStream, 19, out data);
                         sslStream.Dispose();
                         c.Dispose();
+                        bool pass = false;
+                        if (1 == Interlocked.Exchange(ref sessions[data].is_waited, 1)) pass = true;
                         int h = 0;
-                        while (h < 20 && !sessions.ContainsKey(data)) await Task.Delay(1000);
-                        if (sessions.ContainsKey(data))
+                        while (!pass && h++ < 20 && !sessions.ContainsKey(data)) 
+                        {
+                                await Task.Delay(1000);
+                        }
+                        if (sessions.ContainsKey(data) && !pass)
                         {
                             try
                             {
-                                while (sessions[data].is_locked)
+                                while (1 == Interlocked.Exchange(ref sessions[data].is_locked, 1))
                                 {
                                     await Task.Delay(1000);
                                 }
@@ -1092,7 +1097,6 @@ namespace AFriendServer
                                         }
                                         else // There is data waiting to be read"
                                         {
-                                            sessions[data].is_locked = true;
                                             try
                                             {
 
@@ -1110,11 +1114,23 @@ namespace AFriendServer
                                 {
                                     shutdown(data);
                                 }
+                                Interlocked.Exchange(ref sessions[data].is_locked, 0);
                             }
                             catch (Exception clientquit)
                             {
                                 //Console.WriteLine(clientquit.ToString());
                                 shutdown(data);
+                            }
+                            finally
+                            {
+                                try
+                                {
+                                    Interlocked.Exchange(ref sessions[data].is_waited, 0);
+                                }
+                                catch (Exception e)
+                                {
+
+                                }
                             }
                         }
                     }
@@ -1169,7 +1185,7 @@ namespace AFriendServer
                                             {
                                                 try
                                                 {
-                                                    sessions[id].is_locked = true;
+                                                    Interlocked.Exchange(ref sessions[id].is_locked, 1);
                                                     sessions[id].stream.Write(Encoding.Unicode.GetBytes("2004"));
                                                     Console.WriteLine("User logged in from another device");
                                                 }
@@ -1248,7 +1264,8 @@ namespace AFriendServer
                                             while (sessions.ContainsKey(id)) await Task.Delay(1000);
                                             client.client = c;
                                             client.stream = sslStream;
-                                            client.is_locked = false;
+                                            client.is_locked = 0;
+                                            client.id = id;
                                             sessions.Add(id, client);
                                             Console.WriteLine("Joined");
                                         } catch (Exception e)

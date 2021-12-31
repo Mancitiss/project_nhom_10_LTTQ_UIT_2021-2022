@@ -99,8 +99,7 @@ namespace A_Friend.CustomControls
                     string datasend = num.ToString();
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
-                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                    AFriendClient.Ping(); 
+                    AFriendClient.Queue_command(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -118,8 +117,7 @@ namespace A_Friend.CustomControls
                     string datasend = num.ToString();
                     string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                     Console.WriteLine(datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend);
-                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                    AFriendClient.Ping();
+                    AFriendClient.Queue_command(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
                     panel_Chat.VerticalScroll.Value = 5;
@@ -220,8 +218,7 @@ namespace A_Friend.CustomControls
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
             // code to remove message
-            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
-            AFriendClient.Ping();
+            AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
         public void AddMessage(MessageObject message)
@@ -319,13 +316,13 @@ namespace A_Friend.CustomControls
                 if (img != null)
                 {
                     string img_string = ImageToString(img);
-                    Console.WriteLine("Finished img to string\n {0}", img_string);
+                    Console.WriteLine("Finished img to string\n");
                     var b = AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + FormApplication.currentID), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string)));
                     //var b = new Byte[200000];
                     //for (int i = 0; i < 200000; i++) b[i] = 0;
-                    AFriendClient.Ping();
                     Console.WriteLine("before sending nude: {0}", b.Length);
-                    AFriendClient.stream.Write(b);
+                    AFriendClient.Queue_command(b);
+                    //AFriendClient.Ping();
                     Console.WriteLine("Nude sent");
                 }
             }
@@ -368,8 +365,7 @@ namespace A_Friend.CustomControls
 
         public void LoadMessage()
         {
-            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
-            AFriendClient.Ping();
+            AFriendClient.Queue_command(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
         }
 
         public void LoadMessage(List<MessageObject> messageObjects)
@@ -500,8 +496,7 @@ namespace A_Friend.CustomControls
                 {
                     if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)
                     {
-                        AFriendClient.stream.Write(Encoding.Unicode.GetBytes("5859" + this.ID));
-                        AFriendClient.Ping();
+                        AFriendClient.Queue_command(Encoding.Unicode.GetBytes("5859" + this.ID));
                         (this.Parent.Parent as FormApplication).RemoveContact(this.ID);
                     }
                 }
