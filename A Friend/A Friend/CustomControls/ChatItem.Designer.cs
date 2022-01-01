@@ -38,7 +38,7 @@ namespace A_Friend.CustomControls
             this.labelAuthor = new System.Windows.Forms.Label();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelBody = new A_Friend.CustomControls.MessagePanel();
-            this.labelBody = new System.Windows.Forms.Label();
+            this.labelBody = new System.Windows.Forms.RichTextBox();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelButton.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -212,7 +212,7 @@ namespace A_Friend.CustomControls
         private System.Windows.Forms.Button buttonRemove;
         private System.Windows.Forms.ToolTip toolTip_DeleteM;
         private System.Windows.Forms.ToolTip toolTip_Copy;
-        private System.Windows.Forms.Label labelBody;
+        private System.Windows.Forms.RichTextBox labelBody;
         private System.Windows.Forms.Label labelAuthor;
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Panel panelBottom;

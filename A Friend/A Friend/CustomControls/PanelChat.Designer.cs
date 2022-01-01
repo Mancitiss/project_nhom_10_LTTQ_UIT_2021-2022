@@ -251,7 +251,7 @@ namespace A_Friend.CustomControls
         private System.Windows.Forms.Label label3;
         private CirclePictureBox friendPicture;
         private CustomButton buttonDelete;
-        private System.Windows.Forms.Panel panel_Chat;
+        internal System.Windows.Forms.Panel panel_Chat;
         private System.Windows.Forms.Panel panelBottomRight;
         private CustomTextBox textboxWriting;
         private CustomButton buttonSend;

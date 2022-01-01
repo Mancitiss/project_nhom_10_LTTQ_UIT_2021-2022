@@ -91,8 +91,12 @@ namespace A_Friend.CustomControls
 
             if (this.messageObject.type == 0)
             {
+                //this.MaximumSize = new Size(900, int.MaxValue); //this line causes problems!!
                 labelBody.Text = messageObject.message;
                 labelBody.Font = ApplicationFont.GetFont(labelBody.Font.Size);
+                labelBody.BackColor = panelBody.BackColor;
+                labelBody.BorderStyle = BorderStyle.None;
+                labelBody.ScrollBars = RichTextBoxScrollBars.None;
             }
             else if (this.messageObject.type == 1)
             {
@@ -232,16 +236,31 @@ namespace A_Friend.CustomControls
         {
             if (messageObject != null && messageObject.type == 0)
             {
-                int maxwidth = this.Width - 200;
+                //int maxwidth = this.Width - 200;
+                int maxwidth = this.Parent.Width-this.Parent.Width/5;
                 labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
                 SuspendLayout();
-                var size = TextRenderer.MeasureText("qwertyuiopasdfghjklzxcbnm1234567890", labelBody.Font);
-                if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= size.Height)
+                var size = TextRenderer.MeasureText(labelBody.Text, labelBody.Font, new Size(labelBody.MaximumSize.Width, 0), TextFormatFlags.Default);
+                if (size.Width > labelBody.MaximumSize.Width)
+                {
+                    size.Height = (size.Width / labelBody.MaximumSize.Width) * 19 + 19;
+                    size.Width = labelBody.MaximumSize.Width;
+                }
+                //the old size = measure("something", font) always return (299, 19)
+                Console.WriteLine("{0}:{1}", size.Width, size.Height);
+
+                panelBody.Width = size.Width + 2 * labelBody.Left;
+                panelTop.Height = size.Height + 2 * labelBody.Top;
+                labelBody.Size = new Size(size.Width, size.Height);
+
+                /*
+                if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= 19)
                 {
                     panelBody.Width = labelBody.Width + 2 * labelBody.Left;
                 }
                 panelBody.Width = labelBody.Width + 2 * labelBody.Left;
                 panelTop.Height = labelBody.Height + 2 * labelBody.Top;
+                */
 
                 if (showDetail)
                 {
@@ -252,6 +271,7 @@ namespace A_Friend.CustomControls
                     this.Height = 5 + panelTop.Height;
                 }
                 panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
+
                 ResumeLayout();
             }
             else if (messageObject != null && messageObject.type == 1)
