@@ -86,7 +86,7 @@ namespace A_Friend
                 }
                 else
                 {
-                    AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
+                    AFriendClient.Queue_command(Encoding.Unicode.GetBytes("1012" + AFriendClient.data_with_byte(customTextBoxUsername.Texts.Trim())));
                     AFriendClient.temp_name = customTextBoxUsername.Texts.Trim();
                     panelUsername.Hide();
                     customTextBoxUsername.Texts = "";
@@ -122,7 +122,7 @@ namespace A_Friend
                     {
                         if (textBoxConfirmPassword.Texts.Equals(textBoxNewPassword.Texts))
                         {
-                            AFriendClient.stream.Write(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
+                            AFriendClient.Queue_command(Encoding.Unicode.GetBytes("4269" + AFriendClient.data_with_byte(textBoxCurrentPassword.Texts) + AFriendClient.data_with_byte(textBoxConfirmPassword.Texts)));
                         }
                         panelPassword.Hide();
                         textBoxNewPassword.Texts = "";
@@ -248,7 +248,7 @@ namespace A_Friend
                         int length = imageAsString.Length;
                         if (length < 2800000)
                         {
-                            AFriendClient.stream.Write(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
+                            AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
                             AFriendClient.img_string = imageAsString.Trim();
                             circlePictureBox1.Crop(StringToImage(AFriendClient.img_string.ToString()));
                         }
@@ -302,10 +302,10 @@ namespace A_Friend
             //Code to change private mode
             if (toggleButton1.Checked)
             {
-                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("1508"));
+                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("1508"));
             } else
             {
-                AFriendClient.stream.Write(Encoding.Unicode.GetBytes("0508"));
+                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("0508"));
             }
         }
     }
