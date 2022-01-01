@@ -23,7 +23,7 @@ namespace A_Friend.CustomControls
         Color stateColor = Color.Gainsboro;
         bool locking = false;
         List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
-        Dictionary<double, ChatItem> messages = new Dictionary<double, ChatItem>();
+        Dictionary<long, ChatItem> messages = new Dictionary<long, ChatItem>();
         ChatItem currentChatItem;
         bool currentChatItemShowing;
         public bool isloadingoldmessages = false;
@@ -52,6 +52,14 @@ namespace A_Friend.CustomControls
         public PanelChat(Account account)
         {
             InitializeComponent();
+            LoadMessageDelegate = new LoadMessageItem(LoadMessage);
+            AddMessageDelegate = new AddMessageItem(AddMessage);
+            RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
+            panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            this.CreateControl();
+            textboxWriting.dynamicMode = true;
+            textboxWriting.SetMaximumTextLenght(2021);
+
             labelFriendName.Font = ApplicationFont.GetFont(labelFriendName.Font.Size);
             labelState.Font = ApplicationFont.GetFont(labelState.Font.Size);
             textboxWriting.Font = ApplicationFont.GetFont(textboxWriting.Font.Size);
@@ -63,13 +71,9 @@ namespace A_Friend.CustomControls
             textboxWriting.PlaceholderText = "to " + account.name;
             this.id = account.id;
             State = account.state;
-            LoadMessageDelegate = new LoadMessageItem(LoadMessage);
-            AddMessageDelegate = new AddMessageItem(AddMessage);
-            this.CreateControl();
+            //this.CreateControl();
             Console.WriteLine("Handler created");
             Console.WriteLine(this.id);
-            textboxWriting.dynamicMode = true;
-            textboxWriting.SetMaximumTextLenght(2021);
             panel_Chat.Click += panelTopRight_Click;
         }
 
@@ -205,11 +209,10 @@ namespace A_Friend.CustomControls
 
         internal void RemoveMessage_Passively(long messagenumber)
         {
-            this.SuspendLayout();
-            chatItems.Remove(messages[messagenumber]);
+            Console.WriteLine("Begin deleting");
             panel_Chat.Controls.Remove(messages[messagenumber]);
-            messages.Remove(messagenumber);
-            this.ResumeLayout();
+            Console.WriteLine("{0},{1}", chatItems.Remove(messages[messagenumber]), messages.Remove(messagenumber));
+            Console.WriteLine("deleted: {0}", messagenumber);
         }
 
         public void RemoveMessage(long messagenumber)

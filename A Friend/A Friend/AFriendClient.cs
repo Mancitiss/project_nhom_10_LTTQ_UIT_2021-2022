@@ -722,11 +722,12 @@ namespace A_Friend
                             {
                                 if (Stream_receive(38, out string panelid))
                                 {
-                                    if (receive_data_automatically(out string messagenumber_int))
+                                    if (receive_data_automatically(out string messagenumber))
                                     {
-                                        if (UIForm.panelChats.ContainsKey(panelid))
+                                        if (UIForm.panelChats.ContainsKey(panelid) && long.TryParse(messagenumber, out long messagenumber_long))
                                         {
-                                            UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].RemoveMessage_Invoke, new object[] { messagenumber_int });
+                                            Console.WriteLine("deleting: {0}", messagenumber_long);
+                                            UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].RemoveMessage_Invoke, new object[] { messagenumber_long });
                                         }
                                     }
                                 }
