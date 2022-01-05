@@ -120,17 +120,23 @@ namespace AFriendServer
 
         private static void exception_handler(KeyValuePair<string, Client> item, string se)
         {
-            if (se.Contains("open and available Connection"))
+            try
             {
-                sql.Open();
-            }
-            else if (se.Contains("Execution Timeout Expired"))
+                if (se.Contains("open and available Connection"))
+                {
+                    sql.Open();
+                }
+                else if (se.Contains("Execution Timeout Expired"))
+                {
+                    sql.Open();
+                }
+                else if (se.Contains("was forcibly closed"))
+                {
+                    shutdown(item.Key);
+                }
+            }catch(Exception e)
             {
-                sql.Open();
-            }
-            else if (se.Contains("was forcibly closed"))
-            {
-                shutdown(item.Key);
+                Console.WriteLine(e.ToString());
             }
         }
 

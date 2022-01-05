@@ -11,11 +11,61 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.IO;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace A_Friend.CustomControls
 {
     public partial class ChatItem : UserControl
     {
+        internal class ModifiedRichTextBox: RichTextBox
+        {
+            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+            
+            [DllImport("user32.dll", EntryPoint = "HideCaret")]
+            public static extern long HideCaret(IntPtr hwnd);
+
+            const int WM_MOUSEWHEEL = 0x020A;
+
+            //thanks to a-clymer's solution
+            protected override void WndProc(ref Message m)
+            {
+                HideCaret(this.Handle);
+                if (m.Msg == WM_MOUSEWHEEL)
+                {
+                    //directly send the message to parent without processing it
+                    //according to https://stackoverflow.com/a/19618100
+                    SendMessage(this.Parent.Handle, m.Msg, m.WParam, m.LParam);
+                    m.Result = IntPtr.Zero;
+                }
+                else base.WndProc(ref m);
+            }
+            internal ModifiedRichTextBox()
+            {
+
+            }
+        }
+
+        [DllImport("user32.dll", CharSet=CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+        const int WM_MOUSEWHEEL = 0x020A;
+
+        //thanks to a-clymer's solution
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM_MOUSEWHEEL)
+            {
+                //directly send the message to parent without processing it
+                //according to https://stackoverflow.com/a/19618100
+                SendMessage(this.Parent.Handle, m.Msg, m.WParam, m.LParam);
+                m.Result = IntPtr.Zero;
+            }
+            else base.WndProc(ref m);
+        }
+
+
+
         private bool showDetail = true;
         public MessageObject messageObject;
 
@@ -97,6 +147,8 @@ namespace A_Friend.CustomControls
                 labelBody.BackColor = panelBody.BackColor;
                 labelBody.BorderStyle = BorderStyle.None;
                 labelBody.ScrollBars = RichTextBoxScrollBars.None;
+                labelBody.ReadOnly = true;
+                labelBody.HideSelection = false;
             }
             else if (this.messageObject.type == 1)
             {
@@ -237,7 +289,7 @@ namespace A_Friend.CustomControls
             if (messageObject != null && messageObject.type == 0)
             {
                 //int maxwidth = this.Width - 200;
-                int maxwidth = this.Parent.Width-this.Parent.Width/5;
+                int maxwidth = this.Parent.Width-2*this.Parent.Width/5;
                 labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
                 SuspendLayout();
                 var size = TextRenderer.MeasureText(labelBody.Text, labelBody.Font, new Size(labelBody.MaximumSize.Width, 0), TextFormatFlags.Default);

@@ -207,6 +207,12 @@ namespace A_Friend.CustomControls
             }
         }
 
+        internal void panelTopRight_Click(object sender, EventArgs e)
+        {
+            //this.OnClick(e);
+            textboxWriting.Focus();
+        }
+
         internal void RemoveMessage_Passively(long messagenumber)
         {
             Console.WriteLine("Begin deleting");
@@ -241,8 +247,6 @@ namespace A_Friend.CustomControls
             messages.Add(message.messagenumber, chatItem);
             chatItem.UpdateDateTime();
             chatItem.BringToFront();
-            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-            chatItem.Click += panelTopRight_Click;
             panel_Chat.ResumeLayout();
             panel_Chat.ScrollControlIntoView(chatItem);
         }
@@ -263,8 +267,6 @@ namespace A_Friend.CustomControls
                 ChatItem chatItem = new ChatItem(message);
                 chatItem.Dock = DockStyle.Top;
                 chatItem.BackColor = panel_Chat.BackColor;
-                chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-                chatItem.Click += panelTopRight_Click;
                 chatItems.Insert(0, chatItem);
                 panel_Chat.Controls.Add(chatItem);
                 chatItem.UpdateDateTime();
@@ -504,11 +506,6 @@ namespace A_Friend.CustomControls
                     }
                 }
             }
-        }
-
-        private void panelTopRight_Click(object sender, EventArgs e)
-        {
-            this.OnClick(e);
         }
     }
 }
