@@ -20,6 +20,9 @@ namespace A_Friend.CustomControls
         byte state;
         Int64 loadedmessagenumber = 0;
 
+        internal bool is_showing;
+        internal int is_form_showing;
+
         Color stateColor = Color.Gainsboro;
         bool locking = false;
         List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
@@ -37,7 +40,7 @@ namespace A_Friend.CustomControls
         internal delegate void RemoveMessageInvoker(long messagenumber);
         internal RemoveMessageInvoker RemoveMessage_Invoke;
 
-        public PanelChat()
+        private void Must_initialize()
         {
             InitializeComponent();
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
@@ -49,16 +52,16 @@ namespace A_Friend.CustomControls
             textboxWriting.SetMaximumTextLenght(2021);
         }
 
+        public PanelChat()
+        {
+            //Must_initialize();
+        }
+
         public PanelChat(Account account)
         {
-            InitializeComponent();
-            LoadMessageDelegate = new LoadMessageItem(LoadMessage);
-            AddMessageDelegate = new AddMessageItem(AddMessage);
-            RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
-            panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-            this.CreateControl();
-            textboxWriting.dynamicMode = true;
-            textboxWriting.SetMaximumTextLenght(2021);
+            Must_initialize();
+            this.is_form_showing = 0;
+            this.is_showing = false;
 
             labelFriendName.Font = ApplicationFont.GetFont(labelFriendName.Font.Size);
             labelState.Font = ApplicationFont.GetFont(labelState.Font.Size);
@@ -71,7 +74,6 @@ namespace A_Friend.CustomControls
             textboxWriting.PlaceholderText = "to " + account.name;
             this.id = account.id;
             State = account.state;
-            //this.CreateControl();
             Console.WriteLine("Handler created");
             Console.WriteLine(this.id);
             panel_Chat.Click += panelTopRight_Click;

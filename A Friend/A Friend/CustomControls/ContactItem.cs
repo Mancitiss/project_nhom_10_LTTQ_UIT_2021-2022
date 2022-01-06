@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Threading;
 
 namespace A_Friend.CustomControls
 {
@@ -41,6 +42,20 @@ namespace A_Friend.CustomControls
             this.FriendName = account.name;
             this.id = account.id;
             State = account.state;
+
+            this.DoubleClick += (s, e) =>
+            {
+                if (0 == Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 1))
+                {
+                    Form form = new Form();
+                    form.Size = new Size(100, 100);
+                    form.FormClosing += (fs, fe) =>
+                    {
+                        Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 0);
+                    };
+                    form.Show();
+                }
+            };
         }
 
         public Image Avatar
