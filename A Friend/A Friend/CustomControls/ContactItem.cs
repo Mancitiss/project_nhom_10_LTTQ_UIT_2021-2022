@@ -43,19 +43,26 @@ namespace A_Friend.CustomControls
             this.id = account.id;
             State = account.state;
 
-            this.DoubleClick += (s, e) =>
+            this.DoubleClick += new EventHandler(Open_chat);
+            this.labelLastMessage.DoubleClick += new EventHandler(Open_chat);
+            this.labelName.DoubleClick += new EventHandler(Open_chat);
+            this.friendPicture.DoubleClick += new EventHandler(Open_chat);
+        }
+
+        private void Open_chat(object sender, EventArgs e)
+        {
+            if (0 == Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 1))
             {
-                if (0 == Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 1))
+                Form form = new Form();
+                form.ClientSize = new Size(300, 450);
+                form.Controls.Add(Program.mainform.panelChats[id]);
+                form.FormClosing += (fs, fe) =>
                 {
-                    Form form = new Form();
-                    form.Size = new Size(100, 100);
-                    form.FormClosing += (fs, fe) =>
-                    {
-                        Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 0);
-                    };
-                    form.Show();
-                }
-            };
+                    Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 0);
+                    this.Controls.Add(Program.mainform.panelChats[id]);
+                };
+                form.Show();
+            }
         }
 
         public Image Avatar
@@ -252,7 +259,7 @@ namespace A_Friend.CustomControls
 
         private void ContactItem_Click(object sender, EventArgs e)
         {
-            if (this.Parent.Parent.Parent is FormApplication)
+            if (this.Parent.Parent.Parent is FormApplication && Program.mainform.panelChats[id].is_form_showing == 0)
             {
                 FormApplication parent = this.Parent.Parent.Parent as FormApplication;
                 if (parent.currentContactItem != null && parent.currentContactItem != this)
