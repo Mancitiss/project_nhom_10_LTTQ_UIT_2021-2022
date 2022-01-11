@@ -35,17 +35,17 @@ namespace A_Friend.CustomControls
             this.labelState = new System.Windows.Forms.Label();
             this.labelFriendName = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.friendPicture = new A_Friend.CustomControls.CirclePictureBox();
-            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panel_Chat = new System.Windows.Forms.Panel();
             this.panelBottomRight = new System.Windows.Forms.Panel();
-            this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
-            this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.timerChat = new System.Windows.Forms.Timer(this.components);
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.textboxWriting = new A_Friend.CustomControls.CustomTextBox();
+            this.buttonSend = new A_Friend.CustomControls.CustomButton();
+            this.friendPicture = new A_Friend.CustomControls.CirclePictureBox();
+            this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panelTopRight.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.panelBottomRight.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
             this.SuspendLayout();
             // 
             // panelTopRight
@@ -98,43 +98,6 @@ namespace A_Friend.CustomControls
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
-            // friendPicture
-            // 
-            this.friendPicture.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
-            this.friendPicture.BorderColor = System.Drawing.Color.GhostWhite;
-            this.friendPicture.BorderColor2 = System.Drawing.Color.Snow;
-            this.friendPicture.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            this.friendPicture.BorderSize = 0;
-            this.friendPicture.GradientAngle = 50F;
-            this.friendPicture.Image = global::A_Friend.Properties.Resources.newUser;
-            this.friendPicture.Location = new System.Drawing.Point(18, 7);
-            this.friendPicture.Name = "friendPicture";
-            this.friendPicture.Size = new System.Drawing.Size(45, 45);
-            this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.friendPicture.TabIndex = 1;
-            this.friendPicture.TabStop = false;
-            this.friendPicture.Click += new System.EventHandler(this.panelTopRight_Click);
-            // 
-            // buttonDelete
-            // 
-            this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
-            this.buttonDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDelete.BackgroundImage")));
-            this.buttonDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonDelete.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.buttonDelete.BorderRadius = 15;
-            this.buttonDelete.BorderSize = 0;
-            this.buttonDelete.FlatAppearance.BorderSize = 0;
-            this.buttonDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonDelete.ForeColor = System.Drawing.Color.White;
-            this.buttonDelete.Location = new System.Drawing.Point(860, 10);
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(40, 40);
-            this.buttonDelete.TabIndex = 0;
-            this.toolTip.SetToolTip(this.buttonDelete, "Delete conversation");
-            this.buttonDelete.UseVisualStyleBackColor = false;
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-            // 
             // panel_Chat
             // 
             this.panel_Chat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -146,7 +109,7 @@ namespace A_Friend.CustomControls
             this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
             this.panel_Chat.Name = "panel_Chat";
             this.panel_Chat.Padding = new System.Windows.Forms.Padding(2);
-            this.panel_Chat.Size = new System.Drawing.Size(912, 564);
+            this.panel_Chat.Size = new System.Drawing.Size(912, 533);
             this.panel_Chat.TabIndex = 2;
             this.panel_Chat.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_Chat_Scroll);
             this.panel_Chat.Click += new System.EventHandler(this.panel_Chat_Click);
@@ -169,6 +132,11 @@ namespace A_Friend.CustomControls
             this.panelBottomRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelBottomRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomRight_Paint);
             this.panelBottomRight.Resize += new System.EventHandler(this.panelBottomRight_Resize);
+            // 
+            // timerChat
+            // 
+            this.timerChat.Interval = 7000;
+            this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
             // 
             // textboxWriting
             // 
@@ -218,10 +186,42 @@ namespace A_Friend.CustomControls
             this.buttonSend.UseVisualStyleBackColor = false;
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
-            // timerChat
+            // friendPicture
             // 
-            this.timerChat.Interval = 7000;
-            this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
+            this.friendPicture.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
+            this.friendPicture.BorderColor = System.Drawing.Color.GhostWhite;
+            this.friendPicture.BorderColor2 = System.Drawing.Color.Snow;
+            this.friendPicture.BorderLineStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            this.friendPicture.BorderSize = 0;
+            this.friendPicture.GradientAngle = 50F;
+            this.friendPicture.Image = global::A_Friend.Properties.Resources.newUser;
+            this.friendPicture.Location = new System.Drawing.Point(18, 7);
+            this.friendPicture.Name = "friendPicture";
+            this.friendPicture.Size = new System.Drawing.Size(45, 45);
+            this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.friendPicture.TabIndex = 1;
+            this.friendPicture.TabStop = false;
+            this.friendPicture.Click += new System.EventHandler(this.panelTopRight_Click);
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.buttonDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.buttonDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDelete.BackgroundImage")));
+            this.buttonDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonDelete.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.buttonDelete.BorderRadius = 15;
+            this.buttonDelete.BorderSize = 0;
+            this.buttonDelete.FlatAppearance.BorderSize = 0;
+            this.buttonDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonDelete.ForeColor = System.Drawing.Color.White;
+            this.buttonDelete.Location = new System.Drawing.Point(860, 10);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(40, 40);
+            this.buttonDelete.TabIndex = 0;
+            this.toolTip.SetToolTip(this.buttonDelete, "Delete conversation");
+            this.buttonDelete.UseVisualStyleBackColor = false;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
             // PanelChat
             // 
@@ -234,12 +234,12 @@ namespace A_Friend.CustomControls
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "PanelChat";
-            this.Size = new System.Drawing.Size(912, 712);
+            this.Size = new System.Drawing.Size(912, 681);
             this.Load += new System.EventHandler(this.PanelChat_Load);
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).EndInit();
             this.panelBottomRight.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).EndInit();
             this.ResumeLayout(false);
 
         }
