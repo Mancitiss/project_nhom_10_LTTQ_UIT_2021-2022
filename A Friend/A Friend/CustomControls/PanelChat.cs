@@ -446,7 +446,7 @@ namespace A_Friend.CustomControls
 
         private void textboxWriting_SizeChanged(object sender, EventArgs e)
         {
-            panelBottomRight.Height = textboxWriting.Height + textboxWriting.Top * 2;
+            panelBottomRight.Height = textboxWriting.Height + buttonSend.Height;
             panelBottomRight.Location = new Point(0, this.Height - panelBottomRight.Height);
             panel_Chat.Height = this.Height - panelBottomRight.Height - panelTopRight.Height;
         }
