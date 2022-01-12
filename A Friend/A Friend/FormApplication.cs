@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -49,6 +53,8 @@ namespace A_Friend
         private string searchText = "";
         private bool loaded = false;
         private bool priv = false;
+
+        internal static ConcurrentDictionary<string, Form> subForms = new ConcurrentDictionary<string, Form>();
 
         public FormApplication()
         {
@@ -428,8 +434,11 @@ namespace A_Friend
         private void LogoutButton_Click_1(object sender, EventArgs e)
         {
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2004"));
-
-            this.Hide();
+            foreach(Form f in subForms.Values)
+            {
+                f.Close();
+            }
+            this.Close();
             FormLogin lg = new FormLogin();
             lg.Show();
             Program.mainform = null;

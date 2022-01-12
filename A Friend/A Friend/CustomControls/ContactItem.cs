@@ -59,8 +59,9 @@ namespace A_Friend.CustomControls
                 form.FormClosing += (fs, fe) =>
                 {
                     Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 0);
-                    this.Controls.Add(Program.mainform.panelChats[id]);
+                    form.Controls.Remove(Program.mainform.panelChats[id]);
                 };
+                FormApplication.subForms.TryAdd(ID, form);
                 form.Show();
             }
         }
