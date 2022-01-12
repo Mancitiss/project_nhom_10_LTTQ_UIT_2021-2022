@@ -59,7 +59,7 @@ namespace A_Friend.CustomControls
                 form.Controls.Add(Program.mainform.panelChats[id]);
                 form.FormClosing += (fs, fe) =>
                 {
-                    Program.mainform.panelChats[id].is_form_showing--;
+                    Program.mainform.panelChats[id].is_form_showing = 0;
                     form.Controls.Remove(Program.mainform.panelChats[id]);
                     FormApplication.subForms.TryRemove(ID, out Form form1);
                 };
