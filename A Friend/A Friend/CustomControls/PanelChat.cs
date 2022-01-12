@@ -54,7 +54,7 @@ namespace A_Friend.CustomControls
 
         public PanelChat()
         {
-            //Must_initialize();
+            Must_initialize();
         }
 
         public PanelChat(Account account)

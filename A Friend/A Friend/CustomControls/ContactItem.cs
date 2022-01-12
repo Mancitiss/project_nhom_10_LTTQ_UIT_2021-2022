@@ -51,15 +51,17 @@ namespace A_Friend.CustomControls
 
         private void Open_chat(object sender, EventArgs e)
         {
-            if (0 == Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 1))
+            Program.mainform.panelChats[id].is_form_showing++;
+            if (1 == Program.mainform.panelChats[id].is_form_showing)
             {
                 Form form = new Form();
                 form.ClientSize = new Size(300, 450);
                 form.Controls.Add(Program.mainform.panelChats[id]);
                 form.FormClosing += (fs, fe) =>
                 {
-                    Interlocked.Exchange(ref Program.mainform.panelChats[id].is_form_showing, 0);
+                    Program.mainform.panelChats[id].is_form_showing--;
                     form.Controls.Remove(Program.mainform.panelChats[id]);
+                    FormApplication.subForms.TryRemove(ID, out Form form1);
                 };
                 FormApplication.subForms.TryAdd(ID, form);
                 form.Show();
@@ -260,7 +262,7 @@ namespace A_Friend.CustomControls
 
         private void ContactItem_Click(object sender, EventArgs e)
         {
-            if (this.Parent.Parent.Parent is FormApplication && Program.mainform.panelChats[id].is_form_showing == 0)
+            if (this.Parent.Parent.Parent is FormApplication)
             {
                 FormApplication parent = this.Parent.Parent.Parent as FormApplication;
                 if (parent.currentContactItem != null && parent.currentContactItem != this)
@@ -269,7 +271,7 @@ namespace A_Friend.CustomControls
                 }
                 parent.currentContactItem = this;
                 Clicked = true;
-            } 
+            }
         }
         protected override void OnMouseEnter(EventArgs e)
         {

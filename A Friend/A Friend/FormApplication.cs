@@ -225,30 +225,32 @@ namespace A_Friend
 
                     contactItem.Click += delegate
                     {
-                        ShowPanelChat(account.id);
-                    //contactItem.Unread = true;
-                    panelChat.ScrollToBottom();
+                        if (!FormApplication.subForms.TryGetValue(account.id, out Form form1)) {
+                            ShowPanelChat(account.id);
+                            //contactItem.Unread = true;
+                            panelChat.ScrollToBottom();
 
-                        if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
-                        {
-                            check = false;
-                            customTextBoxSearch.Texts = "";
-                            this.ActiveControl = contactItem;
-                        //customTextBoxSearch.SetPlaceHolder();
-                        panelContact2.Controls.Clear();
-                            panelContact.Controls.Clear();
-                            foreach (KeyValuePair<int, string> i in orderOfContactItems)
+                            if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
                             {
-                                panelContact.Controls.Add(contactItems[i.Value]);
+                                check = false;
+                                customTextBoxSearch.Texts = "";
+                                this.ActiveControl = contactItem;
+                                //customTextBoxSearch.SetPlaceHolder();
+                                panelContact2.Controls.Clear();
+                                panelContact.Controls.Clear();
+                                foreach (KeyValuePair<int, string> i in orderOfContactItems)
+                                {
+                                    panelContact.Controls.Add(contactItems[i.Value]);
+                                }
+                                panelContact.BringToFront();
+                                check = true;
                             }
-                            panelContact.BringToFront();
-                            check = true;
-                        }
 
-                        if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
-                        {
-                            contactItem.Unread = false;
-                            AFriendClient.Queue_command(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                            if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                            {
+                                contactItem.Unread = false;
+                                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                            } 
                         }
                     };
 

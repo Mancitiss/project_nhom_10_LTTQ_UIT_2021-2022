@@ -43,6 +43,7 @@ namespace A_Friend.CustomControls
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.friendPicture = new A_Friend.CustomControls.CirclePictureBox();
             this.buttonDelete = new A_Friend.CustomControls.CustomButton();
+            this.customButton1 = new A_Friend.CustomControls.CustomButton();
             this.panelTopRight.SuspendLayout();
             this.panelBottomRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
@@ -119,9 +120,10 @@ namespace A_Friend.CustomControls
             // 
             // panelBottomRight
             // 
-            this.panelBottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panelBottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBottomRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.panelBottomRight.Controls.Add(this.customButton1);
             this.panelBottomRight.Controls.Add(this.textboxWriting);
             this.panelBottomRight.Controls.Add(this.buttonSend);
             this.panelBottomRight.Location = new System.Drawing.Point(0, 592);
@@ -223,6 +225,27 @@ namespace A_Friend.CustomControls
             this.buttonDelete.UseVisualStyleBackColor = false;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
+            // customButton1
+            // 
+            this.customButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.customButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.customButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("customButton1.BackgroundImage")));
+            this.customButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.customButton1.BorderColor = System.Drawing.Color.Empty;
+            this.customButton1.BorderRadius = 15;
+            this.customButton1.BorderSize = 0;
+            this.customButton1.FlatAppearance.BorderSize = 0;
+            this.customButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.customButton1.ForeColor = System.Drawing.Color.White;
+            this.customButton1.Location = new System.Drawing.Point(1, 48);
+            this.customButton1.MaximumSize = new System.Drawing.Size(40, 40);
+            this.customButton1.MinimumSize = new System.Drawing.Size(40, 40);
+            this.customButton1.Name = "customButton1";
+            this.customButton1.Size = new System.Drawing.Size(40, 40);
+            this.customButton1.TabIndex = 3;
+            this.toolTip.SetToolTip(this.customButton1, "Send");
+            this.customButton1.UseVisualStyleBackColor = false;
+            // 
             // PanelChat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -258,5 +281,6 @@ namespace A_Friend.CustomControls
         private System.Windows.Forms.Timer timerChat;
         private System.Windows.Forms.Label labelState;
         private System.Windows.Forms.ToolTip toolTip;
+        private CustomButton customButton1;
     }
 }
