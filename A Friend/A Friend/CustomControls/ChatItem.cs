@@ -292,12 +292,22 @@ namespace A_Friend.CustomControls
                 int maxwidth = this.Parent.Width-2*this.Parent.Width/5;
                 labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
                 SuspendLayout();
+                Label temp = new Label();
+                temp.Font = labelBody.Font;
+                temp.AutoSize = true;
+                temp.MaximumSize = new Size(labelBody.MaximumSize.Width, labelBody.MaximumSize.Height);
+                temp.Text = labelBody.Text;
+                this.Controls.Add(temp);
+                var size = temp.Size;
+                this.Controls.Remove(temp);
+                /*
                 var size = TextRenderer.MeasureText(labelBody.Text, labelBody.Font, new Size(labelBody.MaximumSize.Width, 0), TextFormatFlags.Default);
                 if (size.Width > labelBody.MaximumSize.Width)
                 {
                     size.Height = (size.Width / labelBody.MaximumSize.Width) * 19 + 19;
                     size.Width = labelBody.MaximumSize.Width;
                 }
+                */
                 //the old size = measure("something", font) always return (299, 19)
                 Console.WriteLine("{0}:{1}", size.Width, size.Height);
 
