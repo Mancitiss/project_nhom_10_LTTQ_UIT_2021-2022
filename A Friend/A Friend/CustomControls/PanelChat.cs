@@ -48,8 +48,8 @@ namespace A_Friend.CustomControls
             RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             this.CreateControl();
-            textboxWriting.dynamicMode = true;
-            textboxWriting.SetMaximumTextLenght(2021);
+            //textboxWriting.dynamicMode = true;
+            //textboxWriting.SetMaximumTextLenght(2021);
         }
 
         public PanelChat()
@@ -71,7 +71,7 @@ namespace A_Friend.CustomControls
             this.DoubleBuffered = true;
             this.Name = "panelChat_" + account.id;
             labelFriendName.Text = account.name;
-            textboxWriting.PlaceholderText = "to " + account.name;
+            //textboxWriting.PlaceholderText = "to " + account.name;
             this.id = account.id;
             State = account.state;
             Console.WriteLine("Handler created");
@@ -286,37 +286,43 @@ namespace A_Friend.CustomControls
             textboxWriting.Select();
             if (e.KeyCode == Keys.Enter /*&& !locking*/ && !(e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter))
             {
-                if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                if (!string.IsNullOrWhiteSpace(textboxWriting.Text))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                    textboxWriting.Texts = "";
-                    textboxWriting.RemovePlaceHolder();
+                    AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Text);
+                    textboxWriting.Clear();
+                    //textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
-                    textboxWriting.Multiline = false;
+                    //textboxWriting.Multiline = false;
+                } else
+                {
+                    textboxWriting.Clear();
                 }
             }
-            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control) 
+            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
             {
                 Thread temp = new Thread(() => { do_shit(sender, e); });
                 temp.IsBackground = true;
                 temp.SetApartmentState(ApartmentState.STA);
                 temp.Start();
                 e.Handled = true;
-                //e.SuppressKeyPress = true;
+                e.SuppressKeyPress = true;
+                //this.textboxWriting.Paste();
             }
         }
 
         private void do_shit(object sender, KeyEventArgs e)
         {
             Console.WriteLine("Doing");
-            /*
             if (Clipboard.ContainsText())
             {
                 Console.WriteLine("Text detected");
-                this.textboxWriting.Texts += Clipboard.GetText();
+                //this.textboxWriting.Text += Clipboard.GetText();
+                this.textboxWriting.Paste(DataFormats.GetFormat("Text"));
                 //textboxWriting.
             }
-            else */if (Clipboard.ContainsImage())
+            else if (Clipboard.ContainsImage())
             {
                 Console.WriteLine("Image detected");
                 Image img = Clipboard.GetImage();
@@ -341,12 +347,12 @@ namespace A_Friend.CustomControls
 
         public void buttonSend_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textboxWriting.Texts) /*&& !locking*/)
+            if (!string.IsNullOrEmpty(textboxWriting.Text.TrimEnd()) /*&& !locking*/)
             {
-                AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                textboxWriting.Texts = "";
-                textboxWriting.RemovePlaceHolder();
-                textboxWriting.Multiline = false;
+                AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
+                textboxWriting.Text = "";
+                //textboxWriting.RemovePlaceHolder();
+                //textboxWriting.Multiline = false;
             }
         }
 
@@ -446,7 +452,7 @@ namespace A_Friend.CustomControls
 
         private void textboxWriting_SizeChanged(object sender, EventArgs e)
         {
-            panelBottomRight.Height = textboxWriting.Height + buttonSend.Height;
+            panelBottomRight.Height = textboxWriting.Height + buttonSend.Height; // fix this line
             panelBottomRight.Location = new Point(0, this.Height - panelBottomRight.Height);
             panel_Chat.Height = this.Height - panelBottomRight.Height - panelTopRight.Height;
         }
@@ -467,7 +473,7 @@ namespace A_Friend.CustomControls
 
         private void panelBottomRight_Resize(object sender, EventArgs e)
         {
-            textboxWriting.DynamicResize();
+            //textboxWriting.DynamicResize();
             panelBottomRight.Invalidate();
         }
 
@@ -481,7 +487,7 @@ namespace A_Friend.CustomControls
 
         private void textboxWriting__TextChanged(object sender, EventArgs e)
         {
-            textboxWriting.Multiline = true;
+            //textboxWriting.Multiline = true;
             this.OnClick(e);
         }
 
