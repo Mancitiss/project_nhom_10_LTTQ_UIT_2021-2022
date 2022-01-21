@@ -64,9 +64,7 @@ namespace A_Friend.CustomControls
             else base.WndProc(ref m);
         }
 
-
-
-        private bool showDetail = true;
+        private bool showDetail = false;
         public MessageObject messageObject;
 
         public string ImageToString(string path)
@@ -125,9 +123,6 @@ namespace A_Friend.CustomControls
             (new Bitmap(image)).Save(tempFile, ImageFormat.Png);
             System.Diagnostics.Process.Start(tempFile);
         }
-
-        
-        
 
         internal Image image;
 
@@ -268,10 +263,12 @@ namespace A_Friend.CustomControls
                 if (value)
                 {
                     this.Height = 5 + panelTop.Height + panelBottom.Height;
+                    this.Invalidate();
                 }
                 else
                 {
                     this.Height = 5 + panelTop.Height;
+                    this.Invalidate();
                 }
             }
         }
@@ -332,7 +329,7 @@ namespace A_Friend.CustomControls
                 {
                     this.Height = 5 + panelTop.Height;
                 }
-                panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
+                panelBottom.Location = new Point(panelTop.Left, 0);
 
                 ResumeLayout();
             }

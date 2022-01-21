@@ -25,8 +25,9 @@ namespace A_Friend.CustomControls
 
         Color stateColor = Color.Gainsboro;
         bool locking = false;
-        List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
-        Dictionary<long, ChatItem> messages = new Dictionary<long, ChatItem>();
+        //List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
+        internal Dictionary<long, ChatItem> messages = new Dictionary<long, ChatItem>();
+        internal Int64 currentmin = -1, currentmax = -1;
         ChatItem currentChatItem;
         bool currentChatItemShowing;
         public bool isloadingoldmessages = false;
@@ -198,13 +199,13 @@ namespace A_Friend.CustomControls
         {
             get
             {
-                if (chatItems.Count == 0)
+                if (messages.Count == 0)
                 {
                     return DateTime.Now;
                 }
                 else
                 {
-                    return chatItems[chatItems.Count - 1].messageObject.timesent;
+                    return messages[currentmax].messageObject.timesent;
                 }
             }
         }
@@ -219,38 +220,56 @@ namespace A_Friend.CustomControls
         {
             Console.WriteLine("Begin deleting");
             panel_Chat.Controls.Remove(messages[messagenumber]);
-            Console.WriteLine("{0},{1}", chatItems.Remove(messages[messagenumber]), messages.Remove(messagenumber));
+            Console.WriteLine("{0},{1}", /*chatItems.Remove(messages[messagenumber]),*/ messages.Remove(messagenumber));
             Console.WriteLine("deleted: {0}", messagenumber);
         }
 
         public void RemoveMessage(long messagenumber)
         {
-            chatItems.Remove(messages[messagenumber]);
+            //chatItems.Remove(messages[messagenumber]);
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
             // code to remove message
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
+        protected int timi = 240; // this is the elapsed time between 2 message needed to show timer
+
         public void AddMessage(MessageObject message)
         {
-            if (messages.ContainsKey(message.messagenumber))
+            try
             {
-                Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
-                return;
+                if (messages.ContainsKey(message.messagenumber))
+                {
+                    Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
+                    return;
+                }
+                if (messages.ContainsKey(message.messagenumber - 1))
+                {
+                    Console.WriteLine("Ton tai tin nhan phia truoc");
+                }
+                if (currentmin == -1 || currentmin > message.messagenumber) currentmin = message.messagenumber;
+                if (currentmax == -1 || currentmax < message.messagenumber) currentmax = message.messagenumber;
+                panel_Chat.SuspendLayout();
+                ChatItem chatItem = new ChatItem(message);
+                chatItem.Dock = DockStyle.Top;
+                chatItem.BackColor = panel_Chat.BackColor;
+                //chatItems.Add(chatItem);
+                if (!messages.ContainsKey(message.messagenumber - 1) || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
+                {
+                    chatItem.ShowDetail = true;
+                }
+                messages.Add(message.messagenumber, chatItem);
+                panel_Chat.Controls.Add(chatItem);
+                chatItem.UpdateDateTime();
+                chatItem.BringToFront();
+                panel_Chat.ResumeLayout();
+                panel_Chat.ScrollControlIntoView(chatItem);
             }
-
-            panel_Chat.SuspendLayout();
-            ChatItem chatItem = new ChatItem(message);
-            chatItem.Dock = DockStyle.Top;
-            chatItem.BackColor = panel_Chat.BackColor;
-            chatItems.Add(chatItem);
-            panel_Chat.Controls.Add(chatItem);
-            messages.Add(message.messagenumber, chatItem);
-            chatItem.UpdateDateTime();
-            chatItem.BringToFront();
-            panel_Chat.ResumeLayout();
-            panel_Chat.ScrollControlIntoView(chatItem);
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         private void AddMessageToTop(MessageObject message)
@@ -260,6 +279,8 @@ namespace A_Friend.CustomControls
                 Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
                 return;
             }
+            if (currentmin == -1 || currentmin > message.messagenumber) currentmin = message.messagenumber;
+            if (currentmax == -1 || currentmax < message.messagenumber) currentmax = message.messagenumber;
             //await Task.Delay(5);
             this.loadedmessagenumber = message.messagenumber;
             Console.WriteLine(this.loadedmessagenumber);
@@ -269,10 +290,15 @@ namespace A_Friend.CustomControls
                 ChatItem chatItem = new ChatItem(message);
                 chatItem.Dock = DockStyle.Top;
                 chatItem.BackColor = panel_Chat.BackColor;
-                chatItems.Insert(0, chatItem);
+                //chatItems.Insert(0, chatItem);
+                chatItem.ShowDetail = true;
+                if (messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
+                {
+                    messages[message.messagenumber + 1].ShowDetail = false;
+                }
+                messages.Add(message.messagenumber, chatItem);
                 panel_Chat.Controls.Add(chatItem);
                 chatItem.UpdateDateTime();
-                messages.Add(message.messagenumber, chatItem);
                 panel_Chat.ResumeLayout();
             }catch (Exception e)
             {
@@ -405,9 +431,9 @@ namespace A_Friend.CustomControls
 
         public string GetLastMessage()
         {
-            if (chatItems.Count == 0)
+            if (messages.Count == 0)
                 return "New conversation!";
-            var messageObject = chatItems[chatItems.Count - 1].messageObject;
+            var messageObject = messages[currentmax].messageObject;
             if (messageObject.type == 0)
             {
                 return messageObject.message;
@@ -420,16 +446,16 @@ namespace A_Friend.CustomControls
         }
         public string GetFirstMessage()
         {
-            if (chatItems.Count == 0)
+            if (messages.Count == 0)
                 return "";
-            return chatItems[0].messageObject.message;
+            return messages[currentmin].messageObject.message;
         }
 
         public bool IsLastMessageFromYou()
         {
             if (panel_Chat.Controls.Count == 0)
                 return true;
-            ChatItem message = chatItems.Last();
+            ChatItem message = messages[currentmax];
             if (message.IsMyMessage())
                 return true;
             return false;
@@ -452,7 +478,7 @@ namespace A_Friend.CustomControls
 
         private void textboxWriting_SizeChanged(object sender, EventArgs e)
         {
-            panelBottomRight.Height = textboxWriting.Height + buttonSend.Height; // fix this line
+            panelBottomRight.Height = textboxWriting.Height + 6 + buttonSend.Height; // fix this line, 6 is the padding height between textboxwriting and buttonSend
             panelBottomRight.Location = new Point(0, this.Height - panelBottomRight.Height);
             panel_Chat.Height = this.Height - panelBottomRight.Height - panelTopRight.Height;
         }

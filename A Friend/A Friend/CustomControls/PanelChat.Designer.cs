@@ -110,7 +110,7 @@ namespace A_Friend.CustomControls
             this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
             this.panel_Chat.Name = "panel_Chat";
             this.panel_Chat.Padding = new System.Windows.Forms.Padding(2);
-            this.panel_Chat.Size = new System.Drawing.Size(912, 454);
+            this.panel_Chat.Size = new System.Drawing.Size(912, 474);
             this.panel_Chat.TabIndex = 2;
             this.panel_Chat.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_Chat_Scroll);
             this.panel_Chat.Click += new System.EventHandler(this.panel_Chat_Click);
@@ -126,10 +126,10 @@ namespace A_Friend.CustomControls
             this.panelBottomRight.Controls.Add(this.customButton1);
             this.panelBottomRight.Controls.Add(this.textboxWriting);
             this.panelBottomRight.Controls.Add(this.buttonSend);
-            this.panelBottomRight.Location = new System.Drawing.Point(0, 514);
+            this.panelBottomRight.Location = new System.Drawing.Point(0, 534);
             this.panelBottomRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottomRight.Name = "panelBottomRight";
-            this.panelBottomRight.Size = new System.Drawing.Size(912, 164);
+            this.panelBottomRight.Size = new System.Drawing.Size(912, 144);
             this.panelBottomRight.TabIndex = 3;
             this.panelBottomRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelBottomRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomRight_Paint);
@@ -153,10 +153,10 @@ namespace A_Friend.CustomControls
             this.customButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.customButton1.ForeColor = System.Drawing.Color.White;
             this.customButton1.Location = new System.Drawing.Point(1, 126);
-            this.customButton1.MaximumSize = new System.Drawing.Size(40, 40);
-            this.customButton1.MinimumSize = new System.Drawing.Size(40, 40);
+            this.customButton1.MaximumSize = new System.Drawing.Size(40, 20);
+            this.customButton1.MinimumSize = new System.Drawing.Size(40, 20);
             this.customButton1.Name = "customButton1";
-            this.customButton1.Size = new System.Drawing.Size(40, 40);
+            this.customButton1.Size = new System.Drawing.Size(40, 20);
             this.customButton1.TabIndex = 3;
             this.toolTip.SetToolTip(this.customButton1, "Send");
             this.customButton1.UseVisualStyleBackColor = false;
@@ -166,27 +166,19 @@ namespace A_Friend.CustomControls
             this.textboxWriting.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textboxWriting.BackColor = System.Drawing.SystemColors.Window;
-            //this.textboxWriting.BorderColor = System.Drawing.SystemColors.Control;
-            //this.textboxWriting.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(161)))), ((int)(((byte)(252)))));
-            //this.textboxWriting.BorderRadius = 20;
-            //this.textboxWriting.BorderSize = 3;
             this.textboxWriting.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textboxWriting.Location = new System.Drawing.Point(0, 0);
             this.textboxWriting.Margin = new System.Windows.Forms.Padding(0);
             this.textboxWriting.Multiline = true;
             this.textboxWriting.Name = "textboxWriting";
             this.textboxWriting.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
-            //this.textboxWriting.PasswordChar = false;
-            //this.textboxWriting.PlaceholderColor = System.Drawing.Color.DarkGray;
-            //this.textboxWriting.PlaceholderText = "To ...";
             this.textboxWriting.Size = new System.Drawing.Size(912, 120);
             this.textboxWriting.TabIndex = 2;
             this.textboxWriting.Text = "";
-            //this.textboxWriting.UnderlinedStyle = false;
-            this.textboxWriting.TextChanged += new System.EventHandler(this.textboxWriting__TextChanged);
-            this.textboxWriting.SizeChanged += new System.EventHandler(this.textboxWriting_SizeChanged);
             this.textboxWriting.Click += new System.EventHandler(this.panelTopRight_Click);
             this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
+            this.textboxWriting.TextChanged += new System.EventHandler(this.textboxWriting__TextChanged);
+            this.textboxWriting.SizeChanged += new System.EventHandler(this.textboxWriting_SizeChanged);
             // 
             // buttonSend
             // 
@@ -201,10 +193,10 @@ namespace A_Friend.CustomControls
             this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonSend.ForeColor = System.Drawing.Color.White;
             this.buttonSend.Location = new System.Drawing.Point(872, 126);
-            this.buttonSend.MaximumSize = new System.Drawing.Size(40, 40);
-            this.buttonSend.MinimumSize = new System.Drawing.Size(40, 40);
+            this.buttonSend.MaximumSize = new System.Drawing.Size(40, 20);
+            this.buttonSend.MinimumSize = new System.Drawing.Size(40, 20);
             this.buttonSend.Name = "buttonSend";
-            this.buttonSend.Size = new System.Drawing.Size(40, 40);
+            this.buttonSend.Size = new System.Drawing.Size(40, 20);
             this.buttonSend.TabIndex = 0;
             this.toolTip.SetToolTip(this.buttonSend, "Send");
             this.buttonSend.UseVisualStyleBackColor = false;

@@ -54,8 +54,10 @@ namespace A_Friend.CustomControls
             Program.mainform.panelChats[id].is_form_showing++;
             if (1 == Program.mainform.panelChats[id].is_form_showing)
             {
-                Form form = new Form();
+                SnapForm form = new SnapForm();
                 form.ClientSize = new Size(300, 450);
+                form.FormBorderStyle = FormBorderStyle.FixedSingle;
+                form.MaximizeBox = false;
                 form.Controls.Add(Program.mainform.panelChats[id]);
                 form.FormClosing += (fs, fe) =>
                 {
@@ -64,7 +66,10 @@ namespace A_Friend.CustomControls
                     FormApplication.subForms.TryRemove(ID, out Form form1);
                 };
                 FormApplication.subForms.TryAdd(ID, form);
-                form.Show();
+                form.Show(); 
+                if (Program.mainform.panelChats[id].messages.Count > 0)
+                    (form.Controls[0] as PanelChat).panel_Chat.ScrollControlIntoView(
+                        (form.Controls[0] as PanelChat).messages[(form.Controls[0] as PanelChat).currentmax]);
             }
         }
 
