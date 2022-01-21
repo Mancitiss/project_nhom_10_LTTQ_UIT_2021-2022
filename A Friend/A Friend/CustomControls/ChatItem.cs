@@ -11,12 +11,60 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.IO;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace A_Friend.CustomControls
 {
     public partial class ChatItem : UserControl
     {
-        private bool showDetail = true;
+        internal class ModifiedRichTextBox: RichTextBox
+        {
+            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+            
+            [DllImport("user32.dll", EntryPoint = "HideCaret")]
+            public static extern long HideCaret(IntPtr hwnd);
+
+            const int WM_MOUSEWHEEL = 0x020A;
+
+            //thanks to a-clymer's solution
+            protected override void WndProc(ref Message m)
+            {
+                HideCaret(this.Handle);
+                if (m.Msg == WM_MOUSEWHEEL)
+                {
+                    //directly send the message to parent without processing it
+                    //according to https://stackoverflow.com/a/19618100
+                    SendMessage(this.Parent.Handle, m.Msg, m.WParam, m.LParam);
+                    m.Result = IntPtr.Zero;
+                }
+                else base.WndProc(ref m);
+            }
+            internal ModifiedRichTextBox()
+            {
+
+            }
+        }
+
+        [DllImport("user32.dll", CharSet=CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+        const int WM_MOUSEWHEEL = 0x020A;
+
+        //thanks to a-clymer's solution
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM_MOUSEWHEEL)
+            {
+                //directly send the message to parent without processing it
+                //according to https://stackoverflow.com/a/19618100
+                SendMessage(this.Parent.Handle, m.Msg, m.WParam, m.LParam);
+                m.Result = IntPtr.Zero;
+            }
+            else base.WndProc(ref m);
+        }
+
+        private bool showDetail = false;
         public MessageObject messageObject;
 
         public string ImageToString(string path)
@@ -76,9 +124,6 @@ namespace A_Friend.CustomControls
             System.Diagnostics.Process.Start(tempFile);
         }
 
-        
-        
-
         internal Image image;
 
         public ChatItem(MessageObject messageObject)
@@ -91,8 +136,14 @@ namespace A_Friend.CustomControls
 
             if (this.messageObject.type == 0)
             {
+                //this.MaximumSize = new Size(900, int.MaxValue); //this line causes problems!!
                 labelBody.Text = messageObject.message;
                 labelBody.Font = ApplicationFont.GetFont(labelBody.Font.Size);
+                labelBody.BackColor = panelBody.BackColor;
+                labelBody.BorderStyle = BorderStyle.None;
+                labelBody.ScrollBars = RichTextBoxScrollBars.None;
+                labelBody.ReadOnly = true;
+                labelBody.HideSelection = false;
             }
             else if (this.messageObject.type == 1)
             {
@@ -212,10 +263,12 @@ namespace A_Friend.CustomControls
                 if (value)
                 {
                     this.Height = 5 + panelTop.Height + panelBottom.Height;
+                    this.Invalidate();
                 }
                 else
                 {
                     this.Height = 5 + panelTop.Height;
+                    this.Invalidate();
                 }
             }
         }
@@ -232,16 +285,41 @@ namespace A_Friend.CustomControls
         {
             if (messageObject != null && messageObject.type == 0)
             {
-                int maxwidth = this.Width - 200;
+                //int maxwidth = this.Width - 200;
+                int maxwidth = this.Parent.Width-2*this.Parent.Width/5;
                 labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
                 SuspendLayout();
-                var size = TextRenderer.MeasureText("qwertyuiopasdfghjklzxcbnm1234567890", labelBody.Font);
-                if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= size.Height)
+                Label temp = new Label();
+                temp.Font = labelBody.Font;
+                temp.AutoSize = true;
+                temp.MaximumSize = new Size(labelBody.MaximumSize.Width, labelBody.MaximumSize.Height);
+                temp.Text = labelBody.Text;
+                this.Controls.Add(temp);
+                var size = temp.Size;
+                this.Controls.Remove(temp);
+                /*
+                var size = TextRenderer.MeasureText(labelBody.Text, labelBody.Font, new Size(labelBody.MaximumSize.Width, 0), TextFormatFlags.Default);
+                if (size.Width > labelBody.MaximumSize.Width)
+                {
+                    size.Height = (size.Width / labelBody.MaximumSize.Width) * 19 + 19;
+                    size.Width = labelBody.MaximumSize.Width;
+                }
+                */
+                //the old size = measure("something", font) always return (299, 19)
+                Console.WriteLine("{0}:{1}", size.Width, size.Height);
+
+                panelBody.Width = size.Width + 2 * labelBody.Left;
+                panelTop.Height = size.Height + 2 * labelBody.Top;
+                labelBody.Size = new Size(size.Width, size.Height);
+
+                /*
+                if (labelBody.Width <= maxwidth - 2 * labelBody.Left && labelBody.Height <= 19)
                 {
                     panelBody.Width = labelBody.Width + 2 * labelBody.Left;
                 }
                 panelBody.Width = labelBody.Width + 2 * labelBody.Left;
                 panelTop.Height = labelBody.Height + 2 * labelBody.Top;
+                */
 
                 if (showDetail)
                 {
@@ -251,7 +329,8 @@ namespace A_Friend.CustomControls
                 {
                     this.Height = 5 + panelTop.Height;
                 }
-                panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
+                panelBottom.Location = new Point(panelTop.Left, 0);
+
                 ResumeLayout();
             }
             else if (messageObject != null && messageObject.type == 1)

@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -49,6 +53,8 @@ namespace A_Friend
         private string searchText = "";
         private bool loaded = false;
         private bool priv = false;
+
+        internal static ConcurrentDictionary<string, Form> subForms = new ConcurrentDictionary<string, Form>();
 
         public FormApplication()
         {
@@ -219,30 +225,32 @@ namespace A_Friend
 
                     contactItem.Click += delegate
                     {
-                        ShowPanelChat(account.id);
-                    //contactItem.Unread = true;
-                    panelChat.ScrollToBottom();
+                        if (!FormApplication.subForms.TryGetValue(account.id, out Form form1)) {
+                            ShowPanelChat(account.id);
+                            //contactItem.Unread = true;
+                            panelChat.ScrollToBottom();
 
-                        if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
-                        {
-                            check = false;
-                            customTextBoxSearch.Texts = "";
-                            this.ActiveControl = contactItem;
-                        //customTextBoxSearch.SetPlaceHolder();
-                        panelContact2.Controls.Clear();
-                            panelContact.Controls.Clear();
-                            foreach (KeyValuePair<int, string> i in orderOfContactItems)
+                            if (!string.IsNullOrEmpty(customTextBoxSearch.Texts))
                             {
-                                panelContact.Controls.Add(contactItems[i.Value]);
+                                check = false;
+                                customTextBoxSearch.Texts = "";
+                                this.ActiveControl = contactItem;
+                                //customTextBoxSearch.SetPlaceHolder();
+                                panelContact2.Controls.Clear();
+                                panelContact.Controls.Clear();
+                                foreach (KeyValuePair<int, string> i in orderOfContactItems)
+                                {
+                                    panelContact.Controls.Add(contactItems[i.Value]);
+                                }
+                                panelContact.BringToFront();
+                                check = true;
                             }
-                            panelContact.BringToFront();
-                            check = true;
-                        }
 
-                        if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
-                        {
-                            contactItem.Unread = false;
-                            AFriendClient.Queue_command(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                            if (!panelChat.IsLastMessageFromYou() && contactItem.Unread)
+                            {
+                                contactItem.Unread = false;
+                                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("1234" + account.id + "1"));
+                            } 
                         }
                     };
 
@@ -428,8 +436,11 @@ namespace A_Friend
         private void LogoutButton_Click_1(object sender, EventArgs e)
         {
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2004"));
-
-            this.Hide();
+            foreach(Form f in subForms.Values)
+            {
+                f.Close();
+            }
+            this.Close();
             FormLogin lg = new FormLogin();
             lg.Show();
             Program.mainform = null;

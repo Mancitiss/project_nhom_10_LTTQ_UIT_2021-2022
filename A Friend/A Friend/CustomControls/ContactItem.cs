@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Threading;
 
 namespace A_Friend.CustomControls
 {
@@ -41,6 +42,35 @@ namespace A_Friend.CustomControls
             this.FriendName = account.name;
             this.id = account.id;
             State = account.state;
+
+            this.DoubleClick += new EventHandler(Open_chat);
+            this.labelLastMessage.DoubleClick += new EventHandler(Open_chat);
+            this.labelName.DoubleClick += new EventHandler(Open_chat);
+            this.friendPicture.DoubleClick += new EventHandler(Open_chat);
+        }
+
+        private void Open_chat(object sender, EventArgs e)
+        {
+            Program.mainform.panelChats[id].is_form_showing++;
+            if (1 == Program.mainform.panelChats[id].is_form_showing)
+            {
+                SnapForm form = new SnapForm();
+                form.ClientSize = new Size(300, 450);
+                form.FormBorderStyle = FormBorderStyle.FixedSingle;
+                form.MaximizeBox = false;
+                form.Controls.Add(Program.mainform.panelChats[id]);
+                form.FormClosing += (fs, fe) =>
+                {
+                    Program.mainform.panelChats[id].is_form_showing = 0;
+                    form.Controls.Remove(Program.mainform.panelChats[id]);
+                    FormApplication.subForms.TryRemove(ID, out Form form1);
+                };
+                FormApplication.subForms.TryAdd(ID, form);
+                form.Show(); 
+                if (Program.mainform.panelChats[id].messages.Count > 0)
+                    (form.Controls[0] as PanelChat).panel_Chat.ScrollControlIntoView(
+                        (form.Controls[0] as PanelChat).messages[(form.Controls[0] as PanelChat).currentmax]);
+            }
         }
 
         public Image Avatar
@@ -246,7 +276,7 @@ namespace A_Friend.CustomControls
                 }
                 parent.currentContactItem = this;
                 Clicked = true;
-            } 
+            }
         }
         protected override void OnMouseEnter(EventArgs e)
         {

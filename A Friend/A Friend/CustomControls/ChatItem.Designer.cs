@@ -36,9 +36,9 @@ namespace A_Friend.CustomControls
             this.toolTip_DeleteM = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip_Copy = new System.Windows.Forms.ToolTip(this.components);
             this.labelAuthor = new System.Windows.Forms.Label();
+            this.labelBody = new ModifiedRichTextBox();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelBody = new A_Friend.CustomControls.MessagePanel();
-            this.labelBody = new System.Windows.Forms.Label();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelButton.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -121,12 +121,28 @@ namespace A_Friend.CustomControls
             this.labelAuthor.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
             this.labelAuthor.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
+            // labelBody
+            // 
+            this.labelBody.AutoSize = true;
+            this.labelBody.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelBody.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBody.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.labelBody.Location = new System.Drawing.Point(5, 5);
+            this.labelBody.Name = "labelBody";
+            this.labelBody.Size = new System.Drawing.Size(290, 122);
+            this.labelBody.TabIndex = 0;
+            this.labelBody.Text = "labelBody";
+            this.labelBody.Click += new System.EventHandler(this.labelBody_Click);
+            this.labelBody.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
+            this.labelBody.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
+            // 
             // panelTop
             // 
+            this.panelTop.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.panelTop.Controls.Add(this.panelButton);
             this.panelTop.Controls.Add(this.panelBody);
-            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTop.Location = new System.Drawing.Point(15, 5);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelTop.Location = new System.Drawing.Point(15, 28);
             this.panelTop.Margin = new System.Windows.Forms.Padding(0);
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(743, 132);
@@ -150,27 +166,11 @@ namespace A_Friend.CustomControls
             this.panelBody.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
             this.panelBody.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
-            // labelBody
-            // 
-            this.labelBody.AutoSize = true;
-            this.labelBody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelBody.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelBody.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.labelBody.Location = new System.Drawing.Point(5, 5);
-            this.labelBody.Name = "labelBody";
-            this.labelBody.Padding = new System.Windows.Forms.Padding(5);
-            this.labelBody.Size = new System.Drawing.Size(87, 28);
-            this.labelBody.TabIndex = 0;
-            this.labelBody.Text = "labelBody";
-            this.labelBody.Click += new System.EventHandler(this.labelBody_Click);
-            this.labelBody.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
-            this.labelBody.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
-            // 
             // panelBottom
             // 
-            this.panelBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Top)));
             this.panelBottom.Controls.Add(this.labelAuthor);
-            this.panelBottom.Location = new System.Drawing.Point(15, 137);
+            this.panelBottom.Location = new System.Drawing.Point(15, 5);
             this.panelBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
@@ -212,7 +212,7 @@ namespace A_Friend.CustomControls
         private System.Windows.Forms.Button buttonRemove;
         private System.Windows.Forms.ToolTip toolTip_DeleteM;
         private System.Windows.Forms.ToolTip toolTip_Copy;
-        private System.Windows.Forms.Label labelBody;
+        internal ModifiedRichTextBox labelBody;
         private System.Windows.Forms.Label labelAuthor;
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Panel panelBottom;

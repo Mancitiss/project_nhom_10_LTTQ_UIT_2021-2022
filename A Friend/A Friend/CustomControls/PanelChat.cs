@@ -20,10 +20,14 @@ namespace A_Friend.CustomControls
         byte state;
         Int64 loadedmessagenumber = 0;
 
+        internal bool is_showing;
+        internal int is_form_showing;
+
         Color stateColor = Color.Gainsboro;
         bool locking = false;
-        List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
-        Dictionary<double, ChatItem> messages = new Dictionary<double, ChatItem>();
+        //List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
+        internal Dictionary<long, ChatItem> messages = new Dictionary<long, ChatItem>();
+        internal Int64 currentmin = -1, currentmax = -1;
         ChatItem currentChatItem;
         bool currentChatItemShowing;
         public bool isloadingoldmessages = false;
@@ -37,7 +41,7 @@ namespace A_Friend.CustomControls
         internal delegate void RemoveMessageInvoker(long messagenumber);
         internal RemoveMessageInvoker RemoveMessage_Invoke;
 
-        public PanelChat()
+        private void Must_initialize()
         {
             InitializeComponent();
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
@@ -45,13 +49,21 @@ namespace A_Friend.CustomControls
             RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             this.CreateControl();
-            textboxWriting.dynamicMode = true;
-            textboxWriting.SetMaximumTextLenght(2021);
+            //textboxWriting.dynamicMode = true;
+            //textboxWriting.SetMaximumTextLenght(2021);
+        }
+
+        public PanelChat()
+        {
+            Must_initialize();
         }
 
         public PanelChat(Account account)
         {
-            InitializeComponent();
+            Must_initialize();
+            this.is_form_showing = 0;
+            this.is_showing = false;
+
             labelFriendName.Font = ApplicationFont.GetFont(labelFriendName.Font.Size);
             labelState.Font = ApplicationFont.GetFont(labelState.Font.Size);
             textboxWriting.Font = ApplicationFont.GetFont(textboxWriting.Font.Size);
@@ -60,16 +72,11 @@ namespace A_Friend.CustomControls
             this.DoubleBuffered = true;
             this.Name = "panelChat_" + account.id;
             labelFriendName.Text = account.name;
-            textboxWriting.PlaceholderText = "to " + account.name;
+            //textboxWriting.PlaceholderText = "to " + account.name;
             this.id = account.id;
             State = account.state;
-            LoadMessageDelegate = new LoadMessageItem(LoadMessage);
-            AddMessageDelegate = new AddMessageItem(AddMessage);
-            this.CreateControl();
             Console.WriteLine("Handler created");
             Console.WriteLine(this.id);
-            textboxWriting.dynamicMode = true;
-            textboxWriting.SetMaximumTextLenght(2021);
             panel_Chat.Click += panelTopRight_Click;
         }
 
@@ -192,56 +199,77 @@ namespace A_Friend.CustomControls
         {
             get
             {
-                if (chatItems.Count == 0)
+                if (messages.Count == 0)
                 {
                     return DateTime.Now;
                 }
                 else
                 {
-                    return chatItems[chatItems.Count - 1].messageObject.timesent;
+                    return messages[currentmax].messageObject.timesent;
                 }
             }
         }
 
+        internal void panelTopRight_Click(object sender, EventArgs e)
+        {
+            //this.OnClick(e);
+            textboxWriting.Focus();
+        }
+
         internal void RemoveMessage_Passively(long messagenumber)
         {
-            this.SuspendLayout();
-            chatItems.Remove(messages[messagenumber]);
+            Console.WriteLine("Begin deleting");
             panel_Chat.Controls.Remove(messages[messagenumber]);
-            messages.Remove(messagenumber);
-            this.ResumeLayout();
+            Console.WriteLine("{0},{1}", /*chatItems.Remove(messages[messagenumber]),*/ messages.Remove(messagenumber));
+            Console.WriteLine("deleted: {0}", messagenumber);
         }
 
         public void RemoveMessage(long messagenumber)
         {
-            chatItems.Remove(messages[messagenumber]);
+            //chatItems.Remove(messages[messagenumber]);
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
             // code to remove message
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
+        protected int timi = 240; // this is the elapsed time between 2 message needed to show timer
+
         public void AddMessage(MessageObject message)
         {
-            if (messages.ContainsKey(message.messagenumber))
+            try
             {
-                Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
-                return;
+                if (messages.ContainsKey(message.messagenumber))
+                {
+                    Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
+                    return;
+                }
+                if (messages.ContainsKey(message.messagenumber - 1))
+                {
+                    Console.WriteLine("Ton tai tin nhan phia truoc");
+                }
+                if (currentmin == -1 || currentmin > message.messagenumber) currentmin = message.messagenumber;
+                if (currentmax == -1 || currentmax < message.messagenumber) currentmax = message.messagenumber;
+                panel_Chat.SuspendLayout();
+                ChatItem chatItem = new ChatItem(message);
+                chatItem.Dock = DockStyle.Top;
+                chatItem.BackColor = panel_Chat.BackColor;
+                //chatItems.Add(chatItem);
+                if (!messages.ContainsKey(message.messagenumber - 1) || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
+                {
+                    chatItem.ShowDetail = true;
+                }
+                messages.Add(message.messagenumber, chatItem);
+                panel_Chat.Controls.Add(chatItem);
+                chatItem.UpdateDateTime();
+                chatItem.BringToFront();
+                panel_Chat.ResumeLayout();
+                panel_Chat.ScrollControlIntoView(chatItem);
             }
-
-            panel_Chat.SuspendLayout();
-            ChatItem chatItem = new ChatItem(message);
-            chatItem.Dock = DockStyle.Top;
-            chatItem.BackColor = panel_Chat.BackColor;
-            chatItems.Add(chatItem);
-            panel_Chat.Controls.Add(chatItem);
-            messages.Add(message.messagenumber, chatItem);
-            chatItem.UpdateDateTime();
-            chatItem.BringToFront();
-            chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-            chatItem.Click += panelTopRight_Click;
-            panel_Chat.ResumeLayout();
-            panel_Chat.ScrollControlIntoView(chatItem);
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         private void AddMessageToTop(MessageObject message)
@@ -251,6 +279,8 @@ namespace A_Friend.CustomControls
                 Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
                 return;
             }
+            if (currentmin == -1 || currentmin > message.messagenumber) currentmin = message.messagenumber;
+            if (currentmax == -1 || currentmax < message.messagenumber) currentmax = message.messagenumber;
             //await Task.Delay(5);
             this.loadedmessagenumber = message.messagenumber;
             Console.WriteLine(this.loadedmessagenumber);
@@ -260,12 +290,15 @@ namespace A_Friend.CustomControls
                 ChatItem chatItem = new ChatItem(message);
                 chatItem.Dock = DockStyle.Top;
                 chatItem.BackColor = panel_Chat.BackColor;
-                chatItem.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
-                chatItem.Click += panelTopRight_Click;
-                chatItems.Insert(0, chatItem);
+                //chatItems.Insert(0, chatItem);
+                chatItem.ShowDetail = true;
+                if (messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
+                {
+                    messages[message.messagenumber + 1].ShowDetail = false;
+                }
+                messages.Add(message.messagenumber, chatItem);
                 panel_Chat.Controls.Add(chatItem);
                 chatItem.UpdateDateTime();
-                messages.Add(message.messagenumber, chatItem);
                 panel_Chat.ResumeLayout();
             }catch (Exception e)
             {
@@ -279,37 +312,43 @@ namespace A_Friend.CustomControls
             textboxWriting.Select();
             if (e.KeyCode == Keys.Enter /*&& !locking*/ && !(e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter))
             {
-                if (!string.IsNullOrWhiteSpace(textboxWriting.Texts))
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                if (!string.IsNullOrWhiteSpace(textboxWriting.Text))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                    textboxWriting.Texts = "";
-                    textboxWriting.RemovePlaceHolder();
+                    AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Text);
+                    textboxWriting.Clear();
+                    //textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
-                    textboxWriting.Multiline = false;
+                    //textboxWriting.Multiline = false;
+                } else
+                {
+                    textboxWriting.Clear();
                 }
             }
-            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control) 
+            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
             {
                 Thread temp = new Thread(() => { do_shit(sender, e); });
                 temp.IsBackground = true;
                 temp.SetApartmentState(ApartmentState.STA);
                 temp.Start();
                 e.Handled = true;
-                //e.SuppressKeyPress = true;
+                e.SuppressKeyPress = true;
+                //this.textboxWriting.Paste();
             }
         }
 
         private void do_shit(object sender, KeyEventArgs e)
         {
             Console.WriteLine("Doing");
-            /*
             if (Clipboard.ContainsText())
             {
                 Console.WriteLine("Text detected");
-                this.textboxWriting.Texts += Clipboard.GetText();
+                //this.textboxWriting.Text += Clipboard.GetText();
+                this.textboxWriting.Paste(DataFormats.GetFormat("Text"));
                 //textboxWriting.
             }
-            else */if (Clipboard.ContainsImage())
+            else if (Clipboard.ContainsImage())
             {
                 Console.WriteLine("Image detected");
                 Image img = Clipboard.GetImage();
@@ -334,12 +373,12 @@ namespace A_Friend.CustomControls
 
         public void buttonSend_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textboxWriting.Texts) /*&& !locking*/)
+            if (!string.IsNullOrEmpty(textboxWriting.Text.TrimEnd()) /*&& !locking*/)
             {
-                AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Texts);
-                textboxWriting.Texts = "";
-                textboxWriting.RemovePlaceHolder();
-                textboxWriting.Multiline = false;
+                AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
+                textboxWriting.Text = "";
+                //textboxWriting.RemovePlaceHolder();
+                //textboxWriting.Multiline = false;
             }
         }
 
@@ -392,9 +431,9 @@ namespace A_Friend.CustomControls
 
         public string GetLastMessage()
         {
-            if (chatItems.Count == 0)
+            if (messages.Count == 0)
                 return "New conversation!";
-            var messageObject = chatItems[chatItems.Count - 1].messageObject;
+            var messageObject = messages[currentmax].messageObject;
             if (messageObject.type == 0)
             {
                 return messageObject.message;
@@ -407,16 +446,16 @@ namespace A_Friend.CustomControls
         }
         public string GetFirstMessage()
         {
-            if (chatItems.Count == 0)
+            if (messages.Count == 0)
                 return "";
-            return chatItems[0].messageObject.message;
+            return messages[currentmin].messageObject.message;
         }
 
         public bool IsLastMessageFromYou()
         {
             if (panel_Chat.Controls.Count == 0)
                 return true;
-            ChatItem message = chatItems.Last();
+            ChatItem message = messages[currentmax];
             if (message.IsMyMessage())
                 return true;
             return false;
@@ -439,7 +478,7 @@ namespace A_Friend.CustomControls
 
         private void textboxWriting_SizeChanged(object sender, EventArgs e)
         {
-            panelBottomRight.Height = textboxWriting.Height + textboxWriting.Top * 2;
+            panelBottomRight.Height = textboxWriting.Height + 6 + buttonSend.Height; // fix this line, 6 is the padding height between textboxwriting and buttonSend
             panelBottomRight.Location = new Point(0, this.Height - panelBottomRight.Height);
             panel_Chat.Height = this.Height - panelBottomRight.Height - panelTopRight.Height;
         }
@@ -460,7 +499,7 @@ namespace A_Friend.CustomControls
 
         private void panelBottomRight_Resize(object sender, EventArgs e)
         {
-            textboxWriting.DynamicResize();
+            //textboxWriting.DynamicResize();
             panelBottomRight.Invalidate();
         }
 
@@ -474,7 +513,7 @@ namespace A_Friend.CustomControls
 
         private void textboxWriting__TextChanged(object sender, EventArgs e)
         {
-            textboxWriting.Multiline = true;
+            //textboxWriting.Multiline = true;
             this.OnClick(e);
         }
 
@@ -501,11 +540,6 @@ namespace A_Friend.CustomControls
                     }
                 }
             }
-        }
-
-        private void panelTopRight_Click(object sender, EventArgs e)
-        {
-            this.OnClick(e);
         }
     }
 }

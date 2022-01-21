@@ -14,13 +14,12 @@ namespace A_Friend
     class Program
     {
         public static FormApplication mainform;
-        internal static int[] thisversion = {2, 0, 0, 2};
+        internal static int[] thisversion = {2, 2, 2, 2};
 
         static void Main(string[] args)
         {
             try
             {
-                
                 bool newv = false;
                 try
                 {
