@@ -287,6 +287,7 @@ namespace A_Friend.CustomControls
             {
                 //int maxwidth = this.Width - 200;
                 int maxwidth = this.Parent.Width-2*this.Parent.Width/5;
+                labelAuthor.MaximumSize = new Size(maxwidth, int.MaxValue);
                 labelBody.MaximumSize = new Size(maxwidth - 2 * labelBody.Left, int.MaxValue);
                 SuspendLayout();
                 Label temp = new Label();
@@ -323,22 +324,24 @@ namespace A_Friend.CustomControls
 
                 if (showDetail)
                 {
+                    panelBottom.Size = new Size(this.Parent.Width, labelAuthor.Size.Height + 5);
                     this.Height = 5 + panelTop.Height + panelBottom.Height;
                 }
                 else
                 {
                     this.Height = 5 + panelTop.Height;
                 }
-                panelBottom.Location = new Point(panelTop.Left, 0);
+                panelBottom.Location = new Point(0, 0);
 
                 ResumeLayout();
             }
             else if (messageObject != null && messageObject.type == 1)
             {
-                int maxwitdh = this.Width - 200;
-                if (image.Width > maxwitdh)
+                int maxwidth = this.Width*3/5;
+                labelAuthor.MaximumSize = new Size(maxwidth, int.MaxValue);
+                if (image.Width > maxwidth)
                 { 
-                var img = ResizeImage(image, maxwitdh, maxwitdh * image.Height / image.Width);
+                var img = ResizeImage(image, maxwidth, maxwidth * image.Height / image.Width);
                 panelBody.BackgroundImage = img;
                 }
                 else if (panelBody.BackgroundImage != image)
@@ -347,8 +350,15 @@ namespace A_Friend.CustomControls
                 }
                 panelTop.Height = panelBody.BackgroundImage.Height;
                 panelBody.Width = panelBody.BackgroundImage.Width;
-                this.Height = 5 + panelTop.Height + panelBottom.Height;
-                panelBottom.Location = new Point(panelTop.Left, this.Height - panelBottom.Height);
+                if (ShowDetail)
+                {
+                    panelBottom.Size = new Size(this.Parent.Width, labelAuthor.Size.Height + 5);
+                    this.Height = 5 + panelTop.Height + panelBottom.Height;
+                } else
+                {
+                    this.Height = 5 + panelTop.Height;
+                }
+                panelBottom.Location = new Point(0, 0);
             }
         }
 

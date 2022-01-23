@@ -51,7 +51,7 @@ namespace A_Friend.CustomControls
             // 
             // panelTopRight
             // 
-            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(140)))), ((int)(((byte)(130)))));
+            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(46, 140, 130);
             this.panelTopRight.Controls.Add(this.labelState);
             this.panelTopRight.Controls.Add(this.labelFriendName);
             this.panelTopRight.Controls.Add(this.label3);
@@ -119,7 +119,7 @@ namespace A_Friend.CustomControls
             // buttonDelete
             // 
             this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.buttonDelete.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
             this.buttonDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDelete.BackgroundImage")));
             this.buttonDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonDelete.BorderColor = System.Drawing.Color.PaleVioletRed;
@@ -142,7 +142,7 @@ namespace A_Friend.CustomControls
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_Chat.AutoScroll = true;
-            this.panel_Chat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
+            this.panel_Chat.BackColor = System.Drawing.Color.FromArgb(247, 249, 255);
             this.panel_Chat.Location = new System.Drawing.Point(0, 60);
             this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
             this.panel_Chat.Name = "panel_Chat";
@@ -159,7 +159,7 @@ namespace A_Friend.CustomControls
             // 
             this.panelBottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBottomRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.panelBottomRight.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
             this.panelBottomRight.Controls.Add(this.sendImageButton);
             this.panelBottomRight.Controls.Add(this.textboxWriting);
             this.panelBottomRight.Controls.Add(this.buttonSend);
@@ -175,7 +175,7 @@ namespace A_Friend.CustomControls
             // sendImageButton
             // 
             this.sendImageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.sendImageButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.sendImageButton.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
             this.sendImageButton.BackgroundImage = global::A_Friend.Properties.Resources.camera_outline;
             this.sendImageButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.sendImageButton.BorderColor = System.Drawing.Color.Empty;
@@ -185,10 +185,10 @@ namespace A_Friend.CustomControls
             this.sendImageButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.sendImageButton.ForeColor = System.Drawing.Color.White;
             this.sendImageButton.Location = new System.Drawing.Point(1, 126);
-            this.sendImageButton.MaximumSize = new System.Drawing.Size(40, 20);
-            this.sendImageButton.MinimumSize = new System.Drawing.Size(40, 20);
+            this.sendImageButton.MaximumSize = new System.Drawing.Size(20, 20);
+            this.sendImageButton.MinimumSize = new System.Drawing.Size(20, 20);
             this.sendImageButton.Name = "sendImageButton";
-            this.sendImageButton.Size = new System.Drawing.Size(40, 20);
+            this.sendImageButton.Size = new System.Drawing.Size(20, 20);
             this.sendImageButton.TabIndex = 3;
             this.toolTip.SetToolTip(this.sendImageButton, "Send");
             this.sendImageButton.UseVisualStyleBackColor = false;
@@ -213,7 +213,7 @@ namespace A_Friend.CustomControls
             // buttonSend
             // 
             this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
             this.buttonSend.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonSend.BackgroundImage")));
             this.buttonSend.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonSend.BorderColor = System.Drawing.Color.Empty;
@@ -261,7 +261,7 @@ namespace A_Friend.CustomControls
         #endregion
 
         private System.Windows.Forms.Panel panelTopRight;
-        private System.Windows.Forms.Label labelFriendName;
+        internal System.Windows.Forms.Label labelFriendName;
         private System.Windows.Forms.Label label3;
         private CirclePictureBox friendPicture;
         private CustomButton buttonDelete;

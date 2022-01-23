@@ -303,9 +303,9 @@ namespace AFriendServer
         {
             Console.WriteLine("Work Started");
             string id = si as string;
-            SslStream s = sessions[id].stream;
             try
             {
+                SslStream s = sessions[id].stream;
                 string data;
                 if (SslStream_receive(s, 8, out data))
                 {
