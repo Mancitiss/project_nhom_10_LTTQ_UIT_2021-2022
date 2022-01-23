@@ -14,7 +14,7 @@ namespace A_Friend
     class Program
     {
         public static FormApplication mainform;
-        internal static int[] thisversion = {2, 2, 2, 2};
+        internal static int[] thisversion = {2, 3, 0, 0};
 
         static void Main(string[] args)
         {

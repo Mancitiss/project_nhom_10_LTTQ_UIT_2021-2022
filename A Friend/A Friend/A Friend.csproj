@@ -122,6 +122,7 @@
     <Compile Include="CustomControls\ToggleButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="FlashWindow.cs" />
     <Compile Include="FormAddContact.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -260,6 +261,7 @@
   <ItemGroup>
     <Content Include="logo.ico" />
     <Content Include="Old_if_else_code_client_instruction.txt" />
+    <None Include="Resources\message.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

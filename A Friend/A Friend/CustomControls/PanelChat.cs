@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Threading;
+using System.Media;
 
 namespace A_Friend.CustomControls
 {
@@ -265,6 +266,16 @@ namespace A_Friend.CustomControls
                 chatItem.BringToFront();
                 panel_Chat.ResumeLayout();
                 panel_Chat.ScrollControlIntoView(chatItem);
+                if (!chatItem.IsMyMessage() && is_form_showing > 0)
+                {
+                    FlashWindow.Flash(FormApplication.subForms[id]);
+                    SoundPlayer snd = new SoundPlayer(Properties.Resources.message);
+                    snd.Play();
+                } else if (!chatItem.IsMyMessage())
+                {
+                    SoundPlayer snd = new SoundPlayer(Properties.Resources.message);
+                    snd.Play();
+                }
             }
             catch (Exception e)
             {

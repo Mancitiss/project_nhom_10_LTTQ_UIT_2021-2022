@@ -59,8 +59,11 @@ namespace A_Friend.CustomControls
                 form.FormBorderStyle = FormBorderStyle.FixedSingle;
                 form.MaximizeBox = false;
                 form.Controls.Add(Program.mainform.panelChats[id]);
+                if (Program.mainform.panelChats[id].account.name.Length > 10)
+                    (form.Controls[0] as PanelChat).labelFriendName.Text = Program.mainform.panelChats[id].account.name.Substring(0, 10) + "...";
                 form.FormClosing += (fs, fe) =>
                 {
+                    Program.mainform.panelChats[id].labelFriendName.Text = Program.mainform.panelChats[id].account.name;
                     Program.mainform.panelChats[id].is_form_showing = 0;
                     form.Controls.Remove(Program.mainform.panelChats[id]);
                     FormApplication.subForms.TryRemove(ID, out Form form1);
@@ -70,6 +73,12 @@ namespace A_Friend.CustomControls
                 if (Program.mainform.panelChats[id].messages.Count > 0)
                     (form.Controls[0] as PanelChat).panel_Chat.ScrollControlIntoView(
                         (form.Controls[0] as PanelChat).messages[(form.Controls[0] as PanelChat).currentmax]);
+                Rectangle rectangle = form.RectangleToScreen(form.ClientRectangle);
+                form.DesktopLocation = new System.Drawing.Point(
+                    Screen.FromControl(Program.mainform).WorkingArea.Width - rectangle.Width * (FormApplication.subForms.Count) > 0 ?
+                    Screen.FromControl(Program.mainform).WorkingArea.Width - rectangle.Width * (FormApplication.subForms.Count) : 0,
+                    Screen.FromControl(Program.mainform).WorkingArea.Height - rectangle.Height - (rectangle.Top - form.Top) > 0 ?
+                    Screen.FromControl(Program.mainform).WorkingArea.Height - rectangle.Height - (rectangle.Top - form.Top) : 0);
             }
         }
 

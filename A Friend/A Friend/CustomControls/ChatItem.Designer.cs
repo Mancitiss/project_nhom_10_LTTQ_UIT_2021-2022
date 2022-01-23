@@ -21,12 +21,6 @@ namespace A_Friend.CustomControls
             base.Dispose(disposing);
         }
 
-        #region Component Designer generated code
-
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
@@ -173,7 +167,7 @@ namespace A_Friend.CustomControls
             this.panelBottom.Location = new System.Drawing.Point(15, 5);
             this.panelBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
+            this.panelBottom.Padding = new System.Windows.Forms.Padding(10, 5, 20, 5);
             this.panelBottom.Size = new System.Drawing.Size(743, 23);
             this.panelBottom.TabIndex = 5;
             this.panelBottom.Click += new System.EventHandler(this.labelBody_Click);
@@ -202,10 +196,9 @@ namespace A_Friend.CustomControls
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
-        #endregion
+
         private MessagePanel panelBody;
         private System.Windows.Forms.Panel panelButton;
         private System.Windows.Forms.Button buttonCopy;

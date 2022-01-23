@@ -35,23 +35,23 @@ namespace A_Friend.CustomControls
             this.labelState = new System.Windows.Forms.Label();
             this.labelFriendName = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.panel_Chat = new System.Windows.Forms.Panel();
-            this.panelBottomRight = new System.Windows.Forms.Panel();
-            this.timerChat = new System.Windows.Forms.Timer(this.components);
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.customButton1 = new A_Friend.CustomControls.CustomButton();
-            this.textboxWriting = new System.Windows.Forms.RichTextBox();
-            this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.friendPicture = new A_Friend.CustomControls.CirclePictureBox();
             this.buttonDelete = new A_Friend.CustomControls.CustomButton();
+            this.panel_Chat = new System.Windows.Forms.Panel();
+            this.panelBottomRight = new System.Windows.Forms.Panel();
+            this.sendImageButton = new A_Friend.CustomControls.CustomButton();
+            this.textboxWriting = new System.Windows.Forms.RichTextBox();
+            this.buttonSend = new A_Friend.CustomControls.CustomButton();
+            this.timerChat = new System.Windows.Forms.Timer(this.components);
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panelTopRight.SuspendLayout();
-            this.panelBottomRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).BeginInit();
+            this.panelBottomRight.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelTopRight
             // 
-            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(140)))), ((int)(((byte)(130)))));
+            this.panelTopRight.BackColor = System.Drawing.Color.FromArgb(46, 140, 130);
             this.panelTopRight.Controls.Add(this.labelState);
             this.panelTopRight.Controls.Add(this.labelFriendName);
             this.panelTopRight.Controls.Add(this.label3);
@@ -99,109 +99,6 @@ namespace A_Friend.CustomControls
             this.label3.TabIndex = 5;
             this.label3.Text = " ";
             // 
-            // panel_Chat
-            // 
-            this.panel_Chat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel_Chat.AutoScroll = true;
-            this.panel_Chat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
-            this.panel_Chat.Location = new System.Drawing.Point(0, 60);
-            this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
-            this.panel_Chat.Name = "panel_Chat";
-            this.panel_Chat.Padding = new System.Windows.Forms.Padding(2);
-            this.panel_Chat.Size = new System.Drawing.Size(912, 474);
-            this.panel_Chat.TabIndex = 2;
-            this.panel_Chat.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_Chat_Scroll);
-            this.panel_Chat.Click += new System.EventHandler(this.panel_Chat_Click);
-            this.panel_Chat.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlAdded);
-            this.panel_Chat.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlRemoved);
-            this.panel_Chat.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Chat_Paint);
-            // 
-            // panelBottomRight
-            // 
-            this.panelBottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBottomRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
-            this.panelBottomRight.Controls.Add(this.customButton1);
-            this.panelBottomRight.Controls.Add(this.textboxWriting);
-            this.panelBottomRight.Controls.Add(this.buttonSend);
-            this.panelBottomRight.Location = new System.Drawing.Point(0, 534);
-            this.panelBottomRight.Margin = new System.Windows.Forms.Padding(0);
-            this.panelBottomRight.Name = "panelBottomRight";
-            this.panelBottomRight.Size = new System.Drawing.Size(912, 144);
-            this.panelBottomRight.TabIndex = 3;
-            this.panelBottomRight.Click += new System.EventHandler(this.panelTopRight_Click);
-            this.panelBottomRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomRight_Paint);
-            this.panelBottomRight.Resize += new System.EventHandler(this.panelBottomRight_Resize);
-            // 
-            // timerChat
-            // 
-            this.timerChat.Interval = 7000;
-            this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
-            // 
-            // customButton1
-            // 
-            this.customButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.customButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
-            this.customButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("customButton1.BackgroundImage")));
-            this.customButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.customButton1.BorderColor = System.Drawing.Color.Empty;
-            this.customButton1.BorderRadius = 15;
-            this.customButton1.BorderSize = 0;
-            this.customButton1.FlatAppearance.BorderSize = 0;
-            this.customButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.customButton1.ForeColor = System.Drawing.Color.White;
-            this.customButton1.Location = new System.Drawing.Point(1, 126);
-            this.customButton1.MaximumSize = new System.Drawing.Size(40, 20);
-            this.customButton1.MinimumSize = new System.Drawing.Size(40, 20);
-            this.customButton1.Name = "customButton1";
-            this.customButton1.Size = new System.Drawing.Size(40, 20);
-            this.customButton1.TabIndex = 3;
-            this.toolTip.SetToolTip(this.customButton1, "Send");
-            this.customButton1.UseVisualStyleBackColor = false;
-            // 
-            // textboxWriting
-            // 
-            this.textboxWriting.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textboxWriting.BackColor = System.Drawing.SystemColors.Window;
-            this.textboxWriting.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textboxWriting.Location = new System.Drawing.Point(0, 0);
-            this.textboxWriting.Margin = new System.Windows.Forms.Padding(0);
-            this.textboxWriting.Multiline = true;
-            this.textboxWriting.Name = "textboxWriting";
-            this.textboxWriting.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
-            this.textboxWriting.Size = new System.Drawing.Size(912, 120);
-            this.textboxWriting.TabIndex = 2;
-            this.textboxWriting.Text = "";
-            this.textboxWriting.Click += new System.EventHandler(this.panelTopRight_Click);
-            this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
-            this.textboxWriting.TextChanged += new System.EventHandler(this.textboxWriting__TextChanged);
-            this.textboxWriting.SizeChanged += new System.EventHandler(this.textboxWriting_SizeChanged);
-            // 
-            // buttonSend
-            // 
-            this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
-            this.buttonSend.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonSend.BackgroundImage")));
-            this.buttonSend.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.buttonSend.BorderColor = System.Drawing.Color.Empty;
-            this.buttonSend.BorderRadius = 15;
-            this.buttonSend.BorderSize = 0;
-            this.buttonSend.FlatAppearance.BorderSize = 0;
-            this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSend.ForeColor = System.Drawing.Color.White;
-            this.buttonSend.Location = new System.Drawing.Point(872, 126);
-            this.buttonSend.MaximumSize = new System.Drawing.Size(40, 20);
-            this.buttonSend.MinimumSize = new System.Drawing.Size(40, 20);
-            this.buttonSend.Name = "buttonSend";
-            this.buttonSend.Size = new System.Drawing.Size(40, 20);
-            this.buttonSend.TabIndex = 0;
-            this.toolTip.SetToolTip(this.buttonSend, "Send");
-            this.buttonSend.UseVisualStyleBackColor = false;
-            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
-            // 
             // friendPicture
             // 
             this.friendPicture.BorderCapStyle = System.Drawing.Drawing2D.DashCap.Flat;
@@ -222,7 +119,7 @@ namespace A_Friend.CustomControls
             // buttonDelete
             // 
             this.buttonDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.buttonDelete.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
             this.buttonDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDelete.BackgroundImage")));
             this.buttonDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonDelete.BorderColor = System.Drawing.Color.PaleVioletRed;
@@ -239,6 +136,107 @@ namespace A_Friend.CustomControls
             this.buttonDelete.UseVisualStyleBackColor = false;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
+            // panel_Chat
+            // 
+            this.panel_Chat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel_Chat.AutoScroll = true;
+            this.panel_Chat.BackColor = System.Drawing.Color.FromArgb(247, 249, 255);
+            this.panel_Chat.Location = new System.Drawing.Point(0, 60);
+            this.panel_Chat.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_Chat.Name = "panel_Chat";
+            this.panel_Chat.Padding = new System.Windows.Forms.Padding(2);
+            this.panel_Chat.Size = new System.Drawing.Size(912, 474);
+            this.panel_Chat.TabIndex = 2;
+            this.panel_Chat.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_Chat_Scroll);
+            this.panel_Chat.Click += new System.EventHandler(this.panel_Chat_Click);
+            this.panel_Chat.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlAdded);
+            this.panel_Chat.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.panel_Chat_ControlRemoved);
+            this.panel_Chat.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Chat_Paint);
+            // 
+            // panelBottomRight
+            // 
+            this.panelBottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBottomRight.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
+            this.panelBottomRight.Controls.Add(this.sendImageButton);
+            this.panelBottomRight.Controls.Add(this.textboxWriting);
+            this.panelBottomRight.Controls.Add(this.buttonSend);
+            this.panelBottomRight.Location = new System.Drawing.Point(0, 534);
+            this.panelBottomRight.Margin = new System.Windows.Forms.Padding(0);
+            this.panelBottomRight.Name = "panelBottomRight";
+            this.panelBottomRight.Size = new System.Drawing.Size(912, 144);
+            this.panelBottomRight.TabIndex = 3;
+            this.panelBottomRight.Click += new System.EventHandler(this.panelTopRight_Click);
+            this.panelBottomRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomRight_Paint);
+            this.panelBottomRight.Resize += new System.EventHandler(this.panelBottomRight_Resize);
+            // 
+            // sendImageButton
+            // 
+            this.sendImageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.sendImageButton.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
+            this.sendImageButton.BackgroundImage = global::A_Friend.Properties.Resources.camera_outline;
+            this.sendImageButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.sendImageButton.BorderColor = System.Drawing.Color.Empty;
+            this.sendImageButton.BorderRadius = 15;
+            this.sendImageButton.BorderSize = 0;
+            this.sendImageButton.FlatAppearance.BorderSize = 0;
+            this.sendImageButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.sendImageButton.ForeColor = System.Drawing.Color.White;
+            this.sendImageButton.Location = new System.Drawing.Point(1, 126);
+            this.sendImageButton.MaximumSize = new System.Drawing.Size(20, 20);
+            this.sendImageButton.MinimumSize = new System.Drawing.Size(20, 20);
+            this.sendImageButton.Name = "sendImageButton";
+            this.sendImageButton.Size = new System.Drawing.Size(20, 20);
+            this.sendImageButton.TabIndex = 3;
+            this.toolTip.SetToolTip(this.sendImageButton, "Send");
+            this.sendImageButton.UseVisualStyleBackColor = false;
+            // 
+            // textboxWriting
+            // 
+            this.textboxWriting.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textboxWriting.BackColor = System.Drawing.SystemColors.Window;
+            this.textboxWriting.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textboxWriting.Location = new System.Drawing.Point(0, 0);
+            this.textboxWriting.Margin = new System.Windows.Forms.Padding(0);
+            this.textboxWriting.Name = "textboxWriting";
+            this.textboxWriting.Size = new System.Drawing.Size(912, 120);
+            this.textboxWriting.TabIndex = 2;
+            this.textboxWriting.Text = "";
+            this.textboxWriting.Click += new System.EventHandler(this.panelTopRight_Click);
+            this.textboxWriting.SizeChanged += new System.EventHandler(this.textboxWriting_SizeChanged);
+            this.textboxWriting.TextChanged += new System.EventHandler(this.textboxWriting__TextChanged);
+            this.textboxWriting.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxWriting_KeyDown);
+            // 
+            // buttonSend
+            // 
+            this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSend.BackColor = System.Drawing.Color.FromArgb(230, 244, 241);
+            this.buttonSend.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonSend.BackgroundImage")));
+            this.buttonSend.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonSend.BorderColor = System.Drawing.Color.Empty;
+            this.buttonSend.BorderRadius = 15;
+            this.buttonSend.BorderSize = 0;
+            this.buttonSend.FlatAppearance.BorderSize = 0;
+            this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonSend.ForeColor = System.Drawing.Color.White;
+            this.buttonSend.Location = new System.Drawing.Point(872, 126);
+            this.buttonSend.MaximumSize = new System.Drawing.Size(40, 20);
+            this.buttonSend.MinimumSize = new System.Drawing.Size(40, 20);
+            this.buttonSend.Name = "buttonSend";
+            this.buttonSend.Size = new System.Drawing.Size(40, 20);
+            this.buttonSend.TabIndex = 0;
+            this.toolTip.SetToolTip(this.buttonSend, "Send");
+            this.buttonSend.UseVisualStyleBackColor = false;
+            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
+            // 
+            // timerChat
+            // 
+            this.timerChat.Interval = 7000;
+            this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
+            // 
             // PanelChat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -254,8 +252,8 @@ namespace A_Friend.CustomControls
             this.Load += new System.EventHandler(this.PanelChat_Load);
             this.panelTopRight.ResumeLayout(false);
             this.panelTopRight.PerformLayout();
-            this.panelBottomRight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.friendPicture)).EndInit();
+            this.panelBottomRight.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -263,7 +261,7 @@ namespace A_Friend.CustomControls
         #endregion
 
         private System.Windows.Forms.Panel panelTopRight;
-        private System.Windows.Forms.Label labelFriendName;
+        internal System.Windows.Forms.Label labelFriendName;
         private System.Windows.Forms.Label label3;
         private CirclePictureBox friendPicture;
         private CustomButton buttonDelete;
@@ -274,6 +272,6 @@ namespace A_Friend.CustomControls
         private System.Windows.Forms.Timer timerChat;
         private System.Windows.Forms.Label labelState;
         private System.Windows.Forms.ToolTip toolTip;
-        private CustomButton customButton1;
+        private CustomButton sendImageButton;
     }
 }
