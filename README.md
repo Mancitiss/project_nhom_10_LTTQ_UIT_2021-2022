@@ -3,4 +3,4 @@ Or you can find it at the "University project version" branch, the project stopp
 
 ===========================================================================  
 Starting from 2022 the main branch will get updates from me mancitiss, the owner of this repository  
-Current version: 2.3.0.0  
+Current version: 2.4    

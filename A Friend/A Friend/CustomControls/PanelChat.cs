@@ -49,6 +49,11 @@ namespace A_Friend.CustomControls
             AddMessageDelegate = new AddMessageItem(AddMessage);
             RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.ResizeRedraw, false);
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.CreateControl();
             //textboxWriting.dynamicMode = true;
             //textboxWriting.SetMaximumTextLenght(2021);
@@ -97,8 +102,9 @@ namespace A_Friend.CustomControls
             }
         }
 
-        private void panel_Chat_MouseWheel(object sender, EventArgs e)
+        private void panel_Chat_MouseWheel(object sender, MouseEventArgs e)
         {
+            if (isloadingoldmessages) panel_Chat.VerticalScroll.Value = current_vertical_value;
             if (panel_Chat.VerticalScroll.Value == 0 && !locking)
             {
                 Int64 num = this.loadedmessagenumber - 1;
@@ -110,13 +116,14 @@ namespace A_Friend.CustomControls
                     AFriendClient.Queue_command(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
-                    panel_Chat.VerticalScroll.Value = 5;
+                    //panel_Chat.VerticalScroll.Value = 5;
                 }
             }
         }
 
         private void panel_Chat_Scroll(object sender, ScrollEventArgs e)
         {
+            if (isloadingoldmessages) panel_Chat.VerticalScroll.Value = current_vertical_value;
             if (panel_Chat.VerticalScroll.Value == 0 && !locking)
             {
                 Int64 num = this.loadedmessagenumber - 1;
@@ -128,7 +135,7 @@ namespace A_Friend.CustomControls
                     AFriendClient.Queue_command(Encoding.Unicode.GetBytes("6475" + this.ID + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                     locking = true;
                     timerChat.Start();
-                    panel_Chat.VerticalScroll.Value = 5;
+                    //panel_Chat.VerticalScroll.Value = 5;
                 }
             }
         }
@@ -265,7 +272,12 @@ namespace A_Friend.CustomControls
                 chatItem.UpdateDateTime();
                 chatItem.BringToFront();
                 panel_Chat.ResumeLayout();
-                panel_Chat.ScrollControlIntoView(chatItem);
+                if (is_form_showing == 1 && panel_Chat.VerticalScroll.Value > panel_Chat.VerticalScroll.Maximum-350)
+                    panel_Chat.ScrollControlIntoView(chatItem);
+                else if (is_form_showing == 0 && panel_Chat.VerticalScroll.Value > panel_Chat.VerticalScroll.Maximum - 2*panel_Chat.Height)
+                {
+                    panel_Chat.ScrollControlIntoView(chatItem);
+                }
                 if (!chatItem.IsMyMessage() && is_form_showing > 0)
                 {
                     FlashWindow.Flash(FormApplication.subForms[id]);
@@ -325,9 +337,9 @@ namespace A_Friend.CustomControls
             {
                 e.Handled = true;
                 e.SuppressKeyPress = true;
-                if (!string.IsNullOrWhiteSpace(textboxWriting.Text))
+                if (!string.IsNullOrWhiteSpace(textboxWriting.Text.TrimEnd()))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Text);
+                    AFriendClient.Send_to_id(AFriendClient.stream, id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
                     textboxWriting.Clear();
                     //textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
@@ -367,7 +379,7 @@ namespace A_Friend.CustomControls
                 {
                     string img_string = ImageToString(img);
                     Console.WriteLine("Finished img to string\n");
-                    var b = AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + FormApplication.currentID), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string)));
+                    var b = AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string)));
                     //var b = new Byte[200000];
                     //for (int i = 0; i < 200000; i++) b[i] = 0;
                     Console.WriteLine("before sending nude: {0}", b.Length);
@@ -386,7 +398,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Text.TrimEnd()) /*&& !locking*/)
             {
-                AFriendClient.Send_to_id(AFriendClient.stream, FormApplication.currentID, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
+                AFriendClient.Send_to_id(AFriendClient.stream, id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
                 textboxWriting.Text = "";
                 //textboxWriting.RemovePlaceHolder();
                 //textboxWriting.Multiline = false;
@@ -418,10 +430,13 @@ namespace A_Friend.CustomControls
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("6475"+this.ID+"0120"));
         }
 
+        private int current_vertical_value = 0;
+
         public void LoadMessage(List<MessageObject> messageObjects)
         {
             isloadingoldmessages = true;
             panel_Chat.SuspendLayout();
+            var current_min_chat = currentmin;
             foreach(MessageObject messageObject in messageObjects)
             {
                 AddMessageToTop(messageObject);
@@ -429,7 +444,9 @@ namespace A_Friend.CustomControls
             panel_Chat.ResumeLayout();
             if (panel_Chat.Controls.Count > messageObjects.Count)
             {
-                panel_Chat.ScrollControlIntoView(panel_Chat.Controls[panel_Chat.Controls.Count - messageObjects.Count - 1]);
+                panel_Chat.ScrollControlIntoView(messages[current_min_chat]);
+                panel_Chat.VerticalScroll.Value += textboxWriting.Height;
+                current_vertical_value = panel_Chat.VerticalScroll.Value;
             }
             isloadingoldmessages = false;
         }

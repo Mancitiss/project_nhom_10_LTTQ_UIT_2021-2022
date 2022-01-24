@@ -68,6 +68,12 @@ namespace A_Friend.CustomControls
                     form.Controls.Remove(Program.mainform.panelChats[id]);
                     FormApplication.subForms.TryRemove(ID, out Form form1);
                 };
+                form.Resize += (o, ev) =>
+                {
+                    if (form.WindowState == FormWindowState.Normal && Program.mainform.panelChats[id].messages.Count > 0)
+                        (form.Controls[0] as PanelChat).panel_Chat.ScrollControlIntoView(
+                            (form.Controls[0] as PanelChat).messages[(form.Controls[0] as PanelChat).currentmax]);
+                };
                 FormApplication.subForms.TryAdd(ID, form);
                 form.Show(); 
                 if (Program.mainform.panelChats[id].messages.Count > 0)
