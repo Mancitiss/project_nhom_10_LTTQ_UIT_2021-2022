@@ -204,7 +204,8 @@ namespace A_Friend.CustomControls
 
         public void UpdateDateTime()
         {
-            if (IsMyMessage())
+            //if (IsMyMessage())
+            if (true)
             {
                 if (messageObject.timesent.ToLocalTime() < DateTime.Today)
                 {
@@ -383,7 +384,11 @@ namespace A_Friend.CustomControls
         {
             if (this.Parent.Parent is PanelChat)
             {
-                (this.Parent.Parent as PanelChat).RemoveMessage(this.ID);
+                DialogResult dialogResult = MessageBox.Show("You wanna delete this message? (no one will see it after you delete it)", "Warning", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    (this.Parent.Parent as PanelChat).RemoveMessage(this.ID);
+                }
             }
         }
 
