@@ -1070,7 +1070,7 @@ namespace AFriendServer
                         sslStream.Dispose();
                         c.Dispose();
                         bool pass = false;
-                        if (1 == Interlocked.Exchange(ref sessions[data].is_waited, 1)) pass = true;
+                        if (sessions.ContainsKey(data) && 1 == Interlocked.Exchange(ref sessions[data].is_waited, 1)) pass = true;
                         int h = 0;
                         while (!pass && h++ < 20 && !sessions.ContainsKey(data)) 
                         {

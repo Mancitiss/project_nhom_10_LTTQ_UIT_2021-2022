@@ -37,7 +37,6 @@ namespace A_Friend
         internal static SslStream stream;
         public static Account user;
 
-        private static FormApplication UIForm;
         public static bool loginResult = true;
 
         private static int workeradded = 0;
@@ -102,8 +101,9 @@ namespace A_Friend
             Ping();
             user = new Account();
             user.state = 0;
-            stream.Close();
-            client.Close();
+            stream.Dispose();
+            client.Dispose();
+            GC.Collect();
         }
 
         internal static void Change_name()
@@ -118,7 +118,6 @@ namespace A_Friend
 
         public static /*async*/ void ExecuteClient()
         {
-            UIForm = Program.mainform;
             try
             {
                 while (user.state == 1 || user.state == 2) // while self.state == online or fake-offline
@@ -490,10 +489,10 @@ namespace A_Friend
                                 Console.WriteLine(user.priv);
                                 user.state = 1;
                                 // set initial private option (on or off) from here
-                                if (UIForm != null)
+                                if (Program.mainform != null)
                                 { 
-                                    if (UIForm.formSettings != null && UIForm.formSettings.IsHandleCreated)
-                                        UIForm.formSettings.Invoke(UIForm.formSettings.changeIncognitoMode, new object[] { user.priv });
+                                    if (Program.mainform.formSettings != null && Program.mainform.formSettings.IsHandleCreated)
+                                        Program.mainform.formSettings.Invoke(Program.mainform.formSettings.changeIncognitoMode, new object[] { user.priv });
                                 }
                                 // or not, if you don't have to
 
@@ -506,7 +505,7 @@ namespace A_Friend
                                 if (Stream_receive(38, out string offline_id))
                                 {
                                     Console.WriteLine(offline_id);
-                                    UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
+                                    Program.mainform.Invoke(Program.mainform.turnContactActiveStateDelegate, new object[] { offline_id, (byte)0 });
                                 }
                             } // this id is offline
                             break;
@@ -520,8 +519,8 @@ namespace A_Friend
                                     Console.WriteLine("My avatar received");
                                 }
                                 //int h = 1;
-                                //while (!UIForm.formSettings.IsHandleCreated) { Console.WriteLine(h++); await Task.Delay(1000); }
-                                //UIForm.formLoading.Invoke(UIForm.formLoading.Show_progress_delegate, new object[] { 0 });
+                                //while (!Program.mainform.formSettings.IsHandleCreated) { Console.WriteLine(h++); await Task.Delay(1000); }
+                                //Program.mainform.formLoading.Invoke(Program.mainform.formLoading.Show_progress_delegate, new object[] { 0 });
                                 Console.WriteLine("My Avatar finished");
                             } // avatar received, not loaded
                             break;
@@ -556,7 +555,7 @@ namespace A_Friend
                             {
                                 Console.WriteLine("Name changed!");
                                 Change_name();
-                                UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
+                                Program.mainform.formSettings.Invoke(Program.mainform.formSettings.changeSettingsWarning, new object[] { "Name changed successfully!", Color.FromArgb(37, 75, 133) });
                                 //MessageBox.Show("What a beautiful name!");
                                 //if name not change then it is your internet connection problem
                             } // successfully changed your name to a different one
@@ -575,7 +574,7 @@ namespace A_Friend
                                         {
                                             byte[] array = Convert.FromBase64String(friend_avatar);
                                             Image image = Image.FromStream(new MemoryStream(array));
-                                            UIForm.Invoke(UIForm.set_avatar_delegate, new object[] { panelid, image });
+                                            Program.mainform.Invoke(Program.mainform.set_avatar_delegate, new object[] { panelid, image });
                                         }
 
                                         // finish
@@ -606,14 +605,14 @@ namespace A_Friend
                                     {
                                         try
                                         {
-                                            UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
-                                            UIForm.Invoke(UIForm.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
+                                            Program.mainform.formAddContact.Invoke(Program.mainform.formAddContact.changeWarningLabelDelegate, new object[] { "New contact added!", Color.FromArgb(143, 228, 185) });
+                                            Program.mainform.Invoke(Program.mainform.addContactItemDelegate, new object[] { new Account(found[1], name, found[0], state) });
                                             Console.WriteLine("New Contact Added");
                                             if (first.ContainsKey(found[0]))
                                             {
                                                 foreach (var msgobj in first[found[0]])
                                                 {
-                                                    UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { msgobj });
+                                                    Program.mainform.panelChats[found[0]].Invoke(Program.mainform.panelChats[found[0]].AddMessageDelegate, new object[] { msgobj });
                                                 }
                                                 first.Remove(found[0]);
                                             }
@@ -625,13 +624,13 @@ namespace A_Friend
                                         /*
                                         if ((first_message_sender != "") && (first_message_sender != null) && (first_message_sender != String.Empty))
                                         {
-                                            UIForm.panelChats[first_message_sender].Invoke(UIForm.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
+                                            Program.mainform.panelChats[first_message_sender].Invoke(Program.mainform.panelChats[first_message_sender].AddMessageDelegate, new object[] { first_message });
                                             first_message_sender = String.Empty;
                                             first_message = null;
                                         }
                                         */
                                         /*
-                                        UIForm.panelChats[found[0]].Invoke(UIForm.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
+                                        Program.mainform.panelChats[found[0]].Invoke(Program.mainform.panelChats[found[0]].AddMessageDelegate, new object[] { data, true });
                                         Console.WriteLine("Message Received");*/
 
                                         Queue_command(Encoding.Unicode.GetBytes("1060" + found[0]));
@@ -664,11 +663,11 @@ namespace A_Friend
                                                 {
                                                     if (Program.mainform.Is_this_person_added(msgobj.id1))
                                                     {
-                                                        UIForm.panelChats[msgobj.id1].Invoke(UIForm.panelChats[msgobj.id1].AddMessageDelegate, new object[] { msgobj });
+                                                        Program.mainform.panelChats[msgobj.id1].Invoke(Program.mainform.panelChats[msgobj.id1].AddMessageDelegate, new object[] { msgobj });
                                                         Console.WriteLine("data added");
                                                         //Console.WriteLine(msgobj.message);
                                                         if (!msgobj.sender)
-                                                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id1, (byte)1 });
+                                                            Program.mainform.Invoke(Program.mainform.turnContactActiveStateDelegate, new object[] { msgobj.id1, (byte)1 });
                                                     }
                                                     else
                                                     {
@@ -688,11 +687,11 @@ namespace A_Friend
                                                 {
                                                     if (Program.mainform.Is_this_person_added(msgobj.id2))
                                                     {
-                                                        UIForm.panelChats[msgobj.id2].Invoke(UIForm.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
+                                                        Program.mainform.panelChats[msgobj.id2].Invoke(Program.mainform.panelChats[msgobj.id2].AddMessageDelegate, new object[] { msgobj });
                                                         Console.WriteLine("data added");
                                                         //Console.WriteLine(msgobj.message);
                                                         if (msgobj.sender)
-                                                            UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { msgobj.id2, (byte)1 });
+                                                            Program.mainform.Invoke(Program.mainform.turnContactActiveStateDelegate, new object[] { msgobj.id2, (byte)1 });
                                                     }
                                                     else
                                                     {
@@ -724,10 +723,10 @@ namespace A_Friend
                                 {
                                     if (receive_data_automatically(out string messagenumber))
                                     {
-                                        if (UIForm.panelChats.ContainsKey(panelid) && long.TryParse(messagenumber, out long messagenumber_long))
+                                        if (Program.mainform.panelChats.ContainsKey(panelid) && long.TryParse(messagenumber, out long messagenumber_long))
                                         {
                                             Console.WriteLine("deleting: {0}", messagenumber_long);
-                                            UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].RemoveMessage_Invoke, new object[] { messagenumber_long });
+                                            Program.mainform.panelChats[panelid].Invoke(Program.mainform.panelChats[panelid].RemoveMessage_Invoke, new object[] { messagenumber_long });
                                         }
                                     }
                                 }
@@ -737,7 +736,7 @@ namespace A_Friend
                             {
                                 Console.WriteLine("You are logged in from another device, you will be logged out");
                                 user.state = 0;
-                                UIForm.Invoke(UIForm.show_login_delegate);
+                                Program.mainform.Invoke(Program.mainform.show_login_delegate);
                             } // logged in from another device, will log out
                             break;
                         case "2211": // 2211 = this id is online
@@ -746,20 +745,20 @@ namespace A_Friend
                                 if (Stream_receive(38, out string online_id))
                                 {
                                     Console.WriteLine(online_id);
-                                    UIForm.Invoke(UIForm.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
+                                    Program.mainform.Invoke(Program.mainform.turnContactActiveStateDelegate, new object[] { online_id, (byte)1 });
                                 }
                             }
                             break; // this id is online
                         case "2411": // sort contact list
                             {
-                                UIForm.formLoading.Invoke(UIForm.formLoading.Show_progress_delegate, new object[] { 100 });
-                                UIForm.Invoke(UIForm.sort_contact_item_delegate);
+                                Program.mainform.formLoading.Invoke(Program.mainform.formLoading.Show_progress_delegate, new object[] { 100 });
+                                Program.mainform.Invoke(Program.mainform.sort_contact_item_delegate);
                             } // sort contact list
                             break;
                         case "2609": // add contact failed
                             {
                                 Console.WriteLine("No such account exists");
-                                UIForm.formAddContact.Invoke(UIForm.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
+                                Program.mainform.formAddContact.Invoke(Program.mainform.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
                                 //first_message = null;
                                 //first_message_sender = String.Empty;
                             } // add contact failed
@@ -767,7 +766,7 @@ namespace A_Friend
                         case "4269": // password changed successfully
                             {
                                 Console.WriteLine("Password changed successfully!");
-                                UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!", Color.FromArgb(143, 228, 185) });
+                                Program.mainform.formSettings.Invoke(Program.mainform.formSettings.changeSettingsWarning, new object[] { "Password changed successfully!", Color.FromArgb(143, 228, 185) });
                             } // successfully changed password
                             break;
                         case "6475":
@@ -783,7 +782,7 @@ namespace A_Friend
                                         List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring);
                                         try
                                         {
-                                            UIForm.panelChats[panelid].Invoke(UIForm.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
+                                            Program.mainform.panelChats[panelid].Invoke(Program.mainform.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
                                         }catch(Exception asd)
                                         {
                                             Console.WriteLine(asd.ToString());
@@ -799,7 +798,7 @@ namespace A_Friend
                         case "9624": // old password is incorrect
                             {
                                 Console.WriteLine("Old Password is not correct!!");
-                                UIForm.formSettings.Invoke(UIForm.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!", Color.FromArgb(213, 54, 41) });
+                                Program.mainform.formSettings.Invoke(Program.mainform.formSettings.changeSettingsWarning, new object[] { "Current password is incorrect!", Color.FromArgb(213, 54, 41) });
 
                             } // password is incorrect
                             break;
