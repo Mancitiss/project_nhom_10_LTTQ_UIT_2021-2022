@@ -197,7 +197,7 @@ namespace A_Friend
         {
             timerClosing.Stop();
             var frm = new FormApplication();
-            frm.Location = this.Location;
+            frm.Location = new System.Drawing.Point(Screen.FromControl(this).WorkingArea.Width / 4, Screen.FromControl(this).WorkingArea.Height / 4);
             frm.StartPosition = FormStartPosition.CenterScreen;
             //frm.FormClosing += delegate { this.Show(); this.Opacity = 1; };
             this.ResetTexts();

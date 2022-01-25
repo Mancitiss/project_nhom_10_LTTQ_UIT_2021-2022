@@ -21,6 +21,10 @@ namespace A_Friend
             {
                 components.Dispose();
             }
+            panelChats = null;
+            contactItems = null;
+            orderOfContactItems = null;
+
             base.Dispose(disposing);
         }
 

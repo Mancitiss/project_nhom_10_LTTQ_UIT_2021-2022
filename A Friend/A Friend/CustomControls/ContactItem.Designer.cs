@@ -17,6 +17,7 @@
             {
                 components.Dispose();
             }
+            account = null;
             base.Dispose(disposing);
         }
 

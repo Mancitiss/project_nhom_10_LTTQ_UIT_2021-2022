@@ -73,6 +73,7 @@ namespace A_Friend
             show_login_delegate = new ShowLoginDelegate(ShowLogin);
             customTextBoxSearch.Font = ApplicationFont.GetFont(customTextBoxSearch.Font.Size);
             this.Text += $" {Program.thisversion[0]}.{Program.thisversion[1]}.{Program.thisversion[2]}.{Program.thisversion[3]}";
+            this.Size = new System.Drawing.Size(Screen.FromControl(this).WorkingArea.Width / 2, Screen.FromControl(this).WorkingArea.Height / 2);
         }
 
         private void FormApplication_ResizeBegin(Object sender, EventArgs e)
@@ -433,14 +434,30 @@ namespace A_Friend
             }
         }
 
+        private bool logout = false;
+
         private void LogoutButton_Click_1(object sender, EventArgs e)
         {
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2004"));
             foreach(Form f in subForms.Values)
             {
-                f.Close();
+                for(int i = f.Controls.Count -1; i>=0; i--)
+                {
+                    f.Controls[i].Dispose();
+                }
+                f.Dispose();
             }
-            this.Close();
+            this.logout = true;
+            for (int i = this.Controls.Count - 1; i >= 0; i--)
+            {
+                this.Controls[i].Dispose();
+            }
+            foreach(CustomControls.PanelChat p in panelChats.Values)
+            {
+                foreach (Control c in p.Controls) c.Dispose();
+                p.Dispose();
+            }
+            this.Dispose(true);
             FormLogin lg = new FormLogin();
             lg.Show();
             Program.mainform = null;
@@ -454,6 +471,7 @@ namespace A_Friend
             {
                 AFriendClient.user = null;
             }
+            GC.Collect();
         }
 
         private void SettingButton_Click(object sender, EventArgs e)
@@ -583,12 +601,20 @@ namespace A_Friend
 
             }
             System.Environment.Exit(0);
+            notifyIconApp.Visible = false;
             notifyIconApp.Icon = null;
         }
 
         private void FormApplication_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!loaded)
+            if (WindowState == FormWindowState.Normal && !logout)
+            {
+                e.Cancel = true;
+                ((Control)sender).Hide();
+                notifyIconApp.Visible = true;
+                //notifyIconApp.ShowBalloonTip(1000);
+            }
+            if (!loaded && !logout)
             {
                 try
                 {
@@ -598,19 +624,21 @@ namespace A_Friend
 
                 }
                 System.Environment.Exit(0);
+                notifyIconApp.Visible = false;
                 notifyIconApp.Icon = null;
             }
+            if (logout)
+            {
+                try
+                {
+                    AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2004"));
+                }
+                catch (Exception done)
+                {
 
-            if (WindowState == FormWindowState.Normal)
-            {
-                e.Cancel = true;
-                ((Control)sender).Hide();
-                notifyIconApp.Visible = true;
-                notifyIconApp.ShowBalloonTip(1000);
-            }
-            else if (FormWindowState.Normal == this.WindowState)
-            {
+                }
                 notifyIconApp.Visible = false;
+                notifyIconApp.Icon = null;
             }
         }
 
@@ -732,10 +760,26 @@ namespace A_Friend
 
         public void ShowLogin()
         {
-            this.Hide();
+            foreach (Form f in subForms.Values)
+            {
+                f.Close();
+            }
+            this.Close();
             FormLogin lg = new FormLogin();
             lg.Show();
             Program.mainform = null;
+            try
+            {
+                if (AFriendClient.user != null)
+                {
+                    AFriendClient.user.state = 0;
+                }
+            }
+            catch
+            {
+                AFriendClient.user = null;
+            }
+            MessageBox.Show("You have been logged out due to a login from another device.");
         }
 
         public void ChangePrivateMode(bool priv)

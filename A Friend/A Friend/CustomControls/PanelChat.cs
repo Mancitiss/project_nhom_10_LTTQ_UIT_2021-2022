@@ -272,9 +272,12 @@ namespace A_Friend.CustomControls
                 chatItem.UpdateDateTime();
                 chatItem.BringToFront();
                 panel_Chat.ResumeLayout();
-                if (is_form_showing == 1 && panel_Chat.VerticalScroll.Value > panel_Chat.VerticalScroll.Maximum-350)
+                if (is_form_showing == 1 && panel_Chat.VerticalScroll.Value > panel_Chat.VerticalScroll.Maximum-350-chatItem.Height)
                     panel_Chat.ScrollControlIntoView(chatItem);
-                else if (is_form_showing == 0 && panel_Chat.VerticalScroll.Value > panel_Chat.VerticalScroll.Maximum - 2*panel_Chat.Height)
+                else if (is_form_showing == 0 && panel_Chat.VerticalScroll.Value > panel_Chat.VerticalScroll.Maximum - 2*panel_Chat.Height - chatItem.Height)
+                {
+                    panel_Chat.ScrollControlIntoView(chatItem);
+                } else if (chatItem.IsMyMessage())
                 {
                     panel_Chat.ScrollControlIntoView(chatItem);
                 }
