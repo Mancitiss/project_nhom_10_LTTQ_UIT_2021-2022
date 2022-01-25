@@ -49,6 +49,7 @@ namespace A_Friend.CustomControls
             AddMessageDelegate = new AddMessageItem(AddMessage);
             RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            textboxWriting.LinkClicked += (o, e) => { System.Diagnostics.Process.Start(e.LinkText); };
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.ResizeRedraw, false);
