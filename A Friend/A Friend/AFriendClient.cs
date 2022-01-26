@@ -31,8 +31,7 @@ namespace A_Friend
 
 
         internal static string temp_name = null;
-        //internal static string img_string = null;
-        internal static Image img = null;
+        internal static string img_string = null;
 
         public static TcpClient client;
         internal static SslStream stream;
@@ -98,15 +97,12 @@ namespace A_Friend
             //first_message = null;
             //first_message_sender = null;
             temp_name = null;
-            img = null;
-            //img_string = null;
+            img_string = null;
             Ping();
             user = new Account();
             user.state = 0;
             stream.Dispose();
-            stream = null;
             client.Dispose();
-            client = null;
             GC.Collect();
         }
 
@@ -120,7 +116,7 @@ namespace A_Friend
         }
 
 
-        public static async void ExecuteClient()
+        public static /*async*/ void ExecuteClient()
         {
             try
             {
@@ -163,7 +159,6 @@ namespace A_Friend
                     {
                         Console.WriteLine(e.ToString());
                     }
-                    await Task.Delay(50);
                 }
                 Logout();
             }
@@ -214,6 +209,8 @@ namespace A_Friend
                                 Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
                             }
                             Console.WriteLine("Authentication failed - closing the connection.");
+                            stream_2.Close();
+                            client_2.Close();
                         }
                         stream_2.Write(Combine(Encoding.Unicode.GetBytes("0012"), Encoding.ASCII.GetBytes(user.id)));
                         Console.WriteLine("Pinged");
@@ -247,10 +244,8 @@ namespace A_Friend
                     Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
                 }
                 Console.WriteLine("Authentication failed - closing the connection.");
-                stream.Dispose();
-                stream = null;
-                client.Dispose();
-                client = null;
+                stream.Close();
+                client.Close();
                 return false;
             }
             try
@@ -261,10 +256,8 @@ namespace A_Friend
                 {
                     Queue_command(Encoding.Unicode.GetBytes("2004")); // 2004 = stop client
                     Ping();
-                    stream.Dispose();
-                    stream = null;
-                    client.Dispose();
-                    client = null;
+                    stream.Close();
+                    client.Close();
                     return false;
                 }
                 FormApplication.currentID = user.id;
@@ -281,7 +274,7 @@ namespace A_Friend
             }
         }
 
-        public static void Send_to_id(string id, string myid, string str)
+        public static void Send_to_id(SslStream self, string id, string myid, string str)
         {
             if (myid.Length != 19 || id.Length != 19)
             {
@@ -391,7 +384,7 @@ namespace A_Friend
                 Console.WriteLine("Expected: {0}", byte_expected);
                 do
                 {
-                    received_byte = stream.Read(data, total_byte_received, byte_expected < 10000? byte_expected:10000);
+                    received_byte = stream.Read(data, total_byte_received, byte_expected);
                     if (received_byte > 0)
                     {
                         total_byte_received += received_byte;
@@ -426,7 +419,7 @@ namespace A_Friend
             Console.WriteLine("Expected: {0}", byte_expected);
             do
             {
-                received_byte = stream.Read(data, total_byte_received, byte_expected < 10000? byte_expected:10000);
+                received_byte = stream.Read(data, total_byte_received, byte_expected);
                 if (received_byte > 0)
                 {
                     total_byte_received += received_byte;
@@ -451,14 +444,11 @@ namespace A_Friend
         {
             if (path == null)
                 throw new ArgumentNullException("path");
-            using (Image im = Image.FromFile(path))
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    im.Save(ms, im.RawFormat);
-                    return Convert.ToBase64String(ms.ToArray());
-                }
-            }
+            Image im = Image.FromFile(path);
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
         }
         public static Image StringToImage(string imageString)
         {
@@ -466,12 +456,8 @@ namespace A_Friend
             if (imageString == null)
                 throw new ArgumentNullException("imageString");
             byte[] array = Convert.FromBase64String(imageString);
-            using (MemoryStream ms = new MemoryStream(array))
-            {
-                Image image = Image.FromStream(ms);
-                array = null;
-                return image;
-            }
+            Image image = Image.FromStream(new MemoryStream(array));
+            return image;
         }
 
         private static /*async*/ async void Receive_from_id(TcpClient self)
@@ -527,10 +513,9 @@ namespace A_Friend
                             {
                                 //await Task.Delay(100);
                                 
-                                if (receive_ASCII_data_automatically(out string img_str))
+                                if (receive_ASCII_data_automatically(out img_string))
                                 {
                                     //user.avatar = StringToImage(img_string);
-                                    AFriendClient.img = StringToImage(img_str);
                                     Console.WriteLine("My avatar received");
                                 }
                                 //int h = 1;
@@ -588,11 +573,8 @@ namespace A_Friend
                                         if (!string.IsNullOrEmpty(friend_avatar))
                                         {
                                             byte[] array = Convert.FromBase64String(friend_avatar);
-                                            using (MemoryStream ms = new MemoryStream(array))
-                                            {
-                                                Image image = Image.FromStream(ms);
-                                                Program.mainform.Invoke(Program.mainform.set_avatar_delegate, new object[] { panelid, image });
-                                            }
+                                            Image image = Image.FromStream(new MemoryStream(array));
+                                            Program.mainform.Invoke(Program.mainform.set_avatar_delegate, new object[] { panelid, image });
                                         }
 
                                         // finish
@@ -855,10 +837,8 @@ namespace A_Friend
                         Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
                     }
                     Console.WriteLine("Authentication failed - closing the connection.");
-                    stream.Dispose();
-                    stream = null;
-                    client.Dispose();
-                    client = null;
+                    stream.Close();
+                    client.Close();
                     return false;
                 }
                 Console.WriteLine("Success");
@@ -875,10 +855,8 @@ namespace A_Friend
                 }
                 Console.WriteLine(instruction);
                 Queue_command(Encoding.Unicode.GetBytes("2004"));
-                stream.Dispose();
-                stream = null;
-                client.Dispose();
-                client = null;
+                stream.Close();
+                client.Close();
                 return success;
             }
             catch (Exception e)

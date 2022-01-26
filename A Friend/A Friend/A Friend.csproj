@@ -228,7 +228,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +260,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
+    <Content Include="Old_if_else_code_client_instruction.txt" />
     <None Include="Resources\ring tone - Kalimbist.wav" />
     <None Include="Resources\message.wav" />
   </ItemGroup>

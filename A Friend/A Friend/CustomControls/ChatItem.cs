@@ -71,15 +71,11 @@ namespace A_Friend.CustomControls
         {
             if (path == null)
                 throw new ArgumentNullException("path");
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (Image im = Image.FromFile(path))
-                {
-                    im.Save(ms, im.RawFormat);
-                    byte[] array = ms.ToArray();
-                    return Convert.ToBase64String(array);
-                }
-            }
+            Image im = Image.FromFile(path);
+            MemoryStream ms = new MemoryStream();
+            im.Save(ms, im.RawFormat);
+            byte[] array = ms.ToArray();
+            return Convert.ToBase64String(array);
         }
 
         public Image StringToImage(string imageString)
@@ -88,11 +84,8 @@ namespace A_Friend.CustomControls
             if (imageString == null)
                 throw new ArgumentNullException("imageString");
             byte[] array = Convert.FromBase64String(imageString);
-            using (MemoryStream ms = new MemoryStream(array))
-            {
-                Image image = Image.FromStream(ms);
-                return image;
-            }
+            Image image = Image.FromStream(new MemoryStream(array));
+            return image;
         }
 
         public static Bitmap ResizeImage(Image image, int width, int height)
@@ -136,19 +129,7 @@ namespace A_Friend.CustomControls
         public ChatItem(MessageObject messageObject)
         {
             InitializeComponent();
-            if (messageObject.sender == false)
-            {
-                if (messageObject.id1 == AFriendClient.user.id)
-                {
-                    isMyMessage = true;
-                } else
-                isMyMessage = false;
-            } else
-            if (messageObject.id2 == AFriendClient.user.id)
-            {
-                isMyMessage = true;
-            } else
-            isMyMessage = false;
+
             this.messageObject = messageObject;
             labelAuthor.Font = ApplicationFont.GetFont(labelAuthor.Font.Size);
             DoubleBuffered = true;
@@ -169,24 +150,19 @@ namespace A_Friend.CustomControls
                 image = StringToImage(this.messageObject.message);
                 panelBody.Controls.Remove(labelBody);
                 labelBody.Dispose();
-                labelBody = null;
                 panelBody.DoubleClick += delegate
                 {
                     //code to open image in photo viewer 
                     ThreadPool.QueueUserWorkItem((state) => open_image(this.image));
                 };
             }
-            //remove unnecessary memory
-            messageObject.id1 = null;
-            messageObject.id2 = null;
-            messageObject.message = null;
 
             buttonCopy.Enabled = false;
             buttonRemove.Enabled = false;
             buttonCopy.Visible = false;
             buttonRemove.Visible = false;
 
-            if (isMyMessage)
+            if (IsMyMessage())
             {
                 panelBody.Dock = DockStyle.Right;
                 panelButton.Dock = DockStyle.Right;
@@ -209,11 +185,7 @@ namespace A_Friend.CustomControls
                 return this.messageObject.messagenumber;
             }
         }
-
-        public bool isMyMessage;
-
-        /*
-        public bool isMyMessage
+        public bool IsMyMessage()
         {
             if (messageObject.sender == false)
             {
@@ -228,11 +200,11 @@ namespace A_Friend.CustomControls
                 return true;
             }
             return false;
-        }*/
+        }
 
         public void UpdateDateTime()
         {
-            //if (isMyMessage)
+            //if (IsMyMessage())
             if (true)
             {
                 if (messageObject.timesent.ToLocalTime() < DateTime.Today)
