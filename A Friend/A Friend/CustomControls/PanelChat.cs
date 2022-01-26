@@ -11,6 +11,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Threading;
 using System.Media;
+using System.Runtime;
 
 namespace A_Friend.CustomControls
 {
@@ -89,10 +90,12 @@ namespace A_Friend.CustomControls
 
         public static string ImageToString(Image im)
         {
-            MemoryStream ms = new MemoryStream();
-            im.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            byte[] array = ms.ToArray();
-            return Convert.ToBase64String(array);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                im.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] array = ms.ToArray();
+                return Convert.ToBase64String(array);
+            }
         }
 
         public Image Avatar
@@ -238,6 +241,7 @@ namespace A_Friend.CustomControls
             //chatItems.Remove(messages[messagenumber]);
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber);
+            Program.mainform.contactItems[id].LastMessage = GetLastMessage();
             // code to remove message
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
@@ -268,7 +272,7 @@ namespace A_Friend.CustomControls
                 {
                     chatItem.ShowDetail = true;
                 }
-                messages.Add(message.messagenumber, chatItem);
+                messages.Add(chatItem.messageObject.messagenumber, chatItem);
                 panel_Chat.Controls.Add(chatItem);
                 chatItem.UpdateDateTime();
                 chatItem.BringToFront();
@@ -278,19 +282,23 @@ namespace A_Friend.CustomControls
                 else if (is_form_showing == 0 && panel_Chat.VerticalScroll.Value > panel_Chat.VerticalScroll.Maximum - 2*panel_Chat.Height - chatItem.Height)
                 {
                     panel_Chat.ScrollControlIntoView(chatItem);
-                } else if (chatItem.IsMyMessage())
+                } else if (chatItem.isMyMessage)
                 {
                     panel_Chat.ScrollControlIntoView(chatItem);
                 }
-                if (!chatItem.IsMyMessage() && is_form_showing > 0)
+                if (!chatItem.isMyMessage && is_form_showing > 0)
                 {
                     FlashWindow.Flash(FormApplication.subForms[id]);
-                    SoundPlayer snd = new SoundPlayer(Properties.Resources.message);
-                    snd.Play();
-                } else if (!chatItem.IsMyMessage())
+                    using (SoundPlayer snd = new SoundPlayer(Properties.Resources.message))
+                    {
+                        snd.Play();
+                    }
+                } else if (!chatItem.isMyMessage)
                 {
-                    SoundPlayer snd = new SoundPlayer(Properties.Resources.message);
-                    snd.Play();
+                    using (SoundPlayer snd = new SoundPlayer(Properties.Resources.message))
+                    {
+                        snd.Play();
+                    }
                 }
             }
             catch (Exception e)
@@ -323,7 +331,7 @@ namespace A_Friend.CustomControls
                 {
                     messages[message.messagenumber + 1].ShowDetail = false;
                 }
-                messages.Add(message.messagenumber, chatItem);
+                messages.Add(chatItem.messageObject.messagenumber, chatItem);
                 panel_Chat.Controls.Add(chatItem);
                 chatItem.UpdateDateTime();
                 panel_Chat.ResumeLayout();
@@ -331,7 +339,7 @@ namespace A_Friend.CustomControls
             {
                 Console.WriteLine(e.ToString());
             }
-            Console.WriteLine("Finish successfully");
+            //Console.WriteLine("Finish successfully");
         }
 
         public void textboxWriting_KeyDown(object sender, KeyEventArgs e)
@@ -343,7 +351,7 @@ namespace A_Friend.CustomControls
                 e.SuppressKeyPress = true;
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Text.TrimEnd()))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.stream, id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
+                    AFriendClient.Send_to_id(id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
                     textboxWriting.Clear();
                     //textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
@@ -402,7 +410,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Text.TrimEnd()) /*&& !locking*/)
             {
-                AFriendClient.Send_to_id(AFriendClient.stream, id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
+                AFriendClient.Send_to_id(id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
                 textboxWriting.Text = "";
                 //textboxWriting.RemovePlaceHolder();
                 //textboxWriting.Multiline = false;
@@ -461,14 +469,22 @@ namespace A_Friend.CustomControls
             this.ActiveControl = textboxWriting;
         }
 
+        private void ReEvaluateMaxmin()
+        {
+            if (messages.Count == 0) return;
+            while (!messages.ContainsKey(currentmax)) currentmax -= 1;
+            while (!messages.ContainsKey(currentmin)) currentmin += 1;
+        }
+
         public string GetLastMessage()
         {
             if (messages.Count == 0)
                 return "New conversation!";
+            ReEvaluateMaxmin();
             var messageObject = messages[currentmax].messageObject;
             if (messageObject.type == 0)
             {
-                return messageObject.message;
+                return messages[currentmax].labelBody.Text;
             }
             else if (messageObject.type == 1)
             {
@@ -480,15 +496,17 @@ namespace A_Friend.CustomControls
         {
             if (messages.Count == 0)
                 return "";
-            return messages[currentmin].messageObject.message;
+            ReEvaluateMaxmin();
+            return messages[currentmin].labelBody.Text;
         }
 
         public bool IsLastMessageFromYou()
         {
             if (panel_Chat.Controls.Count == 0)
                 return true;
+            ReEvaluateMaxmin();
             ChatItem message = messages[currentmax];
-            if (message.IsMyMessage())
+            if (message.isMyMessage)
                 return true;
             return false;
         }

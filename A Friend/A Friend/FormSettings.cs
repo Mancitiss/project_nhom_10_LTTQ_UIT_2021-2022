@@ -55,9 +55,9 @@ namespace A_Friend
 
         private void FormSettings_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(AFriendClient.img_string))
+            if (AFriendClient.img != null)
             {
-                circlePictureBox1.Crop(StringToImage(AFriendClient.img_string));
+                circlePictureBox1.Crop(AFriendClient.img);
             }
             this.labelUsername.Text = AFriendClient.user.name;
             panelPassword.Hide();
@@ -136,20 +136,28 @@ namespace A_Friend
         {
             if (path == null)
                 throw new ArgumentNullException("path");
-            Image im = Image.FromFile(path);
-            MemoryStream ms = new MemoryStream();
-            im.Save(ms, im.RawFormat);
-            byte[] array = ms.ToArray();
-            return Convert.ToBase64String(array);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (Image im = Image.FromFile(path))
+                {
+                    im.Save(ms, im.RawFormat);
+                    byte[] array = ms.ToArray();
+                    return Convert.ToBase64String(array);
+                }
+            }
         }
 
         public string ImageToString(Bitmap img)
         {
-            Image im = (Image)img;
-            MemoryStream ms = new MemoryStream();
-            im.Save(ms, im.RawFormat);
-            byte[] array = ms.ToArray();
-            return Convert.ToBase64String(array);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (Image im = (Image)img)
+                {
+                    im.Save(ms, im.RawFormat);
+                    byte[] array = ms.ToArray();
+                    return Convert.ToBase64String(array);
+                }
+            }
         }
 
         public Image StringToImage(string imageString)
@@ -158,8 +166,10 @@ namespace A_Friend
             if (imageString == null)
                 throw new ArgumentNullException("imageString");
             byte[] array = Convert.FromBase64String(imageString);
-            Image image = Image.FromStream(new MemoryStream(array));
-            return image;
+            using (MemoryStream ms = new MemoryStream(array)) {
+                Image image = Image.FromStream(ms);
+                return image;
+            }
         }
         static public class TopMostMessageBox
         {
@@ -249,8 +259,8 @@ namespace A_Friend
                         if (length < 2800000)
                         {
                             AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
-                            AFriendClient.img_string = imageAsString.Trim();
-                            circlePictureBox1.Crop(StringToImage(AFriendClient.img_string.ToString()));
+                            AFriendClient.img = img;
+                            circlePictureBox1.Crop(AFriendClient.img);
                         }
                         else
                         {
