@@ -116,7 +116,7 @@ namespace A_Friend
         }
 
 
-        public static /*async*/ void ExecuteClient()
+        public static async void ExecuteClient()
         {
             try
             {
@@ -159,6 +159,7 @@ namespace A_Friend
                     {
                         Console.WriteLine(e.ToString());
                     }
+                    await Task.Delay(70);
                 }
                 Logout();
             }
@@ -274,7 +275,7 @@ namespace A_Friend
             }
         }
 
-        public static void Send_to_id(SslStream self, string id, string myid, string str)
+        public static void Send_to_id(string id, string myid, string str)
         {
             if (myid.Length != 19 || id.Length != 19)
             {
