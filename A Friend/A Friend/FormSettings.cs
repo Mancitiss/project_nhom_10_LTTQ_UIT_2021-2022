@@ -34,7 +34,7 @@ namespace A_Friend
             customTextBoxUsername.Font = ApplicationFont.GetFont(customTextBoxUsername.Font.Size);
             customButtonPassword.Font = ApplicationFont.GetFont(customButtonPassword.Font.Size);
             textBoxCurrentPassword.Font = ApplicationFont.GetFont(textBoxCurrentPassword.Font.Size);
-            textBoxNewPassword.Font = ApplicationFont.GetFont(textBoxNewPassword  .Font.Size);
+            textBoxNewPassword.Font = ApplicationFont.GetFont(textBoxNewPassword.Font.Size);
             textBoxConfirmPassword.Font = ApplicationFont.GetFont(textBoxConfirmPassword.Font.Size);
             buttonSavePassword.Font = ApplicationFont.GetFont(buttonSavePassword.Font.Size);
             buttonSaveUsername.Font = ApplicationFont.GetFont(buttonSaveUsername.Font.Size);
@@ -60,6 +60,7 @@ namespace A_Friend
                 circlePictureBox1.Crop(StringToImage(AFriendClient.img_string));
             }
             this.labelUsername.Text = AFriendClient.user.name;
+            this.label2.Text = AFriendClient.user.id;
             panelPassword.Hide();
             panelUsername.Hide();
             this.ControlBox = false;

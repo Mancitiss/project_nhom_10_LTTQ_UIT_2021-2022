@@ -491,7 +491,7 @@ namespace A_Friend
                 panelContact.Height -= panelAdd.Height;
                 panelContact2.Height -= panelAdd.Height;
                 formAddContact.ResetTexts();
-                formAddContact.ChangeWarning("Enter your friend's user name", Color.FromArgb(143, 228, 185));
+                formAddContact.ChangeWarning("Enter your friend's ID", Color.FromArgb(143, 228, 185));
                 panelAdd.Show();
             }
             else

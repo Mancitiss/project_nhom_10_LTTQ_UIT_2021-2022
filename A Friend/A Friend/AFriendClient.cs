@@ -639,7 +639,7 @@ namespace A_Friend
                                     else
                                     {
                                         Console.WriteLine("Data Corrupted");
-                                        System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
+                                        System.Windows.Forms.MessageBox.Show("that ID doesn't exist!");
                                     }
                                 }
                             } // add contact
@@ -759,7 +759,7 @@ namespace A_Friend
                         case "2609": // add contact failed
                             {
                                 Console.WriteLine("No such account exists");
-                                Program.mainform.formAddContact.Invoke(Program.mainform.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
+                                Program.mainform.formAddContact.Invoke(Program.mainform.formAddContact.changeWarningLabelDelegate, new object[] { "That ID doesn't eixst!", Color.Red });
                                 //first_message = null;
                                 //first_message_sender = String.Empty;
                             } // add contact failed

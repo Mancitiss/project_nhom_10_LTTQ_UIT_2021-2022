@@ -733,14 +733,15 @@ namespace AFriendServer
                                 {
                                     if (SslStream_receive(s, 38, out data))
                                     {
-                                        string commandtext = "select top 1 id, username, name, state from account where id=@id";
+                                        string commandtext = "select top 1 id, name from account where id=@id and private=0";
                                         SqlCommand command = new SqlCommand(commandtext, sql);
                                         command.Parameters.AddWithValue("@id", Int64.Parse(data));
                                         using (SqlDataReader reader = command.ExecuteReader())
                                         {
                                             if (reader.Read())
                                             {
-                                                string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["username"].ToString() + " " + reader["name"].ToString() + " " + reader["state"].ToString();
+                                                int state = sessions.ContainsKey(reader["id"].ToString()) ? 1 : 0;
+                                                string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["id"].ToString() + " " + reader["name"].ToString() + " " + state.ToString();
                                                 string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                                 sessions[id].Queue_command(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                             }
@@ -753,7 +754,7 @@ namespace AFriendServer
 
                                     break;
                                 } // iplookup
-
+                                /*
                             case "0610":
                                 {
                                     if (receive_data_automatically(s, out data))
@@ -779,7 +780,7 @@ namespace AFriendServer
 
                                     break;
                                 } //nameloopkpup
-
+                                */
                             case "1060":
                                 {
                                     string requested_id;
@@ -1222,14 +1223,15 @@ namespace AFriendServer
                                                     Int64 friendid = (Int64)friendreader["id1"];
                                                     if (id_int == friendid) friendid = (Int64)friendreader["id2"];
 
-                                                    string friendcommandtext = "select top 1 id, username, name, state from account where id=@id";
+                                                    string friendcommandtext = "select top 1 id, name from account where id=@id";
                                                     SqlCommand friendcommandget = new SqlCommand(friendcommandtext, sql);
                                                     friendcommandget.Parameters.AddWithValue("@id", friendid);
                                                     using (SqlDataReader readerget = friendcommandget.ExecuteReader())
                                                     {
                                                         if (readerget.Read())
                                                         {
-                                                            string datasend = readerget["id"].ToString().PadLeft(19, '0') + " " + readerget["username"].ToString() + " " + readerget["name"].ToString() + " " + readerget["state"].ToString();
+                                                            int state = sessions.ContainsKey(readerget["id"].ToString()) ? 1 : 0;
+                                                            string datasend = readerget["id"].ToString().PadLeft(19, '0') + " " + readerget["id"].ToString() + " " + readerget["name"].ToString() + " " + state.ToString();
                                                             string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
                                                             sslStream.Write(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
                                                         }
