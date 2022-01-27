@@ -575,10 +575,10 @@ namespace A_Friend.CustomControls
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("You are about to delete your conversation with this person, this action cannot be undone, are you sure you want to DELETE ALL YOUR MESSAGES WITH THIS PERSON?", "Warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("You are about to delete your conversation with this person, this action cannot be undone, are you sure you want to DELETE ALL YOUR MESSAGES WITH THIS PERSON?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (dialogResult == DialogResult.Yes)
             {
-                dialogResult = MessageBox.Show("This action will DELETE ALL YOUR MESSAGES with THIS PERSON! Think twice! Are you serious?", "Warning", MessageBoxButtons.YesNo);
+                dialogResult = MessageBox.Show("This action will DELETE ALL YOUR MESSAGES with THIS PERSON! Think twice! Are you serious?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                 if (dialogResult == DialogResult.Yes)
                 {
                     if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)

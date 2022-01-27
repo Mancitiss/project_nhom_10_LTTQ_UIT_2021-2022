@@ -132,8 +132,9 @@ namespace A_Friend.CustomControls
             this.buttonDelete.Location = new System.Drawing.Point(860, 10);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(40, 40);
-            this.buttonDelete.TabIndex = 0;
             this.toolTip.SetToolTip(this.buttonDelete, "Delete conversation");
+            this.buttonDelete.TabIndex = 0;
+            this.buttonDelete.TabStop = false;
             this.buttonDelete.UseVisualStyleBackColor = false;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
