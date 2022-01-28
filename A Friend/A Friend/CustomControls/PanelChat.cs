@@ -573,6 +573,49 @@ namespace A_Friend.CustomControls
             }
         }
 
+        private void sendImageButton_Click(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(() =>
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
+                    ofd.Multiselect = true;
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
+                        foreach (string file in ofd.FileNames)
+                        {
+                            try
+                            {
+                                using (Image img = Image.FromFile(file))
+                                {
+                                    if (img != null)
+                                    {
+                                        string img_string = ImageToString(img);
+                                        Console.WriteLine("Finished img to string\n");
+                                        var b = AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string)));
+                                        //var b = new Byte[200000];
+                                        //for (int i = 0; i < 200000; i++) b[i] = 0;
+                                        Console.WriteLine("before sending nude: {0}", b.Length);
+                                        AFriendClient.Queue_command(b);
+                                        //AFriendClient.Ping();
+                                        Console.WriteLine("Nude sent");
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                FormSettings.TopMostMessageBox.Show("Cannot use this file: " + file, file);
+                            }
+                        }
+                    }
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             DialogResult dialogResult = MessageBox.Show("You are about to delete your conversation with this person, this action cannot be undone, are you sure you want to DELETE ALL YOUR MESSAGES WITH THIS PERSON?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
