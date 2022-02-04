@@ -18,6 +18,7 @@ using System.Drawing;
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Drawing.Imaging;
+using System.Collections.Concurrent;
 
 namespace AFriendServer
 {
@@ -29,6 +30,7 @@ namespace AFriendServer
         static X509Certificate serverCertificate = new X509Certificate(Environment.GetEnvironmentVariable("certpath", EnvironmentVariableTarget.User), Environment.GetEnvironmentVariable("certpass", EnvironmentVariableTarget.User));
 
         static Dictionary<string, Client> sessions = new Dictionary<string, Client>();
+        static ConcurrentDictionary<string, long> files = new ConcurrentDictionary<string, long>();
 
         static SqlConnection sql;
         static Random rand;
@@ -224,6 +226,31 @@ namespace AFriendServer
             return false;
         }
 
+        private static bool SslStream_receive_bytes(SslStream s, int byte_expected, out byte[] data)
+        {
+            int total_byte_received = 0;
+            data = new byte[byte_expected];
+            int received_byte;
+            do
+            {
+                received_byte = s.Read(data, total_byte_received, byte_expected);
+                if (received_byte > 0)
+                {
+                    total_byte_received += received_byte;
+                    byte_expected -= received_byte;
+                }
+                else break;
+            } while (byte_expected > 0 && received_byte > 0);
+            if (byte_expected == 0) // all data received
+            {
+                return true;
+            }
+            else // data corrupted
+            {
+                return false;
+            }
+        }
+
         private static bool SslStream_receive_ASCII(SslStream s, int byte_expected, out string data_string)
         {
             int total_byte_received = 0;
@@ -307,227 +334,149 @@ namespace AFriendServer
             {
                 SslStream s = sessions[id].stream;
                 string data;
-                if (SslStream_receive(s, 8, out data))
+                do
                 {
-                    Console.WriteLine("Work: " + data);
-                    if (data != null && data != "")
+                    if (SslStream_receive(s, 8, out data))
                     {
-                        string instruction = data;
-                        switch (instruction) 
+                        Console.WriteLine("Work: " + data);
+                        if (data != null && data != "")
                         {
-                            case "6475":
-                                {
-                                    string receiver_id;
-                                    if (SslStream_receive(s, 38, out receiver_id))
+                            string instruction = data;
+                            switch (instruction)
+                            {
+                                case "6475":
                                     {
-                                        Console.WriteLine(receiver_id);
-                                        string id1, id2;
-                                        if (id.CompareTo(receiver_id) <= 0)
+                                        string receiver_id;
+                                        if (SslStream_receive(s, 38, out receiver_id))
                                         {
-                                            id1 = id;
-                                            id2 = receiver_id;
-                                        }
-                                        else
-                                        {
-                                            id1 = receiver_id;
-                                            id2 = id;
-                                        }
-                                        if (receive_data_automatically(s, out data))
-                                        {
-                                            //Console.WriteLine(data);
-                                            Int64 num;
-                                            if (Int64.TryParse(data, out num))
+                                            Console.WriteLine(receiver_id);
+                                            string id1, id2;
+                                            if (id.CompareTo(receiver_id) <= 0)
                                             {
-                                                if (num == 0)
+                                                id1 = id;
+                                                id2 = receiver_id;
+                                            }
+                                            else
+                                            {
+                                                id1 = receiver_id;
+                                                id2 = id;
+                                            }
+                                            if (receive_data_automatically(s, out data))
+                                            {
+                                                //Console.WriteLine(data);
+                                                Int64 num;
+                                                if (Int64.TryParse(data, out num))
                                                 {
-                                                    SqlCommand command = new SqlCommand("select top 1 count from friend where id1=@id1 and id2=@id2", sql);
-                                                    command.Parameters.AddWithValue("@id1", id1);
-                                                    command.Parameters.AddWithValue("@id2", id2);
-                                                    using (SqlDataReader reader = command.ExecuteReader())
+                                                    if (num == 0)
                                                     {
-                                                        if (reader.Read())
-                                                        {
-                                                            num = (Int64)reader["count"];
-                                                        }
-                                                    }
-                                                    //Console.WriteLine(num);
-                                                    int i = 0;
-                                                    List<MessageObject> messageObjects = new List<MessageObject>();
-                                                    while (num > 0 && i < 50)
-                                                    {
-                                                        command = new SqlCommand("select top 1 * from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql);
+                                                        SqlCommand command = new SqlCommand("select top 1 count from friend where id1=@id1 and id2=@id2", sql);
                                                         command.Parameters.AddWithValue("@id1", id1);
                                                         command.Parameters.AddWithValue("@id2", id2);
-                                                        command.Parameters.AddWithValue("@messagenumber", num);
                                                         using (SqlDataReader reader = command.ExecuteReader())
                                                         {
                                                             if (reader.Read())
                                                             {
-                                                                //Console.WriteLine((DateTime)reader["timesent"]);
-                                                                if ((byte)reader["type"] == 0)
-                                                                {
-                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
-                                                                    messageObjects.Add(msgobj);
-                                                                }
-                                                                else if ((byte)reader["type"] == 1 && File.Exists(img_path + id1 + "_" + id2 + "_" + num + ".png"))
-                                                                {
-                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], ImageToString(img_path + id1 + "_" + id2 + "_" + num + ".png"), (byte)reader["type"]);
-                                                                    messageObjects.Add(msgobj);
-                                                                }
+                                                                num = (Int64)reader["count"];
                                                             }
                                                         }
-                                                        num = num - 1;
-                                                        i = i + 1;
-                                                    }
-                                                    string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
-                                                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                                                    //Console.WriteLine("Old messages sent");
-                                                    if (sessions.ContainsKey(id))
-                                                    {
-                                                        if (sessions[id].loaded > 1)
+                                                        //Console.WriteLine(num);
+                                                        int i = 0;
+                                                        List<MessageObject> messageObjects = new List<MessageObject>();
+                                                        while (num > 0 && i < 20)
                                                         {
-                                                            sessions[id].loaded -= 1;
-                                                        }
-                                                        else if (sessions[id].loaded == 1)
-                                                        {
-                                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("2411"));
-                                                            sessions[id].loaded -= 1;
-                                                        }
-                                                    }
-                                                }
-                                                else if (num > 1)
-                                                {
-                                                    int i = 0;
-                                                    SqlCommand command;
-                                                    List<MessageObject> messageObjects = new List<MessageObject>();
-                                                    while (num > 0 && i < 50)
-                                                    {
-                                                        command = new SqlCommand("select top 1 * from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql);
-                                                        command.Parameters.AddWithValue("@id1", id1);
-                                                        command.Parameters.AddWithValue("@id2", id2);
-                                                        command.Parameters.AddWithValue("@messagenumber", num);
-                                                        using (SqlDataReader reader = command.ExecuteReader())
-                                                        {
-                                                            if (reader.Read())
+                                                            command = new SqlCommand("select top 1 * from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql);
+                                                            command.Parameters.AddWithValue("@id1", id1);
+                                                            command.Parameters.AddWithValue("@id2", id2);
+                                                            command.Parameters.AddWithValue("@messagenumber", num);
+                                                            using (SqlDataReader reader = command.ExecuteReader())
                                                             {
-                                                                if ((byte)reader["type"] == 0)
+                                                                if (reader.Read())
                                                                 {
-                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
-                                                                    messageObjects.Add(msgobj);
-                                                                } else if ((byte)reader["type"] == 1 && File.Exists(img_path + id1 + "_" + id2 + "_" + num + ".png"))
-                                                                {
-                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], ImageToString(img_path + id1 + "_" + id2 + "_" + num + ".png"), (byte)reader["type"]);
-                                                                    messageObjects.Add(msgobj);
+                                                                    //Console.WriteLine((DateTime)reader["timesent"]);
+                                                                    if ((byte)reader["type"] == 0 || (byte)reader["type"] == 3)
+                                                                    {
+                                                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                        messageObjects.Add(msgobj);
+                                                                    }
+                                                                    else if ((byte)reader["type"] == 1 && File.Exists(img_path + id1 + "_" + id2 + "_" + num.ToString() + ".png"))
+                                                                    {
+                                                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], ImageToString(img_path + id1 + "_" + id2 + "_" + num + ".png"), (byte)reader["type"]);
+                                                                        messageObjects.Add(msgobj);
+                                                                    }
                                                                 }
                                                             }
+                                                            num = num - 1;
+                                                            i = i + 1;
                                                         }
-                                                        num = num - 1;
-                                                        i = i + 1;
-                                                    }
-                                                    string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
-                                                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
-                                                    //Console.WriteLine("Old messages sent");
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                } // load message
-
-                            case "1901":
-                                {
-                                    SslStream_receive(s, 4, out data);
-                                    int bytesize = Int32.Parse(data) * 2;
-                                    SslStream_receive(s, bytesize, out data);
-                                    Int32.TryParse(data, out int temp);
-                                    if (SslStream_receive(s, temp, out string data_string))// all data received, save to database, send to socket
-                                    {
-                                        string receiver_id = data_string.Substring(0, 19);
-                                        data_string = data_string.Remove(0, 19);
-                                        //save to database start
-                                        string id1, id2;
-                                        if (id.CompareTo(receiver_id) <= 0)
-                                        {
-                                            id1 = id;
-                                            id2 = receiver_id;
-                                        }
-                                        else
-                                        {
-                                            id1 = receiver_id;
-                                            id2 = id;
-                                        }
-                                        string sqlmessage = data_string;
-                                        try
-                                        {
-                                            bool success = false;
-                                            DateTime now = DateTime.Now;
-                                            using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message, 0)", sql))
-                                            {
-                                                command.Parameters.AddWithValue("@id1", id1);
-                                                command.Parameters.AddWithValue("@id2", id2);
-                                                command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
-                                                command.Parameters.AddWithValue("@datetimenow", now);
-                                                command.Parameters.AddWithValue("@sender", id == id2);
-                                                command.Parameters.AddWithValue("@message", sqlmessage);
-                                                if (command.ExecuteNonQuery() >= 1) success = true;
-                                            }
-                                            if (success)
-                                            {
-                                                using (SqlCommand another_command = new SqlCommand("select top 1 * from message where id1 = @id1 and id2 = @id2 and timesent = @timesent and sender = @sender", sql))
-                                                {
-                                                    another_command.Parameters.AddWithValue("@id1", id1);
-                                                    another_command.Parameters.AddWithValue("@id2", id2);
-                                                    another_command.Parameters.AddWithValue("@timesent", now);
-                                                    another_command.Parameters.AddWithValue("sender", id == id2);
-                                                    using (SqlDataReader reader = another_command.ExecuteReader())
-                                                    {
-                                                        if (reader.Read())
+                                                        string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
+                                                        string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                                        sessions[id].Queue_command(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                        //Console.WriteLine("Old messages sent");
+                                                        if (sessions.ContainsKey(id))
                                                         {
-                                                            MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
-                                                            //data_string = data_string.Insert(0, id);
-                                                            //send to socket start
-                                                            if (id != receiver_id) Send_to_id(id, msgobj);
-                                                            if (!Send_to_id(receiver_id, msgobj))
+                                                            if (sessions[id].loaded > 1)
                                                             {
-                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("0404" + receiver_id));
+                                                                sessions[id].loaded -= 1;
                                                             }
-                                                            else
+                                                            else if (sessions[id].loaded == 1)
                                                             {
-                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("2411"));
+                                                                sessions[id].loaded -= 1;
                                                             }
-                                                            Console.WriteLine("Sent");
-                                                            //send to socket end
                                                         }
+                                                    }
+                                                    else if (num > 1)
+                                                    {
+                                                        int i = 0;
+                                                        SqlCommand command;
+                                                        List<MessageObject> messageObjects = new List<MessageObject>();
+                                                        while (num > 0 && i < 20)
+                                                        {
+                                                            command = new SqlCommand("select top 1 * from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql);
+                                                            command.Parameters.AddWithValue("@id1", id1);
+                                                            command.Parameters.AddWithValue("@id2", id2);
+                                                            command.Parameters.AddWithValue("@messagenumber", num);
+                                                            using (SqlDataReader reader = command.ExecuteReader())
+                                                            {
+                                                                if (reader.Read())
+                                                                {
+                                                                    if ((byte)reader["type"] == 0 || (byte)reader["type"] == 3)
+                                                                    {
+                                                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                        messageObjects.Add(msgobj);
+                                                                    }
+                                                                    else if ((byte)reader["type"] == 1 && File.Exists(img_path + id1 + "_" + id2 + "_" + num.ToString() + ".png"))
+                                                                    {
+                                                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], ImageToString(img_path + id1 + "_" + id2 + "_" + num.ToString() + ".png"), (byte)reader["type"]);
+                                                                        messageObjects.Add(msgobj);
+                                                                    }
+                                                                }
+                                                            }
+                                                            num = num - 1;
+                                                            i = i + 1;
+                                                        }
+                                                        string datasend = JSON.Serialize<List<MessageObject>>(messageObjects);
+                                                        string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                                        sessions[id].Queue_command(Encoding.Unicode.GetBytes("6475" + receiver_id + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                        //Console.WriteLine("Old messages sent");
                                                     }
                                                 }
                                             }
                                         }
-                                        catch (Exception e) 
-                                        {
-                                            Console.WriteLine(e.ToString());
-                                            exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
-                                        }
-                                        //save to database end
-                                    }
-                                    else // data corrupted
-                                    {
-                                        Console.WriteLine("Data Corrupted");
-                                    }
-                                    /*
-                                    byte_expected[id] = temp;*/
-                                    //Console.WriteLine("After Message:" + item.Value.Available);
-                                    break;
-                                } // handle message
 
-                            case "1902": // handle image message
-                                {
-                                    if (SslStream_receive(s, 38, out string receiver_id))
+                                        break;
+                                    } // load message
+
+                                case "1901":
                                     {
-                                        if (receive_ASCII_data_automatically(s, out string data_string))
+                                        SslStream_receive(s, 4, out data);
+                                        int bytesize = Int32.Parse(data) * 2;
+                                        SslStream_receive(s, bytesize, out data);
+                                        Int32.TryParse(data, out int temp);
+                                        if (SslStream_receive(s, temp, out string data_string))// all data received, save to database, send to socket
                                         {
+                                            string receiver_id = data_string.Substring(0, 19);
+                                            data_string = data_string.Remove(0, 19);
                                             //save to database start
                                             string id1, id2;
                                             if (id.CompareTo(receiver_id) <= 0)
@@ -540,18 +489,19 @@ namespace AFriendServer
                                                 id1 = receiver_id;
                                                 id2 = id;
                                             }
+                                            string sqlmessage = data_string;
                                             try
                                             {
                                                 bool success = false;
                                                 DateTime now = DateTime.Now;
-                                                using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message, 1)", sql))
+                                                using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message, 0)", sql))
                                                 {
                                                     command.Parameters.AddWithValue("@id1", id1);
                                                     command.Parameters.AddWithValue("@id2", id2);
                                                     command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
                                                     command.Parameters.AddWithValue("@datetimenow", now);
                                                     command.Parameters.AddWithValue("@sender", id == id2);
-                                                    command.Parameters.AddWithValue("@message", "");
+                                                    command.Parameters.AddWithValue("@message", sqlmessage);
                                                     if (command.ExecuteNonQuery() >= 1) success = true;
                                                 }
                                                 if (success)
@@ -566,29 +516,19 @@ namespace AFriendServer
                                                         {
                                                             if (reader.Read())
                                                             {
-                                                                try
+                                                                MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                //data_string = data_string.Insert(0, id);
+                                                                //send to socket start
+                                                                if (id != receiver_id) Send_to_id(id, msgobj);
+                                                                if (!Send_to_id(receiver_id, msgobj))
                                                                 {
-                                                                    string img_message = data_string;
-                                                                    Image temp = StringToImage(data_string);
-                                                                    string tempFile = img_path + id1 + "_" + id2 + "_" + reader["messagenumber"] + ".png";
-                                                                    (new Bitmap(temp)).Save(tempFile, ImageFormat.Png);
-                                                                    MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], img_message, (byte)reader["type"]);
-                                                                    //data_string = data_string.Insert(0, id);
-                                                                    //send to socket start
-                                                                    if (id != receiver_id) Send_to_id(id, msgobj);
-                                                                    if (!Send_to_id(receiver_id, msgobj))
-                                                                    {
-                                                                        sessions[id].Queue_command(Encoding.Unicode.GetBytes("0404" + receiver_id));
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        sessions[id].Queue_command(Encoding.Unicode.GetBytes("2211" + receiver_id));
-                                                                    }
-                                                                    Console.WriteLine("Sent");
-                                                                } catch (Exception e)
-                                                                {
-                                                                    Console.WriteLine(e.ToString());
+                                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("0404" + receiver_id));
                                                                 }
+                                                                else
+                                                                {
+                                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                }
+                                                                Console.WriteLine("Sent");
                                                                 //send to socket end
                                                             }
                                                         }
@@ -602,158 +542,525 @@ namespace AFriendServer
                                             }
                                             //save to database end
                                         }
-                                    }
-                                    break;
-                                } // handle image message
+                                        else // data corrupted
+                                        {
+                                            Console.WriteLine("Data Corrupted");
+                                        }
+                                        /*
+                                        byte_expected[id] = temp;*/
+                                        //Console.WriteLine("After Message:" + item.Value.Available);
+                                        break;
+                                    } // handle message
 
-                            case "1234":
-                                {
-                                    string receiver_id;
-                                    if (SslStream_receive(s, 38, out receiver_id))
+                                case "1902": // handle image message
                                     {
-                                        string id1, id2;
-                                        if (id.CompareTo(receiver_id) <= 0)
+                                        if (SslStream_receive(s, 38, out string receiver_id))
                                         {
-                                            id1 = id;
-                                            id2 = receiver_id;
-                                        }
-                                        else
-                                        {
-                                            id1 = receiver_id;
-                                            id2 = id;
-                                        }
-                                        string boolstr;
-                                        if (SslStream_receive(s, 2, out boolstr))
-                                        {
-                                            using (SqlCommand command = new SqlCommand("update top (1) seen set seen=@bool where id1=@id1 and id2=@id2", sql))
+                                            if (receive_ASCII_data_automatically(s, out string data_string))
                                             {
-                                                if (boolstr == "0")
+                                                //save to database start
+                                                string id1, id2;
+                                                if (id.CompareTo(receiver_id) <= 0)
                                                 {
-                                                    command.Parameters.AddWithValue("@bool", 0);
+                                                    id1 = id;
+                                                    id2 = receiver_id;
                                                 }
                                                 else
                                                 {
-                                                    command.Parameters.AddWithValue("@bool", 1);
+                                                    id1 = receiver_id;
+                                                    id2 = id;
                                                 }
-                                                command.Parameters.AddWithValue("@id1", id1);
-                                                command.Parameters.AddWithValue("@id2", id2);
-                                                command.ExecuteNonQuery();
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                } // me seen
-
-                            case "0708":
-                                {
-                                    string receiver_id;
-                                    if (SslStream_receive(s, 38, out receiver_id))
-                                    {
-                                        string id1, id2;
-                                        if (id.CompareTo(receiver_id) <= 0)
-                                        {
-                                            id1 = id;
-                                            id2 = receiver_id;
-                                        }
-                                        else
-                                        {
-                                            id1 = receiver_id;
-                                            id2 = id;
-                                        }
-                                        string commandtext = "select top 1 seen from seen where id1=@id1 and id2=@id2";
-                                        SqlCommand command = new SqlCommand(commandtext, sql);
-                                        command.Parameters.AddWithValue("@id1", Int64.Parse(id1));
-                                        command.Parameters.AddWithValue("@id2", Int64.Parse(id2));
-                                        bool result = false;
-                                        using (SqlDataReader reader = command.ExecuteReader())
-                                        {
-                                            if (reader.Read())
-                                            {
-                                                result = (bool)reader[0];
-                                            }
-                                        }
-                                        if (result)
-                                        {
-                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("0708" + receiver_id + "1"));
-                                        }
-                                        else
-                                        {
-                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("0708" + receiver_id + "0"));
-                                        }
-                                    }
-
-                                    break;
-                                } // load seen
-
-                            case "2002":
-                                {
-                                    string receiver_id;
-                                    if (SslStream_receive(s, 38, out receiver_id))
-                                    {
-                                        string id1, id2;
-                                        if (id.CompareTo(receiver_id) <= 0)
-                                        {
-                                            id1 = id;
-                                            id2 = receiver_id;
-                                        }
-                                        else
-                                        {
-                                            id1 = receiver_id;
-                                            id2 = id;
-                                        }
-                                        string messagenumberstring;
-                                        if (receive_data_automatically(s, out messagenumberstring))
-                                        {
-                                            long messagenumber;
-                                            if (long.TryParse(messagenumberstring, out messagenumber))
-                                            {
-                                                using (SqlCommand command = new SqlCommand("delete top (1) from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql))
+                                                try
                                                 {
-                                                    command.Parameters.AddWithValue("@id1", id1);
-                                                    command.Parameters.AddWithValue("@id2", id2);
-                                                    command.Parameters.AddWithValue("messagenumber", messagenumber);
-                                                    command.ExecuteNonQuery();
+                                                    bool success = false;
+                                                    DateTime now = DateTime.Now;
+                                                    using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message, 1)", sql))
+                                                    {
+                                                        command.Parameters.AddWithValue("@id1", id1);
+                                                        command.Parameters.AddWithValue("@id2", id2);
+                                                        command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
+                                                        command.Parameters.AddWithValue("@datetimenow", now);
+                                                        command.Parameters.AddWithValue("@sender", id == id2);
+                                                        command.Parameters.AddWithValue("@message", "");
+                                                        if (command.ExecuteNonQuery() >= 1) success = true;
+                                                    }
+                                                    if (success)
+                                                    {
+                                                        using (SqlCommand another_command = new SqlCommand("select top 1 * from message where id1 = @id1 and id2 = @id2 and timesent = @timesent and sender = @sender", sql))
+                                                        {
+                                                            another_command.Parameters.AddWithValue("@id1", id1);
+                                                            another_command.Parameters.AddWithValue("@id2", id2);
+                                                            another_command.Parameters.AddWithValue("@timesent", now);
+                                                            another_command.Parameters.AddWithValue("sender", id == id2);
+                                                            using (SqlDataReader reader = another_command.ExecuteReader())
+                                                            {
+                                                                if (reader.Read())
+                                                                {
+                                                                    try
+                                                                    {
+                                                                        string img_message = data_string;
+                                                                        Image temp = StringToImage(data_string);
+                                                                        string tempFile = img_path + id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + ".png";
+                                                                        (new Bitmap(temp)).Save(tempFile, ImageFormat.Png);
+                                                                        MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], img_message, (byte)reader["type"]);
+                                                                        //data_string = data_string.Insert(0, id);
+                                                                        //send to socket start
+                                                                        if (id != receiver_id) Send_to_id(id, msgobj);
+                                                                        if (!Send_to_id(receiver_id, msgobj))
+                                                                        {
+                                                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("0404" + receiver_id));
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                        }
+                                                                        Console.WriteLine("Sent");
+                                                                    }
+                                                                    catch (Exception e)
+                                                                    {
+                                                                        Console.WriteLine(e.ToString());
+                                                                    }
+                                                                    //send to socket end
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
-                                            }
-                                            if (sessions.ContainsKey(receiver_id))
-                                            {
-                                                sessions[receiver_id].Queue_command(Encoding.Unicode.GetBytes("2002" + id + data_with_byte(messagenumber.ToString())));
+                                                catch (Exception e)
+                                                {
+                                                    Console.WriteLine(e.ToString());
+                                                    exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
+                                                }
+                                                //save to database end
                                             }
                                         }
+                                        break;
+                                    } // handle image message
+
+                                case "1903":
+                                    {
+                                        if (SslStream_receive(s, 38, out string receiver_id))
+                                        {
+                                            if (receive_data_automatically(s, out string file))
+                                            {
+                                                if (receive_ASCII_data_automatically(s, out string length))
+                                                {
+                                                    string id1, id2;
+                                                    if (id.CompareTo(receiver_id) <= 0)
+                                                    {
+                                                        id1 = id;
+                                                        id2 = receiver_id;
+                                                    }
+                                                    else
+                                                    {
+                                                        id1 = receiver_id;
+                                                        id2 = id;
+                                                    }
+                                                    try
+                                                    {
+                                                        bool success = false;
+                                                        DateTime now = DateTime.Now;
+                                                        using (SqlCommand command = new SqlCommand("insert into message values (@id1, @id2, @n, @datetimenow, @sender, @message, 3)", sql))
+                                                        {
+                                                            command.Parameters.AddWithValue("@id1", id1);
+                                                            command.Parameters.AddWithValue("@id2", id2);
+                                                            command.Parameters.AddWithValue("@n", rand.Next(-1000000000, 0));
+                                                            command.Parameters.AddWithValue("@datetimenow", now);
+                                                            command.Parameters.AddWithValue("@sender", id == id2);
+                                                            command.Parameters.AddWithValue("@message", file);
+                                                            if (command.ExecuteNonQuery() >= 1) success = true;
+                                                        }
+                                                        if (success)
+                                                        {
+                                                            using (SqlCommand another_command = new SqlCommand("select top 1 * from message where id1 = @id1 and id2 = @id2 and timesent = @timesent and sender = @sender and message = @message and type = 3", sql))
+                                                            {
+                                                                another_command.Parameters.AddWithValue("@id1", id1);
+                                                                another_command.Parameters.AddWithValue("@id2", id2);
+                                                                another_command.Parameters.AddWithValue("@timesent", now);
+                                                                another_command.Parameters.AddWithValue("sender", id == id2);
+                                                                another_command.Parameters.AddWithValue("message", file);
+                                                                using (SqlDataReader reader = another_command.ExecuteReader())
+                                                                {
+                                                                    if (reader.Read())
+                                                                    {
+                                                                        try
+                                                                        {
+                                                                            files.AddOrUpdate(id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + ".", long.Parse(length), (key, oldValue) => oldValue);
+                                                                            sessions[id].Queue_command
+                                                                                (
+                                                                                    Combine
+                                                                                    (
+                                                                                        Encoding.Unicode.GetBytes("1903" + receiver_id),
+                                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(reader["messagenumber"].ToString())),
+                                                                                        Encoding.Unicode.GetBytes(data_with_byte(reader["message"].ToString())),
+                                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(files[id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + "."].ToString()))
+                                                                                    )
+                                                                                );
+                                                                            MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
+                                                                            //data_string = data_string.Insert(0, id);
+                                                                            //send to socket start
+                                                                            if (id != receiver_id) Send_to_id(id, msgobj);
+                                                                            if (!Send_to_id(receiver_id, msgobj))
+                                                                            {
+                                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("0404" + receiver_id));
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("2211" + receiver_id));
+                                                                            }
+                                                                            Console.WriteLine("Sent");
+                                                                        }
+                                                                        catch (Exception e)
+                                                                        {
+                                                                            Console.WriteLine(e.ToString());
+                                                                        }
+                                                                        //send to socket end
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    catch (Exception e)
+                                                    {
+                                                        Console.WriteLine(e.ToString());
+                                                        exception_handler(new KeyValuePair<string, Client>(id, sessions[id]), e.ToString());
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
                                     }
 
-                                    break;
-                                } // delete message
-
-                            case "2004":
-                                shutdown(id);
-                                break;
-                            case "0609":
-                                {
-                                    if (SslStream_receive(s, 38, out data))
+                                case "1904":
                                     {
-                                        string commandtext = "select top 1 id, name from account where id=@id and private=0";
-                                        SqlCommand command = new SqlCommand(commandtext, sql);
-                                        command.Parameters.AddWithValue("@id", Int64.Parse(data));
-                                        using (SqlDataReader reader = command.ExecuteReader())
+                                        if (SslStream_receive(s, 38, out string receiver_id))
                                         {
-                                            if (reader.Read())
+                                            if (receive_ASCII_data_automatically(s, out string num))
                                             {
-                                                int state = sessions.ContainsKey(reader["id"].ToString()) ? 1 : 0;
-                                                string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["id"].ToString() + " " + reader["name"].ToString() + " " + state.ToString();
-                                                string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
-                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                if (long.TryParse(num, out long messagenumber))
+                                                {
+                                                    if (receive_ASCII_data_automatically(s, out string offsetstr))
+                                                    {
+                                                        if (long.TryParse(offsetstr, out long offset))
+                                                        {
+                                                            if (receive_ASCII_data_automatically(s, out string received_byte_str))
+                                                            {
+                                                                if (int.TryParse(received_byte_str, out int received_byte))
+                                                                {
+                                                                    if (SslStream_receive_bytes(s, received_byte, out byte[] databyte))
+                                                                    {
+                                                                        string id1, id2;
+                                                                        if (id.CompareTo(receiver_id) <= 0)
+                                                                        {
+                                                                            id1 = id;
+                                                                            id2 = receiver_id;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            id1 = receiver_id;
+                                                                            id2 = id;
+                                                                        }
+                                                                        string filename = id1 + "_" + id2 + "_" + num + ".";
+                                                                        Console.WriteLine("File: {0}", img_path + filename);
+                                                                        if (files.ContainsKey(filename) && files[filename] > 0)
+                                                                        {
+                                                                            bool done = false;
+                                                                            while (!done)
+                                                                            {
+                                                                                try
+                                                                                {
+                                                                                    using (FileStream fileStream = File.Open(img_path + filename, FileMode.OpenOrCreate))
+                                                                                    {
+                                                                                        if (fileStream.CanSeek && fileStream.CanWrite)
+                                                                                        {
+                                                                                            fileStream.Seek(offset, SeekOrigin.Begin);
+                                                                                            fileStream.Write(databyte, 0, received_byte);
+                                                                                            files.AddOrUpdate(filename, files[filename] - received_byte, (key, oldValue) => oldValue - received_byte);
+                                                                                            if (files[filename] <= 0) files.TryRemove(filename, out long temp);
+                                                                                            Console.WriteLine("Write to file ended");
+                                                                                            done = true;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                catch (Exception e)
+                                                                                {
+                                                                                    if (e.ToString().Contains("being used by another process"))
+                                                                                    {
+                                                                                        Console.WriteLine("Try again!");
+                                                                                        Task.Delay(100);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
+                                                                                        files.TryRemove(filename, out long temp);
+                                                                                        throw e;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+
+                                case "1905":
+                                    {
+                                        if (SslStream_receive(s, 38, out string receiver_id))
+                                        {
+                                            if (receive_ASCII_data_automatically(s, out string num))
+                                            {
+                                                string id1, id2;
+                                                if (id.CompareTo(receiver_id) <= 0)
+                                                {
+                                                    id1 = id;
+                                                    id2 = receiver_id;
+                                                }
+                                                else
+                                                {
+                                                    id1 = receiver_id;
+                                                    id2 = id;
+                                                }
+                                                string file = img_path + id1 + "_" + id2 + "_" + num + ".";
+
+                                                if (File.Exists(file))
+                                                {
+                                                    using (FileStream fileStream = File.Open(file, FileMode.Open))
+                                                    {
+                                                        long filesize = fileStream.Length;
+                                                        sessions[id].Queue_command
+                                                        (
+                                                            Combine
+                                                            (
+                                                                Encoding.Unicode.GetBytes("1905" + receiver_id),
+                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(filesize.ToString()))
+                                                            )
+                                                        );
+                                                        long offset = 0;
+                                                        byte[] buffer = new byte[32768];
+                                                        while (offset < filesize)
+                                                        {
+                                                            if (filesize - offset > buffer.Length)
+                                                            {
+                                                                int first_byte_expected = buffer.Length;
+                                                                int byte_expected = first_byte_expected;
+                                                                int total_byte_received = 0;
+                                                                int received_byte;
+                                                                do
+                                                                {
+                                                                    received_byte = fileStream.Read(buffer, total_byte_received, byte_expected);
+                                                                    if (received_byte > 0)
+                                                                    {
+                                                                        total_byte_received += received_byte;
+                                                                        byte_expected -= received_byte;
+                                                                    }
+                                                                    else break;
+                                                                } while (byte_expected > 0 && received_byte > 0);
+                                                                if (total_byte_received == first_byte_expected)
+                                                                {
+                                                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                                                        Encoding.Unicode.GetBytes(receiver_id),
+                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                                                        buffer));
+                                                                }
+                                                                offset += total_byte_received;
+                                                            }
+                                                            else
+                                                            {
+                                                                int first_byte_expected = (int)(filesize - offset);
+                                                                int byte_expected = first_byte_expected;
+                                                                byte[] final_buffer = new byte[(int)(filesize - offset)];
+                                                                int total_byte_received = 0;
+                                                                int received_byte;
+                                                                do
+                                                                {
+                                                                    received_byte = fileStream.Read(final_buffer, total_byte_received, byte_expected);
+                                                                    if (received_byte > 0)
+                                                                    {
+                                                                        total_byte_received += received_byte;
+                                                                        byte_expected -= received_byte;
+                                                                    }
+                                                                    else break;
+                                                                } while (byte_expected > 0 && received_byte > 0);
+                                                                if (total_byte_received == first_byte_expected)
+                                                                {
+                                                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                                                        Encoding.Unicode.GetBytes(receiver_id),
+                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                                                        final_buffer));
+                                                                }
+                                                                offset += total_byte_received;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+
+                                case "1234":
+                                    {
+                                        string receiver_id;
+                                        if (SslStream_receive(s, 38, out receiver_id))
+                                        {
+                                            string id1, id2;
+                                            if (id.CompareTo(receiver_id) <= 0)
+                                            {
+                                                id1 = id;
+                                                id2 = receiver_id;
                                             }
                                             else
                                             {
-                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("2609")); // info not found
+                                                id1 = receiver_id;
+                                                id2 = id;
+                                            }
+                                            string boolstr;
+                                            if (SslStream_receive(s, 2, out boolstr))
+                                            {
+                                                using (SqlCommand command = new SqlCommand("update top (1) seen set seen=@bool where id1=@id1 and id2=@id2", sql))
+                                                {
+                                                    if (boolstr == "0")
+                                                    {
+                                                        command.Parameters.AddWithValue("@bool", 0);
+                                                    }
+                                                    else
+                                                    {
+                                                        command.Parameters.AddWithValue("@bool", 1);
+                                                    }
+                                                    command.Parameters.AddWithValue("@id1", id1);
+                                                    command.Parameters.AddWithValue("@id2", id2);
+                                                    command.ExecuteNonQuery();
+                                                }
                                             }
                                         }
-                                    }
 
+                                        break;
+                                    } // me seen
+
+                                case "0708":
+                                    {
+                                        string receiver_id;
+                                        if (SslStream_receive(s, 38, out receiver_id))
+                                        {
+                                            string id1, id2;
+                                            if (id.CompareTo(receiver_id) <= 0)
+                                            {
+                                                id1 = id;
+                                                id2 = receiver_id;
+                                            }
+                                            else
+                                            {
+                                                id1 = receiver_id;
+                                                id2 = id;
+                                            }
+                                            string commandtext = "select top 1 seen from seen where id1=@id1 and id2=@id2";
+                                            SqlCommand command = new SqlCommand(commandtext, sql);
+                                            command.Parameters.AddWithValue("@id1", Int64.Parse(id1));
+                                            command.Parameters.AddWithValue("@id2", Int64.Parse(id2));
+                                            bool result = false;
+                                            using (SqlDataReader reader = command.ExecuteReader())
+                                            {
+                                                if (reader.Read())
+                                                {
+                                                    result = (bool)reader[0];
+                                                }
+                                            }
+                                            if (result)
+                                            {
+                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("0708" + receiver_id + "1"));
+                                            }
+                                            else
+                                            {
+                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("0708" + receiver_id + "0"));
+                                            }
+                                        }
+
+                                        break;
+                                    } // load seen
+
+                                case "2002":
+                                    {
+                                        string receiver_id;
+                                        if (SslStream_receive(s, 38, out receiver_id))
+                                        {
+                                            string id1, id2;
+                                            if (id.CompareTo(receiver_id) <= 0)
+                                            {
+                                                id1 = id;
+                                                id2 = receiver_id;
+                                            }
+                                            else
+                                            {
+                                                id1 = receiver_id;
+                                                id2 = id;
+                                            }
+                                            string messagenumberstring;
+                                            if (receive_data_automatically(s, out messagenumberstring))
+                                            {
+                                                long messagenumber;
+                                                if (long.TryParse(messagenumberstring, out messagenumber))
+                                                {
+                                                    using (SqlCommand command = new SqlCommand("delete top (1) from message where id1=@id1 and id2=@id2 and messagenumber=@messagenumber", sql))
+                                                    {
+                                                        command.Parameters.AddWithValue("@id1", id1);
+                                                        command.Parameters.AddWithValue("@id2", id2);
+                                                        command.Parameters.AddWithValue("messagenumber", messagenumber);
+                                                        command.ExecuteNonQuery();
+                                                    }
+                                                    if (File.Exists(img_path + id1 + "_" + id2 + "_" + messagenumber.ToString() + ".png"))
+                                                    {
+                                                        File.Delete(img_path + id1 + "_" + id2 + "_" + messagenumber.ToString() + ".png");
+                                                    }
+                                                }
+                                                if (sessions.ContainsKey(receiver_id))
+                                                {
+                                                    sessions[receiver_id].Queue_command(Encoding.Unicode.GetBytes("2002" + id + data_with_byte(messagenumber.ToString())));
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    } // delete message
+
+                                case "2004":
+                                    shutdown(id);
                                     break;
-                                } // iplookup
+                                case "0609":
+                                    {
+                                        if (SslStream_receive(s, 38, out data))
+                                        {
+                                            string commandtext = "select top 1 id, name from account where id=@id and private=0";
+                                            SqlCommand command = new SqlCommand(commandtext, sql);
+                                            command.Parameters.AddWithValue("@id", Int64.Parse(data));
+                                            using (SqlDataReader reader = command.ExecuteReader())
+                                            {
+                                                if (reader.Read())
+                                                {
+                                                    int state = sessions.ContainsKey(reader["id"].ToString()) ? 1 : 0;
+                                                    string datasend = reader["id"].ToString().PadLeft(19, '0') + " " + reader["id"].ToString() + " " + reader["name"].ToString() + " " + state.ToString();
+                                                    string datasendbyte = Encoding.Unicode.GetByteCount(datasend).ToString();
+                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("1609" + datasendbyte.Length.ToString().PadLeft(2, '0') + datasendbyte + datasend));
+                                                }
+                                                else
+                                                {
+                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("2609")); // info not found
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    } // iplookup
                                 /*
                             case "0610":
                                 {
@@ -781,184 +1088,184 @@ namespace AFriendServer
                                     break;
                                 } //nameloopkpup
                                 */
-                            case "1060":
-                                {
-                                    string requested_id;
-                                    if (SslStream_receive(s, 38, out requested_id))
+                                case "1060":
                                     {
-                                        /*
-                                        SqlCommand command = new SqlCommand("select avatar from account where id=@id", sql);
-                                        command.Parameters.AddWithValue("@id", requested_id);
-                                        using (SqlDataReader reader = command.ExecuteReader())
-                                        {*/
-                                        string path = avatar_path + requested_id + ".png";
-                                        if (File.Exists(path))
+                                        string requested_id;
+                                        if (SslStream_receive(s, 38, out requested_id))
                                         {
                                             /*
-                                            if (reader[0].GetType() != typeof(DBNull))
+                                            SqlCommand command = new SqlCommand("select avatar from account where id=@id", sql);
+                                            command.Parameters.AddWithValue("@id", requested_id);
+                                            using (SqlDataReader reader = command.ExecuteReader())
                                             {*/
-                                            sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1060" + requested_id), Encoding.ASCII.GetBytes(data_with_ASCII_byte(ImageToString(path)))));
-                                            Console.WriteLine("Friend avatar sent!");
-                                        
+                                            string path = avatar_path + requested_id + ".png";
+                                            if (File.Exists(path))
+                                            {
+                                                /*
+                                                if (reader[0].GetType() != typeof(DBNull))
+                                                {*/
+                                                sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1060" + requested_id), Encoding.ASCII.GetBytes(data_with_ASCII_byte(ImageToString(path)))));
+                                                Console.WriteLine("Friend avatar sent!");
+
+                                                //}
+                                            }
                                             //}
                                         }
-                                        //}
-                                    }
 
-                                    break;
-                                } // load friend's avatars
+                                        break;
+                                    } // load friend's avatars
 
-                            case "0601":
-                                {
-                                    string img_string;
-                                    if (receive_ASCII_data_automatically(s, out img_string))
+                                case "0601":
                                     {
-                                        string tempFile = avatar_path + id + ".png";
-                                        (new Bitmap(StringToImage(img_string))).Save(tempFile, ImageFormat.Png);
-                                        /*
-                                        using (SqlCommand command = new SqlCommand("update top (1) account set avatar=@avatar where id=@id", sql))
+                                        string img_string;
+                                        if (receive_ASCII_data_automatically(s, out img_string))
                                         {
-                                            command.Parameters.AddWithValue("@avatar", img_string);
-                                            command.Parameters.AddWithValue("@id", Int64.Parse(id));
-                                            command.ExecuteNonQuery();
-                                        }
-                                        */
-                                    }
-
-                                    break;
-                                } // set avatar
-
-                            case "4269":
-                                {
-                                    string opw;
-                                    if (receive_data_automatically(s, out opw))
-                                    {
-                                        string pw;
-                                        if (receive_data_automatically(s, out pw))
-                                        {
-                                            SqlCommand command = new SqlCommand("Select top 1 pw from account where id=@id", sql);
-                                            Int64 longkey;
-                                            if (Int64.TryParse(id, out longkey))
+                                            string tempFile = avatar_path + id + ".png";
+                                            (new Bitmap(StringToImage(img_string))).Save(tempFile, ImageFormat.Png);
+                                            /*
+                                            using (SqlCommand command = new SqlCommand("update top (1) account set avatar=@avatar where id=@id", sql))
                                             {
+                                                command.Parameters.AddWithValue("@avatar", img_string);
                                                 command.Parameters.AddWithValue("@id", Int64.Parse(id));
-                                                using (SqlDataReader reader = command.ExecuteReader())
+                                                command.ExecuteNonQuery();
+                                            }
+                                            */
+                                        }
+
+                                        break;
+                                    } // set avatar
+
+                                case "4269":
+                                    {
+                                        string opw;
+                                        if (receive_data_automatically(s, out opw))
+                                        {
+                                            string pw;
+                                            if (receive_data_automatically(s, out pw))
+                                            {
+                                                SqlCommand command = new SqlCommand("Select top 1 pw from account where id=@id", sql);
+                                                Int64 longkey;
+                                                if (Int64.TryParse(id, out longkey))
                                                 {
-                                                    if (reader.Read())
+                                                    command.Parameters.AddWithValue("@id", Int64.Parse(id));
+                                                    using (SqlDataReader reader = command.ExecuteReader())
                                                     {
-                                                        if (Crypter.CheckPassword(opw, reader["pw"].ToString()))
+                                                        if (reader.Read())
                                                         {
-                                                            using (SqlCommand changepass = new SqlCommand("update top (1) account set pw = @pw where id = @id", sql))
+                                                            if (Crypter.CheckPassword(opw, reader["pw"].ToString()))
                                                             {
-                                                                changepass.Parameters.AddWithValue("@pw", Crypter.Blowfish.Crypt(pw));
-                                                                changepass.Parameters.AddWithValue("@id", id);
-                                                                if (changepass.ExecuteNonQuery() == 1)
+                                                                using (SqlCommand changepass = new SqlCommand("update top (1) account set pw = @pw where id = @id", sql))
                                                                 {
-                                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("4269"));
+                                                                    changepass.Parameters.AddWithValue("@pw", Crypter.Blowfish.Crypt(pw));
+                                                                    changepass.Parameters.AddWithValue("@id", id);
+                                                                    if (changepass.ExecuteNonQuery() == 1)
+                                                                    {
+                                                                        sessions[id].Queue_command(Encoding.Unicode.GetBytes("4269"));
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            sessions[id].Queue_command(Encoding.Unicode.GetBytes("9624"));
+                                                            else
+                                                            {
+                                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("9624"));
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    break;
-                                } // change pass
+                                        break;
+                                    } // change pass
 
-                            case "1508":
-                                {
-                                    using (SqlCommand command = new SqlCommand("update top (1) account set private=1 where id=@id", sql))
+                                case "1508":
                                     {
-                                        command.Parameters.AddWithValue("@id", id);
-                                        command.ExecuteNonQuery();
-                                    }
-                                    break;
-                                } // set private = true
-
-                            case "0508":
-                                {
-                                    using (SqlCommand command = new SqlCommand("update top (1) account set private=0 where id=@id", sql))
-                                    {
-                                        command.Parameters.AddWithValue("@id", id);
-                                        command.ExecuteNonQuery();
-                                    }
-                                    break;
-                                } // set private = false;
-
-                            case "1012":
-                                {
-                                    string newname;
-                                    if (receive_data_automatically(s, out newname))
-                                    {
-                                        using (SqlCommand changename = new SqlCommand("update top (1) account set name = @name where id = @id", sql))
+                                        using (SqlCommand command = new SqlCommand("update top (1) account set private=1 where id=@id", sql))
                                         {
-                                            changename.Parameters.AddWithValue("@name", newname);
-                                            changename.Parameters.AddWithValue("@id", id);
-                                            if (changename.ExecuteNonQuery() == 1)
-                                            {
-                                                sessions[id].Queue_command(Encoding.Unicode.GetBytes("1012"));
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                } // user has changed their name
-
-                            case "5859":
-                                {
-                                    string receiver_id;
-                                    if (SslStream_receive(s, 38, out receiver_id))
-                                    {
-                                        string id1, id2;
-                                        if (id.CompareTo(receiver_id) <= 0)
-                                        {
-                                            id1 = id;
-                                            id2 = receiver_id;
-                                        }
-                                        else
-                                        {
-                                            id1 = receiver_id;
-                                            id2 = id;
-                                        }
-                                        using (SqlCommand command = new SqlCommand("delete top (1) from friend where id1=@id1 and id2=@id2", sql))
-                                        {
-                                            command.Parameters.AddWithValue("@id1", id1);
-                                            command.Parameters.AddWithValue("@id2", id2);
+                                            command.Parameters.AddWithValue("@id", id);
                                             command.ExecuteNonQuery();
                                         }
-                                        Thread thread = new Thread(() => Delete_conversation_thread(id1, id2));
-                                        thread.IsBackground = true;
-                                        thread.Start();
-                                    }
+                                        break;
+                                    } // set private = true
 
+                                case "0508":
+                                    {
+                                        using (SqlCommand command = new SqlCommand("update top (1) account set private=0 where id=@id", sql))
+                                        {
+                                            command.Parameters.AddWithValue("@id", id);
+                                            command.ExecuteNonQuery();
+                                        }
+                                        break;
+                                    } // set private = false;
+
+                                case "1012":
+                                    {
+                                        string newname;
+                                        if (receive_data_automatically(s, out newname))
+                                        {
+                                            using (SqlCommand changename = new SqlCommand("update top (1) account set name = @name where id = @id", sql))
+                                            {
+                                                changename.Parameters.AddWithValue("@name", newname);
+                                                changename.Parameters.AddWithValue("@id", id);
+                                                if (changename.ExecuteNonQuery() == 1)
+                                                {
+                                                    sessions[id].Queue_command(Encoding.Unicode.GetBytes("1012"));
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    } // user has changed their name
+
+                                case "5859":
+                                    {
+                                        string receiver_id;
+                                        if (SslStream_receive(s, 38, out receiver_id))
+                                        {
+                                            string id1, id2;
+                                            if (id.CompareTo(receiver_id) <= 0)
+                                            {
+                                                id1 = id;
+                                                id2 = receiver_id;
+                                            }
+                                            else
+                                            {
+                                                id1 = receiver_id;
+                                                id2 = id;
+                                            }
+                                            using (SqlCommand command = new SqlCommand("delete top (1) from friend where id1=@id1 and id2=@id2", sql))
+                                            {
+                                                command.Parameters.AddWithValue("@id1", id1);
+                                                command.Parameters.AddWithValue("@id2", id2);
+                                                command.ExecuteNonQuery();
+                                            }
+                                            Thread thread = new Thread(() => Delete_conversation_thread(id1, id2));
+                                            thread.IsBackground = true;
+                                            thread.Start();
+                                        }
+
+                                        break;
+                                    } // delete conversation
+
+                                default:
+                                    shutdown(id);
+                                    Console.WriteLine("Received strange signal, socket closed");
                                     break;
-                                } // delete conversation
-
-                            default:
-                                shutdown(id);
-                                Console.WriteLine("Received strange signal, socket closed");
-                                break;
+                            }
                         }
+                        else
+                        {
+                            shutdown(id);
+                            Console.WriteLine("Received strange signal, socket closed (2)");
+                        }
+                        //sessions[id].stream = s;
+                        Console.WriteLine("Work finished");
                     }
                     else
                     {
                         shutdown(id);
-                        Console.WriteLine("Received strange signal, socket closed (2)");
+                        Console.WriteLine("Received strange signal, socket closed (3)");
                     }
-                    //sessions[id].stream = s;
-                    Console.WriteLine("Work finished");
-                }
-                else
-                {
-                    shutdown(id);
-                    Console.WriteLine("Received strange signal, socket closed (3)");
-                }
-
+                } while (sessions[id].client.Available > 0);
             }
             catch (Exception e)
             {
@@ -998,6 +1305,28 @@ namespace AFriendServer
                 command.Parameters.AddWithValue("@id1", id1);
                 command.Parameters.AddWithValue("@id2", id2);
                 command.ExecuteNonQuery();
+            }
+            string filestodelete = id1 + "_" + id2 + "_" + "*.*";
+            if (filestodelete.Length > 19) // simple protection against accidentally deleting system files
+            {
+                try
+                {
+                    string[] fileslist = System.IO.Directory.GetFiles(img_path, filestodelete);
+                    foreach (string file in fileslist)
+                    {
+                        try
+                        {
+                            if (file.Length > 19) File.Delete(file);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                        }
+                    }
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
         }
 
@@ -1077,10 +1406,11 @@ namespace AFriendServer
                         {
                                 await Task.Delay(1000);
                         }
-                        if (sessions.ContainsKey(data) && !pass)
+                        if (!pass && sessions.ContainsKey(data))
                         {
                             try
                             {
+                                bool do_work = false;
                                 while (1 == Interlocked.Exchange(ref sessions[data].is_locked, 1))
                                 {
                                     await Task.Delay(1000);
@@ -1106,7 +1436,7 @@ namespace AFriendServer
                                         {
                                             try
                                             {
-
+                                                do_work = true;
                                                 ThreadPool.QueueUserWorkItem(Receive_message, data);
                                             }
                                             catch (Exception e)
@@ -1121,7 +1451,7 @@ namespace AFriendServer
                                 {
                                     shutdown(data);
                                 }
-                                Interlocked.Exchange(ref sessions[data].is_locked, 0);
+                                if (!do_work) Interlocked.Exchange(ref sessions[data].is_locked, 0);
                             }
                             catch (Exception clientquit)
                             {

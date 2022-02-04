@@ -11,6 +11,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Threading;
 using System.Media;
+using System.Collections.Concurrent;
 
 namespace A_Friend.CustomControls
 {
@@ -26,7 +27,7 @@ namespace A_Friend.CustomControls
 
         Color stateColor = Color.Gainsboro;
         bool locking = false;
-        //List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
+        internal ConcurrentQueue<string> files_to_send = new ConcurrentQueue<string>();
         internal Dictionary<long, ChatItem> messages = new Dictionary<long, ChatItem>();
         internal Int64 currentmin = -1, currentmax = -1;
         ChatItem currentChatItem;
@@ -608,6 +609,30 @@ namespace A_Friend.CustomControls
                                 Console.WriteLine(ex.ToString());
                                 FormSettings.TopMostMessageBox.Show("Cannot use this file: " + file, file);
                             }
+                        }
+                    }
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+
+        private void SendFileButton_Click(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(() =>
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Filter = "All files (*.*)|*.*";
+                    ofd.Multiselect = true;
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
+                        foreach (string file in ofd.FileNames)
+                        {
+                            AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("1903" 
+                                + id + AFriendClient.data_with_byte(Path.GetFileName(file))) 
+                                ,Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte((new FileInfo(file).Length).ToString()))));
+                            files_to_send.Enqueue(file);
                         }
                     }
                 }

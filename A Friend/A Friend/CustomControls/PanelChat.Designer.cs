@@ -40,6 +40,7 @@ namespace A_Friend.CustomControls
             this.buttonDelete = new A_Friend.CustomControls.CustomButton();
             this.panel_Chat = new System.Windows.Forms.Panel();
             this.panelBottomRight = new System.Windows.Forms.Panel();
+            this.SendFileButton = new A_Friend.CustomControls.CustomButton();
             this.sendImageButton = new A_Friend.CustomControls.CustomButton();
             this.textboxWriting = new System.Windows.Forms.RichTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
@@ -162,6 +163,7 @@ namespace A_Friend.CustomControls
             this.panelBottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBottomRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.panelBottomRight.Controls.Add(this.SendFileButton);
             this.panelBottomRight.Controls.Add(this.sendImageButton);
             this.panelBottomRight.Controls.Add(this.textboxWriting);
             this.panelBottomRight.Controls.Add(this.buttonSend);
@@ -173,6 +175,28 @@ namespace A_Friend.CustomControls
             this.panelBottomRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelBottomRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomRight_Paint);
             this.panelBottomRight.Resize += new System.EventHandler(this.panelBottomRight_Resize);
+            // 
+            // SendFileButton
+            // 
+            this.SendFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.SendFileButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(244)))), ((int)(((byte)(241)))));
+            this.SendFileButton.BackgroundImage = global::A_Friend.Properties.Resources.file_icon_207228;
+            this.SendFileButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.SendFileButton.BorderColor = System.Drawing.Color.Empty;
+            this.SendFileButton.BorderRadius = 15;
+            this.SendFileButton.BorderSize = 0;
+            this.SendFileButton.FlatAppearance.BorderSize = 0;
+            this.SendFileButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SendFileButton.ForeColor = System.Drawing.Color.White;
+            this.SendFileButton.Location = new System.Drawing.Point(21, 126);
+            this.SendFileButton.MaximumSize = new System.Drawing.Size(20, 20);
+            this.SendFileButton.MinimumSize = new System.Drawing.Size(20, 20);
+            this.SendFileButton.Name = "SendFileButton";
+            this.SendFileButton.Size = new System.Drawing.Size(20, 20);
+            this.SendFileButton.TabIndex = 4;
+            this.toolTip.SetToolTip(this.SendFileButton, "Send File");
+            this.SendFileButton.UseVisualStyleBackColor = false;
+            this.SendFileButton.Click += new System.EventHandler(this.SendFileButton_Click);
             // 
             // sendImageButton
             // 
@@ -192,7 +216,7 @@ namespace A_Friend.CustomControls
             this.sendImageButton.Name = "sendImageButton";
             this.sendImageButton.Size = new System.Drawing.Size(20, 20);
             this.sendImageButton.TabIndex = 3;
-            this.toolTip.SetToolTip(this.sendImageButton, "Send");
+            this.toolTip.SetToolTip(this.sendImageButton, "Send images");
             this.sendImageButton.UseVisualStyleBackColor = false;
             this.sendImageButton.Click += new System.EventHandler(this.sendImageButton_Click);
             // 
@@ -231,7 +255,7 @@ namespace A_Friend.CustomControls
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(40, 20);
             this.buttonSend.TabIndex = 0;
-            this.toolTip.SetToolTip(this.buttonSend, "Send");
+            this.toolTip.SetToolTip(this.buttonSend, "Send message");
             this.buttonSend.UseVisualStyleBackColor = false;
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
@@ -276,5 +300,6 @@ namespace A_Friend.CustomControls
         private System.Windows.Forms.Label labelState;
         private System.Windows.Forms.ToolTip toolTip;
         private CustomButton sendImageButton;
+        private CustomButton SendFileButton;
     }
 }
