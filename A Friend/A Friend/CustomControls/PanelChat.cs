@@ -11,6 +11,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Threading;
 using System.Media;
+using System.Collections.Concurrent;
 
 namespace A_Friend.CustomControls
 {
@@ -26,7 +27,7 @@ namespace A_Friend.CustomControls
 
         Color stateColor = Color.Gainsboro;
         bool locking = false;
-        //List<CustomControls.ChatItem> chatItems = new List<ChatItem>();
+        internal ConcurrentQueue<string> files_to_send = new ConcurrentQueue<string>();
         internal Dictionary<long, ChatItem> messages = new Dictionary<long, ChatItem>();
         internal Int64 currentmin = -1, currentmax = -1;
         ChatItem currentChatItem;
@@ -49,6 +50,7 @@ namespace A_Friend.CustomControls
             AddMessageDelegate = new AddMessageItem(AddMessage);
             RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
+            textboxWriting.LinkClicked += (o, e) => { System.Diagnostics.Process.Start(e.LinkText); };
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.ResizeRedraw, false);
@@ -236,7 +238,13 @@ namespace A_Friend.CustomControls
         {
             //chatItems.Remove(messages[messagenumber]);
             panel_Chat.Controls.Remove(messages[messagenumber]);
-            messages.Remove(messagenumber);
+            messages.Remove(messagenumber); 
+            Program.mainform.contactItems[id].LastMessage = GetLastMessage();
+            ReEvaluateMaxmin();
+            if (messages.Count > 0)
+            {
+                ScrollControlIntoView(messages[currentmax]);
+            }
             // code to remove message
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
@@ -342,7 +350,7 @@ namespace A_Friend.CustomControls
                 e.SuppressKeyPress = true;
                 if (!string.IsNullOrWhiteSpace(textboxWriting.Text.TrimEnd()))
                 {
-                    AFriendClient.Send_to_id(AFriendClient.stream, id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
+                    AFriendClient.Send_to_id(id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
                     textboxWriting.Clear();
                     //textboxWriting.RemovePlaceHolder();
                     Console.WriteLine("Wrote");
@@ -401,7 +409,7 @@ namespace A_Friend.CustomControls
         {
             if (!string.IsNullOrEmpty(textboxWriting.Text.TrimEnd()) /*&& !locking*/)
             {
-                AFriendClient.Send_to_id(AFriendClient.stream, id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
+                AFriendClient.Send_to_id(id, AFriendClient.user.id, textboxWriting.Text.TrimEnd());
                 textboxWriting.Text = "";
                 //textboxWriting.RemovePlaceHolder();
                 //textboxWriting.Multiline = false;
@@ -460,10 +468,18 @@ namespace A_Friend.CustomControls
             this.ActiveControl = textboxWriting;
         }
 
+        private void ReEvaluateMaxmin()
+        {
+            if (messages.Count == 0) return;
+            while (!messages.ContainsKey(currentmax)) currentmax -= 1;
+            while (!messages.ContainsKey(currentmin)) currentmin += 1;
+        }
+
         public string GetLastMessage()
         {
             if (messages.Count == 0)
                 return "New conversation!";
+            ReEvaluateMaxmin();
             var messageObject = messages[currentmax].messageObject;
             if (messageObject.type == 0)
             {
@@ -479,6 +495,7 @@ namespace A_Friend.CustomControls
         {
             if (messages.Count == 0)
                 return "";
+            ReEvaluateMaxmin();
             return messages[currentmin].messageObject.message;
         }
 
@@ -486,6 +503,7 @@ namespace A_Friend.CustomControls
         {
             if (panel_Chat.Controls.Count == 0)
                 return true;
+            ReEvaluateMaxmin();
             ChatItem message = messages[currentmax];
             if (message.IsMyMessage())
                 return true;
@@ -556,12 +574,79 @@ namespace A_Friend.CustomControls
             }
         }
 
+        private void sendImageButton_Click(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(() =>
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
+                    ofd.Multiselect = true;
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
+                        foreach (string file in ofd.FileNames)
+                        {
+                            try
+                            {
+                                using (Image img = Image.FromFile(file))
+                                {
+                                    if (img != null)
+                                    {
+                                        string img_string = ImageToString(img);
+                                        Console.WriteLine("Finished img to string\n");
+                                        var b = AFriendClient.Combine(Encoding.Unicode.GetBytes("1902" + id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(img_string)));
+                                        //var b = new Byte[200000];
+                                        //for (int i = 0; i < 200000; i++) b[i] = 0;
+                                        Console.WriteLine("before sending nude: {0}", b.Length);
+                                        AFriendClient.Queue_command(b);
+                                        //AFriendClient.Ping();
+                                        Console.WriteLine("Nude sent");
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                FormSettings.TopMostMessageBox.Show("Cannot use this file: " + file, file);
+                            }
+                        }
+                    }
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+
+        private void SendFileButton_Click(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(() =>
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Filter = "All files (*.*)|*.*";
+                    ofd.Multiselect = true;
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
+                        foreach (string file in ofd.FileNames)
+                        {
+                            AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("1903" 
+                                + id + AFriendClient.data_with_byte(Path.GetFileName(file))) 
+                                ,Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte((new FileInfo(file).Length).ToString()))));
+                            files_to_send.Enqueue(file);
+                        }
+                    }
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("You are about to delete your conversation with this person, this action cannot be undone, are you sure you want to DELETE ALL YOUR MESSAGES WITH THIS PERSON?", "Warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("You are about to delete your conversation with this person, this action cannot be undone, are you sure you want to DELETE ALL YOUR MESSAGES WITH THIS PERSON?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (dialogResult == DialogResult.Yes)
             {
-                dialogResult = MessageBox.Show("This action will DELETE ALL YOUR MESSAGES with THIS PERSON! Think twice! Are you serious?", "Warning", MessageBoxButtons.YesNo);
+                dialogResult = MessageBox.Show("This action will DELETE ALL YOUR MESSAGES with THIS PERSON! Think twice! Are you serious?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                 if (dialogResult == DialogResult.Yes)
                 {
                     if (this.Parent != null && this.Parent.Parent != null && this.Parent.Parent is FormApplication)

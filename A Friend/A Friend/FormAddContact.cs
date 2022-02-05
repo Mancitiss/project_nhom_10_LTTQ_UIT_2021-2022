@@ -21,7 +21,7 @@ namespace A_Friend
             labelWarning.Font = ApplicationFont.GetFont(labelWarning.Font.Size);
             txtNewUser.Font = ApplicationFont.GetFont(txtNewUser.Font.Size);
             labelWarning.ForeColor = Color.FromArgb(143, 228, 185);
-            labelWarning.Text = "Enter your friend's username";
+            labelWarning.Text = "Enter your friend's ID";
             ChangeWarning(labelWarning.Text, labelWarning.ForeColor);
             txtNewUser.RemovePlaceHolder();
             changeWarningLabelDelegate = new ChangeWarningLabel(ChangeWarning);
@@ -33,29 +33,31 @@ namespace A_Friend
         }
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
-            if (txtNewUser.Texts == "")
+            if (txtNewUser.Texts == "" || txtNewUser.Texts.Length != 19)
             {
-                ChangeWarning("Please enter your friend's username", Color.Red);
+                ChangeWarning("Please enter your friend's ID", Color.Red);
             }  
             else
             {
                 string data = txtNewUser.Texts;
-                string databyte = Encoding.Unicode.GetByteCount(data).ToString();
-                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
+                //string databyte = Encoding.Unicode.GetByteCount(data).ToString();
+                //AFriendClient.Queue_command(Encoding.Unicode.GetBytes("0609" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
+                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("0609" + data));
             }
         }
 
         private void AddContact()
         {
-            if (txtNewUser.Texts == "")
+            if (txtNewUser.Texts == "" || txtNewUser.Texts.Length != 19)
             {
-                ChangeWarning("Please enter your friend's username", Color.Red);
+                ChangeWarning("Please enter your friend's ID", Color.Red);
             }  
             else
             {
                 string data = txtNewUser.Texts;
-                string databyte = Encoding.Unicode.GetByteCount(data).ToString();
-                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("0610" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
+                //string databyte = Encoding.Unicode.GetByteCount(data).ToString();
+                //AFriendClient.Queue_command(Encoding.Unicode.GetBytes("0609" + databyte.Length.ToString().PadLeft(2, '0') + databyte + data));
+                AFriendClient.Queue_command(Encoding.Unicode.GetBytes("0609" + data));
             }
         }
 

@@ -34,7 +34,7 @@ namespace A_Friend
             customTextBoxUsername.Font = ApplicationFont.GetFont(customTextBoxUsername.Font.Size);
             customButtonPassword.Font = ApplicationFont.GetFont(customButtonPassword.Font.Size);
             textBoxCurrentPassword.Font = ApplicationFont.GetFont(textBoxCurrentPassword.Font.Size);
-            textBoxNewPassword.Font = ApplicationFont.GetFont(textBoxNewPassword  .Font.Size);
+            textBoxNewPassword.Font = ApplicationFont.GetFont(textBoxNewPassword.Font.Size);
             textBoxConfirmPassword.Font = ApplicationFont.GetFont(textBoxConfirmPassword.Font.Size);
             buttonSavePassword.Font = ApplicationFont.GetFont(buttonSavePassword.Font.Size);
             buttonSaveUsername.Font = ApplicationFont.GetFont(buttonSaveUsername.Font.Size);
@@ -60,6 +60,7 @@ namespace A_Friend
                 circlePictureBox1.Crop(StringToImage(AFriendClient.img_string));
             }
             this.labelUsername.Text = AFriendClient.user.name;
+            this.label2.Text = AFriendClient.user.id;
             panelPassword.Hide();
             panelUsername.Hide();
             this.ControlBox = false;
@@ -192,7 +193,7 @@ namespace A_Friend
                 topmostForm.BringToFront();
                 topmostForm.TopMost = true;
                 // Finally show the MessageBox with the form just created as its owner
-                DialogResult result = MessageBox.Show(topmostForm, message);
+                DialogResult result = MessageBox.Show(topmostForm, message, title);
                 topmostForm.Dispose(); // clean it up all the way
 
                 return result;
@@ -232,7 +233,7 @@ namespace A_Friend
         private void customButtonAvatar_Click_1(object sender, EventArgs e)
         {
             labelWarning.Text = "";
-            Thread thread = new Thread((ThreadStart)(() =>
+            Thread thread = new Thread(() =>
             {
                 OpenFileDialog ofd = new OpenFileDialog();
                 ofd.Filter = "Images|*.pjp;*.jpg;*.pjpeg;*.jpeg;*.jfif;*.png";
@@ -246,7 +247,7 @@ namespace A_Friend
                         img = (Image)ResizeImage(img, width, width * img.Height / img.Width);
                         string imageAsString = Convert.ToBase64String(ImageToByteArray(img));
                         int length = imageAsString.Length;
-                        if (length < 2800000)
+                        if (length < 28000000)
                         {
                             AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("0601"), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(imageAsString.Trim()))));
                             AFriendClient.img_string = imageAsString.Trim();
@@ -263,7 +264,7 @@ namespace A_Friend
                         TopMostMessageBox.Show("Can't use this image, please choose another one");
                     }
                 }
-            }));
+            });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();

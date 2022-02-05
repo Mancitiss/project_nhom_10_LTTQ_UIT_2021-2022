@@ -30,7 +30,9 @@ namespace A_Friend
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
-        
+
+        protected override bool ShowWithoutActivation { get { return true; } }
+
         public bool lockLogin = false;
 
         public FormLogin()

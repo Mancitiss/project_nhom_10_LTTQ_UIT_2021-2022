@@ -12,6 +12,7 @@ using System.Threading;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using Microsoft.VisualBasic.FileIO;
 
 namespace A_Friend.CustomControls
 {
@@ -134,7 +135,7 @@ namespace A_Friend.CustomControls
             labelAuthor.Font = ApplicationFont.GetFont(labelAuthor.Font.Size);
             DoubleBuffered = true;
 
-            if (this.messageObject.type == 0)
+            if (this.messageObject.type == 0 || this.messageObject.type == 3)
             {
                 //this.MaximumSize = new Size(900, int.MaxValue); //this line causes problems!!
                 labelBody.Text = messageObject.message;
@@ -171,11 +172,40 @@ namespace A_Friend.CustomControls
             else
             {
                 BackgroundColor = Color.FromArgb(215, 244, 241);
-                if (this.messageObject.type == 0)
+                if (this.messageObject.type == 0 || this.messageObject.type == 3)
                 {
                     labelBody.ForeColor = SystemColors.ControlText;
                 }
             }
+
+            if (this.messageObject.type == 3)
+            {
+                labelBody.BackColor = Color.Yellow;
+                labelBody.ForeColor = Color.Black;
+                panelBody.BackColor = Color.Yellow;
+                labelBody.DoubleClick += LabelBody_DoubleClick;
+            }
+        }
+
+        private void LabelBody_DoubleClick(object sender, EventArgs e)
+        {
+            string partner_id = (messageObject.id1 == messageObject.id2) ? messageObject.id1 : (messageObject.id1 == AFriendClient.user.id) ? messageObject.id2 : messageObject.id1;
+            Thread thread = new Thread(() =>
+            {
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "All files (*.*)|*.*";
+                    saveFileDialog.FileName = labelBody.Text;
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        if (File.Exists(saveFileDialog.FileName)) FileSystem.DeleteFile(saveFileDialog.FileName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("1905" + partner_id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(messageObject.messagenumber.ToString()))));
+                        AFriendClient.files.Add(messageObject.id1 + "_" + messageObject.id2 + "_" + messageObject.messagenumber+".", new AFriendClient.file(saveFileDialog.FileName, 0));
+                    }
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
         }
 
         public long ID
@@ -243,7 +273,7 @@ namespace A_Friend.CustomControls
 
             set
             {
-                if (messageObject.type == 0)
+                if (messageObject.type == 0 || messageObject.type == 3)
                 {
                     labelBody.BackColor = value;
                 }
@@ -284,7 +314,7 @@ namespace A_Friend.CustomControls
 
         public void ResizeBubbles()
         {
-            if (messageObject != null && messageObject.type == 0)
+            if (messageObject != null && (messageObject.type == 0|| messageObject.type == 3))
             {
                 //int maxwidth = this.Width - 200;
                 int maxwidth = this.Parent.Width-2*this.Parent.Width/5;
@@ -367,7 +397,7 @@ namespace A_Friend.CustomControls
         {
             Thread t = new Thread((ThreadStart)(() =>
             {
-                if (messageObject.type == 0)
+                if (messageObject.type == 0 || messageObject.type == 3)
                 { 
                     Clipboard.SetText(labelBody.Text);
                 }

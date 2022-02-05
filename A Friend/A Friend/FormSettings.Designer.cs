@@ -53,6 +53,7 @@ namespace A_Friend
             this.toggleButton1 = new A_Friend.CustomControls.ToggleButton();
             this.label1 = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.label2 = new System.Windows.Forms.Label();
             this.panelPassword.SuspendLayout();
             this.panelUsername.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -246,6 +247,7 @@ namespace A_Friend
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.White;
+            this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.labelUsername);
             this.tabPage1.Controls.Add(this.circlePictureBox1);
             this.tabPage1.Controls.Add(this.panelPassword);
@@ -408,6 +410,17 @@ namespace A_Friend
             this.label1.TabIndex = 1;
             this.label1.Text = "Incognito Mode";
             // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.label2.Location = new System.Drawing.Point(3, 588);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(286, 20);
+            this.label2.TabIndex = 33;
+            this.label2.Text = "0000000000000000000";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -459,5 +472,6 @@ namespace A_Friend
         private CustomControls.ToggleButton toggleButton1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Label label2;
     }
 }

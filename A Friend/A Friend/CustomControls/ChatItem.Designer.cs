@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace A_Friend.CustomControls
 {
     partial class ChatItem
@@ -128,6 +130,7 @@ namespace A_Friend.CustomControls
             this.labelBody.TabIndex = 0;
             this.labelBody.Text = "labelBody";
             this.labelBody.Click += new System.EventHandler(this.labelBody_Click);
+            this.labelBody.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.labelBody_LinkClicked);
             this.labelBody.MouseEnter += new System.EventHandler(this.ChatItem_MouseEnter);
             this.labelBody.MouseLeave += new System.EventHandler(this.ChatItem_MouseLeave);
             // 
@@ -199,6 +202,10 @@ namespace A_Friend.CustomControls
             this.ResumeLayout(false);
         }
 
+        private void labelBody_LinkClicked(object sender, System.Windows.Forms.LinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.LinkText);
+        }
 
         private MessagePanel panelBody;
         private System.Windows.Forms.Panel panelButton;

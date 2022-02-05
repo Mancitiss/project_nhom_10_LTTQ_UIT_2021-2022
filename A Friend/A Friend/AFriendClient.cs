@@ -29,6 +29,8 @@ namespace A_Friend
 
         private static Dictionary<string, List<MessageObject>> first = new Dictionary<string, List<MessageObject>>();
 
+        internal static Dictionary<string, file> files = new Dictionary<string, file>();
+
 
         internal static string temp_name = null;
         internal static string img_string = null;
@@ -40,7 +42,184 @@ namespace A_Friend
         public static bool loginResult = true;
 
         private static int workeradded = 0;
+        private static int sendfileworker = 0;
         internal static ConcurrentQueue<byte[]> commands = new ConcurrentQueue<byte[]>();
+        internal static ConcurrentQueue<Slot> available_slots = new ConcurrentQueue<Slot>();
+
+        internal class file
+        {
+            internal string name;
+            internal long size;
+
+            internal file(string name, long size)
+            {
+                this.name = name;
+                this.size = size;
+            }
+        }
+
+        internal class Slot
+        {
+            internal long num;
+            internal string id;
+            internal string name;
+            internal long length;
+
+            internal Slot(string id, long num, string name, long length)
+            {
+                this.id = id;
+                this.num = num;
+                this.name = name;
+                this.length = length;
+            }
+
+            internal Slot() { }
+        }
+
+        internal static void Queue_slot(string id, long num, string file, long length)
+        {
+            available_slots.Enqueue(new Slot(id, num, file, length));
+            Add_send_file_thread();
+        }
+
+        private static void Add_send_file_thread()
+        {
+            Console.WriteLine("Send file workers: {0}", sendfileworker);
+            if (0 == Interlocked.Exchange(ref sendfileworker, 1))
+            {
+                try
+                {
+                    ThreadPool.QueueUserWorkItem(Send_files);
+                }
+                catch (NotSupportedException nse)
+                {
+                    Console.WriteLine(nse.ToString());
+                    try
+                    {
+                        Interlocked.Exchange(ref sendfileworker, 0);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        internal static void Send_files(object state)
+        {
+            Console.WriteLine("start sending files");
+            try
+            {
+                while (!available_slots.IsEmpty)
+                {
+                    if (available_slots.TryDequeue(out Slot slot))
+                    {
+                        bool file_found = false;
+                        while (!file_found)
+                        {
+                            if (Program.mainform.panelChats[slot.id].files_to_send.TryDequeue(out string file))
+                            {
+                                if (File.Exists(file) && Path.GetFileName(file).Equals(slot.name) && (new FileInfo(file).Length) == slot.length)
+                                {
+                                    Console.WriteLine("Start sending file: {0}", file);
+                                    file_found = true;
+                                    try
+                                    {
+                                        using (FileStream fileStream = File.Open(file, FileMode.Open))
+                                        {
+                                            long filesize = fileStream.Length;
+                                            long offset = 0;
+                                            byte[] buffer = new byte[32768];
+                                            while (offset < filesize)
+                                            {
+                                                if (filesize - offset > buffer.Length)
+                                                {
+                                                    int first_byte_expected = buffer.Length;
+                                                    int byte_expected = first_byte_expected;
+                                                    int total_byte_received = 0;
+                                                    int received_byte;
+                                                    do
+                                                    {
+                                                        received_byte = fileStream.Read(buffer, total_byte_received, byte_expected);
+                                                        if (received_byte > 0)
+                                                        {
+                                                            total_byte_received += received_byte;
+                                                            byte_expected -= received_byte;
+                                                        }
+                                                        else break;
+                                                    } while (byte_expected > 0 && received_byte > 0);
+                                                    if (total_byte_received == first_byte_expected)
+                                                    {
+                                                        Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                                            Encoding.Unicode.GetBytes(slot.id),
+                                                            Encoding.ASCII.GetBytes(data_with_ASCII_byte(slot.num.ToString())),
+                                                            Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                                            Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                                            buffer));
+                                                    }
+                                                    offset += total_byte_received;
+                                                }
+                                                else
+                                                {
+                                                    int first_byte_expected = (int)(filesize - offset);
+                                                    int byte_expected = first_byte_expected;
+                                                    byte[] final_buffer = new byte[(int)(filesize - offset)];
+                                                    int total_byte_received = 0;
+                                                    int received_byte;
+                                                    do
+                                                    {
+                                                        received_byte = fileStream.Read(final_buffer, total_byte_received, byte_expected);
+                                                        if (received_byte > 0)
+                                                        {
+                                                            total_byte_received += received_byte;
+                                                            byte_expected -= received_byte;
+                                                        }
+                                                        else break;
+                                                    } while (byte_expected > 0 && received_byte > 0);
+                                                    if (total_byte_received == first_byte_expected)
+                                                    {
+                                                        Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                                            Encoding.Unicode.GetBytes(slot.id),
+                                                            Encoding.ASCII.GetBytes(data_with_ASCII_byte(slot.num.ToString())),
+                                                            Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                                            Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                                            final_buffer));
+                                                    }
+                                                    offset += total_byte_received;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch (FileNotFoundException e)
+                                    {
+                                        Console.WriteLine("File :{0} not found", file);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.ToString());
+                                    }
+                                    Console.WriteLine("File transfer finished");
+                                }
+                                else if (File.Exists(file))
+                                {
+                                    Program.mainform.panelChats[slot.id].files_to_send.Enqueue(file);
+                                }
+                            }
+                            else throw new Exception("No files to send");
+                        }
+                    }
+                    Ping();
+                }
+            }
+            catch (Exception se)
+            {
+                Console.WriteLine(se.ToString());
+                //throw se;
+            } 
+            finally
+            {
+                Interlocked.Exchange(ref sendfileworker, 0);
+                Console.WriteLine("send file worker reset!");
+            }
+        }
 
         internal static void Queue_command(byte[] command)
         {
@@ -116,7 +295,7 @@ namespace A_Friend
         }
 
 
-        public static /*async*/ void ExecuteClient()
+        public static async void ExecuteClient()
         {
             try
             {
@@ -159,6 +338,7 @@ namespace A_Friend
                     {
                         Console.WriteLine(e.ToString());
                     }
+                    await Task.Delay(70);
                 }
                 Logout();
             }
@@ -274,7 +454,7 @@ namespace A_Friend
             }
         }
 
-        public static void Send_to_id(SslStream self, string id, string myid, string str)
+        public static void Send_to_id(string id, string myid, string str)
         {
             if (myid.Length != 19 || id.Length != 19)
             {
@@ -296,16 +476,13 @@ namespace A_Friend
 
         internal static byte[] Combine(params byte[][] arrays)
         {
-            Console.WriteLine("Start combining");
             byte[] rv = new byte[arrays.Sum(a => a.Length)];
             int offset = 0;
             foreach (byte[] array in arrays)
             {
                 System.Buffer.BlockCopy(array, 0, rv, offset, array.Length);
-                Console.WriteLine("Finish block copy");
                 offset += array.Length;
             }
-            Console.WriteLine("Finish Combining");
             return rv;
         }
 
@@ -458,6 +635,31 @@ namespace A_Friend
             byte[] array = Convert.FromBase64String(imageString);
             Image image = Image.FromStream(new MemoryStream(array));
             return image;
+        }
+
+        private static bool SslStream_receive_bytes(int byte_expected, out byte[] data)
+        {
+            int total_byte_received = 0;
+            data = new byte[byte_expected];
+            int received_byte;
+            do
+            {
+                received_byte = stream.Read(data, total_byte_received, byte_expected);
+                if (received_byte > 0)
+                {
+                    total_byte_received += received_byte;
+                    byte_expected -= received_byte;
+                }
+                else break;
+            } while (byte_expected > 0 && received_byte > 0);
+            if (byte_expected == 0) // all data received
+            {
+                return true;
+            }
+            else // data corrupted
+            {
+                return false;
+            }
         }
 
         private static /*async*/ async void Receive_from_id(TcpClient self)
@@ -638,7 +840,7 @@ namespace A_Friend
                                     else
                                     {
                                         Console.WriteLine("Data Corrupted");
-                                        System.Windows.Forms.MessageBox.Show("that username doesn't exist!");
+                                        System.Windows.Forms.MessageBox.Show("that ID doesn't exist!");
                                     }
                                 }
                             } // add contact
@@ -717,6 +919,137 @@ namespace A_Friend
                                 }
                             } // message received
                             break;
+                        case "1903":
+                            {
+                                if (Stream_receive(38, out string receiver_id))
+                                {
+                                    if (receive_ASCII_data_automatically(out string numslot))
+                                    {
+                                        if (long.TryParse(numslot, out long result))
+                                        {
+                                            if (receive_data_automatically(out string name))
+                                            {
+                                                if (receive_ASCII_data_automatically(out string lengthstr))
+                                                {
+                                                    if (long.TryParse(lengthstr, out long length))
+                                                    {
+                                                        Queue_slot(receiver_id, result, name, length);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case "1904":
+                            {
+                                if (Stream_receive(38, out string receiver_id))
+                                {
+                                    if (receive_ASCII_data_automatically(out string num))
+                                    {
+                                        if (long.TryParse(num, out long messagenumber))
+                                        {
+                                            if (receive_ASCII_data_automatically( out string offsetstr))
+                                            {
+                                                if (long.TryParse(offsetstr, out long offset))
+                                                {
+                                                    if (receive_ASCII_data_automatically(out string received_byte_str))
+                                                    {
+                                                        if (int.TryParse(received_byte_str, out int received_byte))
+                                                        {
+                                                            if (SslStream_receive_bytes(received_byte, out byte[] databyte))
+                                                            {
+                                                                string id1, id2;
+                                                                if (user.id.CompareTo(receiver_id) <= 0)
+                                                                {
+                                                                    id1 = user.id;
+                                                                    id2 = receiver_id;
+                                                                }
+                                                                else
+                                                                {
+                                                                    id1 = receiver_id;
+                                                                    id2 = user.id;
+                                                                }
+                                                                string filename = id1 + "_" + id2 + "_" + num + ".";
+                                                                Console.WriteLine("File: {0}", filename);
+                                                                if (files.ContainsKey(filename))
+                                                                {
+                                                                    bool finish = false;
+                                                                    while (!finish)
+                                                                    {
+                                                                        try
+                                                                        {
+                                                                            using (FileStream fileStream = File.Open(files[filename].name, FileMode.OpenOrCreate))
+                                                                            {
+                                                                                if (fileStream.CanSeek && fileStream.CanWrite)
+                                                                                {
+                                                                                    fileStream.Seek(offset, SeekOrigin.Begin);
+                                                                                    fileStream.Write(databyte, 0, received_byte);
+                                                                                    files[filename].size -= received_byte;
+                                                                                    if (files[filename].size == 0) files.Remove(filename);
+                                                                                    Console.WriteLine("Write to file ended");
+                                                                                    finish = true;
+                                                                                }
+                                                                            }
+                                                                        } catch (Exception e)
+                                                                        {
+                                                                            if (e.ToString().Contains("being used by another process"))
+                                                                            {
+                                                                                Console.WriteLine("Try again!");
+                                                                                await Task.Delay(100);
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
+                                                                                files.Remove(filename);
+                                                                                throw e;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case "1905":
+                            {
+                                if (Stream_receive(38, out string receiver_id))
+                                {
+                                    if (receive_ASCII_data_automatically(out string num))
+                                    {
+                                        if (receive_ASCII_data_automatically(out string sizestr)) {
+                                            if (long.TryParse(sizestr, out long size))
+                                            {
+                                                string id1, id2;
+                                                if (user.id.CompareTo(receiver_id) <= 0)
+                                                {
+                                                    id1 = user.id;
+                                                    id2 = receiver_id;
+                                                }
+                                                else
+                                                {
+                                                    id1 = receiver_id;
+                                                    id2 = user.id;
+                                                }
+                                                string file = id1 + "_" + id2 + "_" + num + ".";
+                                                if (files.ContainsKey(file))
+                                                {
+                                                    files[file].size += size;
+                                                    if (files[file].size == 0) files.Remove(file);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                         case "2002": // message deleted
                             {
                                 if (Stream_receive(38, out string panelid))
@@ -758,7 +1091,7 @@ namespace A_Friend
                         case "2609": // add contact failed
                             {
                                 Console.WriteLine("No such account exists");
-                                Program.mainform.formAddContact.Invoke(Program.mainform.formAddContact.changeWarningLabelDelegate, new object[] { "That username doesn't eixst!", Color.Red });
+                                Program.mainform.formAddContact.Invoke(Program.mainform.formAddContact.changeWarningLabelDelegate, new object[] { "That ID doesn't eixst!", Color.Red });
                                 //first_message = null;
                                 //first_message_sender = String.Empty;
                             } // add contact failed
