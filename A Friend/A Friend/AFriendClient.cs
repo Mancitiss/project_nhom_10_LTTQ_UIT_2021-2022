@@ -103,7 +103,7 @@ namespace A_Friend
             }
         }
 
-        internal static void Send_files(object state)
+        internal static async void Send_files(object state)
         {
             Console.WriteLine("start sending files");
             try
@@ -148,6 +148,7 @@ namespace A_Friend
                                                     } while (byte_expected > 0 && received_byte > 0);
                                                     if (total_byte_received == first_byte_expected)
                                                     {
+                                                        while (commands.Count > 10) await Task.Delay(5);
                                                         Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
                                                             Encoding.Unicode.GetBytes(slot.id),
                                                             Encoding.ASCII.GetBytes(data_with_ASCII_byte(slot.num.ToString())),
