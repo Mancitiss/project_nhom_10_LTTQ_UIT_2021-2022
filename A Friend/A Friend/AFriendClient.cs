@@ -43,8 +43,98 @@ namespace A_Friend
 
         private static int workeradded = 0;
         private static int sendfileworker = 0;
+        private static int writefileadded = 0;
         internal static ConcurrentQueue<byte[]> commands = new ConcurrentQueue<byte[]>();
         internal static ConcurrentQueue<Slot> available_slots = new ConcurrentQueue<Slot>();
+
+        internal static ConcurrentQueue<WriteCommand> write_commands = new ConcurrentQueue<WriteCommand>();
+
+        internal class WriteCommand
+        {
+            internal string file;
+            internal long offset;
+            internal int received_byte;
+            internal byte[] databyte;
+
+            internal WriteCommand(string file, long offset, int received_byte, byte[] databyte)
+            {
+                this.file = file;
+                this.offset = offset;
+                this.received_byte = received_byte;
+                this.databyte = databyte;
+            }
+        }
+
+        private static void Add_write_thread()
+        {
+            Console.WriteLine("WriteCommand file worker: {0}", writefileadded);
+            if (0 == Interlocked.Exchange(ref writefileadded, 1))
+            {
+                try
+                {
+                    ThreadPool.QueueUserWorkItem(Write_to_file);
+                }
+                catch (NotSupportedException nse)
+                {
+                    Console.WriteLine(nse.ToString());
+                    try
+                    {
+                        Interlocked.Exchange(ref writefileadded, 0);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        private static void Write_to_file(object state)
+        {
+            try
+            {
+                while (!write_commands.IsEmpty)
+                {
+                    if (write_commands.TryDequeue(out WriteCommand writeCommand))
+                    {
+                        try
+                        {
+                            using (FileStream fileStream = File.Open(files[writeCommand.file].name, FileMode.OpenOrCreate))
+                            {
+                                if (fileStream.CanSeek && fileStream.CanWrite)
+                                {
+                                    fileStream.Seek(writeCommand.offset, SeekOrigin.Begin);
+                                    fileStream.Write(writeCommand.databyte, 0, writeCommand.received_byte);
+                                    files[writeCommand.file].size -= writeCommand.received_byte;
+                                    if (files[writeCommand.file].size == 0) files.Remove(writeCommand.file);
+                                    Console.WriteLine("Write to file ended");
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            if (e.ToString().Contains("being used by another process"))
+                            {
+                                Console.WriteLine("Try again! Thread ID: {0}, offset: {1}", Thread.CurrentThread.ManagedThreadId, writeCommand.offset);
+                                write_commands.Enqueue(writeCommand);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
+                                files.Remove(writeCommand.file);
+                            }
+                        }
+                        
+                    }
+                }
+            } 
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.ToString());
+            }
+            finally
+            {
+                Interlocked.Exchange(ref writefileadded, 0);
+                Console.WriteLine("Write file worker reset!");
+            }
+        }
 
         internal class file
         {
@@ -296,6 +386,7 @@ namespace A_Friend
             img_string = null;
             Ping();
             user = new Account();
+            write_commands = new ConcurrentQueue<WriteCommand>();
             user.state = 0;
             stream.Dispose();
             client.Dispose();
@@ -679,7 +770,7 @@ namespace A_Friend
             }
         }
 
-        private static /*async*/ async void Receive_from_id(TcpClient self)
+        private static async void Receive_from_id(TcpClient self)
         {
             try
             {
@@ -992,38 +1083,8 @@ namespace A_Friend
                                                                 Console.WriteLine("File: {0}", filename);
                                                                 if (files.ContainsKey(filename))
                                                                 {
-                                                                    bool finish = false;
-                                                                    while (!finish)
-                                                                    {
-                                                                        try
-                                                                        {
-                                                                            using (FileStream fileStream = File.Open(files[filename].name, FileMode.OpenOrCreate))
-                                                                            {
-                                                                                if (fileStream.CanSeek && fileStream.CanWrite)
-                                                                                {
-                                                                                    fileStream.Seek(offset, SeekOrigin.Begin);
-                                                                                    fileStream.Write(databyte, 0, received_byte);
-                                                                                    files[filename].size -= received_byte;
-                                                                                    if (files[filename].size == 0) files.Remove(filename);
-                                                                                    Console.WriteLine("Write to file ended");
-                                                                                    finish = true;
-                                                                                }
-                                                                            }
-                                                                        } catch (Exception e)
-                                                                        {
-                                                                            if (e.ToString().Contains("being used by another process"))
-                                                                            {
-                                                                                Console.WriteLine("Try again!");
-                                                                                await Task.Delay(100);
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
-                                                                                files.Remove(filename);
-                                                                                throw e;
-                                                                            }
-                                                                        }
-                                                                    }
+                                                                    write_commands.Enqueue(new WriteCommand(filename, offset, received_byte, databyte));
+                                                                    Add_write_thread();
                                                                 }
                                                             }
                                                         }

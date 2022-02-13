@@ -335,13 +335,16 @@ namespace A_Friend.CustomControls
                 chatItem.BackColor = panel_Chat.BackColor;
                 //chatItems.Insert(0, chatItem);
                 chatItem.ShowDetail = true;
-                if (message.type != 3 && messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
+                if (messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
                 {
-                    messages[message.messagenumber + 1].ShowDetail = false;
+                    if (messages[message.messagenumber + 1].messageObject.type != 3)
+                    {
+                        messages[message.messagenumber + 1].ShowDetail = false;
+                    }
                 }
+                chatItem.UpdateDateTime();
                 messages.Add(message.messagenumber, chatItem);
                 panel_Chat.Controls.Add(chatItem);
-                chatItem.UpdateDateTime();
                 panel_Chat.ResumeLayout();
             }catch (Exception e)
             {
