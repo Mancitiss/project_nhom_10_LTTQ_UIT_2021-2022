@@ -157,6 +157,14 @@ namespace A_Friend
                                                             buffer));
                                                     }
                                                     offset += total_byte_received;
+                                                    try
+                                                    {
+                                                        Program.mainform.panelChats[slot.id].messages[slot.num].Invoke(Program.mainform.panelChats[slot.id].messages[slot.num].Change_text_upload, new object[] { (byte)(100 * offset / filesize) });
+                                                    } 
+                                                    catch (Exception ex)
+                                                    {
+                                                        Console.WriteLine(ex);
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -185,6 +193,14 @@ namespace A_Friend
                                                             final_buffer));
                                                     }
                                                     offset += total_byte_received;
+                                                    try
+                                                    {
+                                                        Program.mainform.panelChats[slot.id].messages[slot.num].Invoke(Program.mainform.panelChats[slot.id].messages[slot.num].Change_text_upload, new object[] { (byte)(100 * offset / filesize) });
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        Console.WriteLine(ex);
+                                                    }
                                                 }
                                             }
                                         }
@@ -1043,6 +1059,7 @@ namespace A_Friend
                                                 if (files.ContainsKey(file))
                                                 {
                                                     files[file].size += size;
+                                                    Program.mainform.panelChats[receiver_id].messages[Int64.Parse(num)].Invoke(Program.mainform.panelChats[receiver_id].messages[Int64.Parse(num)].startTimerDelegate, new object[] {file, size});
                                                     if (files[file].size == 0) files.Remove(file);
                                                 }
                                             }

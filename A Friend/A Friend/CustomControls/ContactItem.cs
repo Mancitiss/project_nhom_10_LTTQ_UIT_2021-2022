@@ -55,6 +55,7 @@ namespace A_Friend.CustomControls
             if (1 == Program.mainform.panelChats[id].is_form_showing)
             {
                 SnapForm form = new SnapForm();
+                form.Icon = Program.mainform.panelChats[id].AvatarIcon;
                 form.ClientSize = new Size(300, 450);
                 form.FormBorderStyle = FormBorderStyle.FixedSingle;
                 form.MaximizeBox = false;
@@ -81,10 +82,10 @@ namespace A_Friend.CustomControls
                         (form.Controls[0] as PanelChat).messages[(form.Controls[0] as PanelChat).currentmax]);
                 Rectangle rectangle = form.RectangleToScreen(form.ClientRectangle);
                 form.DesktopLocation = new System.Drawing.Point(
-                    Screen.FromControl(Program.mainform).WorkingArea.Width - rectangle.Width * (FormApplication.subForms.Count) > 0 ?
-                    Screen.FromControl(Program.mainform).WorkingArea.Width - rectangle.Width * (FormApplication.subForms.Count) : 0,
-                    Screen.FromControl(Program.mainform).WorkingArea.Height - rectangle.Height - (rectangle.Top - form.Top) > 0 ?
-                    Screen.FromControl(Program.mainform).WorkingArea.Height - rectangle.Height - (rectangle.Top - form.Top) : 0);
+                    Screen.FromControl(Program.mainform).WorkingArea.Width -7 - rectangle.Width * (FormApplication.subForms.Count) > 0 ?
+                    Screen.FromControl(Program.mainform).WorkingArea.Width -7 - rectangle.Width * (FormApplication.subForms.Count) : 0,
+                    Screen.FromControl(Program.mainform).WorkingArea.Height -3 - rectangle.Height - (rectangle.Top - form.Top) > 0 ?
+                    Screen.FromControl(Program.mainform).WorkingArea.Height -3 - rectangle.Height - (rectangle.Top - form.Top) : 0);
             }
         }
 

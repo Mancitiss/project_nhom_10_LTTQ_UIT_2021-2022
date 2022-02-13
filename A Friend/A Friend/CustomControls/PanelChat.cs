@@ -104,6 +104,14 @@ namespace A_Friend.CustomControls
             }
         }
 
+        public Icon AvatarIcon
+        {
+            get
+            {
+                return Icon.FromHandle(new Bitmap(friendPicture.Image, new Size(256, 256)).GetHicon());
+            }
+        }
+
         private void panel_Chat_MouseWheel(object sender, MouseEventArgs e)
         {
             if (isloadingoldmessages) panel_Chat.VerticalScroll.Value = current_vertical_value;
@@ -260,10 +268,11 @@ namespace A_Friend.CustomControls
                     Console.WriteLine($"message number {message.messagenumber} existed in this conversation!");
                     return;
                 }
+                /*
                 if (messages.ContainsKey(message.messagenumber - 1))
                 {
                     Console.WriteLine("Ton tai tin nhan phia truoc");
-                }
+                }*/
                 if (currentmin == -1 || currentmin > message.messagenumber) currentmin = message.messagenumber;
                 if (currentmax == -1 || currentmax < message.messagenumber) currentmax = message.messagenumber;
                 panel_Chat.SuspendLayout();
@@ -271,7 +280,7 @@ namespace A_Friend.CustomControls
                 chatItem.Dock = DockStyle.Top;
                 chatItem.BackColor = panel_Chat.BackColor;
                 //chatItems.Add(chatItem);
-                if (!messages.ContainsKey(message.messagenumber - 1) || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
+                if (message.type == 3 || !messages.ContainsKey(message.messagenumber - 1) || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
                 {
                     chatItem.ShowDetail = true;
                 }
@@ -326,7 +335,7 @@ namespace A_Friend.CustomControls
                 chatItem.BackColor = panel_Chat.BackColor;
                 //chatItems.Insert(0, chatItem);
                 chatItem.ShowDetail = true;
-                if (messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
+                if (message.type != 3 && messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
                 {
                     messages[message.messagenumber + 1].ShowDetail = false;
                 }

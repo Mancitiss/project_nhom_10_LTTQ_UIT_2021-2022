@@ -184,6 +184,65 @@ namespace A_Friend.CustomControls
                 labelBody.ForeColor = Color.Black;
                 panelBody.BackColor = Color.Yellow;
                 labelBody.DoubleClick += LabelBody_DoubleClick;
+                Change_text_upload = new ChangeTextUploading(Upload);
+                startTimerDelegate = new StartTimer(Start_Timer);
+            }
+        }
+
+        private void Upload(byte percent)
+        {
+            labelAuthor.Text = timetext + " " + percent + "%";
+            if (percent == 100)
+            {
+                labelAuthor.Text = timetext + " DONE";
+            }
+        }
+
+        internal delegate void ChangeTextUploading(byte percent);
+        internal ChangeTextUploading Change_text_upload;
+
+        internal delegate void StartTimer(string file, long size);
+        internal StartTimer startTimerDelegate;
+        private System.Windows.Forms.Timer timer;
+        private long original_file_size;
+        private string original_file_name;
+
+        private void Start_Timer(string file, long size)
+        {
+            original_file_name = file;
+            original_file_size = size/1048576;
+            timer = new System.Windows.Forms.Timer();
+            timer.Interval = 1000;
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                long left = AFriendClient.files[original_file_name].size;
+                labelAuthor.Text = timetext /*+ (original_file_size - left / 1048576) + "/" + original_file_size + " MB"*/ + " " + 100*(original_file_size - left / 1048576) / original_file_size + "%";
+                if (left == 0)
+                {
+                    //Downloading = false;
+                    //Downloaded = true;
+                    labelAuthor.Text = timetext + " DONE";
+                    timer.Stop();
+                    timer.Dispose();
+                }
+            } 
+            catch (KeyNotFoundException knfex)
+            {
+                labelAuthor.Text = timetext + " DONE";
+                timer.Stop();
+                timer.Dispose();
+            } 
+            catch (Exception ex)
+            {
+                labelAuthor.Text = timetext;
+                timer.Stop();
+                timer.Dispose();
             }
         }
 
@@ -232,6 +291,8 @@ namespace A_Friend.CustomControls
             return false;
         }
 
+        public string timetext;
+
         public void UpdateDateTime()
         {
             //if (IsMyMessage())
@@ -245,6 +306,7 @@ namespace A_Friend.CustomControls
                 {
                     labelAuthor.Text = $"{messageObject.timesent.ToLocalTime().ToShortTimeString()}";
                 }
+                timetext = labelAuthor.Text;
             }
             else
             {
