@@ -326,7 +326,7 @@ namespace AFriendServer
             return "";
         }
 
-        private static void Receive_message(object si)
+        private static async void Receive_message(object si)
         {
             Console.WriteLine("Work Started");
             string id = si as string;
@@ -827,83 +827,94 @@ namespace AFriendServer
                                                     id2 = id;
                                                 }
                                                 string file = img_path + id1 + "_" + id2 + "_" + num + ".";
-
-                                                if (File.Exists(file))
+                                                Thread thread = new Thread(() =>
                                                 {
-                                                    using (FileStream fileStream = File.Open(file, FileMode.Open))
+                                                    try
                                                     {
-                                                        long filesize = fileStream.Length;
-                                                        sessions[id].Queue_command
-                                                        (
-                                                            Combine
-                                                            (
-                                                                Encoding.Unicode.GetBytes("1905" + receiver_id),
-                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
-                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(filesize.ToString()))
-                                                            )
-                                                        );
-                                                        long offset = 0;
-                                                        byte[] buffer = new byte[32768];
-                                                        while (offset < filesize)
+                                                        if (File.Exists(file))
                                                         {
-                                                            if (filesize - offset > buffer.Length)
+                                                            using (FileStream fileStream = File.Open(file, FileMode.Open))
                                                             {
-                                                                int first_byte_expected = buffer.Length;
-                                                                int byte_expected = first_byte_expected;
-                                                                int total_byte_received = 0;
-                                                                int received_byte;
-                                                                do
-                                                                {
-                                                                    received_byte = fileStream.Read(buffer, total_byte_received, byte_expected);
-                                                                    if (received_byte > 0)
-                                                                    {
-                                                                        total_byte_received += received_byte;
-                                                                        byte_expected -= received_byte;
-                                                                    }
-                                                                    else break;
-                                                                } while (byte_expected > 0 && received_byte > 0);
-                                                                if (total_byte_received == first_byte_expected)
-                                                                {
-                                                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
-                                                                        Encoding.Unicode.GetBytes(receiver_id),
+                                                                long filesize = fileStream.Length;
+                                                                sessions[id].Queue_command
+                                                                (
+                                                                    Combine
+                                                                    (
+                                                                        Encoding.Unicode.GetBytes("1905" + receiver_id),
                                                                         Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
-                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
-                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
-                                                                        buffer));
-                                                                }
-                                                                offset += total_byte_received;
-                                                            }
-                                                            else
-                                                            {
-                                                                int first_byte_expected = (int)(filesize - offset);
-                                                                int byte_expected = first_byte_expected;
-                                                                byte[] final_buffer = new byte[(int)(filesize - offset)];
-                                                                int total_byte_received = 0;
-                                                                int received_byte;
-                                                                do
+                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(filesize.ToString()))
+                                                                    )
+                                                                );
+                                                                long offset = 0;
+                                                                byte[] buffer = new byte[32768];
+                                                                while (offset < filesize)
                                                                 {
-                                                                    received_byte = fileStream.Read(final_buffer, total_byte_received, byte_expected);
-                                                                    if (received_byte > 0)
+                                                                    if (filesize - offset > buffer.Length)
                                                                     {
-                                                                        total_byte_received += received_byte;
-                                                                        byte_expected -= received_byte;
+                                                                        int first_byte_expected = buffer.Length;
+                                                                        int byte_expected = first_byte_expected;
+                                                                        int total_byte_received = 0;
+                                                                        int received_byte;
+                                                                        do
+                                                                        {
+                                                                            received_byte = fileStream.Read(buffer, total_byte_received, byte_expected);
+                                                                            if (received_byte > 0)
+                                                                            {
+                                                                                total_byte_received += received_byte;
+                                                                                byte_expected -= received_byte;
+                                                                            }
+                                                                            else break;
+                                                                        } while (byte_expected > 0 && received_byte > 0);
+                                                                        while (sessions[id].commands.Count > 10) Thread.Sleep(5);
+                                                                        if (total_byte_received == first_byte_expected)
+                                                                        {
+                                                                            sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                                                                Encoding.Unicode.GetBytes(receiver_id),
+                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                                                                buffer));
+                                                                        }
+                                                                        offset += total_byte_received;
                                                                     }
-                                                                    else break;
-                                                                } while (byte_expected > 0 && received_byte > 0);
-                                                                if (total_byte_received == first_byte_expected)
-                                                                {
-                                                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
-                                                                        Encoding.Unicode.GetBytes(receiver_id),
-                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
-                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
-                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
-                                                                        final_buffer));
+                                                                    else
+                                                                    {
+                                                                        int first_byte_expected = (int)(filesize - offset);
+                                                                        int byte_expected = first_byte_expected;
+                                                                        byte[] final_buffer = new byte[(int)(filesize - offset)];
+                                                                        int total_byte_received = 0;
+                                                                        int received_byte;
+                                                                        do
+                                                                        {
+                                                                            received_byte = fileStream.Read(final_buffer, total_byte_received, byte_expected);
+                                                                            if (received_byte > 0)
+                                                                            {
+                                                                                total_byte_received += received_byte;
+                                                                                byte_expected -= received_byte;
+                                                                            }
+                                                                            else break;
+                                                                        } while (byte_expected > 0 && received_byte > 0);
+                                                                        if (total_byte_received == first_byte_expected)
+                                                                        {
+                                                                            sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                                                                Encoding.Unicode.GetBytes(receiver_id),
+                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                                                                final_buffer));
+                                                                        }
+                                                                        offset += total_byte_received;
+                                                                    }
                                                                 }
-                                                                offset += total_byte_received;
                                                             }
                                                         }
+                                                    } catch (Exception e)
+                                                    {
+                                                        
                                                     }
-                                                }
+                                                });
+                                                thread.IsBackground = true;
+                                                thread.Start();
                                             }
                                         }
                                         break;
