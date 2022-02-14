@@ -96,14 +96,34 @@ namespace A_Friend
                     {
                         try
                         {
-                            using (FileStream fileStream = File.Open(files[writeCommand.file].name, FileMode.OpenOrCreate))
+                            if (files[writeCommand.file].fileStream != null)
                             {
-                                if (fileStream.CanSeek && fileStream.CanWrite)
+                                if (files[writeCommand.file].fileStream.CanSeek && files[writeCommand.file].fileStream.CanWrite)
                                 {
-                                    fileStream.Seek(writeCommand.offset, SeekOrigin.Begin);
-                                    fileStream.Write(writeCommand.databyte, 0, writeCommand.received_byte);
+                                    files[writeCommand.file].fileStream.Seek(writeCommand.offset, SeekOrigin.Begin);
+                                    files[writeCommand.file].fileStream.Write(writeCommand.databyte, 0, writeCommand.received_byte);
                                     files[writeCommand.file].size -= writeCommand.received_byte;
-                                    if (files[writeCommand.file].size == 0) files.Remove(writeCommand.file);
+                                    if (files[writeCommand.file].size == 0)
+                                    {
+                                        files[writeCommand.file].fileStream.Dispose();
+                                        files.Remove(writeCommand.file);
+                                    }
+                                    Console.WriteLine("Write to file ended");
+                                }
+                            } 
+                            else 
+                            {
+                                files[writeCommand.file].fileStream = File.Open(files[writeCommand.file].name, FileMode.OpenOrCreate);
+                                if (files[writeCommand.file].fileStream.CanSeek && files[writeCommand.file].fileStream.CanWrite)
+                                {
+                                    files[writeCommand.file].fileStream.Seek(writeCommand.offset, SeekOrigin.Begin);
+                                    files[writeCommand.file].fileStream.Write(writeCommand.databyte, 0, writeCommand.received_byte);
+                                    files[writeCommand.file].size -= writeCommand.received_byte;
+                                    if (files[writeCommand.file].size == 0)
+                                    {
+                                        files[writeCommand.file].fileStream.Dispose();
+                                        files.Remove(writeCommand.file);
+                                    }
                                     Console.WriteLine("Write to file ended");
                                 }
                             }
@@ -118,6 +138,7 @@ namespace A_Friend
                             else
                             {
                                 Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
+                                files[writeCommand.file].fileStream.Dispose();
                                 files.Remove(writeCommand.file);
                             }
                         }
@@ -140,6 +161,7 @@ namespace A_Friend
         {
             internal string name;
             internal long size;
+            internal FileStream fileStream;
 
             internal file(string name, long size)
             {

@@ -191,10 +191,11 @@ namespace A_Friend.CustomControls
 
         private void Upload(byte percent)
         {
-            labelAuthor.Text = timetext + " " + percent + "%";
+            labelAuthor.Text = percent + "%";
+            labelAuthor.ForeColor = Color.Blue;
             if (percent == 100)
             {
-                labelAuthor.Text = timetext + " DONE";
+                labelAuthor.Text = "DONE";
             }
         }
 
@@ -214,6 +215,7 @@ namespace A_Friend.CustomControls
             timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
             timer.Tick += Timer_Tick;
+            labelAuthor.ForeColor = Color.Green;
             timer.Start();
         }
 
@@ -222,19 +224,19 @@ namespace A_Friend.CustomControls
             try
             {
                 long left = AFriendClient.files[original_file_name].size;
-                labelAuthor.Text = timetext /*+ (original_file_size - left / 1048576) + "/" + original_file_size + " MB"*/ + " " + 100*(original_file_size - left / 1048576) / original_file_size + "%";
+                labelAuthor.Text = /*timetext /*+ (original_file_size - left / 1048576) + "/" + original_file_size + " MB" + " " +*/ 100*(original_file_size - left / 1048576) / original_file_size + "%";
                 if (left == 0)
                 {
                     //Downloading = false;
                     //Downloaded = true;
-                    labelAuthor.Text = timetext + " DONE";
+                    labelAuthor.Text = "DONE";
                     timer.Stop();
                     timer.Dispose();
                 }
             } 
             catch (KeyNotFoundException knfex)
             {
-                labelAuthor.Text = timetext + " DONE";
+                labelAuthor.Text = "DONE";
                 timer.Stop();
                 timer.Dispose();
             } 

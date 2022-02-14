@@ -280,7 +280,7 @@ namespace A_Friend.CustomControls
                 chatItem.Dock = DockStyle.Top;
                 chatItem.BackColor = panel_Chat.BackColor;
                 //chatItems.Add(chatItem);
-                if (message.type == 3 || !messages.ContainsKey(message.messagenumber - 1) || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
+                if (message.type == 3 || !messages.ContainsKey(message.messagenumber - 1) || messages[message.messagenumber - 1].messageObject.type == 3 || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
                 {
                     chatItem.ShowDetail = true;
                 }

@@ -30,7 +30,7 @@ namespace AFriendServer
         static X509Certificate serverCertificate = new X509Certificate(Environment.GetEnvironmentVariable("certpath", EnvironmentVariableTarget.User), Environment.GetEnvironmentVariable("certpass", EnvironmentVariableTarget.User));
 
         static Dictionary<string, Client> sessions = new Dictionary<string, Client>();
-        static ConcurrentDictionary<string, long> files = new ConcurrentDictionary<string, long>();
+        static ConcurrentDictionary<string, FileToWrite> files = new ConcurrentDictionary<string, FileToWrite>();
 
         static SqlConnection sql;
         static Random rand;
@@ -685,7 +685,7 @@ namespace AFriendServer
                                                                     {
                                                                         try
                                                                         {
-                                                                            files.AddOrUpdate(id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + ".", long.Parse(length), (key, oldValue) => oldValue);
+                                                                            files.AddOrUpdate(id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + ".", new FileToWrite(long.Parse(length)), (key, oldValue) => oldValue);
                                                                             sessions[id].Queue_command
                                                                                 (
                                                                                     Combine
@@ -693,7 +693,7 @@ namespace AFriendServer
                                                                                         Encoding.Unicode.GetBytes("1903" + receiver_id),
                                                                                         Encoding.ASCII.GetBytes(data_with_ASCII_byte(reader["messagenumber"].ToString())),
                                                                                         Encoding.Unicode.GetBytes(data_with_byte(reader["message"].ToString())),
-                                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(files[id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + "."].ToString()))
+                                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(files[id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + "."].size.ToString()))
                                                                                     )
                                                                                 );
                                                                             MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
@@ -762,21 +762,50 @@ namespace AFriendServer
                                                                         }
                                                                         string filename = id1 + "_" + id2 + "_" + num + ".";
                                                                         Console.WriteLine("File: {0}", img_path + filename);
-                                                                        if (files.ContainsKey(filename) && files[filename] > 0)
+                                                                        if (files.ContainsKey(filename) && files[filename].size > 0)
                                                                         {
                                                                             bool done = false;
                                                                             while (!done)
                                                                             {
                                                                                 try
                                                                                 {
-                                                                                    using (FileStream fileStream = File.Open(img_path + filename, FileMode.OpenOrCreate))
+                                                                                    if (files[filename].fileStream != null)
                                                                                     {
-                                                                                        if (fileStream.CanSeek && fileStream.CanWrite)
+                                                                                        if (files[filename].fileStream.CanSeek && files[filename].fileStream.CanWrite)
                                                                                         {
-                                                                                            fileStream.Seek(offset, SeekOrigin.Begin);
-                                                                                            fileStream.Write(databyte, 0, received_byte);
-                                                                                            files.AddOrUpdate(filename, files[filename] - received_byte, (key, oldValue) => oldValue - received_byte);
-                                                                                            if (files[filename] <= 0) files.TryRemove(filename, out long temp);
+                                                                                            files[filename].fileStream.Seek(offset, SeekOrigin.Begin);
+                                                                                            files[filename].fileStream.Write(databyte, 0, received_byte);
+                                                                                            files.AddOrUpdate(filename, new FileToWrite(files[filename].size - received_byte, files[filename].fileStream), (key, oldValue) => new FileToWrite(oldValue.size - received_byte, oldValue.fileStream));
+                                                                                            if (files[filename].size <= 0)
+                                                                                            {
+                                                                                                files.TryRemove(filename, out FileToWrite temp);
+                                                                                                try
+                                                                                                {
+                                                                                                    temp.fileStream.Dispose();
+                                                                                                }
+                                                                                                catch { }
+                                                                                            }
+                                                                                            Console.WriteLine("Write to file ended");
+                                                                                            done = true;
+                                                                                        }
+                                                                                    } 
+                                                                                    else
+                                                                                    {
+                                                                                        files[filename].fileStream = File.Open(img_path + filename, FileMode.OpenOrCreate);
+                                                                                        if (files[filename].fileStream.CanSeek && files[filename].fileStream.CanWrite)
+                                                                                        {
+                                                                                            files[filename].fileStream.Seek(offset, SeekOrigin.Begin);
+                                                                                            files[filename].fileStream.Write(databyte, 0, received_byte);
+                                                                                            files.AddOrUpdate(filename, new FileToWrite(files[filename].size - received_byte, files[filename].fileStream), (key, oldValue) => new FileToWrite(oldValue.size - received_byte, oldValue.fileStream));
+                                                                                            if (files[filename].size <= 0)
+                                                                                            {
+                                                                                                files.TryRemove(filename, out FileToWrite temp);
+                                                                                                try
+                                                                                                {
+                                                                                                    temp.fileStream.Dispose();
+                                                                                                }
+                                                                                                catch { }
+                                                                                            }
                                                                                             Console.WriteLine("Write to file ended");
                                                                                             done = true;
                                                                                         }
@@ -792,7 +821,11 @@ namespace AFriendServer
                                                                                     else
                                                                                     {
                                                                                         Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
-                                                                                        files.TryRemove(filename, out long temp);
+                                                                                        files.TryRemove(filename, out FileToWrite temp);
+                                                                                        try
+                                                                                        {
+                                                                                            temp.fileStream.Dispose();
+                                                                                        } catch { }
                                                                                         throw e;
                                                                                     }
                                                                                 }
