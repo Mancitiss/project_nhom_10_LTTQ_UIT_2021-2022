@@ -215,6 +215,8 @@ namespace A_Friend
             }
         }
 
+        internal static ConcurrentDictionary<string, bool> files_on_cancel = new ConcurrentDictionary<string, bool>();
+
         internal static async void Send_files(object state)
         {
             Console.WriteLine("start sending files");
@@ -242,6 +244,11 @@ namespace A_Friend
                                             byte[] buffer = new byte[32768];
                                             while (offset < filesize)
                                             {
+                                                if (files_on_cancel.ContainsKey(user.id+"_"+slot.id+"_"+slot.num) || user.state == 0)
+                                                {
+                                                    files_on_cancel.TryRemove(user.id + "_" + slot.id + "_" + slot.num, out bool temp);
+                                                    break;
+                                                }
                                                 if (filesize - offset > buffer.Length)
                                                 {
                                                     int first_byte_expected = buffer.Length;
@@ -402,14 +409,15 @@ namespace A_Friend
         }
         private static void Logout()
         {
+            //Ping();
+            if (user != null) user.state = 0;
             //first_message = null;
             //first_message_sender = null;
             temp_name = null;
             img_string = null;
-            Ping();
-            user = new Account();
-            write_commands = new ConcurrentQueue<WriteCommand>();
-            user.state = 0;
+            user = null;
+            available_slots = new ConcurrentQueue<Slot>();
+            commands = new ConcurrentQueue<byte[]>();
             stream.Dispose();
             client.Dispose();
             GC.Collect();
@@ -429,7 +437,7 @@ namespace A_Friend
         {
             try
             {
-                while (user.state == 1 || user.state == 2) // while self.state == online or fake-offline
+                while (user != null && (user.state == 1 || user.state == 2)) // while self.state == online or fake-offline
                 {
                     //Console.WriteLine("In loop");
                     //Receive_from_id(client);
@@ -1084,7 +1092,37 @@ namespace A_Friend
                                             {
                                                 if (long.TryParse(offsetstr, out long offset))
                                                 {
-                                                    if (receive_ASCII_data_automatically(out string received_byte_str))
+                                                    if (offset < 0)
+                                                    {
+                                                        string id1, id2;
+                                                        if (user.id.CompareTo(receiver_id) <= 0)
+                                                        {
+                                                            id1 = user.id;
+                                                            id2 = receiver_id;
+                                                        }
+                                                        else
+                                                        {
+                                                            id1 = receiver_id;
+                                                            id2 = user.id;
+                                                        }
+                                                        string filename = id1 + "_" + id2 + "_" + num + ".";
+                                                        Console.WriteLine("Deleting File: {0}", filename);
+                                                        if (files.ContainsKey(filename))
+                                                        {
+                                                            try
+                                                            {
+                                                                files[filename].fileStream.Dispose();
+                                                                string file = files[filename].name;
+                                                                files.Remove(filename);
+                                                                File.Delete(files[filename].name);
+                                                            } 
+                                                            catch (Exception exc)
+                                                            {
+                                                                Console.WriteLine(exc.ToString());
+                                                            }
+                                                        }
+                                                    }
+                                                    else if (receive_ASCII_data_automatically(out string received_byte_str))
                                                     {
                                                         if (int.TryParse(received_byte_str, out int received_byte))
                                                         {

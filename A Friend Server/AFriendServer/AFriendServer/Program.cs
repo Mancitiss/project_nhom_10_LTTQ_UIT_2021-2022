@@ -762,7 +762,8 @@ namespace AFriendServer
                                                                         }
                                                                         string filename = id1 + "_" + id2 + "_" + num + ".";
                                                                         Console.WriteLine("File: {0}", img_path + filename);
-                                                                        if (files.ContainsKey(filename) && files[filename].size > 0)
+                                                                        sessions[id].files_on_transfer.AddOrUpdate(filename, true, (key, oldValue) => oldValue);
+                                                                        if (sessions[id].files_on_transfer.ContainsKey(filename) && sessions[id].files_on_transfer[filename] && files.ContainsKey(filename) && files[filename].size > 0)
                                                                         {
                                                                             bool done = false;
                                                                             while (!done)
@@ -805,6 +806,7 @@ namespace AFriendServer
                                                                                                     temp.fileStream.Dispose();
                                                                                                 }
                                                                                                 catch { }
+                                                                                                sessions[id].files_on_transfer.TryRemove(filename, out bool tempbool);
                                                                                             }
                                                                                             Console.WriteLine("Write to file ended");
                                                                                             done = true;
@@ -826,10 +828,23 @@ namespace AFriendServer
                                                                                         {
                                                                                             temp.fileStream.Dispose();
                                                                                         } catch { }
+                                                                                        sessions[id].files_on_transfer.TryRemove(filename, out bool tempbool);
                                                                                         throw e;
                                                                                     }
                                                                                 }
                                                                             }
+                                                                        } 
+                                                                        else if (sessions[id].files_on_transfer.ContainsKey(filename) && sessions[id].files_on_transfer[filename] == false)
+                                                                        {
+
+                                                                            files.TryRemove(filename, out FileToWrite temp);
+                                                                            if (temp != null)
+                                                                            try
+                                                                            {
+                                                                                temp.fileStream.Dispose();
+                                                                            }
+                                                                            catch { }
+                                                                            sessions[id].files_on_transfer.TryRemove(filename, out bool tempbool);
                                                                         }
                                                                     }
                                                                 }
@@ -967,6 +982,37 @@ namespace AFriendServer
                                                     {
                                                         File.Delete(img_path + id1 + "_" + id2 + "_" + messagenumber.ToString() + ".png");
                                                     }
+                                                    try
+                                                    {
+                                                        string file = img_path + id1 + "_" + id2 + "_" + messagenumber.ToString() + ".";
+                                                        if (File.Exists(file))
+                                                        {
+                                                            Console.WriteLine("=========================================================================");
+                                                            string filename = id1 + "_" + id2 + "_" + messagenumber + ".";
+                                                            if (sessions.ContainsKey(id1) && sessions[id1].files_on_transfer.ContainsKey(file))
+                                                            {
+                                                                sessions[id1].files_on_transfer[file] = false;
+                                                            }
+                                                            if (sessions.ContainsKey(id2) && sessions[id2].files_on_transfer.ContainsKey(file))
+                                                            {
+                                                                sessions[id2].files_on_transfer[file] = false;
+                                                            }
+                                                            try
+                                                            {
+                                                                files.TryRemove(filename, out FileToWrite temp);
+                                                                if (temp != null)
+                                                                try
+                                                                {
+                                                                    temp.fileStream.Dispose();
+                                                                }
+                                                                catch { }
+                                                            } catch (Exception exc)
+                                                            {
+
+                                                            }
+                                                            Task.Run(() => Delete_this_file(file));
+                                                        }
+                                                    } catch (Exception ex) { }
                                                 }
                                                 if (sessions.ContainsKey(receiver_id))
                                                 {
@@ -1251,6 +1297,8 @@ namespace AFriendServer
                 id2 = id;
             }
             string file = img_path + id1 + "_" + id2 + "_" + num + ".";
+            if (sessions[id].files_on_transfer.ContainsKey(file)) return;
+            sessions[id].files_on_transfer.TryAdd(file, true);
             try
             {
                 if (File.Exists(file))
@@ -1288,7 +1336,7 @@ namespace AFriendServer
                                     else break;
                                 } while (byte_expected > 0 && received_byte > 0);
                                 while (sessions[id].commands.Count > 5 || sessions[id].is_locked == 1) await Task.Delay(30);
-                                if (total_byte_received == first_byte_expected)
+                                if (total_byte_received == first_byte_expected && sessions[id].files_on_transfer[file])
                                 {
                                     sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
                                         Encoding.Unicode.GetBytes(receiver_id),
@@ -1296,6 +1344,14 @@ namespace AFriendServer
                                         Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
                                         Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
                                         buffer));
+                                }
+                                else
+                                {
+                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                        Encoding.Unicode.GetBytes(receiver_id),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte("-1"))));
+                                    break;
                                 }
                                 offset += total_byte_received;
                             }
@@ -1316,7 +1372,7 @@ namespace AFriendServer
                                     }
                                     else break;
                                 } while (byte_expected > 0 && received_byte > 0);
-                                if (total_byte_received == first_byte_expected)
+                                if (total_byte_received == first_byte_expected && sessions[id].files_on_transfer[file])
                                 {
                                     sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
                                         Encoding.Unicode.GetBytes(receiver_id),
@@ -1324,6 +1380,13 @@ namespace AFriendServer
                                         Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
                                         Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
                                         final_buffer));
+                                } else
+                                {
+                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                        Encoding.Unicode.GetBytes(receiver_id),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte("-1"))));
+                                    break;
                                 }
                                 offset += total_byte_received;
                             }
@@ -1335,9 +1398,16 @@ namespace AFriendServer
             {
                 Console.WriteLine(e.ToString());
             }
+            finally
+            {
+                try
+                {
+                    sessions[id].files_on_transfer.TryRemove(file, out bool temp);
+                } catch { }
+            }
         }
 
-        private static void Delete_conversation_thread(string id1, string id2)
+        private static async void Delete_conversation_thread(string id1, string id2)
         {
             using (SqlCommand command = new SqlCommand("delete from message where id1=@id1 and id2=@id2", sql))
             {
@@ -1365,7 +1435,20 @@ namespace AFriendServer
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.ToString());
+                            if (e.ToString().Contains("is being used by") && long.TryParse(file.Substring(file.LastIndexOf('_')+1, file.Length-file.LastIndexOf('_')-2), out long result)) 
+                            {
+                                string filename = id1 + "_" + id2 + "_" + result + ".";
+                                if (sessions[id1].files_on_transfer.ContainsKey(filename))
+                                {
+                                    sessions[id1].files_on_transfer[filename] = false;
+                                }
+                                if (sessions[id2].files_on_transfer.ContainsKey(filename))
+                                {
+                                    sessions[id2].files_on_transfer[filename] = false;
+                                }
+                                Task.Run(()=>Delete_this_file(filename));
+                            } 
+                            else Console.WriteLine(e.ToString());
                         }
                     }
                 } catch (Exception ex)
@@ -1373,6 +1456,37 @@ namespace AFriendServer
                     Console.WriteLine(ex.ToString());
                 }
             }
+        }
+
+        private static async void Delete_this_file(string file)
+        {
+            bool done = false;
+            do
+            {
+                try
+                {
+                    if (files.TryRemove(file, out FileToWrite temp))
+                    {
+                        try
+                        {
+                            temp.fileStream.Dispose();
+                        }
+                        catch { }
+                    }
+                    Console.WriteLine("*******************************Try deleting file: {0}", file);
+                    File.Delete(file);
+                    done = true;
+                }
+                catch (Exception ex)
+                {
+                    if (ex.ToString().Contains("is being used by")) {Console.WriteLine("File is in used {0}", file); await Task.Delay(100); }
+                    else
+                    {
+                        Console.WriteLine(ex.ToString());
+                        done = true;
+                    }
+                }
+            } while (!done);
         }
 
         private static bool Send_to_id(string id, MessageObject msgobj)

@@ -19,6 +19,7 @@ namespace A_Friend.CustomControls
                 components.Dispose();
             }
             messages = null;
+            files_to_send = null;
             base.Dispose(disposing);
         }
 

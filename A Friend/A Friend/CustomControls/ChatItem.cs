@@ -253,20 +253,28 @@ namespace A_Friend.CustomControls
             string partner_id = (messageObject.id1 == messageObject.id2) ? messageObject.id1 : (messageObject.id1 == AFriendClient.user.id) ? messageObject.id2 : messageObject.id1;
             Thread thread = new Thread(() =>
             {
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                try
                 {
-                    saveFileDialog.Filter = "All files (*.*)|*.*";
-                    saveFileDialog.FileName = labelBody.Text;
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        if (File.Exists(saveFileDialog.FileName)) FileSystem.DeleteFile(saveFileDialog.FileName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                        AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("1905" + partner_id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(messageObject.messagenumber.ToString()))));
-                        AFriendClient.files.Add(messageObject.id1 + "_" + messageObject.id2 + "_" + messageObject.messagenumber+".", new AFriendClient.file(saveFileDialog.FileName, 0));
+                        saveFileDialog.Filter = "All files (*.*)|*.*";
+                        saveFileDialog.FileName = labelBody.Text;
+                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            labelAuthor.Text = "Try again later!";
+                            labelAuthor.ForeColor = Color.Red;
+                            if (File.Exists(saveFileDialog.FileName)) FileSystem.DeleteFile(saveFileDialog.FileName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                            AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("1905" + partner_id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(messageObject.messagenumber.ToString()))));
+                            AFriendClient.files.Add(messageObject.id1 + "_" + messageObject.id2 + "_" + messageObject.messagenumber + ".", new AFriendClient.file(saveFileDialog.FileName, 0));
+                        }
                     }
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
+            thread.Start(); 
         }
 
         public long ID

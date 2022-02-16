@@ -225,6 +225,12 @@ namespace A_Friend
         {
             this.Text = "\t";
             this.ControlBox = false;
+            //this.TopMost = true;
+            //this.TopMost = false;
+            this.Activate();
+            this.TopMost = true;
+            this.BringToFront();
+            this.TopMost = false;
         }
     }
 }
