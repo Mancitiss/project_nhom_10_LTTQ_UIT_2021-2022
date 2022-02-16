@@ -43,13 +43,125 @@ namespace A_Friend
 
         private static int workeradded = 0;
         private static int sendfileworker = 0;
+        private static int writefileadded = 0;
         internal static ConcurrentQueue<byte[]> commands = new ConcurrentQueue<byte[]>();
         internal static ConcurrentQueue<Slot> available_slots = new ConcurrentQueue<Slot>();
+
+        internal static ConcurrentQueue<WriteCommand> write_commands = new ConcurrentQueue<WriteCommand>();
+
+        internal class WriteCommand
+        {
+            internal string file;
+            internal long offset;
+            internal int received_byte;
+            internal byte[] databyte;
+
+            internal WriteCommand(string file, long offset, int received_byte, byte[] databyte)
+            {
+                this.file = file;
+                this.offset = offset;
+                this.received_byte = received_byte;
+                this.databyte = databyte;
+            }
+        }
+
+        private static void Add_write_thread()
+        {
+            Console.WriteLine("WriteCommand file worker: {0}", writefileadded);
+            if (0 == Interlocked.Exchange(ref writefileadded, 1))
+            {
+                try
+                {
+                    ThreadPool.QueueUserWorkItem(Write_to_file);
+                }
+                catch (NotSupportedException nse)
+                {
+                    Console.WriteLine(nse.ToString());
+                    try
+                    {
+                        Interlocked.Exchange(ref writefileadded, 0);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        private static void Write_to_file(object state)
+        {
+            try
+            {
+                while (!write_commands.IsEmpty)
+                {
+                    if (write_commands.TryDequeue(out WriteCommand writeCommand))
+                    {
+                        try
+                        {
+                            if (files[writeCommand.file].fileStream != null)
+                            {
+                                if (files[writeCommand.file].fileStream.CanSeek && files[writeCommand.file].fileStream.CanWrite)
+                                {
+                                    files[writeCommand.file].fileStream.Seek(writeCommand.offset, SeekOrigin.Begin);
+                                    files[writeCommand.file].fileStream.Write(writeCommand.databyte, 0, writeCommand.received_byte);
+                                    files[writeCommand.file].size -= writeCommand.received_byte;
+                                    if (files[writeCommand.file].size == 0)
+                                    {
+                                        files[writeCommand.file].fileStream.Dispose();
+                                        files.Remove(writeCommand.file);
+                                    }
+                                    Console.WriteLine("Write to file ended");
+                                }
+                            } 
+                            else 
+                            {
+                                files[writeCommand.file].fileStream = File.Open(files[writeCommand.file].name, FileMode.OpenOrCreate);
+                                if (files[writeCommand.file].fileStream.CanSeek && files[writeCommand.file].fileStream.CanWrite)
+                                {
+                                    files[writeCommand.file].fileStream.Seek(writeCommand.offset, SeekOrigin.Begin);
+                                    files[writeCommand.file].fileStream.Write(writeCommand.databyte, 0, writeCommand.received_byte);
+                                    files[writeCommand.file].size -= writeCommand.received_byte;
+                                    if (files[writeCommand.file].size == 0)
+                                    {
+                                        files[writeCommand.file].fileStream.Dispose();
+                                        files.Remove(writeCommand.file);
+                                    }
+                                    Console.WriteLine("Write to file ended");
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            if (e.ToString().Contains("being used by another process"))
+                            {
+                                Console.WriteLine("Try again! Thread ID: {0}, offset: {1}", Thread.CurrentThread.ManagedThreadId, writeCommand.offset);
+                                write_commands.Enqueue(writeCommand);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
+                                files[writeCommand.file].fileStream.Dispose();
+                                files.Remove(writeCommand.file);
+                            }
+                        }
+                        
+                    }
+                }
+            } 
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.ToString());
+            }
+            finally
+            {
+                Interlocked.Exchange(ref writefileadded, 0);
+                Console.WriteLine("Write file worker reset!");
+            }
+        }
 
         internal class file
         {
             internal string name;
             internal long size;
+            internal FileStream fileStream;
 
             internal file(string name, long size)
             {
@@ -103,6 +215,8 @@ namespace A_Friend
             }
         }
 
+        internal static ConcurrentDictionary<string, bool> files_on_cancel = new ConcurrentDictionary<string, bool>();
+
         internal static async void Send_files(object state)
         {
             Console.WriteLine("start sending files");
@@ -130,6 +244,11 @@ namespace A_Friend
                                             byte[] buffer = new byte[32768];
                                             while (offset < filesize)
                                             {
+                                                if (files_on_cancel.ContainsKey(user.id+"_"+slot.id+"_"+slot.num) || user.state == 0)
+                                                {
+                                                    files_on_cancel.TryRemove(user.id + "_" + slot.id + "_" + slot.num, out bool temp);
+                                                    break;
+                                                }
                                                 if (filesize - offset > buffer.Length)
                                                 {
                                                     int first_byte_expected = buffer.Length;
@@ -290,13 +409,15 @@ namespace A_Friend
         }
         private static void Logout()
         {
+            //Ping();
+            if (user != null) user.state = 0;
             //first_message = null;
             //first_message_sender = null;
             temp_name = null;
             img_string = null;
-            Ping();
-            user = new Account();
-            user.state = 0;
+            user = null;
+            available_slots = new ConcurrentQueue<Slot>();
+            commands = new ConcurrentQueue<byte[]>();
             stream.Dispose();
             client.Dispose();
             GC.Collect();
@@ -316,7 +437,7 @@ namespace A_Friend
         {
             try
             {
-                while (user.state == 1 || user.state == 2) // while self.state == online or fake-offline
+                while (user != null && (user.state == 1 || user.state == 2)) // while self.state == online or fake-offline
                 {
                     //Console.WriteLine("In loop");
                     //Receive_from_id(client);
@@ -679,7 +800,7 @@ namespace A_Friend
             }
         }
 
-        private static /*async*/ async void Receive_from_id(TcpClient self)
+        private static async void Receive_from_id(TcpClient self)
         {
             try
             {
@@ -971,7 +1092,37 @@ namespace A_Friend
                                             {
                                                 if (long.TryParse(offsetstr, out long offset))
                                                 {
-                                                    if (receive_ASCII_data_automatically(out string received_byte_str))
+                                                    if (offset < 0)
+                                                    {
+                                                        string id1, id2;
+                                                        if (user.id.CompareTo(receiver_id) <= 0)
+                                                        {
+                                                            id1 = user.id;
+                                                            id2 = receiver_id;
+                                                        }
+                                                        else
+                                                        {
+                                                            id1 = receiver_id;
+                                                            id2 = user.id;
+                                                        }
+                                                        string filename = id1 + "_" + id2 + "_" + num + ".";
+                                                        Console.WriteLine("Deleting File: {0}", filename);
+                                                        if (files.ContainsKey(filename))
+                                                        {
+                                                            try
+                                                            {
+                                                                files[filename].fileStream.Dispose();
+                                                                string file = files[filename].name;
+                                                                files.Remove(filename);
+                                                                File.Delete(files[filename].name);
+                                                            } 
+                                                            catch (Exception exc)
+                                                            {
+                                                                Console.WriteLine(exc.ToString());
+                                                            }
+                                                        }
+                                                    }
+                                                    else if (receive_ASCII_data_automatically(out string received_byte_str))
                                                     {
                                                         if (int.TryParse(received_byte_str, out int received_byte))
                                                         {
@@ -992,38 +1143,8 @@ namespace A_Friend
                                                                 Console.WriteLine("File: {0}", filename);
                                                                 if (files.ContainsKey(filename))
                                                                 {
-                                                                    bool finish = false;
-                                                                    while (!finish)
-                                                                    {
-                                                                        try
-                                                                        {
-                                                                            using (FileStream fileStream = File.Open(files[filename].name, FileMode.OpenOrCreate))
-                                                                            {
-                                                                                if (fileStream.CanSeek && fileStream.CanWrite)
-                                                                                {
-                                                                                    fileStream.Seek(offset, SeekOrigin.Begin);
-                                                                                    fileStream.Write(databyte, 0, received_byte);
-                                                                                    files[filename].size -= received_byte;
-                                                                                    if (files[filename].size == 0) files.Remove(filename);
-                                                                                    Console.WriteLine("Write to file ended");
-                                                                                    finish = true;
-                                                                                }
-                                                                            }
-                                                                        } catch (Exception e)
-                                                                        {
-                                                                            if (e.ToString().Contains("being used by another process"))
-                                                                            {
-                                                                                Console.WriteLine("Try again!");
-                                                                                await Task.Delay(100);
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
-                                                                                files.Remove(filename);
-                                                                                throw e;
-                                                                            }
-                                                                        }
-                                                                    }
+                                                                    write_commands.Enqueue(new WriteCommand(filename, offset, received_byte, databyte));
+                                                                    Add_write_thread();
                                                                 }
                                                             }
                                                         }

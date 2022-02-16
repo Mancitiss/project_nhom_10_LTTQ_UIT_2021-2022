@@ -19,6 +19,7 @@ namespace A_Friend.CustomControls
                 components.Dispose();
             }
             messages = null;
+            files_to_send = null;
             base.Dispose(disposing);
         }
 
@@ -261,7 +262,7 @@ namespace A_Friend.CustomControls
             // 
             // timerChat
             // 
-            this.timerChat.Interval = 7000;
+            this.timerChat.Interval = 3000;
             this.timerChat.Tick += new System.EventHandler(this.timerChat_Tick);
             // 
             // PanelChat

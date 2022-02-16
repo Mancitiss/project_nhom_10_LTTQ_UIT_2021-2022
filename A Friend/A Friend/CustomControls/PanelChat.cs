@@ -236,15 +236,20 @@ namespace A_Friend.CustomControls
 
         internal void RemoveMessage_Passively(long messagenumber)
         {
+            byte type = messages[messagenumber].messageObject.type;
             Console.WriteLine("Begin deleting");
             panel_Chat.Controls.Remove(messages[messagenumber]);
             Console.WriteLine("{0},{1}", /*chatItems.Remove(messages[messagenumber]),*/ messages.Remove(messagenumber));
             Console.WriteLine("deleted: {0}", messagenumber);
+            string id1 = AFriendClient.user.id;
+            string id2 = id;
+            if (type == 3) AFriendClient.files_on_cancel[id1 + "_" + id2 + "_" + messagenumber] = true;
         }
 
         public void RemoveMessage(long messagenumber)
         {
             //chatItems.Remove(messages[messagenumber]);
+            byte type = messages[messagenumber].messageObject.type;
             panel_Chat.Controls.Remove(messages[messagenumber]);
             messages.Remove(messagenumber); 
             Program.mainform.contactItems[id].LastMessage = GetLastMessage();
@@ -254,10 +259,13 @@ namespace A_Friend.CustomControls
                 ScrollControlIntoView(messages[currentmax]);
             }
             // code to remove message
+            string id1 = AFriendClient.user.id;
+            string id2 = id;
+            if (type == 3) AFriendClient.files_on_cancel[id1+"_"+id2+"_"+messagenumber] = true;
             AFriendClient.Queue_command(Encoding.Unicode.GetBytes("2002"+this.ID+AFriendClient.data_with_byte(messagenumber.ToString())));
         }
 
-        protected int timi = 240; // this is the elapsed time between 2 message needed to show timer
+        protected int timi = 240; // this is the elapsed time (in second) between 2 message needed to show timer
 
         public void AddMessage(MessageObject message)
         {
@@ -280,7 +288,7 @@ namespace A_Friend.CustomControls
                 chatItem.Dock = DockStyle.Top;
                 chatItem.BackColor = panel_Chat.BackColor;
                 //chatItems.Add(chatItem);
-                if (message.type == 3 || !messages.ContainsKey(message.messagenumber - 1) || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
+                if (message.type == 3 || !messages.ContainsKey(message.messagenumber - 1) || messages[message.messagenumber - 1].messageObject.type == 3 || (message.timesent - messages[message.messagenumber - 1].messageObject.timesent).TotalSeconds > timi)
                 {
                     chatItem.ShowDetail = true;
                 }
@@ -335,13 +343,16 @@ namespace A_Friend.CustomControls
                 chatItem.BackColor = panel_Chat.BackColor;
                 //chatItems.Insert(0, chatItem);
                 chatItem.ShowDetail = true;
-                if (message.type != 3 && messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
+                if (messages.ContainsKey(message.messagenumber + 1) && (messages[message.messagenumber + 1].messageObject.timesent - message.timesent).TotalSeconds < timi)
                 {
-                    messages[message.messagenumber + 1].ShowDetail = false;
+                    if (messages[message.messagenumber + 1].messageObject.type != 3)
+                    {
+                        messages[message.messagenumber + 1].ShowDetail = false;
+                    }
                 }
+                chatItem.UpdateDateTime();
                 messages.Add(message.messagenumber, chatItem);
                 panel_Chat.Controls.Add(chatItem);
-                chatItem.UpdateDateTime();
                 panel_Chat.ResumeLayout();
             }catch (Exception e)
             {

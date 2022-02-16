@@ -191,10 +191,11 @@ namespace A_Friend.CustomControls
 
         private void Upload(byte percent)
         {
-            labelAuthor.Text = timetext + " " + percent + "%";
+            labelAuthor.Text = percent + "%";
+            labelAuthor.ForeColor = Color.Blue;
             if (percent == 100)
             {
-                labelAuthor.Text = timetext + " DONE";
+                labelAuthor.Text = "DONE";
             }
         }
 
@@ -214,6 +215,7 @@ namespace A_Friend.CustomControls
             timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
             timer.Tick += Timer_Tick;
+            labelAuthor.ForeColor = Color.Green;
             timer.Start();
         }
 
@@ -222,19 +224,19 @@ namespace A_Friend.CustomControls
             try
             {
                 long left = AFriendClient.files[original_file_name].size;
-                labelAuthor.Text = timetext /*+ (original_file_size - left / 1048576) + "/" + original_file_size + " MB"*/ + " " + 100*(original_file_size - left / 1048576) / original_file_size + "%";
+                labelAuthor.Text = /*timetext /*+ (original_file_size - left / 1048576) + "/" + original_file_size + " MB" + " " +*/ 100*(original_file_size - left / 1048576) / original_file_size + "%";
                 if (left == 0)
                 {
                     //Downloading = false;
                     //Downloaded = true;
-                    labelAuthor.Text = timetext + " DONE";
+                    labelAuthor.Text = "DONE";
                     timer.Stop();
                     timer.Dispose();
                 }
             } 
             catch (KeyNotFoundException knfex)
             {
-                labelAuthor.Text = timetext + " DONE";
+                labelAuthor.Text = "DONE";
                 timer.Stop();
                 timer.Dispose();
             } 
@@ -251,20 +253,28 @@ namespace A_Friend.CustomControls
             string partner_id = (messageObject.id1 == messageObject.id2) ? messageObject.id1 : (messageObject.id1 == AFriendClient.user.id) ? messageObject.id2 : messageObject.id1;
             Thread thread = new Thread(() =>
             {
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                try
                 {
-                    saveFileDialog.Filter = "All files (*.*)|*.*";
-                    saveFileDialog.FileName = labelBody.Text;
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        if (File.Exists(saveFileDialog.FileName)) FileSystem.DeleteFile(saveFileDialog.FileName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                        AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("1905" + partner_id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(messageObject.messagenumber.ToString()))));
-                        AFriendClient.files.Add(messageObject.id1 + "_" + messageObject.id2 + "_" + messageObject.messagenumber+".", new AFriendClient.file(saveFileDialog.FileName, 0));
+                        saveFileDialog.Filter = "All files (*.*)|*.*";
+                        saveFileDialog.FileName = labelBody.Text;
+                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            labelAuthor.Text = "Try again later!";
+                            labelAuthor.ForeColor = Color.Red;
+                            if (File.Exists(saveFileDialog.FileName)) FileSystem.DeleteFile(saveFileDialog.FileName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                            AFriendClient.Queue_command(AFriendClient.Combine(Encoding.Unicode.GetBytes("1905" + partner_id), Encoding.ASCII.GetBytes(AFriendClient.data_with_ASCII_byte(messageObject.messagenumber.ToString()))));
+                            AFriendClient.files.Add(messageObject.id1 + "_" + messageObject.id2 + "_" + messageObject.messagenumber + ".", new AFriendClient.file(saveFileDialog.FileName, 0));
+                        }
                     }
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
+            thread.Start(); 
         }
 
         public long ID

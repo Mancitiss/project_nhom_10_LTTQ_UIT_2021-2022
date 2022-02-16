@@ -14,7 +14,7 @@ namespace A_Friend
     class Program
     {
         public static FormApplication mainform;
-        internal static int[] thisversion = {2, 8, 2, 0};
+        internal static int[] thisversion = {3, 0, 0, 2};
 
         static void Main(string[] args)
         {
@@ -76,6 +76,7 @@ namespace A_Friend
                     //Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
                     //Application.ThreadException += myHandler;
                     Application.Run(new FormLogin());
+
                 }
             } catch (Exception e)
             {

@@ -30,7 +30,7 @@ namespace AFriendServer
         static X509Certificate serverCertificate = new X509Certificate(Environment.GetEnvironmentVariable("certpath", EnvironmentVariableTarget.User), Environment.GetEnvironmentVariable("certpass", EnvironmentVariableTarget.User));
 
         static Dictionary<string, Client> sessions = new Dictionary<string, Client>();
-        static ConcurrentDictionary<string, long> files = new ConcurrentDictionary<string, long>();
+        static ConcurrentDictionary<string, FileToWrite> files = new ConcurrentDictionary<string, FileToWrite>();
 
         static SqlConnection sql;
         static Random rand;
@@ -685,7 +685,7 @@ namespace AFriendServer
                                                                     {
                                                                         try
                                                                         {
-                                                                            files.AddOrUpdate(id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + ".", long.Parse(length), (key, oldValue) => oldValue);
+                                                                            files.AddOrUpdate(id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + ".", new FileToWrite(long.Parse(length)), (key, oldValue) => oldValue);
                                                                             sessions[id].Queue_command
                                                                                 (
                                                                                     Combine
@@ -693,7 +693,7 @@ namespace AFriendServer
                                                                                         Encoding.Unicode.GetBytes("1903" + receiver_id),
                                                                                         Encoding.ASCII.GetBytes(data_with_ASCII_byte(reader["messagenumber"].ToString())),
                                                                                         Encoding.Unicode.GetBytes(data_with_byte(reader["message"].ToString())),
-                                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(files[id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + "."].ToString()))
+                                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(files[id1 + "_" + id2 + "_" + reader["messagenumber"].ToString() + "."].size.ToString()))
                                                                                     )
                                                                                 );
                                                                             MessageObject msgobj = new MessageObject(reader["id1"].ToString().PadLeft(19, '0'), reader["id2"].ToString().PadLeft(19, '0'), (Int64)reader["messagenumber"], (DateTime)reader["timesent"], (bool)reader["sender"], reader["message"].ToString(), (byte)reader["type"]);
@@ -762,21 +762,52 @@ namespace AFriendServer
                                                                         }
                                                                         string filename = id1 + "_" + id2 + "_" + num + ".";
                                                                         Console.WriteLine("File: {0}", img_path + filename);
-                                                                        if (files.ContainsKey(filename) && files[filename] > 0)
+                                                                        sessions[id].files_on_transfer.AddOrUpdate(filename, true, (key, oldValue) => oldValue);
+                                                                        if (sessions[id].files_on_transfer.ContainsKey(filename) && sessions[id].files_on_transfer[filename] && files.ContainsKey(filename) && files[filename].size > 0)
                                                                         {
                                                                             bool done = false;
                                                                             while (!done)
                                                                             {
                                                                                 try
                                                                                 {
-                                                                                    using (FileStream fileStream = File.Open(img_path + filename, FileMode.OpenOrCreate))
+                                                                                    if (files[filename].fileStream != null)
                                                                                     {
-                                                                                        if (fileStream.CanSeek && fileStream.CanWrite)
+                                                                                        if (files[filename].fileStream.CanSeek && files[filename].fileStream.CanWrite)
                                                                                         {
-                                                                                            fileStream.Seek(offset, SeekOrigin.Begin);
-                                                                                            fileStream.Write(databyte, 0, received_byte);
-                                                                                            files.AddOrUpdate(filename, files[filename] - received_byte, (key, oldValue) => oldValue - received_byte);
-                                                                                            if (files[filename] <= 0) files.TryRemove(filename, out long temp);
+                                                                                            files[filename].fileStream.Seek(offset, SeekOrigin.Begin);
+                                                                                            files[filename].fileStream.Write(databyte, 0, received_byte);
+                                                                                            files.AddOrUpdate(filename, new FileToWrite(files[filename].size - received_byte, files[filename].fileStream), (key, oldValue) => new FileToWrite(oldValue.size - received_byte, oldValue.fileStream));
+                                                                                            if (files[filename].size <= 0)
+                                                                                            {
+                                                                                                files.TryRemove(filename, out FileToWrite temp);
+                                                                                                try
+                                                                                                {
+                                                                                                    temp.fileStream.Dispose();
+                                                                                                }
+                                                                                                catch { }
+                                                                                            }
+                                                                                            Console.WriteLine("Write to file ended");
+                                                                                            done = true;
+                                                                                        }
+                                                                                    } 
+                                                                                    else
+                                                                                    {
+                                                                                        files[filename].fileStream = File.Open(img_path + filename, FileMode.OpenOrCreate);
+                                                                                        if (files[filename].fileStream.CanSeek && files[filename].fileStream.CanWrite)
+                                                                                        {
+                                                                                            files[filename].fileStream.Seek(offset, SeekOrigin.Begin);
+                                                                                            files[filename].fileStream.Write(databyte, 0, received_byte);
+                                                                                            files.AddOrUpdate(filename, new FileToWrite(files[filename].size - received_byte, files[filename].fileStream), (key, oldValue) => new FileToWrite(oldValue.size - received_byte, oldValue.fileStream));
+                                                                                            if (files[filename].size <= 0)
+                                                                                            {
+                                                                                                files.TryRemove(filename, out FileToWrite temp);
+                                                                                                try
+                                                                                                {
+                                                                                                    temp.fileStream.Dispose();
+                                                                                                }
+                                                                                                catch { }
+                                                                                                sessions[id].files_on_transfer.TryRemove(filename, out bool tempbool);
+                                                                                            }
                                                                                             Console.WriteLine("Write to file ended");
                                                                                             done = true;
                                                                                         }
@@ -787,16 +818,33 @@ namespace AFriendServer
                                                                                     if (e.ToString().Contains("being used by another process"))
                                                                                     {
                                                                                         Console.WriteLine("Try again!");
-                                                                                        Task.Delay(100);
+                                                                                        await Task.Delay(100);
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         Console.WriteLine("Fatal error: {0}, stopping", e.ToString());
-                                                                                        files.TryRemove(filename, out long temp);
+                                                                                        files.TryRemove(filename, out FileToWrite temp);
+                                                                                        try
+                                                                                        {
+                                                                                            temp.fileStream.Dispose();
+                                                                                        } catch { }
+                                                                                        sessions[id].files_on_transfer.TryRemove(filename, out bool tempbool);
                                                                                         throw e;
                                                                                     }
                                                                                 }
                                                                             }
+                                                                        } 
+                                                                        else if (sessions[id].files_on_transfer.ContainsKey(filename) && sessions[id].files_on_transfer[filename] == false)
+                                                                        {
+
+                                                                            files.TryRemove(filename, out FileToWrite temp);
+                                                                            if (temp != null)
+                                                                            try
+                                                                            {
+                                                                                temp.fileStream.Dispose();
+                                                                            }
+                                                                            catch { }
+                                                                            sessions[id].files_on_transfer.TryRemove(filename, out bool tempbool);
                                                                         }
                                                                     }
                                                                 }
@@ -815,106 +863,7 @@ namespace AFriendServer
                                         {
                                             if (receive_ASCII_data_automatically(s, out string num))
                                             {
-                                                string id1, id2;
-                                                if (id.CompareTo(receiver_id) <= 0)
-                                                {
-                                                    id1 = id;
-                                                    id2 = receiver_id;
-                                                }
-                                                else
-                                                {
-                                                    id1 = receiver_id;
-                                                    id2 = id;
-                                                }
-                                                string file = img_path + id1 + "_" + id2 + "_" + num + ".";
-                                                Thread thread = new Thread(() =>
-                                                {
-                                                    try
-                                                    {
-                                                        if (File.Exists(file))
-                                                        {
-                                                            using (FileStream fileStream = File.Open(file, FileMode.Open))
-                                                            {
-                                                                long filesize = fileStream.Length;
-                                                                sessions[id].Queue_command
-                                                                (
-                                                                    Combine
-                                                                    (
-                                                                        Encoding.Unicode.GetBytes("1905" + receiver_id),
-                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
-                                                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(filesize.ToString()))
-                                                                    )
-                                                                );
-                                                                long offset = 0;
-                                                                byte[] buffer = new byte[32768];
-                                                                while (offset < filesize)
-                                                                {
-                                                                    if (filesize - offset > buffer.Length)
-                                                                    {
-                                                                        int first_byte_expected = buffer.Length;
-                                                                        int byte_expected = first_byte_expected;
-                                                                        int total_byte_received = 0;
-                                                                        int received_byte;
-                                                                        do
-                                                                        {
-                                                                            received_byte = fileStream.Read(buffer, total_byte_received, byte_expected);
-                                                                            if (received_byte > 0)
-                                                                            {
-                                                                                total_byte_received += received_byte;
-                                                                                byte_expected -= received_byte;
-                                                                            }
-                                                                            else break;
-                                                                        } while (byte_expected > 0 && received_byte > 0);
-                                                                        while (sessions[id].commands.Count > 10) Thread.Sleep(5);
-                                                                        if (total_byte_received == first_byte_expected)
-                                                                        {
-                                                                            sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
-                                                                                Encoding.Unicode.GetBytes(receiver_id),
-                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
-                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
-                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
-                                                                                buffer));
-                                                                        }
-                                                                        offset += total_byte_received;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        int first_byte_expected = (int)(filesize - offset);
-                                                                        int byte_expected = first_byte_expected;
-                                                                        byte[] final_buffer = new byte[(int)(filesize - offset)];
-                                                                        int total_byte_received = 0;
-                                                                        int received_byte;
-                                                                        do
-                                                                        {
-                                                                            received_byte = fileStream.Read(final_buffer, total_byte_received, byte_expected);
-                                                                            if (received_byte > 0)
-                                                                            {
-                                                                                total_byte_received += received_byte;
-                                                                                byte_expected -= received_byte;
-                                                                            }
-                                                                            else break;
-                                                                        } while (byte_expected > 0 && received_byte > 0);
-                                                                        if (total_byte_received == first_byte_expected)
-                                                                        {
-                                                                            sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
-                                                                                Encoding.Unicode.GetBytes(receiver_id),
-                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
-                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
-                                                                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
-                                                                                final_buffer));
-                                                                        }
-                                                                        offset += total_byte_received;
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    } catch (Exception e)
-                                                    {
-                                                        
-                                                    }
-                                                });
-                                                thread.IsBackground = true;
-                                                thread.Start();
+                                                Task.Run(() => Send_file(id, receiver_id, num));
                                             }
                                         }
                                         break;
@@ -1033,6 +982,37 @@ namespace AFriendServer
                                                     {
                                                         File.Delete(img_path + id1 + "_" + id2 + "_" + messagenumber.ToString() + ".png");
                                                     }
+                                                    try
+                                                    {
+                                                        string file = img_path + id1 + "_" + id2 + "_" + messagenumber.ToString() + ".";
+                                                        if (File.Exists(file))
+                                                        {
+                                                            Console.WriteLine("=========================================================================");
+                                                            string filename = id1 + "_" + id2 + "_" + messagenumber + ".";
+                                                            if (sessions.ContainsKey(id1) && sessions[id1].files_on_transfer.ContainsKey(file))
+                                                            {
+                                                                sessions[id1].files_on_transfer[file] = false;
+                                                            }
+                                                            if (sessions.ContainsKey(id2) && sessions[id2].files_on_transfer.ContainsKey(file))
+                                                            {
+                                                                sessions[id2].files_on_transfer[file] = false;
+                                                            }
+                                                            try
+                                                            {
+                                                                files.TryRemove(filename, out FileToWrite temp);
+                                                                if (temp != null)
+                                                                try
+                                                                {
+                                                                    temp.fileStream.Dispose();
+                                                                }
+                                                                catch { }
+                                                            } catch (Exception exc)
+                                                            {
+
+                                                            }
+                                                            Task.Run(() => Delete_this_file(file));
+                                                        }
+                                                    } catch (Exception ex) { }
                                                 }
                                                 if (sessions.ContainsKey(receiver_id))
                                                 {
@@ -1303,7 +1283,131 @@ namespace AFriendServer
             }
         }
 
-        private static void Delete_conversation_thread(string id1, string id2)
+        private static async void Send_file(string id, string receiver_id, string num)
+        {
+            string id1, id2;
+            if (id.CompareTo(receiver_id) <= 0)
+            {
+                id1 = id;
+                id2 = receiver_id;
+            }
+            else
+            {
+                id1 = receiver_id;
+                id2 = id;
+            }
+            string file = img_path + id1 + "_" + id2 + "_" + num + ".";
+            if (sessions[id].files_on_transfer.ContainsKey(file)) return;
+            sessions[id].files_on_transfer.TryAdd(file, true);
+            try
+            {
+                if (File.Exists(file))
+                {
+                    using (FileStream fileStream = File.Open(file, FileMode.Open))
+                    {
+                        long filesize = fileStream.Length;
+                        sessions[id].Queue_command
+                        (
+                            Combine
+                            (
+                                Encoding.Unicode.GetBytes("1905" + receiver_id),
+                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                Encoding.ASCII.GetBytes(data_with_ASCII_byte(filesize.ToString()))
+                            )
+                        );
+                        long offset = 0;
+                        byte[] buffer = new byte[32768];
+                        while (offset < filesize)
+                        {
+                            if (filesize - offset > buffer.Length)
+                            {
+                                int first_byte_expected = buffer.Length;
+                                int byte_expected = first_byte_expected;
+                                int total_byte_received = 0;
+                                int received_byte;
+                                do
+                                {
+                                    received_byte = fileStream.Read(buffer, total_byte_received, byte_expected);
+                                    if (received_byte > 0)
+                                    {
+                                        total_byte_received += received_byte;
+                                        byte_expected -= received_byte;
+                                    }
+                                    else break;
+                                } while (byte_expected > 0 && received_byte > 0);
+                                while (sessions[id].commands.Count > 5 || sessions[id].is_locked == 1) await Task.Delay(30);
+                                if (total_byte_received == first_byte_expected && sessions[id].files_on_transfer[file])
+                                {
+                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                        Encoding.Unicode.GetBytes(receiver_id),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                        buffer));
+                                }
+                                else
+                                {
+                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                        Encoding.Unicode.GetBytes(receiver_id),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte("-1"))));
+                                    break;
+                                }
+                                offset += total_byte_received;
+                            }
+                            else
+                            {
+                                int first_byte_expected = (int)(filesize - offset);
+                                int byte_expected = first_byte_expected;
+                                byte[] final_buffer = new byte[(int)(filesize - offset)];
+                                int total_byte_received = 0;
+                                int received_byte;
+                                do
+                                {
+                                    received_byte = fileStream.Read(final_buffer, total_byte_received, byte_expected);
+                                    if (received_byte > 0)
+                                    {
+                                        total_byte_received += received_byte;
+                                        byte_expected -= received_byte;
+                                    }
+                                    else break;
+                                } while (byte_expected > 0 && received_byte > 0);
+                                if (total_byte_received == first_byte_expected && sessions[id].files_on_transfer[file])
+                                {
+                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                        Encoding.Unicode.GetBytes(receiver_id),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(offset.ToString())),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(received_byte.ToString())),
+                                        final_buffer));
+                                } else
+                                {
+                                    sessions[id].Queue_command(Combine(Encoding.Unicode.GetBytes("1904"),
+                                        Encoding.Unicode.GetBytes(receiver_id),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte(num)),
+                                        Encoding.ASCII.GetBytes(data_with_ASCII_byte("-1"))));
+                                    break;
+                                }
+                                offset += total_byte_received;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                try
+                {
+                    sessions[id].files_on_transfer.TryRemove(file, out bool temp);
+                } catch { }
+            }
+        }
+
+        private static async void Delete_conversation_thread(string id1, string id2)
         {
             using (SqlCommand command = new SqlCommand("delete from message where id1=@id1 and id2=@id2", sql))
             {
@@ -1331,7 +1435,20 @@ namespace AFriendServer
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.ToString());
+                            if (e.ToString().Contains("is being used by") && long.TryParse(file.Substring(file.LastIndexOf('_')+1, file.Length-file.LastIndexOf('_')-2), out long result)) 
+                            {
+                                string filename = id1 + "_" + id2 + "_" + result + ".";
+                                if (sessions[id1].files_on_transfer.ContainsKey(filename))
+                                {
+                                    sessions[id1].files_on_transfer[filename] = false;
+                                }
+                                if (sessions[id2].files_on_transfer.ContainsKey(filename))
+                                {
+                                    sessions[id2].files_on_transfer[filename] = false;
+                                }
+                                Task.Run(()=>Delete_this_file(filename));
+                            } 
+                            else Console.WriteLine(e.ToString());
                         }
                     }
                 } catch (Exception ex)
@@ -1339,6 +1456,37 @@ namespace AFriendServer
                     Console.WriteLine(ex.ToString());
                 }
             }
+        }
+
+        private static async void Delete_this_file(string file)
+        {
+            bool done = false;
+            do
+            {
+                try
+                {
+                    if (files.TryRemove(file, out FileToWrite temp))
+                    {
+                        try
+                        {
+                            temp.fileStream.Dispose();
+                        }
+                        catch { }
+                    }
+                    Console.WriteLine("*******************************Try deleting file: {0}", file);
+                    File.Delete(file);
+                    done = true;
+                }
+                catch (Exception ex)
+                {
+                    if (ex.ToString().Contains("is being used by")) {Console.WriteLine("File is in used {0}", file); await Task.Delay(100); }
+                    else
+                    {
+                        Console.WriteLine(ex.ToString());
+                        done = true;
+                    }
+                }
+            } while (!done);
         }
 
         private static bool Send_to_id(string id, MessageObject msgobj)
