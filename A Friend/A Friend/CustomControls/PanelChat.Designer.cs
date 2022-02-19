@@ -43,7 +43,7 @@ namespace A_Friend.CustomControls
             this.panelBottomRight = new System.Windows.Forms.Panel();
             this.SendFileButton = new A_Friend.CustomControls.CustomButton();
             this.sendImageButton = new A_Friend.CustomControls.CustomButton();
-            this.textboxWriting = new System.Windows.Forms.RichTextBox();
+            this.textboxWriting = new TranslucentRichTextBox();
             this.buttonSend = new A_Friend.CustomControls.CustomButton();
             this.timerChat = new System.Windows.Forms.Timer(this.components);
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -66,6 +66,7 @@ namespace A_Friend.CustomControls
             this.panelTopRight.Name = "panelTopRight";
             this.panelTopRight.Size = new System.Drawing.Size(912, 60);
             this.panelTopRight.TabIndex = 1;
+            this.panelTopRight.TabStop = true;
             this.panelTopRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelTopRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTopRight_Paint);
             this.panelTopRight.Resize += new System.EventHandler(this.panelTopRight_Resize);
@@ -78,7 +79,7 @@ namespace A_Friend.CustomControls
             this.labelState.Location = new System.Drawing.Point(73, 32);
             this.labelState.Name = "labelState";
             this.labelState.Size = new System.Drawing.Size(49, 18);
-            this.labelState.TabIndex = 7;
+            this.labelState.TabIndex = 2;
             this.labelState.Text = "offline";
             // 
             // labelFriendName
@@ -89,7 +90,7 @@ namespace A_Friend.CustomControls
             this.labelFriendName.Location = new System.Drawing.Point(72, 10);
             this.labelFriendName.Name = "labelFriendName";
             this.labelFriendName.Size = new System.Drawing.Size(80, 18);
-            this.labelFriendName.TabIndex = 6;
+            this.labelFriendName.TabIndex = 0;
             this.labelFriendName.Text = "Username";
             this.labelFriendName.Click += new System.EventHandler(this.panelTopRight_Click);
             // 
@@ -99,7 +100,7 @@ namespace A_Friend.CustomControls
             this.label3.Location = new System.Drawing.Point(72, 12);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(13, 20);
-            this.label3.TabIndex = 5;
+            this.label3.TabIndex = 3;
             this.label3.Text = " ";
             // 
             // friendPicture
@@ -115,7 +116,6 @@ namespace A_Friend.CustomControls
             this.friendPicture.Name = "friendPicture";
             this.friendPicture.Size = new System.Drawing.Size(45, 45);
             this.friendPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.friendPicture.TabIndex = 1;
             this.friendPicture.TabStop = false;
             this.friendPicture.Click += new System.EventHandler(this.panelTopRight_Click);
             // 
@@ -134,7 +134,6 @@ namespace A_Friend.CustomControls
             this.buttonDelete.Location = new System.Drawing.Point(860, 10);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(40, 40);
-            this.buttonDelete.TabIndex = 0;
             this.buttonDelete.TabStop = false;
             this.toolTip.SetToolTip(this.buttonDelete, "Delete conversation");
             this.buttonDelete.UseVisualStyleBackColor = false;
@@ -172,7 +171,8 @@ namespace A_Friend.CustomControls
             this.panelBottomRight.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottomRight.Name = "panelBottomRight";
             this.panelBottomRight.Size = new System.Drawing.Size(912, 144);
-            this.panelBottomRight.TabIndex = 3;
+            this.panelBottomRight.TabIndex = 0;
+            this.panelBottomRight.TabStop = true;
             this.panelBottomRight.Click += new System.EventHandler(this.panelTopRight_Click);
             this.panelBottomRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottomRight_Paint);
             this.panelBottomRight.Resize += new System.EventHandler(this.panelBottomRight_Resize);
@@ -194,7 +194,8 @@ namespace A_Friend.CustomControls
             this.SendFileButton.MinimumSize = new System.Drawing.Size(20, 20);
             this.SendFileButton.Name = "SendFileButton";
             this.SendFileButton.Size = new System.Drawing.Size(20, 20);
-            this.SendFileButton.TabIndex = 4;
+            this.SendFileButton.TabIndex = 3;
+            this.sendImageButton.TabStop = true;
             this.toolTip.SetToolTip(this.SendFileButton, "Send File");
             this.SendFileButton.UseVisualStyleBackColor = false;
             this.SendFileButton.Click += new System.EventHandler(this.SendFileButton_Click);
@@ -216,7 +217,8 @@ namespace A_Friend.CustomControls
             this.sendImageButton.MinimumSize = new System.Drawing.Size(20, 20);
             this.sendImageButton.Name = "sendImageButton";
             this.sendImageButton.Size = new System.Drawing.Size(20, 20);
-            this.sendImageButton.TabIndex = 3;
+            this.sendImageButton.TabIndex = 2;
+            this.sendImageButton.TabStop = true;
             this.toolTip.SetToolTip(this.sendImageButton, "Send images");
             this.sendImageButton.UseVisualStyleBackColor = false;
             this.sendImageButton.Click += new System.EventHandler(this.sendImageButton_Click);
@@ -225,13 +227,14 @@ namespace A_Friend.CustomControls
             // 
             this.textboxWriting.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textboxWriting.BackColor = System.Drawing.SystemColors.Window;
+            //this.textboxWriting.BackColor = System.Drawing.SystemColors.Window;
             this.textboxWriting.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textboxWriting.Location = new System.Drawing.Point(0, 0);
             this.textboxWriting.Margin = new System.Windows.Forms.Padding(0);
             this.textboxWriting.Name = "textboxWriting";
             this.textboxWriting.Size = new System.Drawing.Size(912, 120);
-            this.textboxWriting.TabIndex = 2;
+            this.textboxWriting.TabIndex = 0;
+            this.textboxWriting.TabStop = true;
             this.textboxWriting.Text = "";
             this.textboxWriting.Click += new System.EventHandler(this.panelTopRight_Click);
             this.textboxWriting.SizeChanged += new System.EventHandler(this.textboxWriting_SizeChanged);
@@ -255,7 +258,8 @@ namespace A_Friend.CustomControls
             this.buttonSend.MinimumSize = new System.Drawing.Size(40, 20);
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(40, 20);
-            this.buttonSend.TabIndex = 0;
+            this.buttonSend.TabIndex = 1;
+            this.buttonSend.TabStop = true;
             this.toolTip.SetToolTip(this.buttonSend, "Send message");
             this.buttonSend.UseVisualStyleBackColor = false;
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
@@ -295,7 +299,7 @@ namespace A_Friend.CustomControls
         private CustomButton buttonDelete;
         internal System.Windows.Forms.Panel panel_Chat;
         private System.Windows.Forms.Panel panelBottomRight;
-        private System.Windows.Forms.RichTextBox textboxWriting;
+        private TranslucentRichTextBox textboxWriting;
         private CustomButton buttonSend;
         private System.Windows.Forms.Timer timerChat;
         private System.Windows.Forms.Label labelState;

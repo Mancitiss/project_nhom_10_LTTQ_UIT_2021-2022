@@ -56,7 +56,8 @@ namespace A_Friend.CustomControls
             {
                 SnapForm form = new SnapForm();
                 form.Icon = Program.mainform.panelChats[id].AvatarIcon;
-                form.ClientSize = new Size(300, 450);
+                form.ClientSize = new Size(300, 450); 
+                form.BackgroundImage = Tools.SetImgOpacity(Tools.ResizeImage(Program.mainform.panelChats[id].Avatar, form.ClientSize.Width, form.ClientSize.Height), 0.19f);
                 form.FormBorderStyle = FormBorderStyle.FixedSingle;
                 form.MaximizeBox = false;
                 form.Controls.Add(Program.mainform.panelChats[id]);

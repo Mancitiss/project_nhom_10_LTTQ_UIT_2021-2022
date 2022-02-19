@@ -35,6 +35,8 @@ namespace A_Friend
         internal static string temp_name = null;
         internal static string img_string = null;
 
+        internal static byte publicstate = 0;
+
         public static TcpClient client;
         internal static SslStream stream;
         public static Account user;
@@ -839,7 +841,7 @@ namespace A_Friend
                                 //
                             } // successfully logged in
                             break;
-                        case "0404": //0404 = this id is offline, don't worry about your nudes, they are stored *not so securely* on the server :)
+                        case "0404": //0404 = this id is offline
                             {
                                 Console.WriteLine("This person is not online");
                                 if (Stream_receive(38, out string offline_id))
@@ -1267,6 +1269,19 @@ namespace A_Friend
                                 }
                             } // load messages
                             break;
+
+                        case "7351":
+                            {
+                                if (Stream_receive(2, out string statestr))
+                                {
+                                    if (byte.TryParse(statestr, out byte state))
+                                    {
+                                        publicstate = state;
+                                    }
+                                }
+                                break;
+                            } // change public state
+
                         case "9624": // old password is incorrect
                             {
                                 Console.WriteLine("Old Password is not correct!!");

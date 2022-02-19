@@ -50,6 +50,28 @@ namespace A_Friend
     /// </summary>
     public class SnapForm : Form
     {
+        /*
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int WS_EX_COMPOSITED = 0x02000000;
+                var cp = base.CreateParams;
+                cp.ExStyle |= WS_EX_COMPOSITED;
+                return cp;
+            }
+        }*/
+        public SnapForm()
+        {
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor |
+                ControlStyles.UserPaint |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.ResizeRedraw, true);
+            this.BackgroundImageLayout = ImageLayout.Stretch;
+            this.BackColor = Color.Transparent;
+        }
+
         private const int WmEnterSizeMove = 0x0231;
         private const int WmMoving = 0x0216;
         private const int WmSize = 0x0005;
