@@ -29,14 +29,14 @@ namespace AFriendServer
 
         static X509Certificate serverCertificate = new X509Certificate(Environment.GetEnvironmentVariable("certpath", EnvironmentVariableTarget.User), Environment.GetEnvironmentVariable("certpass", EnvironmentVariableTarget.User));
 
-        static Dictionary<string, Client> sessions = new Dictionary<string, Client>();
+        static ConcurrentDictionary<string, Client> sessions = new ConcurrentDictionary<string, Client>();
         static ConcurrentDictionary<string, FileToWrite> files = new ConcurrentDictionary<string, FileToWrite>();
 
         static SqlConnection sql;
         static Random rand;
         
         
-        static Thread main_thread, loop;
+        static Thread main_thread;
         //static ManualResetEvent mainstop = new ManualResetEvent(true);
 
         public static Int64 NextInt64(Random rnd)
@@ -108,16 +108,16 @@ namespace AFriendServer
             {
 
             }
-            sessions.Remove(id);
+            byte state = sessions[id].status;
+            sessions.TryRemove(id, out Client temp);
             string str_id = id;
-            //bytes.Remove(item.Key);
             while (str_id[0] == '0' && str_id.Length > 1) str_id.Remove(0, 1);
-            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=0 where id=@id", sql))
+            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=@state where id=@id", sql))
             {
                 cmd.Parameters.AddWithValue("@id", Int64.Parse(str_id));
+                cmd.Parameters.AddWithValue("@state", state);
                 cmd.ExecuteNonQuery();
             }
-            //clear(item.Key);
         }
 
         private static void exception_handler(KeyValuePair<string, Client> item, string se)
@@ -154,10 +154,10 @@ namespace AFriendServer
 
                 while (true)
                 {
-                    Thread.Sleep(10);
+                    //Thread.Sleep(10);
                     TcpClient client = listener.AcceptTcpClient();
 
-                    Console.WriteLine("Accepted Client");
+                    //Console.WriteLine("Accepted Client");
                     try
                     {
                         ThreadPool.QueueUserWorkItem(Receive_from_socket_not_logged_in, client);
@@ -328,7 +328,7 @@ namespace AFriendServer
 
         private static async void Receive_message(object si)
         {
-            Console.WriteLine("Work Started");
+            //Console.WriteLine("Work Started");
             string id = si as string;
             try
             {
@@ -338,7 +338,7 @@ namespace AFriendServer
                 {
                     if (SslStream_receive(s, 8, out data))
                     {
-                        Console.WriteLine("Work: " + data);
+                        if (data!=null && data!="1904") Console.WriteLine("Work: " + data);
                         if (data != null && data != "")
                         {
                             string instruction = data;
@@ -729,7 +729,7 @@ namespace AFriendServer
                                             }
                                         }
                                         break;
-                                    }
+                                    } // pre-receive file from client
 
                                 case "1904":
                                     {
@@ -761,7 +761,7 @@ namespace AFriendServer
                                                                             id2 = id;
                                                                         }
                                                                         string filename = id1 + "_" + id2 + "_" + num + ".";
-                                                                        Console.WriteLine("File: {0}", img_path + filename);
+                                                                        //Console.WriteLine("File: {0}", img_path + filename);
                                                                         sessions[id].files_on_transfer.AddOrUpdate(filename, true, (key, oldValue) => oldValue);
                                                                         if (sessions[id].files_on_transfer.ContainsKey(filename) && sessions[id].files_on_transfer[filename] && files.ContainsKey(filename) && files[filename].size > 0)
                                                                         {
@@ -786,7 +786,7 @@ namespace AFriendServer
                                                                                                 }
                                                                                                 catch { }
                                                                                             }
-                                                                                            Console.WriteLine("Write to file ended");
+                                                                                            //Console.WriteLine("Write to file ended");
                                                                                             done = true;
                                                                                         }
                                                                                     } 
@@ -808,7 +808,7 @@ namespace AFriendServer
                                                                                                 catch { }
                                                                                                 sessions[id].files_on_transfer.TryRemove(filename, out bool tempbool);
                                                                                             }
-                                                                                            Console.WriteLine("Write to file ended");
+                                                                                            //Console.WriteLine("Write to file ended");
                                                                                             done = true;
                                                                                         }
                                                                                     }
@@ -817,7 +817,7 @@ namespace AFriendServer
                                                                                 {
                                                                                     if (e.ToString().Contains("being used by another process"))
                                                                                     {
-                                                                                        Console.WriteLine("Try again!");
+                                                                                        //Console.WriteLine("Try again!");
                                                                                         await Task.Delay(100);
                                                                                     }
                                                                                     else
@@ -855,7 +855,7 @@ namespace AFriendServer
                                             }
                                         }
                                         break;
-                                    }
+                                    } // receive file from client
 
                                 case "1905":
                                     {
@@ -867,7 +867,7 @@ namespace AFriendServer
                                             }
                                         }
                                         break;
-                                    }
+                                    } // send file to client
 
                                 case "1234":
                                     {
@@ -987,7 +987,7 @@ namespace AFriendServer
                                                         string file = img_path + id1 + "_" + id2 + "_" + messagenumber.ToString() + ".";
                                                         if (File.Exists(file))
                                                         {
-                                                            Console.WriteLine("=========================================================================");
+                                                            //Console.WriteLine("=========================================================================");
                                                             string filename = id1 + "_" + id2 + "_" + messagenumber + ".";
                                                             if (sessions.ContainsKey(id1) && sessions[id1].files_on_transfer.ContainsKey(file))
                                                             {
@@ -1237,6 +1237,16 @@ namespace AFriendServer
                                         break;
                                     } // delete conversation
 
+                                case "7351":
+                                    {
+                                        SslStream_receive(s, 2, out string statestr);
+                                        if (byte.TryParse(statestr, out byte state))
+                                        {
+                                            sessions[id].status = state;
+                                        }
+                                        break;
+                                    }
+
                                 default:
                                     shutdown(id);
                                     Console.WriteLine("Received strange signal, socket closed");
@@ -1473,7 +1483,7 @@ namespace AFriendServer
                         }
                         catch { }
                     }
-                    Console.WriteLine("*******************************Try deleting file: {0}", file);
+                    //Console.WriteLine("*******************************Try deleting file: {0}", file);
                     File.Delete(file);
                     done = true;
                 }
@@ -1549,7 +1559,7 @@ namespace AFriendServer
                 */
 
                 SslStream_receive(sslStream, 8, out string data);
-                Console.WriteLine("not logged in:"+data);
+                //Console.WriteLine("not logged in:"+data);
                 if (data != null && data != "")
                 {
                     string instruction = data;
@@ -1643,7 +1653,7 @@ namespace AFriendServer
                         try
                         {
                             Console.WriteLine("Before avatar");
-                            string commandtext = "select top 1 id, name, pw, avatar, private from account where username=@username";
+                            string commandtext = "select top 1 id, name, pw, avatar, private, state from account where username=@username";
                             SqlCommand command = new SqlCommand(commandtext, sql);
                             command.Parameters.AddWithValue("@username", list_str[0]);
                             using (SqlDataReader reader = command.ExecuteReader())
@@ -1669,11 +1679,10 @@ namespace AFriendServer
 
                                         string name = reader["name"].ToString();
                                         string namebyte = Encoding.Unicode.GetByteCount(name).ToString();
+                                        byte mystate = byte.Parse(reader["state"].ToString());
 
                                         sslStream.Write(Encoding.Unicode.GetBytes("0200"
                                             + id + namebyte.Length.ToString().PadLeft(2, '0') + namebyte + name + reader["private"].ToString().PadRight(5, ' ')));
-                                        Console.WriteLine("Before state");
-                                        //state was here
                                         Console.WriteLine("Before dictionaries");
                                         try
                                         {
@@ -1752,18 +1761,14 @@ namespace AFriendServer
                                             {
                                                 Console.WriteLine(exc.ToString());
                                             }
-
-                                            using (SqlCommand cmd = new SqlCommand("update top (1) account set state=1 where id=@id", sql))
-                                            {
-                                                cmd.Parameters.AddWithValue("@id", str_id);
-                                                cmd.ExecuteNonQuery();
-                                            }
                                             while (sessions.ContainsKey(id)) await Task.Delay(1000);
                                             client.client = c;
                                             client.stream = sslStream;
                                             client.is_locked = 0;
                                             client.id = id;
-                                            sessions.Add(id, client);
+                                            client.status = mystate;
+                                            client.stream.Write(Encoding.Unicode.GetBytes("7351" + mystate.ToString()));
+                                            sessions.AddOrUpdate(id, client, (key, oldValue) => { shutdown(key); return client; });
                                             Console.WriteLine("Joined");
                                         } catch (Exception e)
                                         {
@@ -1802,7 +1807,7 @@ namespace AFriendServer
                                         {
                                             Console.WriteLine();
                                         }
-                                    }
+                                    } // wrong password
 
                                 }
                                 else
@@ -1829,7 +1834,7 @@ namespace AFriendServer
                                     {
                                         Console.WriteLine(e.ToString());
                                     }
-                                }
+                                } // log-in failed account doesn't exist
                             }
                         }
                         catch (Exception e)
@@ -1863,7 +1868,7 @@ namespace AFriendServer
                                     command.Parameters.AddWithValue("@username", list_str[0]);
                                     command.Parameters.AddWithValue("@name", list_str[0]);
                                     command.Parameters.AddWithValue("@pw", Crypter.Blowfish.Crypt(list_str[1]));
-                                    command.Parameters.AddWithValue("@state", 0);
+                                    command.Parameters.AddWithValue("@state", 1);
                                     command.Parameters.AddWithValue("@private", 0);
                                     command.Parameters.AddWithValue("@number_of_contacts", 0);
                                     command.Parameters.AddWithValue("@avatar", DBNull.Value);
@@ -1899,7 +1904,7 @@ namespace AFriendServer
                                 Console.WriteLine();
                             }
                         }
-                    }
+                    } // sign up
                     else
                     {
                         try
@@ -1917,7 +1922,7 @@ namespace AFriendServer
                         {
 
                         }
-                    }
+                    } // release resources, dispose connection etc ..
                 }
             } 
             catch (AuthenticationException e)

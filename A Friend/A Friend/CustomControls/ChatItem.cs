@@ -89,35 +89,6 @@ namespace A_Friend.CustomControls
             return image;
         }
 
-        public static Bitmap ResizeImage(Image image, int width, int height)
-        {
-            if (width > 0 && height > 0)
-            {
-                var destRect = new Rectangle(0, 0, width, height);
-                var destImage = new Bitmap(width, height);
-
-                destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-                using (var graphics = Graphics.FromImage(destImage))
-                {
-                    graphics.CompositingMode = CompositingMode.SourceCopy;
-                    graphics.CompositingQuality = CompositingQuality.HighQuality;
-                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    graphics.SmoothingMode = SmoothingMode.HighQuality;
-                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                    using (var wrapMode = new ImageAttributes())
-                    {
-                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                        graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                    }
-                }
-
-                return destImage;
-            }
-            else return (Bitmap)image;
-        }
-
         private static void open_image(Image image)
         {
             string tempFile = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
@@ -444,7 +415,7 @@ namespace A_Friend.CustomControls
                 labelAuthor.MaximumSize = new Size(maxwidth, int.MaxValue);
                 if (image.Width > maxwidth)
                 { 
-                var img = ResizeImage(image, maxwidth, maxwidth * image.Height / image.Width);
+                var img = Tools.ResizeImage(image, maxwidth, maxwidth * image.Height / image.Width);
                 panelBody.BackgroundImage = img;
                 }
                 else if (panelBody.BackgroundImage != image)

@@ -16,6 +16,18 @@ namespace A_Friend
 {
     public partial class FormApplication : Form
     {
+        /*
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int WS_EX_COMPOSITED = 0x02000000;
+                var cp = base.CreateParams;
+                cp.ExStyle |= WS_EX_COMPOSITED;
+                return cp;
+            }
+        }*/
+
         public delegate void SortContactItemsdelegate();
         public SortContactItemsdelegate sort_contact_item_delegate;
         public delegate void SetAvatarDelegate(string id, Image img);
@@ -25,6 +37,8 @@ namespace A_Friend
 
         public A_Friend.CustomControls.PanelChat currentpanelchat;
 
+        public delegate void ShowPanelChatDelegate(string id, bool force);
+        public ShowPanelChatDelegate showPanelChatDelegate;
         public delegate void AddContactItem(Account acc);
         public AddContactItem addContactItemDelegate;
         public delegate void AddMessageItem(string str, bool left);
@@ -51,21 +65,25 @@ namespace A_Friend
         public FormAddContact formAddContact = new FormAddContact();
         private bool check = true;
         private string searchText = "";
-        private bool loaded = false;
+        internal bool loaded = false;
         private bool priv = false;
 
         internal static ConcurrentDictionary<string, Form> subForms = new ConcurrentDictionary<string, Form>();
 
         public FormApplication()
         {
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor | 
+                ControlStyles.UserPaint |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer | 
+                ControlStyles.ResizeRedraw, true);
             InitializeComponent();
+            panelRight.BackgroundImageLayout = ImageLayout.Stretch;
+            panelRight2.BackgroundImageLayout = ImageLayout.Stretch;
             this.ResizeBegin += FormApplication_ResizeBegin;
             this.ResizeEnd += FormApplication_ResizeEnd;
-            this.SetStyle(
-            System.Windows.Forms.ControlStyles.UserPaint |
-            System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
-            System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer, true);
             InitializeSubPanels();
+            showPanelChatDelegate = new ShowPanelChatDelegate(ShowPanelChat);
             addContactItemDelegate = new AddContactItem(AddContact);
             turnContactActiveStateDelegate = new TurnContactActiveState(TurnActiveState);
             sort_contact_item_delegate = new SortContactItemsdelegate(SortContactItems);
@@ -119,8 +137,9 @@ namespace A_Friend
             panelGetStarted.Location = new Point(0, 0);
             panelGetStarted.Size = new Size(this.Width, panelBottomLeft.Top + 2);
             panelGetStarted.Padding = new Padding(1,0,0,0);
-            panelGetStarted.Resize += delegate { 
-                if (panelGetStarted.Width != this.Width)
+            panelGetStarted.Resize += (o, e) => {
+                Console.WriteLine("PanelGetStarted Paint delegate");
+                if (panelGetStarted.Width != this.Width) 
                 {
                     var graphic = panelGetStarted.CreateGraphics();
                     using (Pen pen = new Pen(Color.Gray, 1))
@@ -277,61 +296,67 @@ namespace A_Friend
 
         public void SortContactItems()
         {
-            int lenght = contactItems.Count;
-            for (int i = 0; i < contactItems.Count; i++)
+            try
             {
-                string min = "";
-                int j = 0;
-                foreach (KeyValuePair<int, string> keyValuePair in orderOfContactItems)
+                int lenght = contactItems.Count;
+                for (int i = 0; i < contactItems.Count; i++)
                 {
-                    if (j == lenght)
-                        break;
-                    if (min == "")
+                    string min = "";
+                    int j = 0;
+                    foreach (KeyValuePair<int, string> keyValuePair in orderOfContactItems)
                     {
-                        min = keyValuePair.Value;
-                    }
-                    else
-                    {
-                        if (panelChats[min].DateTimeOflastMessage > panelChats[keyValuePair.Value].DateTimeOflastMessage)
+                        if (j == lenght)
+                            break;
+                        if (min == "")
                         {
                             min = keyValuePair.Value;
                         }
+                        else
+                        {
+                            if (panelChats[min].DateTimeOflastMessage > panelChats[keyValuePair.Value].DateTimeOflastMessage)
+                            {
+                                min = keyValuePair.Value;
+                            }
+                        }
+                        j++;
                     }
-                    j++;
+                    lenght--;
+                    BringContactItemToTop(min);
                 }
-                lenght--;
-                BringContactItemToTop(min);
-            }
 
-            foreach (KeyValuePair <int, string> keyValuePair1 in orderOfContactItems)
+                foreach (KeyValuePair<int, string> keyValuePair1 in orderOfContactItems)
+                {
+                    panelContact.Controls.Add(contactItems[keyValuePair1.Value]);
+                }
+
+                loaded = true;
+
+                panelLoading.SendToBack();
+                formLoading.StopSpinning();
+                formLoading.Dispose();
+                panelLoading.Dispose();
+
+                if (panelChats.Count > 0)
+                {
+                    ShowPanelChat(orderOfContactItems.Values.Last());
+                    panelChats[orderOfContactItems.Values.Last()].ScrollToBottom();
+                    this.currentContactItem = contactItems[orderOfContactItems.Values.Last()];
+                    this.currentContactItem.Clicked = true;
+                }
+                else
+                {
+                    panelRight.Controls.Clear();
+                    customTextBoxSearch.Visible = false;
+                    formGetStarted.Dock = DockStyle.Fill;
+                    formGetStarted.TopLevel = false;
+                    formGetStarted.FormBorderStyle = FormBorderStyle.None;
+                    panelGetStarted.Controls.Add(formGetStarted);
+                    panelGetStarted.BringToFront();
+                    formGetStarted.Visible = true;
+                }
+            } catch (Exception e)
             {
-                panelContact.Controls.Add(contactItems[keyValuePair1.Value]);
-            }
-
-            loaded = true;
-
-            panelLoading.SendToBack();
-            formLoading.StopSpinning();
-            formLoading.Dispose();
-            panelLoading.Dispose();
-
-            if (panelChats.Count > 0)
-            {
-                ShowPanelChat(orderOfContactItems.Values.Last());
-                panelChats[orderOfContactItems.Values.Last()].ScrollToBottom();
-                this.currentContactItem = contactItems[orderOfContactItems.Values.Last()];
-                this.currentContactItem.Clicked = true;
-            }
-            else
-            {
-                panelRight.Controls.Clear();
-                customTextBoxSearch.Visible = false;
-                formGetStarted.Dock = DockStyle.Fill;
-                formGetStarted.TopLevel = false;
-                formGetStarted.FormBorderStyle = FormBorderStyle.None;
-                panelGetStarted.Controls.Add(formGetStarted);
-                panelGetStarted.BringToFront();
-                formGetStarted.Visible = true;
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -389,14 +414,16 @@ namespace A_Friend
             }
         }
 
-        public void ShowPanelChat(string id)
+        public void ShowPanelChat(string id, bool force = false)
         {
             CustomControls.PanelChat item = panelChats[id];
 
             if (panelRight.Controls.Count == 0)
             {
-                if ((GetCurrentPanelChatId() == "") || !(panelRight2.Controls[0] is CustomControls.PanelChat) || (panelRight2.Controls[0] as CustomControls.PanelChat).ID != id)
+                if (force || (GetCurrentPanelChatId() == "") || !(panelRight2.Controls[0] is CustomControls.PanelChat) || (panelRight2.Controls[0] as CustomControls.PanelChat).ID != id)
                 {
+                    panelRight.BackgroundImage = Tools.SetImgOpacity(Tools.ResizeImage(item.Avatar, panelRight.Width, panelRight.Height), 0.19f);
+                    panelRight.BackColor = Color.Transparent;
                     panelRight.Controls.Add(item);
                     panelRight.BringToFront();
                     panelRight2.SendToBack();
@@ -405,8 +432,10 @@ namespace A_Friend
             }
             else
             {
-                if ((GetCurrentPanelChatId() == "") || !(panelRight.Controls[0] is CustomControls.PanelChat) || (panelRight.Controls[0] as CustomControls.PanelChat).ID != id)
+                if (force || (GetCurrentPanelChatId() == "") || !(panelRight.Controls[0] is CustomControls.PanelChat) || (panelRight.Controls[0] as CustomControls.PanelChat).ID != id)
                 {
+                    panelRight2.BackgroundImage = Tools.SetImgOpacity(Tools.ResizeImage(item.Avatar, panelRight2.Width, panelRight2.Height), 0.19f);
+                    panelRight2.BackColor = Color.Transparent;
                     panelRight2.Controls.Add(item);
                     panelRight2.BringToFront();
                     panelRight.SendToBack();
@@ -648,12 +677,12 @@ namespace A_Friend
             panelGetStarted.Size = new Size(panelRight.Width, panelLeft.Height);
             formGetStarted.TopColor = panelTopLeft.BackColor;
             formGetStarted.BottomColor = panelBottomLeft.BackColor;
-            var graphic = panelGetStarted.CreateGraphics(); 
-            using (Pen pen = new Pen (Color.Gray, 1))
+            var graphic = panelGetStarted.CreateGraphics();
+            using (Pen pen = new Pen(Color.Gray, 1))
             {
+                Console.WriteLine("PanelGetStarted Paint");
                 graphic.DrawLine(pen, 0, 0, 0, panelGetStarted.Height - 1);
             }
-
         }
 
         private void PanelGetStartedFill()
@@ -676,14 +705,16 @@ namespace A_Friend
 
         private void panelTopLeft_Paint(object sender, PaintEventArgs e)
         {
+            Console.WriteLine("panelTopLeft_Paint");
             using (Pen pen = new Pen(Color.Gray, 1))
             {
-                e.Graphics.DrawLine(pen, 0, panelTopLeft.Height - 1, panelTopLeft.Width, panelTopLeft.Height -  1);
+                e.Graphics.DrawLine(pen, 0, panelTopLeft.Height - 1, panelTopLeft.Width, panelTopLeft.Height - 1);
             }
         }
 
         private void panelBottomLeft_Paint(object sender, PaintEventArgs e)
         {
+            Console.WriteLine("panelBottomLeft_Paint");
             using (Pen pen = new Pen(Color.Gray, 1))
             {
                 e.Graphics.DrawLine(pen, 0, 1, panelBottomLeft.Width - 0, 1);

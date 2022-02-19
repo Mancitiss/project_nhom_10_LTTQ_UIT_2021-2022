@@ -19,10 +19,11 @@ namespace AFriendServer
         internal int is_waited;
         internal int loaded;
         internal int loopnum;
-        internal string sessionKey;
         internal ConcurrentQueue<byte[]> commands;
         internal ConcurrentDictionary<string, bool> files_on_transfer = new ConcurrentDictionary<string, bool>();
         private Int32 workeradded;
+
+        internal byte status = 1;
         
         internal Client() 
         {

@@ -12,6 +12,7 @@ using System.IO;
 using System.Threading;
 using System.Media;
 using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
 
 namespace A_Friend.CustomControls
 {
@@ -45,17 +46,21 @@ namespace A_Friend.CustomControls
 
         private void Must_initialize()
         {
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor |
+                ControlStyles.UserPaint |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.ResizeRedraw, true);
             InitializeComponent();
+            panel_Chat.BackColor = Color.Transparent;
+            panelBottomRight.BackColor = Color.Transparent;
+            panelTopRight.BackColor = Color.Transparent;
             LoadMessageDelegate = new LoadMessageItem(LoadMessage);
             AddMessageDelegate = new AddMessageItem(AddMessage);
             RemoveMessage_Invoke = new RemoveMessageInvoker(RemoveMessage_Passively);
             panel_Chat.MouseWheel += new System.Windows.Forms.MouseEventHandler(panel_Chat_MouseWheel);
             textboxWriting.LinkClicked += (o, e) => { System.Diagnostics.Process.Start(e.LinkText); };
             this.DoubleBuffered = true;
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.SetStyle(ControlStyles.ResizeRedraw, false);
-            this.SetStyle(ControlStyles.UserPaint, true);
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.CreateControl();
             //textboxWriting.dynamicMode = true;
             //textboxWriting.SetMaximumTextLenght(2021);
@@ -101,6 +106,14 @@ namespace A_Friend.CustomControls
             set
             {
                 friendPicture.Crop(value);
+                if (FormApplication.currentID == ID)
+                {
+                    Program.mainform.Invoke(Program.mainform.showPanelChatDelegate, new object[] { ID, true });
+                }
+            }
+            get
+            {
+                return friendPicture.Image;
             }
         }
 
@@ -568,7 +581,6 @@ namespace A_Friend.CustomControls
 
         private void panelBottomRight_Resize(object sender, EventArgs e)
         {
-            //textboxWriting.DynamicResize();
             panelBottomRight.Invalidate();
         }
 

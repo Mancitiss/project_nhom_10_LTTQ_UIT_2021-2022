@@ -183,6 +183,13 @@
     <Compile Include="SnapForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Tools.cs" />
+    <Compile Include="TranslucentRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TranslucentRichTextBox.Designer.cs">
+      <DependentUpon>TranslucentRichTextBox.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
