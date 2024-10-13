@@ -24,11 +24,18 @@ namespace A_Friend
                 bool newv = false;
                 try
                 {
-                    string data;
-                    using (WebClient wc = new WebClient())
-                    {
-                        data = wc.DownloadString(ConfigurationManager.AppSettings.Get("check_new_version_address"));
-                    }
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ConfigurationManager.AppSettings.Get("check_new_version_address"));
+                    request.Method = "POST";
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    request.Timeout = 5000;
+                    request.ReadWriteTimeout = 5000;
+                    request.KeepAlive = false;
+                    request.ContentLength = 0;
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    Stream dataStream = response.GetResponseStream();
+                    StreamReader reader = new StreamReader(dataStream);
+                    string data = reader.ReadToEnd();
+                    reader.Close();
                     string[] newestversion = data.Split('.');
                     int[] newestversionint = new int[newestversion.Count()];
                     for (int i = 0; i < newestversion.Count(); i++)

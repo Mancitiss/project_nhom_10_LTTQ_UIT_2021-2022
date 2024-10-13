@@ -998,6 +998,10 @@ namespace A_Friend
                                             {
                                                 Console.WriteLine("Data Received\n"+data_string);
                                                 MessageObject msgobj = JSON.Deserialize<MessageObject>(data_string, Options.MillisecondsSinceUnixEpochUtc);
+                                                // msgobj.timesent is in GMT+0, we need to change it based on the user's timezone
+                                                Console.WriteLine("Time sent: {0}", msgobj.timesent);
+                                                msgobj.timesent = msgobj.timesent.AddHours(System.TimeZoneInfo.Local.BaseUtcOffset.Hours);
+                                                Console.WriteLine("Time sent: {0}", msgobj.timesent);
                                                 string sender = msgobj.id1;
                                                 if (msgobj.sender) sender = msgobj.id2;
                                                 //Console.WriteLine("{0}: {1}", sender, msgobj.message);
@@ -1254,6 +1258,14 @@ namespace A_Friend
                                     {
                                         Console.WriteLine("Old messages have come");
                                         List<MessageObject> messageObjects = JSON.Deserialize<List<MessageObject>>(objectdatastring, Options.MillisecondsSinceUnixEpochUtc);
+
+                                        // fix timezone
+                                        foreach (MessageObject messageObject in messageObjects)
+                                        {
+                                            messageObject.timesent = messageObject.timesent.AddHours(System.TimeZoneInfo.Local.BaseUtcOffset.Hours);
+                                        }
+
+                                        // load messages to panel chat
                                         try
                                         {
                                             Program.mainform.panelChats[panelid].Invoke(Program.mainform.panelChats[panelid].LoadMessageDelegate, new object[] { messageObjects });
