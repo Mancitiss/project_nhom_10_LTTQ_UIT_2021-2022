@@ -14,7 +14,7 @@ namespace A_Friend
     class Program
     {
         public static FormApplication mainform;
-        internal static int[] thisversion = {3, 2, 1, 2};
+        internal static int[] thisversion = {3, 2, 1, 3};
 
         static void Main(string[] args)
         {
@@ -71,6 +71,7 @@ namespace A_Friend
                 }
                 else
                 {
+                    
                     Console.WriteLine("A Friend, version {0}.{1}.{2}.{3}", thisversion[0], thisversion[1], thisversion[2], thisversion[3]);
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);

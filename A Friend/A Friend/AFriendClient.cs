@@ -507,7 +507,7 @@ namespace A_Friend
         {
             try
             {
-                string server_address = ConfigurationManager.AppSettings.Get("sever_address");
+                string server_address = ConfigurationManager.AppSettings.Get("server_address");
                 using (var client_2 = new TcpClient(server_address, Convert.ToInt16(ConfigurationManager.AppSettings.Get("port"))))
                 {
                     using (var stream_2 = new SslStream(
@@ -544,7 +544,7 @@ namespace A_Friend
         }
         public static bool Logged_in(string tk, string mk)
         {
-            string server_address = ConfigurationManager.AppSettings.Get("sever_address");
+            string server_address = ConfigurationManager.AppSettings.Get("server_address");
             client = new TcpClient(server_address, Convert.ToInt16(ConfigurationManager.AppSettings.Get("port")));
             stream = new SslStream(
                 client.GetStream(),
@@ -1303,8 +1303,9 @@ namespace A_Friend
             try
             {
                 bool success = false;
-
-                client = new TcpClient("mancitiss.duckdns.org", 11111);
+                Console.WriteLine(ConfigurationManager.AppSettings.Get("server_address"));
+                Console.WriteLine(ConfigurationManager.AppSettings.Get("port"));
+                client = new TcpClient(ConfigurationManager.AppSettings.Get("server_address"), int.Parse(ConfigurationManager.AppSettings.Get("port")));
                 stream = new SslStream(
                     client.GetStream(),
                     false,
@@ -1314,7 +1315,7 @@ namespace A_Friend
                 try
                 {
                     Console.WriteLine("Try authenticate");
-                    stream.AuthenticateAsClient("mancitiss.duckdns.org");
+                    stream.AuthenticateAsClient("mancie.duckdns.org");
                 }
                 catch (AuthenticationException e)
                 {
